@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
   motion,
@@ -6,7 +6,6 @@ import {
   useTransform,
   useSpring,
   useMotionValue,
-  useAnimationFrame,
 } from 'framer-motion'
 import {
   ArrowRight,
@@ -26,6 +25,7 @@ import {
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import Lenis from 'lenis'
+import { PublicNavbar } from '@/components/public/PublicNavbar'
 
 // --- Utility Components ---
 
@@ -128,6 +128,7 @@ const businesses = [
       'https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2070&auto=format&fit=crop',
     colSpan: 'md:col-span-2 lg:col-span-2',
     ready: true,
+    href: '/vehicules',
   },
   {
     id: 'immobilier',
@@ -311,60 +312,64 @@ function Portfolio() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {businesses.map((biz) => (
-          <motion.div
-            key={biz.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.6 }}
-            className={cn(
-              'group relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-sm bg-noir-950 p-8 md:aspect-[16/10] hover-trigger',
-              biz.colSpan.includes('lg:col-span-2') ? 'lg:aspect-[2/1]' : 'lg:aspect-square',
-              biz.colSpan
-            )}
-          >
-            <div className="absolute inset-0 z-0">
-              <img
-                src={biz.image}
-                alt={biz.name}
-                className="h-full w-full object-cover opacity-60 transition-transform duration-1000 ease-out group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/50 to-transparent" />
-            </div>
+        {businesses.map((biz) => {
+          const Wrapper = biz.href ? Link : 'div'
+          const wrapperProps = biz.href ? { to: biz.href } : {}
 
-            <div className="relative z-10 flex justify-between">
-              <div className="rounded-full bg-white/10 p-2 backdrop-blur-sm">
-                <biz.icon className="h-5 w-5 text-gold-400" weight="fill" />
-              </div>
-              {biz.ready ? (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-noir-950 transition-transform group-hover:rotate-45">
-                  <ArrowUpRight className="h-4 w-4" weight="bold" />
-                </div>
-              ) : (
-                <span className="rounded-full bg-noir-900/50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-silver-400 backdrop-blur-sm">
-                  Bientôt
-                </span>
+          return (
+            <motion.div
+              key={biz.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.6 }}
+              className={cn(
+                'group relative flex aspect-[4/5] flex-col justify-between overflow-hidden rounded-sm bg-noir-950 p-8 md:aspect-[16/10] hover-trigger',
+                biz.colSpan.includes('lg:col-span-2') ? 'lg:aspect-[2/1]' : 'lg:aspect-square',
+                biz.colSpan
               )}
-            </div>
+            >
+              <Wrapper {...(wrapperProps as any)} className="absolute inset-0 z-0">
+                <img
+                  src={biz.image}
+                  alt={biz.name}
+                  className="h-full w-full object-cover opacity-60 transition-transform duration-1000 ease-out group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/50 to-transparent" />
+              </Wrapper>
 
-            <div className="relative z-10">
-              <h3 className="mb-2 font-serif text-2xl text-white md:text-3xl italic">{biz.name}</h3>
-              <p className="mb-4 text-silver-300 font-light text-sm">{biz.description}</p>
-              <div className="h-0 overflow-hidden opacity-0 transition-all duration-500 ease-in-out group-hover:h-auto group-hover:opacity-100">
-                <p className="text-sm text-silver-400">{biz.longDescription}</p>
-                {biz.ready && (
-                  <Link
-                    to="/vehicules"
-                    className="mt-4 inline-flex items-center gap-2 border-b border-gold-400 pb-1 text-xs font-bold uppercase tracking-widest text-gold-400 hover:text-white hover:border-white transition-colors"
-                  >
-                    Explorer <CaretRight weight="bold" />
-                  </Link>
+              <div className="relative z-10 flex justify-between pointer-events-none">
+                <div className="rounded-full bg-white/10 p-2 backdrop-blur-sm">
+                  <biz.icon className="h-5 w-5 text-gold-400" weight="fill" />
+                </div>
+                {biz.ready ? (
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-noir-950 transition-transform group-hover:rotate-45">
+                    <ArrowUpRight className="h-4 w-4" weight="bold" />
+                  </div>
+                ) : (
+                  <span className="rounded-full bg-noir-900/50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-silver-400 backdrop-blur-sm">
+                    Bientôt
+                  </span>
                 )}
               </div>
-            </div>
-          </motion.div>
-        ))}
+
+              <div className="relative z-10 pointer-events-none">
+                <h3 className="mb-2 font-serif text-2xl text-white md:text-3xl italic">
+                  {biz.name}
+                </h3>
+                <p className="mb-4 text-silver-300 font-light text-sm">{biz.description}</p>
+                <div className="h-0 overflow-hidden opacity-0 transition-all duration-500 ease-in-out group-hover:h-auto group-hover:opacity-100">
+                  <p className="text-sm text-silver-400">{biz.longDescription}</p>
+                  {biz.ready && (
+                    <div className="mt-4 inline-flex items-center gap-2 border-b border-gold-400 pb-1 text-xs font-bold uppercase tracking-widest text-gold-400">
+                      Explorer <CaretRight weight="bold" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )
+        })}
       </div>
     </section>
   )
@@ -494,59 +499,6 @@ function Footer() {
   )
 }
 
-function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const { scrollY } = useScroll()
-
-  useMotionValue(0) // Initialize
-
-  useAnimationFrame(() => {
-    if (scrollY.get() > 50 && !isScrolled) setIsScrolled(true)
-    if (scrollY.get() <= 50 && isScrolled) setIsScrolled(false)
-  })
-
-  return (
-    <motion.nav
-      className={cn(
-        'fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-6 transition-all duration-300 lg:px-12',
-        isScrolled ? 'bg-noir-950/80 py-4 backdrop-blur-md' : 'bg-transparent'
-      )}
-    >
-      <Link to="/" className="flex items-center gap-2 hover-trigger">
-        <Buildings className="h-6 w-6 text-gold-400" weight="duotone" />
-        <span
-          className={cn(
-            'text-sm font-bold uppercase tracking-widest transition-colors',
-            isScrolled ? 'text-white' : 'text-white'
-          )}
-        >
-          Mansour Holding
-        </span>
-      </Link>
-
-      <div className="flex items-center gap-8">
-        <Link
-          to="/vehicules"
-          className="hidden text-xs font-bold uppercase tracking-[0.2em] text-white transition-colors hover:text-gold-400 md:block hover-trigger"
-        >
-          Portfolio
-        </Link>
-        <Link
-          to="/login"
-          className="hidden text-xs font-bold uppercase tracking-[0.2em] text-white transition-colors hover:text-gold-400 md:block hover-trigger"
-        >
-          Accès
-        </Link>
-        <Link
-          to="/dashboard"
-          className="rounded-sm bg-white px-6 py-2.5 text-[10px] font-bold uppercase tracking-[0.25em] text-noir-950 transition-colors hover:bg-gold-400 hover-trigger"
-        >
-          Espace Pro
-        </Link>
-      </div>
-    </motion.nav>
-  )
-}
 
 export function LandingPage() {
   useEffect(() => {
@@ -566,7 +518,7 @@ export function LandingPage() {
 
   return (
     <div className="min-h-screen bg-noir-950 font-sans selection:bg-gold-400 selection:text-noir-950">
-      <Navbar />
+      <PublicNavbar />
       <Hero />
       <Marquee />
       <About />
