@@ -1,0 +1,341 @@
+{
+  "project_meta": {
+    "name": "mansour-holding",
+    "version": "0.1.0",
+    "ralph_type": "opencode",
+    "opencode_session_id": "cascade-2026-02-12"
+  },
+  "backlog": [
+    {
+      "group": "scaffolding",
+      "feature": "Monorepo project structure",
+      "description": "Set up Bun workspace monorepo with apps/web, apps/api, packages/database, packages/shared, packages/domain. Root package.json with workspace config, tsconfig base, and shared scripts (dev, build, type-check, db:migrate). Remove the flat Vite scaffold currently in apps/ and restructure properly.",
+      "acceptance_criteria": [
+        "Root package.json has workspaces: ['apps/*', 'packages/*'] — verify with `cat package.json | grep workspaces`",
+        "apps/web/package.json exists with name @mansour/web — verify with `cat apps/web/package.json`",
+        "apps/api/package.json exists with name @mansour/api — verify with `cat apps/api/package.json`",
+        "packages/database/package.json exists with name @mansour/database — verify with `cat packages/database/package.json`",
+        "packages/shared/package.json exists with name @mansour/shared — verify with `cat packages/shared/package.json`",
+        "packages/domain/package.json exists with name @mansour/domain — verify with `cat packages/domain/package.json`",
+        "`bun install` succeeds from root — verify with `bun install`",
+        "Root tsconfig.json with project references compiles — verify with `bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "scaffolding",
+      "feature": "Web app foundation (React + Vite + TailwindCSS)",
+      "description": "Configure apps/web with React 19, Vite 8, TailwindCSS 4, TanStack Router, Plus Jakarta Sans font, and i18next (fr primary, en secondary). Create a minimal App shell with router outlet and a placeholder home page.",
+      "acceptance_criteria": [
+        "apps/web dev server starts without errors — verify with `cd apps/web && bun run dev` (check no crash)",
+        "TailwindCSS classes render correctly — verify visually or check tailwind config exists",
+        "TanStack Router is configured with a root route and index route — verify with `cat apps/web/src/routes/__root.tsx`",
+        "i18next loads with fr as default language — verify with `grep 'lng.*fr' apps/web/src/i18n.ts`",
+        "Plus Jakarta Sans font is loaded — verify with `grep 'Jakarta' apps/web/src/index.css`",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "scaffolding",
+      "feature": "API foundation (Hono + Drizzle)",
+      "description": "Configure apps/api with Hono framework running on Bun, Drizzle ORM with PostgreSQL driver, and a health-check endpoint at GET /api/health. Include drizzle.config.ts and a basic connection setup.",
+      "acceptance_criteria": [
+        "apps/api starts and responds to GET /api/health with {status: 'ok'} — verify with `curl http://localhost:3000/api/health`",
+        "Drizzle config file exists — verify with `cat apps/api/drizzle.config.ts`",
+        "Database connection module exists — verify with `cat apps/api/src/db/index.ts`",
+        "Type check passes — verify with `cd apps/api && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "scaffolding",
+      "feature": "Shared packages setup",
+      "description": "Set up packages/shared with Zod validators and shared TypeScript types. Set up packages/database with Drizzle schema barrel export. Set up packages/domain as empty module ready for business logic. All packages should be importable from apps.",
+      "acceptance_criteria": [
+        "packages/shared exports a Zod schema (e.g., idSchema) — verify with `cat packages/shared/src/index.ts`",
+        "packages/database exports from src/index.ts — verify with `cat packages/database/src/index.ts`",
+        "packages/domain exports from src/index.ts — verify with `cat packages/domain/src/index.ts`",
+        "apps/api can import from @mansour/shared — verify with `cd apps/api && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "auth",
+      "feature": "Database schema for auth (better-auth)",
+      "description": "Create Drizzle schema for better-auth tables: users, sessions, accounts. Include fields for multi-tenant support (organizationId). Add migration file.",
+      "acceptance_criteria": [
+        "Schema file exists at packages/database/src/schema/auth.ts — verify with `cat packages/database/src/schema/auth.ts`",
+        "Users table has id, email, name, emailVerified, image, createdAt, updatedAt — verify with grep",
+        "Sessions table has id, userId, token, expiresAt — verify with grep",
+        "Migration can be generated — verify with `cd apps/api && bunx drizzle-kit generate`",
+        "Type check passes — verify with `cd apps/api && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "auth",
+      "feature": "better-auth server configuration",
+      "description": "Configure better-auth on the API side with email+password provider, session management, and Drizzle adapter. Expose auth routes at /api/auth/*.",
+      "acceptance_criteria": [
+        "Auth config file exists at apps/api/src/auth.ts — verify with `cat apps/api/src/auth.ts`",
+        "Auth routes mounted at /api/auth/* — verify with grep in apps/api/src/index.ts",
+        "better-auth uses Drizzle adapter — verify with `grep 'drizzle' apps/api/src/auth.ts`",
+        "Type check passes — verify with `cd apps/api && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "auth",
+      "feature": "Auth UI (login and register pages)",
+      "description": "Create login and register pages in apps/web using React Hook Form + Zod validation. Pages call better-auth client SDK. Include TanStack Router routes at /login and /register. French labels.",
+      "acceptance_criteria": [
+        "Login route exists at apps/web/src/routes/login.tsx — verify with `cat apps/web/src/routes/login.tsx`",
+        "Register route exists at apps/web/src/routes/register.tsx — verify with `cat apps/web/src/routes/register.tsx`",
+        "Forms use react-hook-form with Zod resolver — verify with grep 'useForm' in both files",
+        "French labels are used (e.g., 'Connexion', 'Inscription') — verify with grep",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "auth",
+      "feature": "Protected routes and auth guard",
+      "description": "Create an auth guard component that redirects unauthenticated users to /login. Wrap the dashboard layout with this guard. Store auth state via TanStack Query.",
+      "acceptance_criteria": [
+        "Auth guard component exists — verify with `find apps/web/src -name '*auth*' -o -name '*guard*'`",
+        "Dashboard route redirects to /login when not authenticated — verify by reading route config",
+        "Auth state managed via TanStack Query — verify with grep 'useQuery' in auth-related files",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "layout",
+      "feature": "Dashboard shell layout",
+      "description": "Create the main dashboard layout with sidebar navigation, top header with user menu, and main content area. Sidebar shows business modules (Mansour Motors as first). Include business switcher component. Responsive: sidebar collapses on mobile.",
+      "acceptance_criteria": [
+        "Dashboard layout component exists at apps/web/src/components/layout/DashboardLayout.tsx — verify with cat",
+        "Sidebar component with navigation items exists — verify with cat",
+        "Header component with user menu exists — verify with cat",
+        "Business switcher component exists — verify with find",
+        "Layout is responsive (uses Tailwind responsive classes) — verify with grep 'md:' or 'lg:' in layout files",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "layout",
+      "feature": "Holding overview dashboard page",
+      "description": "Create the main holding dashboard page at /dashboard showing summary cards for each business module (revenue, active items, recent activity). Use placeholder data. French labels.",
+      "acceptance_criteria": [
+        "Dashboard index route exists at apps/web/src/routes/dashboard/index.tsx — verify with cat",
+        "Summary cards rendered for business modules — verify with grep 'Mansour Motors' in the file",
+        "French labels used — verify with grep for French words",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-inventory",
+      "feature": "Vehicle database schema",
+      "description": "Create Drizzle schema for vehicles table: id, make, model, year, mileage, price, status (available/sold/reserved), fuelType, transmission, color, vin, description, images (jsonb), organizationId, createdAt, updatedAt. Add Zod validators in packages/shared.",
+      "acceptance_criteria": [
+        "Schema file exists at packages/database/src/schema/vehicles.ts — verify with cat",
+        "All specified columns exist — verify with grep for each column name",
+        "Zod validator exists in packages/shared — verify with `grep 'vehicle' packages/shared/src/index.ts`",
+        "Status enum includes available, sold, reserved — verify with grep",
+        "Migration can be generated — verify with `cd apps/api && bunx drizzle-kit generate`",
+        "Type check passes — verify with `bunx tsc --noEmit` from root"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-inventory",
+      "feature": "Vehicle CRUD API endpoints",
+      "description": "Create Hono routes for vehicles: GET /api/vehicles (list with pagination/filters), GET /api/vehicles/:id, POST /api/vehicles, PUT /api/vehicles/:id, DELETE /api/vehicles/:id. All routes require authentication. Use Drizzle for DB operations.",
+      "acceptance_criteria": [
+        "Vehicle routes file exists at apps/api/src/routes/vehicles.ts — verify with cat",
+        "All 5 CRUD endpoints are defined — verify with grep 'get\\|post\\|put\\|delete' in the file",
+        "Routes require auth middleware — verify with grep 'auth' in the file",
+        "Pagination support on list endpoint — verify with grep 'limit\\|offset\\|page'",
+        "Type check passes — verify with `cd apps/api && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-inventory",
+      "feature": "Vehicle list page with TanStack Table",
+      "description": "Create the vehicle inventory list page at /dashboard/motors/inventory. Use TanStack Table with columns: image thumbnail, make/model, year, mileage, price, status. Include search bar and status filter. French column headers.",
+      "acceptance_criteria": [
+        "Inventory page exists at apps/web/src/routes/dashboard/motors/inventory.tsx — verify with cat",
+        "TanStack Table is used — verify with grep 'useReactTable' in the file",
+        "Columns include make, model, year, price, status — verify with grep",
+        "Search input exists — verify with grep 'search\\|recherche'",
+        "TanStack Query fetches from /api/vehicles — verify with grep 'useQuery'",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-inventory",
+      "feature": "Vehicle detail and edit form",
+      "description": "Create vehicle detail page at /dashboard/motors/inventory/$vehicleId with view and edit modes. Edit form uses React Hook Form + Zod. Image upload support (placeholder for now). French labels.",
+      "acceptance_criteria": [
+        "Detail page exists at apps/web/src/routes/dashboard/motors/inventory/$vehicleId.tsx — verify with cat",
+        "React Hook Form with Zod resolver used — verify with grep 'useForm\\|zodResolver'",
+        "All vehicle fields are in the form — verify with grep for field names",
+        "French labels used — verify with grep for French words (e.g., 'Marque', 'Modèle', 'Prix')",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-inventory",
+      "feature": "Add new vehicle form",
+      "description": "Create add vehicle page at /dashboard/motors/inventory/new. Reuse the vehicle form component from the edit page. POST to /api/vehicles on submit. Redirect to inventory list on success.",
+      "acceptance_criteria": [
+        "New vehicle page exists at apps/web/src/routes/dashboard/motors/inventory/new.tsx — verify with cat",
+        "Reuses shared vehicle form component — verify with grep for shared component import",
+        "Submits via TanStack Query mutation — verify with grep 'useMutation'",
+        "Redirects on success — verify with grep 'navigate\\|redirect'",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-crm",
+      "feature": "Customer database schema",
+      "description": "Create Drizzle schema for customers table: id, firstName, lastName, email, phone, address, notes, source (walk-in/referral/online/phone), organizationId, createdAt, updatedAt. Add Zod validators.",
+      "acceptance_criteria": [
+        "Schema file exists at packages/database/src/schema/customers.ts — verify with cat",
+        "All specified columns exist — verify with grep",
+        "Source enum includes walk-in, referral, online, phone — verify with grep",
+        "Zod validator exists in packages/shared — verify with grep 'customer'",
+        "Type check passes — verify with `bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-crm",
+      "feature": "Customer CRUD API endpoints",
+      "description": "Create Hono routes for customers: GET /api/customers (list with search/pagination), GET /api/customers/:id, POST /api/customers, PUT /api/customers/:id, DELETE /api/customers/:id. All authenticated.",
+      "acceptance_criteria": [
+        "Customer routes file exists at apps/api/src/routes/customers.ts — verify with cat",
+        "All 5 CRUD endpoints defined — verify with grep",
+        "Search by name/email/phone supported — verify with grep 'search\\|like\\|ilike'",
+        "Type check passes — verify with `cd apps/api && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-crm",
+      "feature": "Customer list and detail pages",
+      "description": "Create customer list page at /dashboard/motors/customers with TanStack Table. Create customer detail page at /dashboard/motors/customers/$customerId. Include add customer form. French labels.",
+      "acceptance_criteria": [
+        "Customer list page exists — verify with `cat apps/web/src/routes/dashboard/motors/customers/index.tsx`",
+        "Customer detail page exists — verify with `cat apps/web/src/routes/dashboard/motors/customers/$customerId.tsx`",
+        "TanStack Table used for list — verify with grep 'useReactTable'",
+        "French labels used — verify with grep (e.g., 'Nom', 'Prénom', 'Téléphone')",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-sales",
+      "feature": "Sales/deals database schema",
+      "description": "Create Drizzle schema for deals table: id, vehicleId (FK), customerId (FK), salesPersonId (FK to users), status (lead/negotiation/closed-won/closed-lost), price, notes, testDriveDate, closedAt, organizationId, createdAt, updatedAt. Add Zod validators.",
+      "acceptance_criteria": [
+        "Schema file exists at packages/database/src/schema/deals.ts — verify with cat",
+        "Foreign keys to vehicles, customers, users — verify with grep 'references'",
+        "Status enum includes lead, negotiation, closed-won, closed-lost — verify with grep",
+        "Zod validator exists in packages/shared — verify with grep 'deal'",
+        "Type check passes — verify with `bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-sales",
+      "feature": "Sales pipeline API endpoints",
+      "description": "Create Hono routes for deals: GET /api/deals (list with status filter), GET /api/deals/:id, POST /api/deals, PUT /api/deals/:id (including status transitions), DELETE /api/deals/:id. Include pipeline summary endpoint GET /api/deals/summary.",
+      "acceptance_criteria": [
+        "Deals routes file exists at apps/api/src/routes/deals.ts — verify with cat",
+        "All CRUD endpoints plus summary endpoint defined — verify with grep",
+        "Status filter on list endpoint — verify with grep 'status'",
+        "Summary endpoint returns counts per status — verify by reading the handler code",
+        "Type check passes — verify with `cd apps/api && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-sales",
+      "feature": "Sales pipeline Kanban board",
+      "description": "Create sales pipeline page at /dashboard/motors/sales showing deals as a Kanban board with columns: Prospect, Négociation, Test Drive, Conclu, Perdu. Cards show customer name, vehicle, and price. French labels.",
+      "acceptance_criteria": [
+        "Sales pipeline page exists at apps/web/src/routes/dashboard/motors/sales.tsx — verify with cat",
+        "Kanban columns for each deal status — verify with grep for status names in French",
+        "Deal cards show customer, vehicle, price — verify with grep",
+        "TanStack Query fetches deals — verify with grep 'useQuery'",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-dashboard",
+      "feature": "Mansour Motors dashboard page",
+      "description": "Create the Motors business dashboard at /dashboard/motors with KPI cards (total vehicles, active deals, monthly revenue, conversion rate), recent activity feed, and quick action buttons. Use placeholder/mock data. French labels.",
+      "acceptance_criteria": [
+        "Motors dashboard page exists at apps/web/src/routes/dashboard/motors/index.tsx — verify with cat",
+        "KPI cards rendered (vehicles, deals, revenue, conversion) — verify with grep",
+        "Recent activity section exists — verify with grep 'activité\\|récent'",
+        "Quick action buttons (add vehicle, new deal) — verify with grep",
+        "French labels used throughout — verify with grep",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-website",
+      "feature": "Public vehicle listing page",
+      "description": "Create a public-facing vehicle listing page (no auth required) at /vehicles. Shows available vehicles with search/filter (make, model, price range, year). Card grid layout with vehicle photos, price, key specs. French labels. SEO-friendly.",
+      "acceptance_criteria": [
+        "Public vehicles route exists at apps/web/src/routes/vehicles/index.tsx — verify with cat",
+        "No auth guard on this route — verify route is outside dashboard layout",
+        "Filter controls for make, model, price, year — verify with grep",
+        "Vehicle cards with image, price, specs — verify with grep",
+        "French labels — verify with grep",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-website",
+      "feature": "Public vehicle detail page",
+      "description": "Create public vehicle detail page at /vehicles/$vehicleId. Photo gallery, full specs table, price, financing calculator placeholder, and contact/appointment form. French labels.",
+      "acceptance_criteria": [
+        "Public vehicle detail route exists at apps/web/src/routes/vehicles/$vehicleId.tsx — verify with cat",
+        "Photo gallery component — verify with grep 'gallery\\|carousel\\|image'",
+        "Specs table with all vehicle fields — verify with grep",
+        "Contact form with name, email, phone, message — verify with grep",
+        "French labels — verify with grep",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "holding-website",
+      "feature": "Holding landing page",
+      "description": "Create the Mansour Holding landing page at / with hero section, business portfolio cards (Motors, Real Estate, etc.), about section, and contact footer. Modern, premium design. French content. Responsive.",
+      "acceptance_criteria": [
+        "Landing page exists at apps/web/src/routes/index.tsx — verify with cat",
+        "Hero section with holding branding — verify with grep 'Mansour Holding'",
+        "Business portfolio cards — verify with grep 'Motors\\|Immobilier\\|Location'",
+        "Contact/footer section — verify with grep 'contact\\|footer'",
+        "Responsive design (Tailwind responsive classes) — verify with grep 'md:\\|lg:'",
+        "French content — verify with grep",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    }
+  ]
+}
