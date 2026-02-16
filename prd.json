@@ -335,7 +335,7 @@
         "French content — verify with grep",
         "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
