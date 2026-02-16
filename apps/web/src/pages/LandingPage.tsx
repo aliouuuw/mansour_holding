@@ -170,7 +170,7 @@ const businesses = [
     longDescription: 'L’art du soin au masculin.',
     icon: Scissors,
     image:
-      'https://images.unsplash.com/photo-1503951914875-452162b7f30a?q=80&w=2070&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1621607512214-68297480165e?q=80&w=2070&auto=format&fit=crop',
     colSpan: 'md:col-span-2 lg:col-span-2',
     ready: false,
   },
@@ -181,7 +181,7 @@ const businesses = [
     longDescription: 'Une collection olfactive unique.',
     icon: Sparkle,
     image:
-      'https://images.unsplash.com/photo-1595475207225-428b62bda831?q=80&w=2080&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=2080&auto=format&fit=crop',
     colSpan: 'md:col-span-2 lg:col-span-1',
     ready: false,
   },

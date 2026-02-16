@@ -35,12 +35,12 @@ export function PublicNavbar() {
       </Link>
 
       <div className="flex items-center gap-8">
-        <Link
-          to="/vehicules"
+        <a
+          href="#portfolio"
           className="hidden text-xs font-bold uppercase tracking-[0.2em] text-white transition-colors hover:text-gold-400 md:block hover-trigger"
         >
           Portfolio
-        </Link>
+        </a>
         <Link
           to="/login"
           className="hidden text-xs font-bold uppercase tracking-[0.2em] text-white transition-colors hover:text-gold-400 md:block hover-trigger"

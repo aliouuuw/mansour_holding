@@ -58,7 +58,7 @@ export const vehicles: Vehicle[] = [
     color: 'Blanc Perle',
     vin: 'JTMAB3FV5RD123456',
     description: 'Land Cruiser 300 GR Sport, full options, cuir, toit ouvrant, caméra 360°',
-    image: 'https://images.unsplash.com/photo-1625231334401-ff3569080fdb?w=400&h=300&fit=crop',
+    image: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&h=600&fit=crop',
   },
   {
     id: 'v2',
@@ -133,7 +133,7 @@ export const vehicles: Vehicle[] = [
     color: 'Blanc Sonic',
     vin: 'JTJBM7FX5R5678901',
     description: 'LX 600 F Sport, Mark Levinson, sièges massants, vision nocturne',
-    image: 'https://images.unsplash.com/photo-1621993202323-eb4e81f5af6a?w=400&h=300&fit=crop',
+    image: 'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800&h=600&fit=crop',
   },
   {
     id: 'v7',
@@ -148,7 +148,7 @@ export const vehicles: Vehicle[] = [
     color: 'Bleu Intense',
     vin: 'KM8J3CAL5PU789012',
     description: 'Tucson Premium, toit panoramique, BOSE, conduite semi-autonome',
-    image: 'https://images.unsplash.com/photo-1633695632011-c1f1e0b0a9a4?w=400&h=300&fit=crop',
+    image: 'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=800&h=600&fit=crop',
   },
   {
     id: 'v8',
