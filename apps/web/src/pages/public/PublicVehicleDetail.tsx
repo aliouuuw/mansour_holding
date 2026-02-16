@@ -1,19 +1,21 @@
 import { Link, useParams } from '@tanstack/react-router'
 import {
   ArrowLeft,
-  Building2,
-  Fuel,
+  CalendarBlank,
+  GasPump,
   Gauge,
-  Calendar,
   Palette,
-  Settings2,
   Hash,
+  SteeringWheel,
   Phone,
-  Mail,
-  MessageSquare,
-} from 'lucide-react'
-import { formatPrice, formatNumber } from '@/lib/utils'
+  Envelope,
+  WhatsappLogo,
+} from '@phosphor-icons/react'
 import { vehicles } from '@/data/mock'
+import { formatPrice, formatNumber } from '@/lib/utils'
+import { PublicNavbar } from '@/components/public/PublicNavbar'
+import { PublicFooter } from '@/components/public/PublicFooter'
+import { motion } from 'framer-motion'
 
 export function PublicVehicleDetail() {
   const { vehicleId } = useParams({ strict: false })
@@ -21,178 +23,213 @@ export function PublicVehicleDetail() {
 
   if (!vehicle) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <p className="text-lg font-medium text-primary-950">Véhicule non trouvé</p>
-        <Link
-          to="/vehicules"
-          className="mt-4 text-sm font-medium text-primary-600 hover:text-primary-700"
-        >
-          Retour aux véhicules
-        </Link>
+      <div className="min-h-screen bg-noir-950 font-sans text-silver-200 selection:bg-gold-400 selection:text-noir-950 flex flex-col">
+        <PublicNavbar />
+        <div className="flex flex-1 flex-col items-center justify-center">
+          <p className="text-2xl font-serif italic text-white">Véhicule non trouvé</p>
+          <Link
+            to="/vehicules"
+            className="mt-6 text-xs font-bold uppercase tracking-widest text-gold-400 hover:text-white transition-colors"
+          >
+            Retour au portfolio
+          </Link>
+        </div>
+        <PublicFooter />
       </div>
     )
   }
 
   const specs = [
-    { label: 'Année', value: vehicle.year.toString(), icon: Calendar },
+    { label: 'Année', value: vehicle.year.toString(), icon: CalendarBlank },
     { label: 'Kilométrage', value: `${formatNumber(vehicle.mileage)} km`, icon: Gauge },
-    { label: 'Carburant', value: vehicle.fuelType, icon: Fuel },
-    { label: 'Transmission', value: vehicle.transmission, icon: Settings2 },
+    { label: 'Carburant', value: vehicle.fuelType, icon: GasPump },
+    { label: 'Transmission', value: vehicle.transmission, icon: SteeringWheel },
     { label: 'Couleur', value: vehicle.color, icon: Palette },
     { label: 'VIN', value: vehicle.vin, icon: Hash },
   ]
 
   return (
-    <div className="min-h-screen bg-surface-dim">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-white/80 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
-          <Link to="/" className="flex items-center gap-3">
-            <Building2 className="h-7 w-7 text-primary-600" />
-            <span className="text-lg font-bold text-primary-950">Mansour Motors</span>
-          </Link>
-          <a
-            href="tel:+221331234567"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+    <div className="min-h-screen bg-noir-950 font-sans text-silver-200 selection:bg-gold-400 selection:text-noir-950">
+      <PublicNavbar />
+
+      <main className="pt-32 pb-24 px-6 lg:px-12">
+        <div className="max-w-7xl mx-auto">
+          {/* Breadcrumb / Back */}
+          <Link
+            to="/vehicules"
+            className="mb-12 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-silver-500 hover:text-gold-400 transition-colors"
           >
-            <Phone className="h-4 w-4" />
-            <span className="hidden sm:inline">Appelez-nous</span>
-          </a>
-        </div>
-      </header>
+            <ArrowLeft className="h-4 w-4" weight="bold" />
+            Retour au portfolio
+          </Link>
 
-      <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
-        {/* Back */}
-        <Link
-          to="/vehicules"
-          className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-muted hover:text-primary-900 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Retour aux véhicules
-        </Link>
+          <div className="grid gap-16 lg:grid-cols-12">
+            {/* Left Column: Images & Specs */}
+            <div className="lg:col-span-8 space-y-12">
+              {/* Main Image */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="relative overflow-hidden rounded-sm bg-noir-900 aspect-[16/10]"
+              >
+                <img
+                  src={vehicle.image}
+                  alt={`${vehicle.make} ${vehicle.model}`}
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-noir-950/50 to-transparent pointer-events-none" />
+              </motion.div>
 
-        <div className="grid gap-8 lg:grid-cols-5">
-          {/* Left - Image & Description */}
-          <div className="lg:col-span-3 space-y-6">
-            <div className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
-              <img
-                src={vehicle.image}
-                alt={`${vehicle.make} ${vehicle.model}`}
-                className="h-72 w-full object-cover sm:h-96"
-              />
-            </div>
+              {/* Description */}
+              <div className="space-y-6">
+                <h2 className="font-serif text-3xl italic text-white">
+                  L'Excellence <span className="text-gold-400 not-italic">Détaillée</span>
+                </h2>
+                <div className="prose prose-invert prose-lg max-w-none text-silver-300 font-light leading-relaxed">
+                  <p>{vehicle.description}</p>
+                  <p>
+                    Ce véhicule incarne le standard de qualité Mansour Motors. Inspecté rigoureusement 
+                    sur plus de 100 points de contrôle, il bénéficie de notre garantie d'excellence. 
+                    Une opportunité rare d'acquérir une pièce d'exception.
+                  </p>
+                </div>
+              </div>
 
-            <div className="rounded-xl border border-border bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-primary-950">Description</h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted">{vehicle.description}</p>
-            </div>
-
-            <div className="rounded-xl border border-border bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-primary-950">Caractéristiques</h2>
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                {specs.map((spec) => (
-                  <div key={spec.label} className="flex items-center gap-3 rounded-lg bg-surface-dim p-3">
-                    <spec.icon className="h-5 w-5 text-muted" />
-                    <div>
-                      <p className="text-xs text-muted">{spec.label}</p>
-                      <p className="text-sm font-medium text-primary-900">{spec.value}</p>
+              {/* Specs Grid */}
+              <div className="border-t border-white/10 pt-12">
+                <h3 className="mb-8 text-xs font-bold uppercase tracking-[0.2em] text-white">
+                  Caractéristiques Techniques
+                </h3>
+                <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
+                  {specs.map((spec) => (
+                    <div key={spec.label} className="group flex items-start gap-4">
+                      <div className="mt-1 rounded-full bg-white/5 p-2 text-gold-400 group-hover:bg-gold-400 group-hover:text-noir-950 transition-colors">
+                        <spec.icon size={20} weight="fill" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-silver-500 uppercase tracking-wider mb-1">{spec.label}</p>
+                        <p className="text-lg font-medium text-white">{spec.value}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Right - Price & Contact */}
-          <div className="lg:col-span-2 space-y-6">
-            <div className="rounded-xl border border-border bg-white p-6 shadow-sm">
-              <h1 className="text-2xl font-bold text-primary-950">
-                {vehicle.make} {vehicle.model}
-              </h1>
-              <p className="mt-1 text-sm text-muted">{vehicle.year} · {vehicle.color}</p>
-              <p className="mt-4 text-3xl font-extrabold text-primary-600">
-                {formatPrice(vehicle.price)}
-              </p>
-            </div>
+            {/* Right Column: Sticky Sidebar */}
+            <div className="lg:col-span-4">
+              <div className="sticky top-32 space-y-8">
+                {/* Header Info */}
+                <div>
+                    <h1 className="font-serif text-4xl text-white italic leading-tight">
+                        {vehicle.make} <span className="block not-italic text-gold-400">{vehicle.model}</span>
+                    </h1>
+                    <p className="mt-4 text-3xl font-bold text-white tracking-tight">
+                        {formatPrice(vehicle.price)}
+                    </p>
+                    <div className="mt-4 flex items-center gap-2">
+                        {vehicle.status === 'available' ? (
+                            <span className="inline-flex items-center gap-1.5 rounded-sm bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-400 border border-emerald-500/20">
+                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                Disponible immédiatement
+                            </span>
+                        ) : (
+                            <span className="inline-flex items-center gap-1.5 rounded-sm bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white border border-white/20">
+                                {vehicle.status === 'reserved' ? 'Réservé' : 'Vendu'}
+                            </span>
+                        )}
+                    </div>
+                </div>
 
-            <div className="rounded-xl border border-border bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-primary-950">Intéressé ?</h2>
-              <p className="mt-2 text-sm text-muted">
-                Remplissez le formulaire et notre équipe vous contactera rapidement.
-              </p>
-              <form className="mt-5 space-y-4" onSubmit={(e) => e.preventDefault()}>
-                <div>
-                  <label className="block text-sm font-medium text-primary-900">Nom complet</label>
-                  <input
-                    type="text"
-                    placeholder="Votre nom"
-                    className="mt-1.5 w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
-                  />
+                {/* Contact Form */}
+                <div className="rounded-sm border border-white/10 bg-noir-900 p-8">
+                  <h3 className="mb-2 font-serif text-2xl italic text-white">Acquérir ce véhicule</h3>
+                  <p className="mb-6 text-sm font-light text-silver-400">
+                    Laissez-nous vos coordonnées, un conseiller privé vous recontactera sous 24h.
+                  </p>
+                  
+                  <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                    <div className="space-y-4">
+                        <input
+                            type="text"
+                            placeholder="Nom complet"
+                            className="w-full rounded-sm border border-white/10 bg-noir-950 px-4 py-3 text-sm text-white placeholder-white/30 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400 transition-all"
+                        />
+                        <input
+                            type="tel"
+                            placeholder="Téléphone"
+                            className="w-full rounded-sm border border-white/10 bg-noir-950 px-4 py-3 text-sm text-white placeholder-white/30 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400 transition-all"
+                        />
+                        <input
+                            type="email"
+                            placeholder="Email professionnel"
+                            className="w-full rounded-sm border border-white/10 bg-noir-950 px-4 py-3 text-sm text-white placeholder-white/30 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400 transition-all"
+                        />
+                        <textarea
+                            rows={3}
+                            placeholder="Message (facultatif)"
+                            className="w-full rounded-sm border border-white/10 bg-noir-950 px-4 py-3 text-sm text-white placeholder-white/30 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400 transition-all resize-none"
+                        />
+                    </div>
+                    
+                    <button
+                        type="submit"
+                        className="w-full rounded-sm bg-gold-400 px-6 py-4 text-xs font-bold uppercase tracking-[0.2em] text-noir-950 hover:bg-gold-300 transition-colors"
+                    >
+                        Demander un rendez-vous
+                    </button>
+                  </form>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary-900">Téléphone</label>
-                  <input
-                    type="tel"
-                    placeholder="+221 77 123 45 67"
-                    className="mt-1.5 w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary-900">Email</label>
-                  <input
-                    type="email"
-                    placeholder="votre@email.com"
-                    className="mt-1.5 w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary-900">Message</label>
-                  <textarea
-                    rows={3}
-                    placeholder="Je suis intéressé par ce véhicule..."
-                    className="mt-1.5 w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-100 resize-none"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 transition-colors"
-                >
-                  Envoyer ma demande
-                </button>
-              </form>
-            </div>
 
-            <div className="rounded-xl border border-border bg-white p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-primary-950">Contact direct</h2>
-              <div className="mt-4 space-y-3">
-                <a
-                  href="tel:+221331234567"
-                  className="flex items-center gap-3 rounded-lg p-3 text-sm text-primary-900 hover:bg-surface-dim transition-colors"
-                >
-                  <Phone className="h-5 w-5 text-primary-600" />
-                  +221 33 123 45 67
-                </a>
-                <a
-                  href="mailto:motors@mansourholding.com"
-                  className="flex items-center gap-3 rounded-lg p-3 text-sm text-primary-900 hover:bg-surface-dim transition-colors"
-                >
-                  <Mail className="h-5 w-5 text-primary-600" />
-                  motors@mansourholding.com
-                </a>
-                <a
-                  href="https://wa.me/221771234567"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 rounded-lg p-3 text-sm text-primary-900 hover:bg-surface-dim transition-colors"
-                >
-                  <MessageSquare className="h-5 w-5 text-emerald-600" />
-                  WhatsApp
-                </a>
+                {/* Direct Contact */}
+                <div className="space-y-4 border-t border-white/5 pt-8">
+                    <p className="text-xs font-bold uppercase tracking-widest text-silver-500">
+                        Contact Direct
+                    </p>
+                    <div className="space-y-4">
+                        <a
+                            href="tel:+221331234567"
+                            className="flex items-center gap-4 group"
+                        >
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-gold-400 group-hover:bg-gold-400 group-hover:text-noir-950 transition-colors">
+                                <Phone weight="fill" />
+                            </div>
+                            <span className="text-sm font-medium text-white group-hover:text-gold-400 transition-colors">
+                                +221 33 123 45 67
+                            </span>
+                        </a>
+                        <a
+                            href="mailto:motors@mansour.sn"
+                            className="flex items-center gap-4 group"
+                        >
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-gold-400 group-hover:bg-gold-400 group-hover:text-noir-950 transition-colors">
+                                <Envelope weight="fill" />
+                            </div>
+                            <span className="text-sm font-medium text-white group-hover:text-gold-400 transition-colors">
+                                motors@mansour.sn
+                            </span>
+                        </a>
+                        <a
+                            href="https://wa.me/221771234567"
+                            className="flex items-center gap-4 group"
+                        >
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-gold-400 group-hover:bg-gold-400 group-hover:text-noir-950 transition-colors">
+                                <WhatsappLogo weight="fill" />
+                            </div>
+                            <span className="text-sm font-medium text-white group-hover:text-gold-400 transition-colors">
+                                WhatsApp
+                            </span>
+                        </a>
+                    </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </main>
+
+      <PublicFooter />
     </div>
   )
 }

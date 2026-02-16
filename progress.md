@@ -4,6 +4,22 @@ This file tracks all implementation cycles, decisions, and learnings during deve
 
 ---
 
+## [Feature] Public Vehicles Catalog (Motors)
+
+* **Status:** Completed
+* **Date:** 2026-02-16
+* **Changes:**
+  * Implemented `/vehicules` page with luxury "Dark Mode" aesthetic (Noir-950 background).
+  * Created `PublicNavbar` and `PublicFooter` shared components for consistency with Landing Page.
+  * Added advanced filtering for vehicles: Make, Year, Fuel, Transmission, and Price Max.
+  * Built responsive `VehicleCard` with hover effects, status badges, and price formatting.
+  * Implemented `/vehicules/$vehicleId` detail page with:
+    * Sticky contact sidebar (Lead capture form + Direct contact links).
+    * Immersive hero image and editorial typography.
+    * Detailed specs grid using Phosphor Icons.
+  * Ensured full responsiveness and smooth Framer Motion transitions.
+* **Tech Stack:** React 19, TailwindCSS 4, Framer Motion, Phosphor Icons.
+
 ## [Feature] Luxury Landing Page Redesign
 
 * **Status:** Completed
