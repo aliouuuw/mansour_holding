@@ -296,10 +296,24 @@
     },
     {
       "group": "motors-website",
-      "feature": "Public vehicle listing page",
-      "description": "Create a public-facing vehicle listing page (no auth required) at /vehicles. Shows available vehicles with search/filter (make, model, price range, year). Card grid layout with vehicle photos, price, key specs. French labels. SEO-friendly.",
+      "feature": "Mansour Motors business landing page",
+      "description": "Create the public Mansour Motors business landing page at /mansour-motors. This page must present Mansour Motors as a company and brand before exposing inventory: hero section, positioning, featured vehicles, services (vente, location, SAV, financement), showroom/contact information, and clear CTAs to the vehicle catalog. French labels. Premium editorial design.",
       "acceptance_criteria": [
-        "Public vehicles route exists at apps/web/src/routes/vehicles/index.tsx — verify with cat",
+        "Business landing route exists at apps/web/src/routes/mansour-motors/index.tsx — verify with cat",
+        "Page presents Mansour Motors brand positioning beyond inventory — verify by reading sections",
+        "Featured vehicles section exists with CTA to catalog — verify with grep 'vehicules\\|catalogue'",
+        "Services section exists (vente, location, SAV, financement) — verify with grep",
+        "Contact or showroom information exists — verify with grep 'contact\\|showroom\\|horaire'",
+        "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
+      ],
+      "passes": false
+    },
+    {
+      "group": "motors-website",
+      "feature": "Public vehicle listing page",
+      "description": "Create a public-facing vehicle listing page (no auth required) at /mansour-motors/vehicules. Shows available vehicles with search/filter (make, model, price range, year). Card grid layout with vehicle photos, price, key specs. French labels. SEO-friendly. This page is a subroute of the Mansour Motors business landing experience.",
+      "acceptance_criteria": [
+        "Public vehicles route exists at apps/web/src/routes/mansour-motors/vehicules/index.tsx — verify with cat",
         "No auth guard on this route — verify route is outside dashboard layout",
         "Filter controls for make, model, price, year — verify with grep",
         "Vehicle cards with image, price, specs — verify with grep",
@@ -311,9 +325,9 @@
     {
       "group": "motors-website",
       "feature": "Public vehicle detail page",
-      "description": "Create public vehicle detail page at /vehicles/$vehicleId. Photo gallery, full specs table, price, financing calculator placeholder, and contact/appointment form. French labels.",
+      "description": "Create public vehicle detail page at /mansour-motors/vehicules/$vehicleId. Photo gallery, full specs table, price, financing calculator placeholder, and contact/appointment form. French labels.",
       "acceptance_criteria": [
-        "Public vehicle detail route exists at apps/web/src/routes/vehicles/$vehicleId.tsx — verify with cat",
+        "Public vehicle detail route exists at apps/web/src/routes/mansour-motors/vehicules/$vehicleId.tsx — verify with cat",
         "Photo gallery component — verify with grep 'gallery\\|carousel\\|image'",
         "Specs table with all vehicle fields — verify with grep",
         "Contact form with name, email, phone, message — verify with grep",

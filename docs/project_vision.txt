@@ -15,9 +15,18 @@ A unified digital ecosystem consolidating Mansour Holding's diverse business por
 
 ### Technical Foundation
 - **Holding Website**: Public-facing landing page showcasing the holding and all businesses
+- **Business Public Sites**: Each business has its own branded landing page and public route namespace (example: `/mansour-motors/*`)
 - **Web Application**: Multi-tenant dashboard application with business modules
 - **Shared Infrastructure**: Common database, auth layer, and design system
 - **Subdomain Strategy**: `mansourholding.com` (landing), `app.mansourholding.com` (dashboard)
+
+### Public Route Architecture
+- **Hierarchy First**: Public navigation follows Holding → Business → Offering
+- **Dedicated Business Namespaces**: Each business owns a top-level public path (`/mansour-motors`, `/mansour-immobilier`, `/mansour-location`)
+- **Business Landing as Entry Point**: Visitors discover a business through its own landing page before navigating to catalog, services, contact, or editorial pages
+- **Subpaths for Offerings**: Product and service pages live inside the business namespace (example: `/mansour-motors/vehicules`, `/mansour-motors/services`, `/mansour-motors/contact`)
+- **Scalable Structure**: New businesses follow the same pattern without changing the holding-level architecture
+- **SEO & Brand Clarity**: Each business becomes its own content hub while staying visibly attached to Mansour Holding
 
 ---
 
@@ -34,8 +43,9 @@ A unified digital ecosystem consolidating Mansour Holding's diverse business por
 - **Staff Dashboard**: Sales performance metrics, commission tracking, activity feed
 
 #### Website
-- Vehicle search with filters (make, model, price, year, mileage)
-- Individual vehicle detail pages with photo galleries
+- Business landing page at `/mansour-motors` presenting the company, positioning, services, showroom, and featured inventory
+- Vehicle search with filters (make, model, price, year, mileage) under `/mansour-motors/vehicules`
+- Individual vehicle detail pages with photo galleries under `/mansour-motors/vehicules/$vehicleId`
 - Financing calculator and pre-qualification form
 - Contact/appointment booking
 
@@ -52,7 +62,8 @@ A unified digital ecosystem consolidating Mansour Holding's diverse business por
 - **Document Hub**: Contracts, disclosures, inspection reports
 
 #### Website
-- Property search with map integration
+- Business landing page under a dedicated namespace (target pattern: `/mansour-immobilier`)
+- Property search with map integration as a subpath of the business landing
 - Property detail pages with virtual tour support
 - Agent profiles and contact forms
 - Market insights and listings newsletter
@@ -70,6 +81,7 @@ A unified digital ecosystem consolidating Mansour Holding's diverse business por
 - **Billing**: Dynamic pricing, add-ons (insurance, GPS), invoice generation
 
 #### Website
+- Business landing page under a dedicated namespace (target pattern: `/mansour-location`)
 - Vehicle category browsing with real-time availability
 - Online reservation with pickup/dropoff scheduling
 - Pricing transparency (daily/weekly/monthly rates)
@@ -88,6 +100,7 @@ A unified digital ecosystem consolidating Mansour Holding's diverse business por
 - **Safety & Compliance**: Inspection checklists, permit tracking, incident reporting
 
 #### Website
+- Business landing page under a dedicated namespace (target pattern: `/mansour-construction`)
 - Portfolio of completed and ongoing projects
 - Service offerings with request-a-quote forms
 - Contractor credentials and certifications display
@@ -125,6 +138,7 @@ A unified digital ecosystem consolidating Mansour Holding's diverse business por
 
 ### UX Principles
 - **Unified Navigation**: Consistent header/sidebar across all business dashboards
+- **Public Business Navigation**: Public visitors navigate by business first, then by offer/service within that business
 - **Context Switching**: Easy business switching without full re-authentication
 - **Cross-Business Insights**: Holding-level dashboard showing portfolio performance
 - **Progressive Disclosure**: Simple for basic users, powerful for power users
@@ -167,6 +181,6 @@ A unified digital ecosystem consolidating Mansour Holding's diverse business por
 ## Immediate Next Steps
 1. Finalize brand identity and color palette for Mansour Holding
 2. Design database schema for multi-tenant architecture
-3. Create wireframes for Mansour Motors dashboard and website
+3. Create wireframes for Mansour Motors business landing page, public subpages, and dashboard
 4. Set up development environment and CI/CD pipeline
 5. Begin Mansour Motors inventory data collection

@@ -4,6 +4,23 @@ This file tracks all implementation cycles, decisions, and learnings during deve
 
 ---
 
+## [Decision] Public Route Architecture Reframe
+
+* **Status:** Confirmed
+* **Date:** 2026-03-16
+* **Decision:**
+  * Public routes must be organized by business namespace instead of exposing standalone offering routes as primary entry points.
+  * The holding website remains the root public entry at `/`.
+  * Each business gets a dedicated public landing page and route family (example: `/mansour-motors/*`).
+  * Vehicle discovery becomes a subpath of the Mansour Motors public site instead of the main public identity.
+* **Implications:**
+  * Existing public Motors route direction changes from `/vehicules` to `/mansour-motors/vehicules`.
+  * A new Motors brand landing page at `/mansour-motors` becomes a required deliverable.
+  * Public navigation, content strategy, SEO structure, and future business expansions must follow the same holding → business → offering hierarchy.
+  * Future public business sites should mirror this route strategy (`/mansour-immobilier`, `/mansour-location`, etc.).
+
+---
+
 ## [Feature] Public Vehicles Catalog (Motors)
 
 * **Status:** Completed
@@ -18,6 +35,9 @@ This file tracks all implementation cycles, decisions, and learnings during deve
     * Immersive hero image and editorial typography.
     * Detailed specs grid using Phosphor Icons.
   * Ensured full responsiveness and smooth Framer Motion transitions.
+* **Follow-up Decision:**
+  * This work should be repositioned under the Mansour Motors public namespace during the next public-route implementation pass.
+  * Target path family is now `/mansour-motors/vehicules/*` rather than standalone `/vehicules/*`.
 * **Tech Stack:** React 19, TailwindCSS 4, Framer Motion, Phosphor Icons.
 
 ## [Feature] Luxury Landing Page Redesign

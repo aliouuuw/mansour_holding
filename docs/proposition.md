@@ -25,6 +25,14 @@ Présence digitale de prestige présentant le groupe et l'ensemble du portefeuil
 - **Section À propos** : Histoire, leadership, ancrage sénégalais, ambition panafricaine
 - **Contact centralisé** : Formulaire de contact avec routage automatique vers l'entreprise concernée
 - **Design system luxury** : Palette Mansour Noir (noir-950, gold-400, silver-300), typographie Plus Jakarta Sans
+- **Architecture publique hiérarchique** : le holding au niveau racine, puis une landing dédiée par entreprise avec ses propres sous-pages
+
+**Architecture publique** :
+- `/` : site institutionnel du holding
+- `/{business-slug}` : landing page publique de chaque entreprise
+- `/{business-slug}/*` : sous-pages d'offres, catalogues, services, contact, contenus éditoriaux
+
+**Principe directeur** : le site holding présente le portefeuille, puis chaque entreprise dispose de son propre univers public structuré avant d'exposer ses produits ou services.
 
 #### 1.2 Plateforme Applicative Unifiée
 Tableau de bord multi-business avec authentification centralisée.
@@ -53,7 +61,14 @@ Gestion complète du concessionnaire automobile.
 - **CRM clients** : Profils acheteurs, historique d'achat, communications
 - **Intégration financement** : Calculateur de prêt, suivi des paiements, documents
 - **Dashboard commercial** : Métriques de performance, commissions, activité
-- **Site public** : Recherche véhicules, pages détaillées, formulaires de contact
+- **Site public business-first** : Landing Mansour Motors, recherche véhicules, pages détaillées, services, formulaires de contact
+
+**Arborescence publique cible** :
+- `/mansour-motors`
+- `/mansour-motors/vehicules`
+- `/mansour-motors/vehicules/:vehicleId`
+- `/mansour-motors/services`
+- `/mansour-motors/contact`
 
 #### 2.2 Mansour Immobilier (Phase 2 — Q2 2026)
 Gestion immobilière résidentielle et commerciale.
@@ -64,7 +79,7 @@ Gestion immobilière résidentielle et commerciale.
 - **Planification visites** : Système de rendez-vous pour tours de propriétés
 - **Pipeline transactions** : Gestion d'offres, contrats, jalons de closing
 - **Hub documentaire** : Contrats, divulgations, rapports d'inspection
-- **Site public** : Recherche avec carte, pages propriétés, profils agents
+- **Site public** : Landing dédiée sous namespace propre, recherche avec carte, pages propriétés, profils agents
 
 #### 2.3 Mansour Location (Phase 3 — Q3 2026)
 Location de véhicules avec gestion de flotte.

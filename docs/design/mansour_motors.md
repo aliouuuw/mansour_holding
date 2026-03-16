@@ -3,6 +3,18 @@ Brand Identity & Positioning
 
 Mansour Motors presents itself as a multibrand automobile dealership focused on prestige, performance, and variety. They sell a range of vehicles including luxury cars, sports vehicles, SUVs, 4×4 and robust pick-ups — catering to customers who want more than just a basic car.
 
+Public Experience Direction
+
+Mansour Motors should not be presented only as a vehicle catalog. Its public experience must position the business first — its reputation, expertise, services, showroom experience, and after-sales support — with vehicle inventory as one part of a broader branded journey.
+
+Recommended public hierarchy:
+
+- `/mansour-motors` as the main brand landing page
+- `/mansour-motors/vehicules` as the catalog experience
+- `/mansour-motors/vehicules/:vehicleId` as the individual product detail page
+- `/mansour-motors/services` for financing, SAV, rental, and support
+- `/mansour-motors/contact` for showroom, contact, and appointment conversion
+
 💎 Focus on High-End & Reliable Vehicles
 
 Their inventory tends to include premium brands and desirable models, such as:
