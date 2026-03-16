@@ -62,6 +62,27 @@ This file tracks all implementation cycles, decisions, and learnings during deve
   * Supporting copy emphasizes unified portfolio and sovereign vision.
   * Navigation uses overline style (11px, SemiBold, 0.08em tracking) per brand spec.
 
+## [Feature] Public Vehicle Listing Page Migration
+
+* **Status:** Completed
+* **Date:** 2026-03-16
+* **Changes:**
+  - Added new route at `/mansour-motors/vehicules` in router configuration
+  - Reused existing `PublicVehicles` component (already had all required features)
+  - Updated links in `MansourMotorsLanding` to point to new `/mansour-motors/vehicules` route
+  - Kept old `/vehicules` route for backward compatibility
+  - Component already includes: filter controls (make, model, year, fuel, transmission, price), vehicle cards with images/specs, French labels
+* **Verification Results:**
+  - ✅ Public vehicles route exists at `/mansour-motors/vehicules` — verified with grep
+  - ✅ No auth guard on this route — route is outside dashboard layout (defined at root level)
+  - ✅ Filter controls for make, model, price, year — verified with grep (lines 130-134, 249-257)
+  - ✅ Vehicle cards with image, price, specs — verified with grep (lines 67-109)
+  - ✅ French labels — verified with grep ('Disponible', 'Réservé', 'Vendu', 'Rechercher', 'Filtres')
+  - ✅ Type check passes: `cd apps/web && bunx tsc --noEmit` (exit code 0)
+* **Result:** Success
+
+---
+
 ## [Feature] Mansour Motors Business Landing Page
 
 * **Status:** Completed

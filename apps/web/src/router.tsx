@@ -46,6 +46,12 @@ const mansourMotorsRoute = createRoute({
   component: MansourMotorsLanding,
 })
 
+const mansourMotorsVehiclesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/mansour-motors/vehicules',
+  component: PublicVehicles,
+})
+
 const publicVehiclesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/vehicules',
@@ -105,6 +111,7 @@ const routeTree = rootRoute.addChildren([
   loginRoute,
   registerRoute,
   mansourMotorsRoute,
+  mansourMotorsVehiclesRoute,
   publicVehiclesRoute,
   publicVehicleDetailRoute,
   dashboardRoute.addChildren([

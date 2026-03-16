@@ -150,7 +150,7 @@ export function MansourMotorsLanding() {
             className="flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
             <Link
-              to="/vehicules"
+              to="/mansour-motors/vehicules"
               className="group inline-flex items-center gap-3 rounded-sm bg-gold-400 px-8 py-4 text-sm font-semibold uppercase tracking-widest text-noir-950 transition-all hover:bg-gold-300"
             >
               Voir le Catalogue
@@ -241,7 +241,7 @@ export function MansourMotorsLanding() {
             className="mt-12 text-center"
           >
             <Link
-              to="/vehicules"
+              to="/mansour-motors/vehicules"
               className="group inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-widest text-gold-400 transition-colors hover:text-gold-300"
             >
               Voir Tous les Véhicules
