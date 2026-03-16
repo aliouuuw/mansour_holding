@@ -17,7 +17,7 @@ export function PublicNavbar() {
   })
 
   const navLinks = [
-    { label: 'Portfolio', to: '/vehicules' },
+    { label: 'Portfolio', to: '/mansour-motors' },
     { label: 'Accès', to: '/login' },
   ]
 

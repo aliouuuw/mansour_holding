@@ -128,7 +128,7 @@ const businesses = [
       'https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2070&auto=format&fit=crop',
     colSpan: 'md:col-span-2 lg:col-span-2',
     ready: true,
-    href: '/vehicules',
+    href: '/mansour-motors',
   },
   {
     id: 'immobilier',
@@ -303,7 +303,7 @@ function Portfolio() {
           </p>
         </div>
         <Link
-          to="/vehicules"
+          to="/mansour-motors"
           className="group flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-noir-950 hover-trigger"
         >
           Voir toutes les activités
