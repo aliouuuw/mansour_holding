@@ -8,30 +8,21 @@ import {
   useMotionValue,
 } from 'framer-motion'
 import {
-  ArrowRight,
   ArrowUpRight,
-  Buildings,
   CarProfile,
   HardHat,
   House,
   Key,
-  Envelope,
-  MapPin,
-  Phone,
   Scissors,
   Sparkle,
   CaretRight,
 } from '@phosphor-icons/react'
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
 import Lenis from 'lenis'
 import { PublicNavbar } from '@/components/public/PublicNavbar'
+import { PublicFooter } from '@/components/public/PublicFooter'
+import { cn } from '@/lib/utils'
 
 // --- Utility Components ---
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
 
 function RevealText({
   children,
@@ -203,33 +194,32 @@ function Hero() {
   const opacity = useTransform(scrollY, [0, 300], [1, 0])
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-noir-950 noise-overlay">
+    <section className="relative h-screen w-full overflow-hidden bg-noir-950">
       <motion.div style={{ y, opacity }} className="absolute inset-0 h-full w-full">
-        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/80 via-black/40 to-noir-950 vignette" />
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/70 via-black/50 to-noir-950" />
         <img
           src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop"
           alt="Modern Architecture"
-          className="h-full w-full object-cover scale-105 animate-pulse-glow"
-          style={{ animationDuration: '15s' }}
+          className="h-full w-full object-cover"
         />
       </motion.div>
 
       <div className="relative z-20 flex h-full flex-col justify-between px-6 pb-12 pt-32 lg:px-12">
         <div className="max-w-5xl">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             className="mb-8 flex items-center gap-4"
           >
-            <span className="h-px w-12 bg-gold-400 animate-draw-line delay-300" />
+            <span className="h-px w-12 bg-gold-400" />
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-gold-400">
               Depuis 2012
             </span>
           </motion.div>
 
-          <h1 className="max-w-5xl font-sans text-[3.2rem] font-extrabold uppercase leading-[0.9] tracking-[-0.03em] text-white md:text-[5.4rem] lg:text-[7.5rem] pb-4">
-            <RevealText delay={0.1} className="block italic font-serif lowercase text-silver-200 normal-case">
+          <h1 className="max-w-5xl font-sans text-[3.5rem] font-extrabold uppercase leading-[0.88] tracking-[-0.03em] text-white md:text-[5.8rem] lg:text-[8rem] pb-4">
+            <RevealText delay={0.1} className="block font-serif italic lowercase text-silver-200 normal-case text-[0.85em]">
               L'Autorité
             </RevealText>
             <RevealText
@@ -238,7 +228,7 @@ function Hero() {
             >
               De l'Excellence
             </RevealText>
-            <RevealText delay={0.3} className="block italic font-serif lowercase gold-gradient-text normal-case">
+            <RevealText delay={0.3} className="block font-serif italic lowercase text-gold-400 normal-case text-[0.85em]">
               Durable.
             </RevealText>
           </h1>
@@ -295,51 +285,33 @@ function Marquee() {
 
 function Portfolio() {
   return (
-    <section id="portfolio" className="bg-surface-dim px-6 py-32 lg:px-12 relative overflow-hidden">
-      {/* Decorative background element */}
-      <div className="absolute top-0 right-0 -mr-32 -mt-32 w-96 h-96 bg-gold-400/5 rounded-full blur-[100px] pointer-events-none" />
-
-      <div className="mb-24 flex flex-col justify-between gap-8 border-b border-noir-200 pb-12 md:flex-row md:items-end relative z-10">
+    <section id="portfolio" className="bg-surface-dim px-6 py-24 lg:px-12">
+      <div className="mb-16 flex flex-col justify-between gap-8 border-b border-noir-200 pb-8 md:flex-row md:items-end">
         <div>
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-4 mb-6"
-          >
-            <span className="h-px w-8 bg-gold-400" />
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-gold-400">Nos Domaines</span>
-          </motion.div>
-          <h2 className="font-serif text-5xl text-noir-950 md:text-7xl italic tracking-tight">Portfolio</h2>
-          <p className="mt-6 max-w-xl text-xl text-noir-500 font-light leading-relaxed">
-            Une diversité d'expertises, une <span className="font-medium text-noir-900">vision unique</span>.
+          <h2 className="font-serif text-4xl text-noir-950 md:text-6xl italic">Portfolio</h2>
+          <p className="mt-4 max-w-xl text-lg text-noir-500 font-light">
+            Une diversité d'expertises, une vision unique.
           </p>
         </div>
-        <Link
-          to="/mansour-motors"
-          className="group flex items-center gap-3 text-xs font-bold uppercase tracking-[0.15em] text-noir-950 hover-trigger"
-        >
-          <span className="border-b border-noir-950 pb-1">Voir toutes les activités</span>
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-noir-50 transition-colors group-hover:bg-gold-400 group-hover:text-white">
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </div>
-        </Link>
+        <span className="text-sm font-bold uppercase tracking-widest text-noir-400">
+          {businesses.length} entreprises
+        </span>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {businesses.map((biz, index) => {
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {businesses.map((biz) => {
           const Wrapper = biz.href ? Link : 'div'
           const wrapperProps = biz.href ? { to: biz.href } : {}
-          
+
           return (
             <motion.div
               key={biz.id}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.7, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.6 }}
               className={cn(
-                'group relative flex aspect-[4/5] flex-col justify-between overflow-hidden bg-noir-950 p-10 md:aspect-[16/10] hover-gold-glow',
+                'group relative flex aspect-[4/5] flex-col justify-between overflow-hidden   bg-noir-950 p-8 md:aspect-[16/10] hover-trigger',
                 biz.colSpan.includes('lg:col-span-2') ? 'lg:aspect-[2/1]' : 'lg:aspect-square',
                 biz.colSpan
               )}
@@ -348,40 +320,38 @@ function Portfolio() {
                 <img
                   src={biz.image}
                   alt={biz.name}
-                  className="h-full w-full object-cover opacity-50 transition-transform duration-1000 ease-out group-hover:scale-110 group-hover:opacity-70"
+                  className="h-full w-full object-cover opacity-60 transition-transform duration-1000 ease-out group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/60 to-transparent transition-opacity duration-500 group-hover:opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/50 to-transparent" />
               </Wrapper>
 
               <div className="relative z-10 flex justify-between pointer-events-none">
-                <div className="rounded-full bg-white/10 p-3 backdrop-blur-md border border-white/5 transition-transform duration-500 group-hover:scale-110 group-hover:bg-gold-400/20">
-                  <biz.icon className="h-6 w-6 text-gold-400" weight="fill" />
+                <div className="rounded-full bg-white/10 p-2  ">
+                  <biz.icon className="h-5 w-5 text-gold-400" weight="fill" />
                 </div>
                 {biz.ready ? (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-noir-950 transition-all duration-500 group-hover:rotate-45 group-hover:bg-gold-400 group-hover:text-white group-hover:shadow-[0_0_20px_rgba(200,168,78,0.4)]">
-                    <ArrowUpRight className="h-5 w-5" weight="bold" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-noir-950 transition-transform group-hover:rotate-45">
+                    <ArrowUpRight className="h-4 w-4" weight="bold" />
                   </div>
                 ) : (
-                  <span className="rounded-full bg-noir-900/50 px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest text-silver-300 backdrop-blur-md border border-white/5">
+                  <span className="rounded-full bg-noir-900/50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-silver-400  ">
                     Bientôt
                   </span>
                 )}
               </div>
 
-              <div className="relative z-10 pointer-events-none transform transition-transform duration-500 ease-out group-hover:translate-y-[-8px]">
-                <h3 className="mb-3 font-serif text-3xl text-white md:text-4xl italic tracking-tight">
+              <div className="relative z-10 pointer-events-none">
+                <h3 className="mb-2 font-serif text-2xl text-white md:text-3xl italic">
                   {biz.name}
                 </h3>
-                <p className="mb-4 text-silver-300 font-light text-base max-w-[90%]">{biz.description}</p>
-                <div className="grid grid-rows-[0fr] opacity-0 transition-all duration-500 ease-[0.25,1,0.5,1] group-hover:grid-rows-[1fr] group-hover:opacity-100">
-                  <div className="overflow-hidden">
-                    <p className="text-sm text-silver-400 leading-relaxed mb-6">{biz.longDescription}</p>
-                    {biz.ready && (
-                      <div className="inline-flex items-center gap-2 border-b border-gold-400 pb-1 text-xs font-bold uppercase tracking-[0.2em] text-gold-400 transition-colors">
-                        Explorer <CaretRight weight="bold" />
-                      </div>
-                    )}
-                  </div>
+                <p className="mb-4 text-silver-300 font-light text-sm">{biz.description}</p>
+                <div className="h-0 overflow-hidden opacity-0 transition-all duration-500 ease-in-out group-hover:h-auto group-hover:opacity-100">
+                  <p className="text-sm text-silver-400">{biz.longDescription}</p>
+                  {biz.ready && (
+                    <div className="mt-4 inline-flex items-center gap-2 border-b border-gold-400 pb-1 text-xs font-bold uppercase tracking-widest text-gold-400">
+                      Explorer <CaretRight weight="bold" />
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -394,173 +364,52 @@ function Portfolio() {
 
 function About() {
   return (
-    <section className="relative overflow-hidden bg-noir-950 px-6 py-32 text-white lg:px-12">
+    <section id="about" className="relative overflow-hidden bg-noir-900 px-6 py-32 text-white lg:px-12">
       {/* Background Pattern */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-gold-400/15 via-noir-950/0 to-noir-950/0 opacity-60" />
-        <div className="absolute inset-0 noise-overlay opacity-30" />
-        <div className="absolute bottom-[-10%] left-[-10%] h-[600px] w-[600px] rounded-full bg-gold-400/5 blur-[150px] animate-pulse-glow" style={{ animationDuration: '10s' }} />
-        
-        {/* Abstract geometric lines */}
-        <div className="absolute top-20 right-20 w-[40vw] h-[1px] bg-gradient-to-r from-transparent via-gold-400/30 to-transparent transform -rotate-45" />
-        <div className="absolute bottom-40 left-10 w-[30vw] h-[1px] bg-gradient-to-r from-transparent via-gold-400/20 to-transparent transform rotate-12" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gold-400/10 via-noir-950/0 to-noir-950/0 opacity-50" />
+        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_35px,rgba(200,168,78,0.015)_35px,rgba(200,168,78,0.015)_36px)] mix-blend-overlay" />
+        <div className="absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full bg-gold-400/5 blur-[120px]" />
       </div>
 
-      <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-20 lg:grid-cols-12">
-        <div className="lg:col-span-5">
+      <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-16 lg:grid-cols-2">
+        <div>
           <div className="sticky top-32">
-            <motion.div 
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
-              <div className="flex items-center gap-4 mb-8">
-                <span className="h-px w-12 bg-gold-400" />
-                <span className="block text-xs font-bold uppercase tracking-[0.2em] text-gold-400">
-                  Notre Philosophie
-                </span>
-              </div>
-              <h2 className="font-sans text-[3rem] font-extrabold uppercase leading-[0.9] tracking-tight text-white md:text-[4.5rem]">
-                Créer<br />
-                de la <span className="block italic font-serif lowercase gold-gradient-text normal-case">valeur durable.</span>
-              </h2>
-            </motion.div>
+            <span className="mb-8 block text-xs font-bold uppercase tracking-[0.2em] text-gold-400">
+              Notre Philosophie
+            </span>
+            <h2 className="font-serif text-4xl leading-tight md:text-6xl italic">
+              Créer de la <span className="text-gold-400 not-italic">valeur durable</span>.
+            </h2>
           </div>
         </div>
-        
-        <div className="lg:col-span-7 lg:pl-12">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-24"
-          >
-            <div className="relative">
-              <span className="absolute -left-6 -top-10 font-serif text-9xl text-white/5 font-black leading-none">"</span>
-              <p className="text-2xl leading-relaxed text-silver-200 md:text-3xl font-light relative z-10">
-                Fondé avec la vision de créer un groupe d'entreprises de premier plan au Sénégal,
-                Mansour Holding s'est développé dans plusieurs secteurs stratégiques. Notre approche
-                combine <span className="font-medium text-white border-b border-gold-400/50 pb-1">rigueur, qualité de service</span> et engagement envers nos communautés.
+        <div className="space-y-24 text-lg leading-relaxed text-silver-300 md:text-xl font-light">
+          <p>
+            Fondé avec la vision de créer un groupe d'entreprises de premier plan au Sénégal,
+            Mansour Holding s'est développé dans plusieurs secteurs stratégiques. Notre approche
+            combine rigueur, qualité de service et engagement envers nos communautés.
+          </p>
+          <div className="grid grid-cols-1 gap-12 border-t border-white/10 pt-12 md:grid-cols-2">
+            <div>
+              <h4 className="mb-4 text-gold-400 font-serif italic text-2xl">Vision</h4>
+              <p className="text-base text-silver-400">
+                Devenir la référence incontestée de l'excellence entrepreneuriale en Afrique de
+                l'Ouest.
               </p>
             </div>
-            
-            <div className="grid grid-cols-1 gap-16 border-t border-white/10 pt-16 md:grid-cols-2">
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-                className="group"
-              >
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-sm bg-white/5 border border-white/10 text-gold-400 transition-colors group-hover:bg-gold-400/10">
-                  <span className="font-serif text-2xl italic">V</span>
-                </div>
-                <h4 className="mb-4 text-white font-sans font-bold uppercase tracking-widest text-sm">Vision</h4>
-                <p className="text-lg text-silver-400 font-light leading-relaxed">
-                  Devenir la référence incontestée de l'excellence entrepreneuriale en Afrique de l'Ouest.
-                </p>
-              </motion.div>
-              
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                className="group"
-              >
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-sm bg-white/5 border border-white/10 text-gold-400 transition-colors group-hover:bg-gold-400/10">
-                  <span className="font-serif text-2xl italic">M</span>
-                </div>
-                <h4 className="mb-4 text-white font-sans font-bold uppercase tracking-widest text-sm">Mission</h4>
-                <p className="text-lg text-silver-400 font-light leading-relaxed">
-                  Innover et bâtir des solutions pérennes qui répondent aux défis de demain.
-                </p>
-              </motion.div>
+            <div>
+              <h4 className="mb-4 text-gold-400 font-serif italic text-2xl">Mission</h4>
+              <p className="text-base text-silver-400">
+                Innover et bâtir des solutions pérennes qui répondent aux défis de demain.
+              </p>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>
   )
 }
 
-function Footer() {
-  return (
-    <footer className="bg-surface-dim px-6 py-24 lg:px-12">
-      <div className="mb-24 grid grid-cols-1 gap-12 lg:grid-cols-4">
-        <div className="lg:col-span-2">
-          <Link to="/" className="flex items-center gap-3 hover-trigger">
-            <Buildings className="h-8 w-8 text-gold-400" weight="duotone" />
-            <span className="text-lg font-bold uppercase tracking-widest text-noir-950">
-              Mansour Holding
-            </span>
-          </Link>
-          <p className="mt-8 max-w-sm text-noir-500 font-light">
-            Groupe diversifié basé à Dakar, Sénégal. Excellence et performance dans chaque
-            secteur.
-          </p>
-        </div>
-
-        <div>
-          <h4 className="mb-8 text-xs font-bold uppercase tracking-widest text-noir-400">
-            Navigation
-          </h4>
-          <ul className="space-y-4">
-            {['Portfolio', 'À propos', 'Carrières', 'Contact'].map((item) => (
-              <li key={item}>
-                <a
-                  href="#"
-                  className="text-noir-600 transition-colors hover:text-gold-400 hover-trigger inline-block"
-                >
-                  {item}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="mb-8 text-xs font-bold uppercase tracking-widest text-noir-400">
-            Contact
-          </h4>
-          <ul className="space-y-4 text-noir-600">
-            <li className="flex items-center gap-3 hover-trigger">
-              <Phone className="h-4 w-4 text-gold-400" weight="fill" />
-              +221 33 123 45 67
-            </li>
-            <li className="flex items-center gap-3 hover-trigger">
-              <Envelope className="h-4 w-4 text-gold-400" weight="fill" />
-              contact@mansour.sn
-            </li>
-            <li className="flex items-center gap-3 hover-trigger">
-              <MapPin className="h-4 w-4 text-gold-400" weight="fill" />
-              Dakar, Sénégal
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div className="flex flex-col items-center justify-between gap-6 border-t border-noir-200 pt-8 md:flex-row">
-        <p className="text-sm text-noir-400">
-          © {new Date().getFullYear()} Mansour Holding. Tous droits réservés.
-        </p>
-        <div className="flex gap-6">
-          {['LinkedIn', 'Twitter', 'Instagram'].map((social) => (
-            <a
-              key={social}
-              href="#"
-              className="text-sm font-medium text-noir-600 hover:text-gold-400 hover-trigger"
-            >
-              {social}
-            </a>
-          ))}
-        </div>
-      </div>
-    </footer>
-  )
-}
 
 
 export function LandingPage() {
@@ -580,13 +429,13 @@ export function LandingPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-noir-950 font-sans selection:bg-gold-400 selection:text-noir-950">
+    <div className="min-h-screen bg-noir-950 font-sans selection:bg-gold-400 selection:text-noir-950 page-grain">
       <PublicNavbar />
       <Hero />
       <Marquee />
-      <About />
       <Portfolio />
-      <Footer />
+      <About />
+      <PublicFooter />
     </div>
   )
 }

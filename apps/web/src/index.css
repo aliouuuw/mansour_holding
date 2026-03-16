@@ -198,6 +198,37 @@ body {
   z-index: 1;
 }
 
+/* ── Gradient Utilities ── */
+
+.bg-gradient-radial {
+  background-image: radial-gradient(var(--tw-gradient-stops));
+}
+
+/* ── Hover Trigger (cursor hint) ── */
+
+.hover-trigger {
+  cursor: pointer;
+}
+
+/* ── Custom Scrollbar (Dark Luxury) ── */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0A0A0A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2E2E2E;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C8A84E;
+}
+
 /* Gold gradient text */
 .gold-gradient-text {
   background: linear-gradient(135deg, #C8A84E 0%, #E8D48B 50%, #C8A84E 100%);
@@ -266,6 +297,8 @@ body {
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
+  scrollbar-color: #2E2E2E #0A0A0A;
+  scrollbar-width: thin;
 }
 
 /* Selection color */
@@ -278,4 +311,49 @@ html {
 :focus-visible {
   outline: 2px solid #C8A84E;
   outline-offset: 2px;
+}
+
+/* ── Page-level grain overlay ── */
+
+.page-grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)'/%3E%3C/svg%3E");
+  opacity: 0.018;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: overlay;
+}
+
+/* ── Stagger animation delays (for JS-free stagger) ── */
+
+[data-stagger] > :nth-child(1) { --stagger-delay: 0ms; }
+[data-stagger] > :nth-child(2) { --stagger-delay: 60ms; }
+[data-stagger] > :nth-child(3) { --stagger-delay: 120ms; }
+[data-stagger] > :nth-child(4) { --stagger-delay: 180ms; }
+[data-stagger] > :nth-child(5) { --stagger-delay: 240ms; }
+[data-stagger] > :nth-child(6) { --stagger-delay: 300ms; }
+[data-stagger] > :nth-child(7) { --stagger-delay: 360ms; }
+[data-stagger] > :nth-child(8) { --stagger-delay: 420ms; }
+
+/* ── Gold line divider ── */
+
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C8A84E 20%, #C8A84E 80%, transparent);
+}
+
+/* ── Image zoom on hover ── */
+
+.img-zoom {
+  overflow: hidden;
+}
+
+.img-zoom img {
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.img-zoom:hover img {
+  transform: scale(1.05);
 }
