@@ -62,6 +62,28 @@ This file tracks all implementation cycles, decisions, and learnings during deve
   * Supporting copy emphasizes unified portfolio and sovereign vision.
   * Navigation uses overline style (11px, SemiBold, 0.08em tracking) per brand spec.
 
+## [Feature] Public Vehicle Detail Page Migration
+
+* **Status:** Completed
+* **Date:** 2026-03-16
+* **Changes:**
+  - Added new route at `/mansour-motors/vehicules/$vehicleId` in router configuration
+  - Reused existing `PublicVehicleDetail` component (already had all required features)
+  - Updated vehicle card links in `PublicVehicles` to point to new namespace
+  - Updated featured vehicle links in `MansourMotorsLanding` to use new detail route
+  - Kept old `/vehicules/$vehicleId` route for backward compatibility
+  - Component already includes: hero image, specs table (year, mileage, fuel, transmission, color, VIN), contact form (name, phone, email, message), French labels
+* **Verification Results:**
+  - ✅ Public vehicle detail route exists at `/mansour-motors/vehicules/$vehicleId` — verified with grep
+  - ✅ Photo gallery component — verified image display (line 77)
+  - ✅ Specs table with all vehicle fields — verified with grep (lines 43-48: year, mileage, fuel, transmission, color, VIN)
+  - ✅ Contact form with name, email, phone, message — verified with grep (lines 156, 161, 166, 171)
+  - ✅ French labels — verified with grep ('Nom complet', 'Téléphone', 'Email professionnel', 'Message')
+  - ✅ Type check passes: `cd apps/web && bunx tsc --noEmit` (exit code 0)
+* **Result:** Success
+
+---
+
 ## [Feature] Public Vehicle Listing Page Migration
 
 * **Status:** Completed

@@ -110,7 +110,7 @@ function VehicleCard({ vehicle }: { vehicle: typeof vehicles[0] }) {
           </span>
           
           <Link
-            to="/vehicules/$vehicleId"
+            to="/mansour-motors/vehicules/$vehicleId"
             params={{ vehicleId: vehicle.id }}
             className="group/btn flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold-600 transition-colors hover:text-gold-700"
           >

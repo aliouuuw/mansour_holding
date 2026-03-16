@@ -201,7 +201,7 @@ export function MansourMotorsLanding() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Link
-                  to="/vehicules/$vehicleId"
+                  to="/mansour-motors/vehicules/$vehicleId"
                   params={{ vehicleId: vehicle.id }}
                   className="group block"
                 >
