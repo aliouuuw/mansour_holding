@@ -62,6 +62,32 @@ This file tracks all implementation cycles, decisions, and learnings during deve
   * Supporting copy emphasizes unified portfolio and sovereign vision.
   * Navigation uses overline style (11px, SemiBold, 0.08em tracking) per brand spec.
 
+## [Feature] Mansour Motors Business Landing Page
+
+* **Status:** Completed
+* **Date:** 2026-03-16
+* **Changes:**
+  - Created `MansourMotorsLanding` component at `apps/web/src/pages/public/MansourMotorsLanding.tsx`
+  - Added route at `/mansour-motors` in router configuration
+  - Implemented hero section with "L'Excellence Automobile à Dakar" positioning
+  - Built featured vehicles section with 3-card grid and CTA to catalog
+  - Created services section showcasing: Vente de Véhicules, Service Après-Vente, Solutions de Financement, Location de Véhicules
+  - Added contact/showroom section with address, hours, phone, and email
+  - Maintained luxury design system (noir-950, gold-400, Playfair Display serif)
+  - Used Lenis smooth scrolling and Framer Motion animations for premium feel
+  - All French labels throughout
+  - Links temporarily point to `/vehicules` (will be migrated to `/mansour-motors/vehicules` in next task)
+* **Verification Results:**
+  - ✅ Business landing route exists at `apps/web/src/pages/public/MansourMotorsLanding.tsx`
+  - ✅ Page presents Mansour Motors brand positioning beyond inventory (hero, services, showroom sections)
+  - ✅ Featured vehicles section exists with CTA to catalog
+  - ✅ Services section exists (vente, location, SAV, financement)
+  - ✅ Contact and showroom information exists (address, hours, phone, email)
+  - ✅ Type check passes: `cd apps/web && bunx tsc --noEmit` (exit code 0)
+* **Result:** Success
+
+---
+
 ## [Init] Ralph Initialization
 
 * **Status:** Success

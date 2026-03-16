@@ -16,6 +16,7 @@ import { LoginPage } from '@/pages/auth/LoginPage'
 import { RegisterPage } from '@/pages/auth/RegisterPage'
 import { PublicVehicles } from '@/pages/public/PublicVehicles'
 import { PublicVehicleDetail } from '@/pages/public/PublicVehicleDetail'
+import { MansourMotorsLanding } from '@/pages/public/MansourMotorsLanding'
 
 const rootRoute = createRootRoute({
   component: () => <Outlet />,
@@ -37,6 +38,12 @@ const registerRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/register',
   component: RegisterPage,
+})
+
+const mansourMotorsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/mansour-motors',
+  component: MansourMotorsLanding,
 })
 
 const publicVehiclesRoute = createRoute({
@@ -97,6 +104,7 @@ const routeTree = rootRoute.addChildren([
   landingRoute,
   loginRoute,
   registerRoute,
+  mansourMotorsRoute,
   publicVehiclesRoute,
   publicVehicleDetailRoute,
   dashboardRoute.addChildren([
