@@ -1,15 +1,15 @@
 import { Link } from '@tanstack/react-router'
 import {
-  Car,
-  Users,
-  DollarSign,
-  Plus,
-  ArrowRight,
-  ShoppingCart,
-  Calendar,
-  CheckCircle2,
-  AlertCircle,
-} from 'lucide-react'
+  Car01Icon,
+  UserMultiple02Icon,
+  DollarCircleIcon,
+  Add01Icon,
+  ArrowRight01Icon,
+  ShoppingCart01Icon,
+  Calendar01Icon,
+  CheckmarkCircle01Icon,
+  AlertCircleIcon,
+} from 'hugeicons-react'
 import { cn, formatPrice, formatNumber } from '@/lib/utils'
 import { vehicles, deals, customers, recentActivity } from '@/data/mock'
 
@@ -18,37 +18,37 @@ const kpis = [
     label: 'Véhicules en stock',
     value: formatNumber(vehicles.filter((v) => v.status === 'available').length),
     total: `${vehicles.length} total`,
-    icon: Car,
+    icon: Car01Icon,
     color: 'text-steel-700 bg-steel-50',
   },
   {
     label: 'Affaires en cours',
     value: formatNumber(deals.filter((d) => !d.status.startsWith('closed')).length),
     total: `${deals.length} total`,
-    icon: ShoppingCart,
+    icon: ShoppingCart01Icon,
     color: 'text-amber-700 bg-amber-50',
   },
   {
     label: 'Revenus du mois',
     value: formatPrice(111500000),
     total: '+23% vs mois dernier',
-    icon: DollarSign,
+    icon: DollarCircleIcon,
     color: 'text-jade-700 bg-jade-50',
   },
   {
     label: 'Clients actifs',
     value: formatNumber(customers.length),
     total: '3 nouveaux ce mois',
-    icon: Users,
+    icon: UserMultiple02Icon,
     color: 'text-gold-700 bg-gold-50',
   },
 ]
 
-const activityIcons: Record<string, typeof Car> = {
-  sale: CheckCircle2,
-  lead: AlertCircle,
-  vehicle: Car,
-  appointment: Calendar,
+const activityIcons: Record<string, typeof Car01Icon> = {
+  sale: CheckmarkCircle01Icon,
+  lead: AlertCircleIcon,
+  vehicle: Car01Icon,
+  appointment: Calendar01Icon,
 }
 
 const activityColors: Record<string, string> = {
@@ -71,14 +71,14 @@ export function MotorsDashboard() {
             to="/dashboard/motors/inventory"
             className="inline-flex items-center gap-2 rounded-sm border border-noir-200 bg-white px-4 py-2 text-sm font-medium text-noir-900 shadow-sm hover:bg-surface-dim transition-colors"
           >
-            <Car className="h-4 w-4" />
+            <Car01Icon className="h-4 w-4" />
             Inventaire
           </Link>
           <Link
             to="/dashboard/motors/sales"
             className="inline-flex items-center gap-2 rounded-sm bg-gold-400 px-4 py-2 text-sm font-semibold text-noir-950 shadow-sm hover:bg-gold-300 transition-colors"
           >
-            <Plus className="h-4 w-4" />
+            <Add01Icon className="h-4 w-4" />
             Nouvelle affaire
           </Link>
         </div>
@@ -109,7 +109,7 @@ export function MotorsDashboard() {
           </div>
           <div className="divide-y divide-border">
             {recentActivity.map((activity) => {
-              const Icon = activityIcons[activity.type] ?? Car
+              const Icon = activityIcons[activity.type] ?? Car01Icon
               const color = activityColors[activity.type] ?? 'text-slate-600 bg-slate-50'
               return (
                 <div key={activity.id} className="flex items-start gap-4 px-6 py-4">
@@ -151,7 +151,7 @@ export function MotorsDashboard() {
               to="/dashboard/motors/sales"
               className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-gold-600 hover:text-gold-700"
             >
-              Voir le pipeline <ArrowRight className="h-3.5 w-3.5" />
+              Voir le pipeline <ArrowRight01Icon className="h-3.5 w-3.5" />
             </Link>
           </div>
 

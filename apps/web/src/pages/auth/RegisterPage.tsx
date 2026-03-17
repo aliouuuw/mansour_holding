@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Building2, Eye, EyeOff } from 'lucide-react'
+import { Building03Icon, ViewIcon, ViewOffIcon } from 'hugeicons-react'
 import { useState } from 'react'
 
 export function RegisterPage() {
@@ -10,7 +10,7 @@ export function RegisterPage() {
       {/* Left panel */}
       <div className="hidden w-1/2 bg-gradient-to-br from-primary-950 via-primary-900 to-primary-800 lg:flex lg:flex-col lg:justify-between lg:p-12">
         <div className="flex items-center gap-3">
-          <Building2 className="h-8 w-8 text-primary-300" />
+          <Building03Icon className="h-8 w-8 text-primary-300" />
           <span className="text-xl font-bold text-white">Mansour Holding</span>
         </div>
         <div>
@@ -29,7 +29,7 @@ export function RegisterPage() {
         <div className="w-full max-w-md">
           <div className="mb-8 lg:hidden">
             <div className="flex items-center gap-2">
-              <Building2 className="h-7 w-7 text-primary-600" />
+              <Building03Icon className="h-7 w-7 text-primary-600" />
               <span className="text-lg font-bold text-primary-950">Mansour Holding</span>
             </div>
           </div>
@@ -90,7 +90,7 @@ export function RegisterPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-primary-900"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? <ViewOffIcon className="h-4 w-4" /> : <ViewIcon className="h-4 w-4" />}
                 </button>
               </div>
               <p className="mt-1.5 text-xs text-muted">Minimum 8 caractères</p>

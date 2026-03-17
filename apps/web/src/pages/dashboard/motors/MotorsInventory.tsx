@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { Search, Plus, Filter, Eye } from 'lucide-react'
+import { Search01Icon, Add01Icon, FilterIcon, ViewIcon } from 'hugeicons-react'
 import { cn, formatPrice, formatNumber } from '@/lib/utils'
 import {
   vehicles,
@@ -81,7 +81,7 @@ const columns = [
         params={{ vehicleId: info.row.original.id }}
         className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium text-primary-600 hover:bg-primary-50 transition-colors"
       >
-        <Eye className="h-3.5 w-3.5" />
+        <ViewIcon className="h-3.5 w-3.5" />
         Voir
       </Link>
     ),
@@ -115,7 +115,7 @@ export function MotorsInventory() {
           </p>
         </div>
         <button className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 transition-colors">
-          <Plus className="h-4 w-4" />
+          <Add01Icon className="h-4 w-4" />
           Ajouter un véhicule
         </button>
       </div>
@@ -123,7 +123,7 @@ export function MotorsInventory() {
       {/* Filters */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+          <Search01Icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
           <input
             type="text"
             placeholder="Rechercher un véhicule..."
@@ -133,7 +133,7 @@ export function MotorsInventory() {
           />
         </div>
         <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-muted" />
+          <FilterIcon className="h-4 w-4 text-muted" />
           {['all', 'available', 'reserved', 'sold'].map((status) => (
             <button
               key={status}

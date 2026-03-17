@@ -10,10 +10,10 @@ import {
 import {
   ArrowUpRight01Icon,
   Car01Icon,
-  ConstructionIcon,
+  Wrench01Icon,
   Home01Icon,
   Key01Icon,
-  Scissors01Icon,
+  Scissor01Icon,
   SparklesIcon,
   ArrowRight02Icon,
 } from 'hugeicons-react'
@@ -151,7 +151,7 @@ const businesses = [
     name: 'Mansour Construction',
     description: 'Bâtir l’avenir',
     longDescription: 'Grands projets résidentiels et commerciaux.',
-    icon: ConstructionIcon,
+    icon: Wrench01Icon,
     image:
       'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop',
     colSpan: 'md:col-span-2 lg:col-span-2',
@@ -162,7 +162,7 @@ const businesses = [
     name: 'Mansour Grooming',
     description: 'Soins pour hommes',
     longDescription: 'L’art du soin au masculin.',
-    icon: Scissors01Icon,
+    icon: Scissor01Icon,
     image:
       'https://images.unsplash.com/photo-1621607512214-68297480165e?q=80&w=2070&auto=format&fit=crop',
     colSpan: 'md:col-span-2 lg:col-span-2',

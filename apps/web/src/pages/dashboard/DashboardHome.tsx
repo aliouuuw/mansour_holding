@@ -1,21 +1,21 @@
 import { Link } from '@tanstack/react-router'
 import {
-  Car,
-  Home,
-  Key,
-  HardHat,
-  TrendingUp,
-  Users,
-  DollarSign,
-  ArrowUpRight,
-  ArrowRight,
-} from 'lucide-react'
+  Car01Icon,
+  Home01Icon,
+  Key01Icon,
+  Wrench01Icon,
+  TrendingUp01Icon,
+  UserMultiple02Icon,
+  DollarCircleIcon,
+  ArrowUpRight01Icon,
+  ArrowRight01Icon,
+} from 'hugeicons-react'
 import { cn, formatPrice, formatNumber } from '@/lib/utils'
 
 const businessCards = [
   {
     name: 'Mansour Motors',
-    icon: Car,
+    icon: Car01Icon,
     color: 'bg-gold-400',
     stats: { revenue: 178500000, items: 8, clients: 6 },
     href: '/dashboard/motors',
@@ -23,7 +23,7 @@ const businessCards = [
   },
   {
     name: 'Mansour Immobilier',
-    icon: Home,
+    icon: Home01Icon,
     color: 'bg-steel-400',
     stats: { revenue: 0, items: 0, clients: 0 },
     href: '/dashboard',
@@ -31,7 +31,7 @@ const businessCards = [
   },
   {
     name: 'Mansour Location',
-    icon: Key,
+    icon: Key01Icon,
     color: 'bg-silver-400',
     stats: { revenue: 0, items: 0, clients: 0 },
     href: '/dashboard',
@@ -39,7 +39,7 @@ const businessCards = [
   },
   {
     name: 'Mansour Construction',
-    icon: HardHat,
+    icon: Wrench01Icon,
     color: 'bg-amber-400',
     stats: { revenue: 0, items: 0, clients: 0 },
     href: '/dashboard',
@@ -48,10 +48,10 @@ const businessCards = [
 ]
 
 const kpis = [
-  { label: 'Chiffre d\'affaires total', value: formatPrice(178500000), change: '+12.5%', icon: DollarSign, color: 'text-jade-700 bg-jade-50' },
-  { label: 'Entreprises actives', value: '1 / 7', change: 'Phase 1', icon: TrendingUp, color: 'text-steel-700 bg-steel-50' },
-  { label: 'Clients totaux', value: formatNumber(6), change: '+3 ce mois', icon: Users, color: 'text-gold-700 bg-gold-50' },
-  { label: 'Transactions', value: formatNumber(8), change: '2 conclues', icon: ArrowUpRight, color: 'text-amber-700 bg-amber-50' },
+  { label: 'Chiffre d\'affaires total', value: formatPrice(178500000), change: '+12.5%', icon: DollarCircleIcon, color: 'text-jade-700 bg-jade-50' },
+  { label: 'Entreprises actives', value: '1 / 7', change: 'Phase 1', icon: TrendingUp01Icon, color: 'text-steel-700 bg-steel-50' },
+  { label: 'Clients totaux', value: formatNumber(6), change: '+3 ce mois', icon: UserMultiple02Icon, color: 'text-gold-700 bg-gold-50' },
+  { label: 'Transactions', value: formatNumber(8), change: '2 conclues', icon: ArrowUpRight01Icon, color: 'text-amber-700 bg-amber-50' },
 ]
 
 export function DashboardHome() {
@@ -101,7 +101,7 @@ export function DashboardHome() {
                   <biz.icon className="h-5 w-5" />
                 </div>
                 {biz.active && (
-                  <ArrowRight className="h-4 w-4 text-noir-600 opacity-0 transition-opacity group-hover:opacity-100" />
+                  <ArrowRight01Icon className="h-4 w-4 text-noir-600 opacity-0 transition-opacity group-hover:opacity-100" />
                 )}
               </div>
               <h3 className="mt-4 font-bold text-noir-950">{biz.name}</h3>

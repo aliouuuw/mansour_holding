@@ -1,14 +1,14 @@
 import { Link, useParams } from '@tanstack/react-router'
 import {
-  ArrowLeft,
-  Fuel,
-  Gauge,
-  Calendar,
-  Palette,
-  Settings2,
-  Hash,
-  Edit,
-} from 'lucide-react'
+  ArrowLeft01Icon,
+  Fuel01Icon,
+  DashboardSpeed01Icon,
+  Calendar01Icon,
+  PaintBoardIcon,
+  Settings02Icon,
+  HashtagIcon,
+  Edit01Icon,
+} from 'hugeicons-react'
 import { cn, formatPrice, formatNumber } from '@/lib/utils'
 import { vehicles, vehicleStatusLabels, vehicleStatusColors } from '@/data/mock'
 
@@ -31,12 +31,12 @@ export function MotorsVehicleDetail() {
   }
 
   const specs = [
-    { label: 'Année', value: vehicle.year.toString(), icon: Calendar },
-    { label: 'Kilométrage', value: `${formatNumber(vehicle.mileage)} km`, icon: Gauge },
-    { label: 'Carburant', value: vehicle.fuelType, icon: Fuel },
-    { label: 'Transmission', value: vehicle.transmission, icon: Settings2 },
-    { label: 'Couleur', value: vehicle.color, icon: Palette },
-    { label: 'VIN', value: vehicle.vin, icon: Hash },
+    { label: 'Année', value: vehicle.year.toString(), icon: Calendar01Icon },
+    { label: 'Kilométrage', value: `${formatNumber(vehicle.mileage)} km`, icon: DashboardSpeed01Icon },
+    { label: 'Carburant', value: vehicle.fuelType, icon: Fuel01Icon },
+    { label: 'Transmission', value: vehicle.transmission, icon: Settings02Icon },
+    { label: 'Couleur', value: vehicle.color, icon: PaintBoardIcon },
+    { label: 'VIN', value: vehicle.vin, icon: HashtagIcon },
   ]
 
   return (
@@ -46,7 +46,7 @@ export function MotorsVehicleDetail() {
           to="/dashboard/motors/inventory"
           className="rounded-lg p-2 text-muted hover:bg-surface-bright transition-colors"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft01Icon className="h-5 w-5" />
         </Link>
         <div className="flex-1">
           <h1 className="text-2xl font-bold text-primary-950">
@@ -63,7 +63,7 @@ export function MotorsVehicleDetail() {
           {vehicleStatusLabels[vehicle.status]}
         </span>
         <button className="inline-flex items-center gap-2 rounded-lg border border-border bg-white px-4 py-2 text-sm font-medium text-primary-900 shadow-sm hover:bg-surface-dim transition-colors">
-          <Edit className="h-4 w-4" />
+          <Edit01Icon className="h-4 w-4" />
           Modifier
         </button>
       </div>

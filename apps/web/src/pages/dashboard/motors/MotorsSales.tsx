@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react'
+import { Add01Icon } from 'hugeicons-react'
 import { cn, formatPrice } from '@/lib/utils'
 import {
   deals,
@@ -57,7 +57,7 @@ export function MotorsSales() {
           </p>
         </div>
         <button className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 transition-colors">
-          <Plus className="h-4 w-4" />
+          <Add01Icon className="h-4 w-4" />
           Nouvelle affaire
         </button>
       </div>

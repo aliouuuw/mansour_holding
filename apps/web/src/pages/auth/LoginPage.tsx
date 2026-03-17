@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Buildings } from '@phosphor-icons/react'
-import { Eye, EyeOff } from 'lucide-react'
+import { Building03Icon, ViewIcon, ViewOffIcon } from 'hugeicons-react'
 import { useState } from 'react'
 
 export function LoginPage() {
@@ -13,7 +12,7 @@ export function LoginPage() {
         <div className="w-full max-w-md">
           <div className="mb-12 flex flex-col items-center">
             <Link to="/" className="flex items-center gap-3 mb-8">
-              <Buildings className="h-8 w-8 text-gold-400" weight="duotone" />
+              <Building03Icon className="h-8 w-8 text-gold-400" />
               <span className="text-xl font-bold uppercase tracking-widest text-white">Mansour Holding</span>
             </Link>
             <div className="text-center">
@@ -56,7 +55,7 @@ export function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-silver-400 hover:text-white"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? <ViewOffIcon className="h-4 w-4" /> : <ViewIcon className="h-4 w-4" />}
                 </button>
               </div>
             </div>

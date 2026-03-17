@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Search, Plus, Phone, Mail } from 'lucide-react'
+import { Search01Icon, Add01Icon, TelephoneIcon, Mail01Icon } from 'hugeicons-react'
 import { cn, formatDate } from '@/lib/utils'
 import {
   customers,
@@ -49,7 +49,7 @@ const columns = [
     header: 'Téléphone',
     cell: (info) => (
       <div className="flex items-center gap-2 text-sm text-primary-900">
-        <Phone className="h-3.5 w-3.5 text-muted" />
+        <TelephoneIcon className="h-3.5 w-3.5 text-muted" />
         {info.getValue()}
       </div>
     ),
@@ -85,10 +85,10 @@ const columns = [
     cell: (_info) => (
       <div className="flex items-center gap-1">
         <button className="rounded-lg p-1.5 text-muted hover:bg-primary-50 hover:text-primary-600 transition-colors">
-          <Phone className="h-4 w-4" />
+          <TelephoneIcon className="h-4 w-4" />
         </button>
         <button className="rounded-lg p-1.5 text-muted hover:bg-primary-50 hover:text-primary-600 transition-colors">
-          <Mail className="h-4 w-4" />
+          <Mail01Icon className="h-4 w-4" />
         </button>
       </div>
     ),
@@ -117,14 +117,14 @@ export function MotorsCustomers() {
           </p>
         </div>
         <button className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 transition-colors">
-          <Plus className="h-4 w-4" />
+          <Add01Icon className="h-4 w-4" />
           Ajouter un client
         </button>
       </div>
 
       {/* Search */}
       <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+        <Search01Icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
         <input
           type="text"
           placeholder="Rechercher un client..."

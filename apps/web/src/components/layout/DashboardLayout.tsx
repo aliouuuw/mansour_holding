@@ -1,25 +1,25 @@
 import { useState } from 'react'
 import { Outlet, Link, useMatchRoute } from '@tanstack/react-router'
 import {
-  LayoutDashboard,
-  Car,
-  Package,
-  Users,
-  TrendingUp,
-  Menu,
-  ChevronDown,
-  Building2,
-  LogOut,
-  User,
-  Bell,
-} from 'lucide-react'
+  Dashboard01Icon,
+  Car01Icon,
+  PackageIcon,
+  UserMultiple02Icon,
+  TrendingUp01Icon,
+  Menu01Icon,
+  ArrowDown01Icon,
+  Building03Icon,
+  Logout01Icon,
+  User01Icon,
+  Notification02Icon,
+} from 'hugeicons-react'
 import { cn } from '@/lib/utils'
 
 const motorsNavItems = [
-  { label: 'Tableau de bord', href: '/dashboard/motors', icon: LayoutDashboard },
-  { label: 'Inventaire', href: '/dashboard/motors/inventory', icon: Package },
-  { label: 'Ventes', href: '/dashboard/motors/sales', icon: TrendingUp },
-  { label: 'Clients', href: '/dashboard/motors/customers', icon: Users },
+  { label: 'Tableau de bord', href: '/dashboard/motors', icon: Dashboard01Icon },
+  { label: 'Inventaire', href: '/dashboard/motors/inventory', icon: PackageIcon },
+  { label: 'Ventes', href: '/dashboard/motors/sales', icon: TrendingUp01Icon },
+  { label: 'Clients', href: '/dashboard/motors/customers', icon: UserMultiple02Icon },
 ]
 
 export function DashboardLayout() {
@@ -44,7 +44,7 @@ export function DashboardLayout() {
         )}
       >
         <div className="flex h-16 items-center gap-3 border-b border-white/10 px-6">
-          <Building2 className="h-7 w-7 text-gold-400" />
+          <Building03Icon className="h-7 w-7 text-gold-400" />
           <div>
             <p className="text-sm font-bold uppercase tracking-widest">Mansour Holding</p>
             <p className="text-[10px] font-medium uppercase tracking-wider text-silver-400">Plateforme Pro</p>
@@ -55,10 +55,10 @@ export function DashboardLayout() {
         <div className="border-b border-white/10 p-4">
           <button className="flex w-full items-center justify-between rounded-sm bg-white/5 px-3 py-2.5 text-sm hover:bg-white/10 transition-colors">
             <div className="flex items-center gap-2">
-              <Car className="h-4 w-4 text-gold-400" />
+              <Car01Icon className="h-4 w-4 text-gold-400" />
               <span className="font-semibold">Mansour Motors</span>
             </div>
-            <ChevronDown className="h-4 w-4 text-gold-400" />
+            <ArrowDown01Icon className="h-4 w-4 text-gold-400" />
           </button>
         </div>
 
@@ -73,7 +73,7 @@ export function DashboardLayout() {
                 : 'text-silver-300 hover:bg-white/5 hover:text-white'
             )}
           >
-            <LayoutDashboard className="h-4 w-4" />
+            <Dashboard01Icon className="h-4 w-4" />
             Vue d'ensemble
           </Link>
 
@@ -116,7 +116,7 @@ export function DashboardLayout() {
               to="/login"
               className="rounded-sm p-1.5 text-silver-400 hover:bg-white/5 hover:text-white transition-colors"
             >
-              <LogOut className="h-4 w-4" />
+              <Logout01Icon className="h-4 w-4" />
             </Link>
           </div>
         </div>
@@ -130,7 +130,7 @@ export function DashboardLayout() {
             onClick={() => setSidebarOpen(true)}
             className="rounded-sm p-2 text-noir-600 hover:bg-surface-dim lg:hidden"
           >
-            <Menu className="h-5 w-5" />
+            <Menu01Icon className="h-5 w-5" />
           </button>
 
           <div className="hidden lg:block">
@@ -141,11 +141,11 @@ export function DashboardLayout() {
 
           <div className="flex items-center gap-2">
             <button className="relative rounded-sm p-2 text-noir-600 hover:bg-surface-dim transition-colors">
-              <Bell className="h-5 w-5" />
+              <Notification02Icon className="h-5 w-5" />
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-gold-400" />
             </button>
             <button className="flex items-center gap-2 rounded-sm p-2 text-noir-600 hover:bg-surface-dim transition-colors lg:hidden">
-              <User className="h-5 w-5" />
+              <User01Icon className="h-5 w-5" />
             </button>
           </div>
         </header>
