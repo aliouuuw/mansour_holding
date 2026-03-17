@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Outlet, Link, useMatchRoute } from '@tanstack/react-router'
 import {
-  Dashboard01Icon,
+  DashboardSquare01Icon,
   Car01Icon,
   PackageIcon,
   UserMultiple02Icon,
@@ -16,7 +16,7 @@ import {
 import { cn } from '@/lib/utils'
 
 const motorsNavItems = [
-  { label: 'Tableau de bord', href: '/dashboard/motors', icon: Dashboard01Icon },
+  { label: 'Tableau de bord', href: '/dashboard/motors', icon: DashboardSquare01Icon },
   { label: 'Inventaire', href: '/dashboard/motors/inventory', icon: PackageIcon },
   { label: 'Ventes', href: '/dashboard/motors/sales', icon: TrendingUp01Icon },
   { label: 'Clients', href: '/dashboard/motors/customers', icon: UserMultiple02Icon },
@@ -73,7 +73,7 @@ export function DashboardLayout() {
                 : 'text-silver-300 hover:bg-white/5 hover:text-white'
             )}
           >
-            <Dashboard01Icon className="h-4 w-4" />
+            <DashboardSquare01Icon className="h-4 w-4" />
             Vue d'ensemble
           </Link>
 
