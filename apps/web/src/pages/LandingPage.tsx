@@ -39,7 +39,7 @@ function RevealText({
         initial={{ y: '100%' }}
         whileInView={{ y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay }}
+        transition={{ duration: 0.9, ease: [0.25, 1, 0.5, 1], delay }}
         className="inline-block"
       >
         {children}
@@ -89,13 +89,15 @@ function MagneticButton({
       style={{ x: springX, y: springY }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      whileTap={{ scale: 0.95 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 17 }}
     >
       {/* @ts-ignore */}
       <Component
         ref={ref as any}
         {...props}
         className={cn(
-          'relative inline-flex items-center justify-center overflow-hidden   bg-gold-400 px-8 py-4 text-sm font-semibold uppercase tracking-widest text-noir-950 transition-colors hover:bg-gold-300',
+          'relative inline-flex items-center justify-center overflow-hidden bg-gold-400 px-8 py-4 text-sm font-semibold uppercase tracking-widest text-noir-950 transition-all hover:bg-gold-300 hover:shadow-lg hover:shadow-gold-400/20',
           className
         )}
       >
@@ -116,7 +118,7 @@ const businesses = [
       'Une sélection exclusive de véhicules neufs et d’occasion certifiés pour une clientèle exigeante.',
     icon: CarProfile,
     image:
-      'https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2070&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1563720360172-67b8f3dce741?q=80&w=2070&auto=format&fit=crop',
     colSpan: 'md:col-span-2 lg:col-span-2',
     ready: true,
     href: '/mansour-motors',
@@ -326,32 +328,34 @@ function Portfolio() {
               </Wrapper>
 
               <div className="relative z-10 flex justify-between pointer-events-none">
-                <div className="rounded-full bg-white/10 p-2  ">
+                <div className="rounded-full bg-white/10 p-2 backdrop-blur-md transition-transform duration-500 group-hover:scale-110">
                   <biz.icon className="h-5 w-5 text-gold-400" weight="fill" />
                 </div>
                 {biz.ready ? (
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-noir-950 transition-transform group-hover:rotate-45">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-noir-950 transition-all duration-500 group-hover:rotate-45 group-hover:bg-gold-400 group-hover:shadow-[0_0_15px_rgba(207,181,59,0.5)]">
                     <ArrowUpRight className="h-4 w-4" weight="bold" />
                   </div>
                 ) : (
-                  <span className="rounded-full bg-noir-900/50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-silver-400  ">
+                  <span className="rounded-full bg-noir-900/50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-silver-400 backdrop-blur-md">
                     Bientôt
                   </span>
                 )}
               </div>
 
-              <div className="relative z-10 pointer-events-none">
+              <div className="relative z-10 pointer-events-none transition-transform duration-500 group-hover:-translate-y-2">
                 <h3 className="mb-2 font-serif text-2xl text-white md:text-3xl italic">
                   {biz.name}
                 </h3>
                 <p className="mb-4 text-silver-300 font-light text-sm">{biz.description}</p>
-                <div className="h-0 overflow-hidden opacity-0 transition-all duration-500 ease-in-out group-hover:h-auto group-hover:opacity-100">
-                  <p className="text-sm text-silver-400">{biz.longDescription}</p>
-                  {biz.ready && (
-                    <div className="mt-4 inline-flex items-center gap-2 border-b border-gold-400 pb-1 text-xs font-bold uppercase tracking-widest text-gold-400">
-                      Explorer <CaretRight weight="bold" />
-                    </div>
-                  )}
+                <div className="grid grid-rows-[0fr] opacity-0 transition-all duration-500 ease-in-out group-hover:grid-rows-[1fr] group-hover:opacity-100">
+                  <div className="overflow-hidden">
+                    <p className="text-sm text-silver-400">{biz.longDescription}</p>
+                    {biz.ready && (
+                      <div className="mt-4 inline-flex items-center gap-2 border-b border-gold-400 pb-1 text-xs font-bold uppercase tracking-widest text-gold-400 transition-colors group-hover:text-gold-300">
+                        Explorer <CaretRight className="transition-transform group-hover:translate-x-1" weight="bold" />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -364,42 +368,41 @@ function Portfolio() {
 
 function About() {
   return (
-    <section id="about" className="relative overflow-hidden bg-noir-900 px-6 py-32 text-white lg:px-12">
+    <section id="about" className="relative overflow-hidden bg-white px-6 py-32 lg:px-12">
       {/* Background Pattern */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gold-400/10 via-noir-950/0 to-noir-950/0 opacity-50" />
-        <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_35px,rgba(200,168,78,0.015)_35px,rgba(200,168,78,0.015)_36px)] mix-blend-overlay" />
-        <div className="absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full bg-gold-400/5 blur-[120px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-gold-100/50 via-transparent to-transparent opacity-60" />
+        <div className="absolute bottom-0 left-0 h-[500px] w-[500px] rounded-full bg-gold-100/40 blur-[120px]" />
       </div>
 
       <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-16 lg:grid-cols-2">
         <div>
           <div className="sticky top-32">
-            <span className="mb-8 block text-xs font-bold uppercase tracking-[0.2em] text-gold-400">
+            <span className="mb-8 block text-xs font-bold uppercase tracking-[0.2em] text-gold-600">
               Notre Philosophie
             </span>
-            <h2 className="font-serif text-4xl leading-tight md:text-6xl italic">
-              Créer de la <span className="text-gold-400 not-italic">valeur durable</span>.
+            <h2 className="font-serif text-4xl leading-tight text-noir-950 md:text-6xl italic">
+              Créer de la <span className="text-gold-600 not-italic">valeur durable</span>.
             </h2>
           </div>
         </div>
-        <div className="space-y-24 text-lg leading-relaxed text-silver-300 md:text-xl font-light">
+        <div className="space-y-24 text-lg leading-relaxed text-noir-500 md:text-xl font-light">
           <p>
             Fondé avec la vision de créer un groupe d'entreprises de premier plan au Sénégal,
             Mansour Holding s'est développé dans plusieurs secteurs stratégiques. Notre approche
             combine rigueur, qualité de service et engagement envers nos communautés.
           </p>
-          <div className="grid grid-cols-1 gap-12 border-t border-white/10 pt-12 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-12 border-t border-noir-100 pt-12 md:grid-cols-2">
             <div>
-              <h4 className="mb-4 text-gold-400 font-serif italic text-2xl">Vision</h4>
-              <p className="text-base text-silver-400">
+              <h4 className="mb-4 text-gold-600 font-serif italic text-2xl">Vision</h4>
+              <p className="text-base text-noir-500">
                 Devenir la référence incontestée de l'excellence entrepreneuriale en Afrique de
                 l'Ouest.
               </p>
             </div>
             <div>
-              <h4 className="mb-4 text-gold-400 font-serif italic text-2xl">Mission</h4>
-              <p className="text-base text-silver-400">
+              <h4 className="mb-4 text-gold-600 font-serif italic text-2xl">Mission</h4>
+              <p className="text-base text-noir-500">
                 Innover et bâtir des solutions pérennes qui répondent aux défis de demain.
               </p>
             </div>
@@ -413,6 +416,10 @@ function About() {
 
 
 export function LandingPage() {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
+
   useEffect(() => {
     const lenis = new Lenis()
 
@@ -429,7 +436,7 @@ export function LandingPage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-noir-950 font-sans selection:bg-gold-400 selection:text-noir-950 page-grain">
+    <div className="min-h-screen bg-surface-dim font-sans selection:bg-gold-400 selection:text-noir-950 page-grain">
       <PublicNavbar />
       <Hero />
       <Marquee />

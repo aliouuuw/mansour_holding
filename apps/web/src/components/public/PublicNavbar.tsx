@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { useScroll, useAnimationFrame, motion, AnimatePresence } from 'framer-motion'
 import { Buildings, List, X, CarProfile } from '@phosphor-icons/react'
@@ -16,11 +16,10 @@ const motorsLinks = [
   { label: 'Showroom', to: '/mansour-motors#contact' },
 ]
 
-interface PublicNavbarProps {
-  lightMode?: boolean;
-}
+// Pages that have dark hero sections (navbar starts transparent with white text)
+const darkHeroPages = ['/', '/mansour-motors']
 
-export function PublicNavbar({ lightMode = false }: PublicNavbarProps) {
+export function PublicNavbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { scrollY } = useScroll()
@@ -29,32 +28,38 @@ export function PublicNavbar({ lightMode = false }: PublicNavbarProps) {
 
   const isMotorsSection = currentPath.startsWith('/mansour-motors')
   const navLinks = isMotorsSection ? motorsLinks : holdingLinks
+  const hasDarkHero = darkHeroPages.includes(currentPath)
+
+  // On dark hero pages: start transparent, go to white on scroll
+  // On light pages: always show solid white navbar
+  const showSolidBg = isScrolled || !hasDarkHero
+  const useDarkText = showSolidBg
 
   useAnimationFrame(() => {
     if (scrollY.get() > 50 && !isScrolled) setIsScrolled(true)
     if (scrollY.get() <= 50 && isScrolled) setIsScrolled(false)
   })
 
-  // Close mobile menu on route change
-  useEffect(() => {
-    setIsMobileMenuOpen(false)
-  }, [currentPath])
-
   return (
     <>
       <motion.nav
         className={cn(
           'fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-5 transition-all duration-500 lg:px-12',
-          isScrolled || isMobileMenuOpen
-            ? 'bg-noir-950/90 py-3.5 backdrop-blur-xl border-b border-white/[0.04]'
-            : 'bg-transparent'
+          showSolidBg || isMobileMenuOpen
+            ? 'py-3.5 backdrop-blur-xl border-b shadow-xs'
+            : 'bg-transparent',
+          showSolidBg && !isMobileMenuOpen
+            ? 'bg-white/95 border-noir-100'
+            : isMobileMenuOpen
+              ? 'bg-noir-950/95 border-white/[0.04]'
+              : 'border-transparent'
         )}
       >
         {/* Brand */}
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2.5 hover-trigger group">
-            <Buildings className={cn("h-5 w-5 transition-transform duration-300 group-hover:scale-110", isScrolled ? "text-gold-400" : lightMode ? "text-gold-600" : "text-gold-400")} weight="duotone" />
-            <span className={cn("text-[11px] font-bold uppercase tracking-[0.18em]", isScrolled ? "text-white" : lightMode ? "text-noir-950" : "text-white")}>
+            <Buildings className={cn('h-5 w-5 transition-transform duration-300 group-hover:scale-110', useDarkText && !isMobileMenuOpen ? 'text-gold-600' : 'text-gold-400')} weight="duotone" />
+            <span className={cn('text-[11px] font-bold uppercase tracking-[0.18em]', useDarkText && !isMobileMenuOpen ? 'text-noir-950' : 'text-white')}>
               Mansour
             </span>
           </Link>
@@ -65,10 +70,10 @@ export function PublicNavbar({ lightMode = false }: PublicNavbarProps) {
               animate={{ opacity: 1, x: 0 }}
               className="hidden items-center gap-2.5 md:flex"
             >
-              <span className={cn("transition-colors", isScrolled ? "text-white/20" : lightMode ? "text-noir-950/20" : "text-white/20")}>/</span>
+              <span className={cn(useDarkText ? 'text-noir-300' : 'text-white/20')}>/</span>
               <Link to="/mansour-motors" className="flex items-center gap-1.5 hover-trigger group">
-                <CarProfile className={cn("h-4 w-4 transition-colors", isScrolled ? "text-gold-400" : lightMode ? "text-gold-600" : "text-gold-400")} weight="fill" />
-                <span className={cn("text-[11px] font-bold uppercase tracking-[0.18em] transition-colors", isScrolled ? "text-gold-400" : lightMode ? "text-gold-600" : "text-gold-400")}>
+                <CarProfile className={cn('h-4 w-4', useDarkText ? 'text-gold-600' : 'text-gold-400')} weight="fill" />
+                <span className={cn('text-[11px] font-bold uppercase tracking-[0.18em]', useDarkText ? 'text-gold-600' : 'text-gold-400')}>
                   Motors
                 </span>
               </Link>
@@ -87,42 +92,35 @@ export function PublicNavbar({ lightMode = false }: PublicNavbarProps) {
                 hash={link.to.includes('#') ? link.to.split('#')[1] : undefined}
                 className={cn(
                   'relative px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors hover-trigger',
-                  isActive 
-                    ? (isScrolled ? 'text-gold-400' : lightMode ? 'text-gold-600' : 'text-gold-400')
-                    : (isScrolled ? 'text-white/70 hover:text-white' : lightMode ? 'text-noir-500 hover:text-noir-950' : 'text-white/70 hover:text-white')
+                  isActive
+                    ? useDarkText ? 'text-gold-600' : 'text-gold-400'
+                    : useDarkText ? 'text-noir-500 hover:text-noir-950' : 'text-white/70 hover:text-white'
                 )}
               >
                 {link.label}
                 {isActive && (
                   <motion.span
                     layoutId="nav-indicator"
-                    className={cn("absolute bottom-0 left-4 right-4 h-px", isScrolled ? "bg-gold-400" : lightMode ? "bg-gold-600" : "bg-gold-400")}
+                    className={cn('absolute bottom-0 left-4 right-4 h-px', useDarkText ? 'bg-gold-600' : 'bg-gold-400')}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   />
                 )}
               </Link>
             )
           })}
-          <div className={cn("ml-4 h-4 w-px transition-colors", isScrolled ? "bg-white/10" : lightMode ? "bg-noir-950/10" : "bg-white/10")} />
+          <div className={cn('ml-4 h-4 w-px', useDarkText ? 'bg-noir-200' : 'bg-white/10')} />
           <Link
             to="/login"
             className={cn(
-              "ml-3 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors hover-trigger",
-              isScrolled ? "text-white/70 hover:text-white" : lightMode ? "text-noir-500 hover:text-noir-950" : "text-white/70 hover:text-white"
+              'ml-3 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors hover-trigger',
+              useDarkText ? 'text-noir-500 hover:text-noir-950' : 'text-white/70 hover:text-white'
             )}
           >
             Connexion
           </Link>
           <Link
             to="/dashboard"
-            className={cn(
-              "ml-1 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] transition-all hover-trigger",
-              isScrolled 
-                ? "bg-gold-400 text-noir-950 hover:bg-gold-300" 
-                : lightMode 
-                  ? "bg-noir-950 text-white hover:bg-noir-800" 
-                  : "bg-gold-400 text-noir-950 hover:bg-gold-300"
-            )}
+            className="ml-1 bg-gold-400 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-noir-950 transition-all hover:bg-gold-300 hover-trigger"
           >
             Espace Pro
           </Link>
@@ -130,7 +128,10 @@ export function PublicNavbar({ lightMode = false }: PublicNavbarProps) {
 
         {/* Mobile Menu Toggle */}
         <button
-          className={cn("relative z-50 flex h-11 w-11 items-center justify-center transition-colors md:hidden", isScrolled || isMobileMenuOpen ? "text-white" : lightMode ? "text-noir-950" : "text-white")}
+          className={cn(
+            'relative z-50 flex h-11 w-11 items-center justify-center md:hidden',
+            isMobileMenuOpen ? 'text-white' : useDarkText ? 'text-noir-950' : 'text-white'
+          )}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label={isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
         >

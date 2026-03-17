@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link } from '@tanstack/react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -35,17 +35,17 @@ function FilterSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full appearance-none border border-bone-200 bg-white px-4 py-3 pr-10 text-sm font-medium text-noir-950 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all shadow-sm"
+        className="w-full appearance-none border border-noir-200 bg-white px-4 py-3 pr-10 text-sm font-medium text-noir-900 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all"
       >
-        <option value="" className="bg-white text-noir-500">{label}</option>
+        <option value="">{label}</option>
         {options.map((opt) => (
-          <option key={opt} value={opt} className="bg-white text-noir-950">
+          <option key={opt} value={opt}>
             {opt}
           </option>
         ))}
       </select>
       <CaretDown
-        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gold-600"
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gold-600/60"
         weight="bold"
         size={14}
       />
@@ -67,61 +67,56 @@ function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: n
         params={{ vehicleId: vehicle.id }}
         className="block"
       >
-        <div className="relative overflow-hidden bg-white transition-all duration-500 hover:shadow-lux-light-md border border-transparent hover:border-bone-200">
-          <div className="relative aspect-[16/10] overflow-hidden bg-bone-100">
+        <div className="overflow-hidden border border-noir-100 bg-white shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1 hover:border-gold-200">
+          <div className="relative aspect-[16/10] overflow-hidden">
             <img
               src={vehicle.image}
               alt={`${vehicle.make} ${vehicle.model}`}
-              className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
+              className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
             />
-            
-            <div className="absolute top-4 right-4">
+            <div className="absolute inset-0 bg-gradient-to-t from-noir-950/80 via-noir-950/20 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100" />
+
+            <div className="absolute top-4 right-4 transform transition-transform duration-500 group-hover:-translate-y-1">
               {vehicle.status === 'available' ? (
-                <span className="inline-flex items-center gap-1.5 bg-white/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-success-600 backdrop-blur-md shadow-sm">
-                  <span className="h-1.5 w-1.5 rounded-full bg-success-500 animate-pulse" />
+                <span className="inline-flex items-center gap-1.5 bg-emerald-50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-700 border border-emerald-200 backdrop-blur-md shadow-sm">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
                   Disponible
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 bg-noir-950/80 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-md">
+                <span className="bg-white/90 text-noir-600 px-3 py-1 text-[10px] font-bold uppercase tracking-widest border border-noir-200 backdrop-blur-md shadow-sm">
                   {vehicle.status === 'reserved' ? 'Réservé' : 'Vendu'}
                 </span>
               )}
             </div>
           </div>
 
-          <div className="p-6">
-            <div className="mb-4 flex items-start justify-between">
-              <div>
-                <h3 className="font-serif text-2xl italic text-noir-950">
-                  {vehicle.make} <span className="text-gold-600 not-italic font-sans font-bold text-[0.8em]">{vehicle.model}</span>
-                </h3>
+          <div className="p-6 relative bg-white transition-colors duration-500 group-hover:bg-gold-50/10">
+            <div className="mb-4 transform transition-transform duration-500 group-hover:-translate-y-1">
+              <h3 className="font-serif text-xl italic text-noir-950">
+                {vehicle.make} <span className="text-gold-600 not-italic font-sans font-semibold transition-colors group-hover:text-gold-700">{vehicle.model}</span>
+              </h3>
+              <div className="mt-2.5 flex flex-wrap gap-4 text-[10px] font-semibold uppercase tracking-[0.12em] text-noir-400">
+                <span className="flex items-center gap-1.5 transition-colors group-hover:text-noir-600">
+                  <CalendarBlank className="text-gold-600/50 transition-colors group-hover:text-gold-600" weight="fill" size={12} /> {vehicle.year}
+                </span>
+                <span className="flex items-center gap-1.5 transition-colors group-hover:text-noir-600">
+                  <GasPump className="text-gold-600/50 transition-colors group-hover:text-gold-600" weight="fill" size={12} /> {vehicle.fuelType}
+                </span>
+                <span className="flex items-center gap-1.5 transition-colors group-hover:text-noir-600">
+                  <SteeringWheel className="text-gold-600/50 transition-colors group-hover:text-gold-600" weight="fill" size={12} /> {vehicle.transmission}
+                </span>
               </div>
-              <span className="text-lg font-bold text-noir-950">
-                {formatPrice(vehicle.price)}
-              </span>
-            </div>
-            
-            <div className="mb-5 flex flex-wrap gap-4 text-[10px] font-semibold uppercase tracking-[0.12em] text-noir-500">
-              <span className="flex items-center gap-1.5">
-                <CalendarBlank className="text-gold-400" weight="fill" size={14} /> {vehicle.year}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <GasPump className="text-gold-400" weight="fill" size={14} /> {vehicle.fuelType}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <SteeringWheel className="text-gold-400" weight="fill" size={14} /> {vehicle.transmission}
-              </span>
             </div>
 
-            <p className="mb-6 line-clamp-2 text-sm font-light leading-relaxed text-noir-600">
+            <p className="mb-5 line-clamp-2 text-sm font-light leading-relaxed text-noir-500 transform transition-transform duration-500 group-hover:-translate-y-1">
               {vehicle.description}
             </p>
 
-            <div className="flex items-center justify-between border-t border-bone-200 pt-5">
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold-600 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-2">
-                Découvrir
+            <div className="flex items-center justify-between border-t border-noir-100 pt-5 relative">
+              <span className="text-lg font-bold text-noir-950 transform transition-transform duration-500 group-hover:-translate-y-0.5">
+                {formatPrice(vehicle.price)}
               </span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-bone-100 text-noir-400 transition-all duration-300 group-hover:bg-gold-400 group-hover:text-white group-hover:-rotate-45">
+              <span className="flex h-8 w-8 items-center justify-center bg-gold-50 text-gold-600 transition-all duration-500 group-hover:bg-gold-400 group-hover:text-noir-950 group-hover:rotate-45 group-hover:shadow-[0_0_10px_rgba(207,181,59,0.4)]">
                 <ArrowUpRight className="h-4 w-4" weight="bold" />
               </span>
             </div>
@@ -135,6 +130,10 @@ function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: n
 export function PublicVehicles() {
   const [search, setSearch] = useState('')
   const [isFiltersOpen, setIsFiltersOpen] = useState(false)
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [])
 
   // Filters state
   const [make, setMake] = useState('')
@@ -183,11 +182,11 @@ export function PublicVehicles() {
   }
 
   return (
-    <div className="min-h-screen bg-bone-50 font-sans text-noir-950 selection:bg-gold-400 selection:text-noir-950 page-grain-light">
+    <div className="min-h-screen bg-surface-dim font-sans text-noir-950 selection:bg-gold-400 selection:text-noir-950 page-grain">
       <PublicNavbar />
 
-      {/* Hero Section (Dark for contrast) */}
-      <section className="relative px-6 pt-32 pb-16 lg:px-12 lg:pt-40 lg:pb-24 bg-noir-950 dark-grain">
+      {/* Hero Section */}
+      <section className="relative bg-surface-dim px-6 pt-32 pb-16 lg:px-12 lg:pt-40 lg:pb-20">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -195,15 +194,15 @@ export function PublicVehicles() {
             transition={{ duration: 0.8 }}
           >
             <div className="mb-4 flex items-center gap-3">
-              <span className="h-px w-10 bg-gold-400" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gold-400">
+              <span className="h-px w-10 bg-gold-500" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gold-600">
                 Mansour Motors — Catalogue
               </span>
             </div>
-            <h1 className="font-serif text-4xl italic text-white md:text-6xl">
-              Véhicules <span className="text-gold-400 not-italic font-sans font-extrabold uppercase text-[0.75em] tracking-tight">d'Exception</span>
+            <h1 className="font-serif text-4xl italic text-noir-950 md:text-6xl">
+              Véhicules <span className="text-gold-600 not-italic font-sans font-extrabold uppercase text-[0.75em] tracking-tight">d'Exception</span>
             </h1>
-            <p className="mt-4 max-w-xl text-base font-light text-white/50 md:text-lg">
+            <p className="mt-4 max-w-xl text-base font-light text-noir-500 md:text-lg">
               Découvrez notre sélection de véhicules premium, neufs et d'occasion certifiés.
             </p>
           </motion.div>
@@ -211,10 +210,10 @@ export function PublicVehicles() {
       </section>
 
       {/* Filters & Content */}
-      <section className="px-6 py-16 lg:px-12 lg:py-24">
+      <section className="px-6 pb-24 lg:px-12">
         <div className="mx-auto max-w-7xl">
           {/* Controls */}
-          <div className="mb-10 flex flex-col gap-4 border-b border-bone-200 pb-8 lg:flex-row lg:items-center lg:justify-between">
+          <div className="mb-10 flex flex-col gap-4 border-b border-noir-100 pb-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full max-w-md">
               <MagnifyingGlass className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-noir-400" />
               <input
@@ -222,21 +221,21 @@ export function PublicVehicles() {
                 placeholder="Rechercher une marque, un modèle..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full border border-bone-200 bg-white py-3 pl-11 pr-4 text-sm text-noir-950 placeholder-noir-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all shadow-sm"
+                className="w-full border border-noir-200 bg-white py-3 pl-11 pr-4 text-sm text-noir-900 placeholder-noir-400 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all"
               />
             </div>
 
-            <div className="flex items-center justify-between gap-6 lg:justify-end">
+            <div className="flex items-center gap-4">
               <span className="text-xs font-semibold text-noir-400 uppercase tracking-wider">
                 {filteredVehicles.length} véhicule{filteredVehicles.length !== 1 ? 's' : ''}
               </span>
               <button
                 onClick={() => setIsFiltersOpen(!isFiltersOpen)}
                 className={cn(
-                  'flex items-center gap-2 px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-all',
+                  'flex items-center gap-2 border px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-300',
                   isFiltersOpen || activeFiltersCount > 0
-                    ? 'bg-gold-400 text-white shadow-lux-glow'
-                    : 'border border-bone-200 bg-white text-noir-600 hover:border-gold-400 hover:text-gold-600 shadow-sm'
+                    ? 'border-gold-400 bg-gold-400 text-noir-950 shadow-[0_0_15px_rgba(207,181,59,0.3)]'
+                    : 'border-noir-200 bg-white text-noir-600 hover:border-gold-300 hover:text-noir-950 hover:bg-gold-50'
                 )}
               >
                 <Faders size={14} weight="bold" />
@@ -253,9 +252,9 @@ export function PublicVehicles() {
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="mb-12 overflow-hidden"
+                className="mb-10 overflow-hidden"
               >
-                <div className="grid grid-cols-1 gap-4 border border-bone-200 bg-white p-6 md:grid-cols-2 lg:grid-cols-5 shadow-sm">
+                <div className="grid grid-cols-1 gap-3 border border-noir-100 bg-white p-6 md:grid-cols-2 lg:grid-cols-5">
                   <FilterSelect label="Marque" value={make} onChange={setMake} options={makes} />
                   <FilterSelect label="Année" value={year} onChange={setYear} options={years.map(String)} />
                   <FilterSelect label="Carburant" value={fuelType} onChange={setFuelType} options={fuelTypes} />
@@ -266,7 +265,7 @@ export function PublicVehicles() {
                       placeholder="Prix max (FCFA)"
                       value={priceMax}
                       onChange={(e) => setPriceMax(e.target.value)}
-                      className="w-full border border-bone-200 bg-white px-4 py-3 text-sm font-medium text-noir-950 placeholder-noir-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all shadow-sm"
+                      className="w-full border border-noir-200 bg-white px-4 py-3 text-sm font-medium text-noir-900 placeholder-noir-400 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all"
                     />
                   </div>
                 </div>
@@ -287,7 +286,7 @@ export function PublicVehicles() {
           {/* Grid */}
           <div className="min-h-[400px]">
             {filteredVehicles.length > 0 ? (
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {filteredVehicles.map((vehicle, i) => (
                   <VehicleCard key={vehicle.id} vehicle={vehicle} index={i} />
                 ))}
@@ -298,8 +297,8 @@ export function PublicVehicles() {
                 animate={{ opacity: 1 }}
                 className="flex flex-col items-center justify-center py-32 text-center"
               >
-                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-sm border border-bone-200">
-                  <CarProfile className="h-8 w-8 text-noir-300" weight="duotone" />
+                <div className="mb-6 flex h-20 w-20 items-center justify-center border border-noir-100 bg-white">
+                  <CarProfile className="h-8 w-8 text-noir-200" weight="duotone" />
                 </div>
                 <h3 className="font-serif text-2xl italic text-noir-950">Aucun résultat</h3>
                 <p className="mt-3 max-w-sm text-sm text-noir-500">
@@ -307,7 +306,7 @@ export function PublicVehicles() {
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="mt-8 border border-bone-200 bg-white px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-noir-600 transition-all hover:border-gold-400 hover:text-gold-600 shadow-sm"
+                  className="mt-8 border border-noir-200 bg-white px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-noir-600 transition-all hover:border-gold-400 hover:text-gold-600"
                 >
                   Effacer les filtres
                 </button>

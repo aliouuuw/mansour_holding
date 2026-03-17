@@ -24,7 +24,7 @@ function RevealText({
   className,
   delay = 0,
 }: {
-  children: React.ReactNode
+  children: string
   className?: string
   delay?: number
 }) {
@@ -93,6 +93,7 @@ export function MansourMotorsLanding() {
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100])
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -115,24 +116,27 @@ export function MansourMotorsLanding() {
   const featuredVehicles = vehicles.filter((v) => v.status === 'available').slice(0, 3)
 
   return (
-    <div ref={containerRef} className="relative bg-bone-50">
-      {/* Navbar defaults to dark mode styling since hero is dark */}
+    <div ref={containerRef} className="relative bg-surface-dim page-grain">
       <PublicNavbar />
 
-      {/* Hero Section — Cinematic with Background Image (Dark) */}
+      {/* Hero Section — Cinematic with Background Video */}
       <motion.section
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative flex min-h-screen items-end overflow-hidden pb-24 lg:pb-32 dark-grain bg-noir-950"
+        className="relative flex min-h-screen items-end overflow-hidden pb-24 lg:pb-32"
       >
-        {/* Background Image */}
+        {/* Background Video */}
         <motion.div style={{ y: heroY }} className="absolute inset-0 -top-24">
-          <img
-            src="https://images.unsplash.com/photo-1617788138017-80ad40651399?q=80&w=2070&auto=format&fit=crop"
-            alt="Luxury vehicles"
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/70 to-noir-950/30" />
-          <div className="absolute inset-0 bg-gradient-to-r from-noir-950/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 overflow-hidden">
+            <iframe
+              className="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              src="https://www.youtube.com/embed/DfBrE9E1DCk?autoplay=1&mute=1&loop=1&playlist=DfBrE9E1DCk&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
+              title="Mansour Motors Background"
+              allow="autoplay; encrypted-media"
+              style={{ border: 'none' }}
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/60 to-noir-950/20" />
+          <div className="absolute inset-0 bg-noir-950/30" />
         </motion.div>
 
         <div className="relative z-10 w-full px-6 lg:px-12">
@@ -178,14 +182,14 @@ export function MansourMotorsLanding() {
             >
               <Link
                 to="/mansour-motors/vehicules"
-                className="group inline-flex items-center gap-3 bg-gold-400 px-8 py-4 text-sm font-semibold uppercase tracking-widest text-noir-950 transition-all hover:bg-gold-300"
+                className="group inline-flex items-center gap-3 bg-gold-400 px-8 py-4 text-sm font-semibold uppercase tracking-widest text-noir-950 transition-all hover:bg-gold-300 hover:shadow-[0_0_20px_rgba(207,181,59,0.3)] hover:-translate-y-0.5"
               >
                 Voir le Catalogue
-                <ArrowRight className="transition-transform group-hover:translate-x-1" weight="bold" />
+                <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1.5" weight="bold" />
               </Link>
               <a
                 href="#contact"
-                className="inline-flex items-center gap-3 border border-white/20 bg-white/5 px-8 py-4 text-sm font-semibold uppercase tracking-widest text-white backdrop-blur-sm transition-all hover:border-white/30 hover:bg-white/10"
+                className="inline-flex items-center gap-3 border border-white/20 bg-white/5 px-8 py-4 text-sm font-semibold uppercase tracking-widest text-white backdrop-blur-sm transition-all hover:border-white/40 hover:bg-white/10 hover:-translate-y-0.5"
               >
                 Nous Contacter
               </a>
@@ -194,8 +198,8 @@ export function MansourMotorsLanding() {
         </div>
       </motion.section>
 
-      {/* Stats Strip (Light) */}
-      <section className="relative border-y border-bone-200 bg-white page-grain-light">
+      {/* Stats Strip */}
+      <section className="relative border-y border-noir-100 bg-gold-50">
         <div className="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, index) => (
             <motion.div
@@ -206,7 +210,7 @@ export function MansourMotorsLanding() {
               transition={{ delay: index * 0.08 }}
               className={cn(
                 'flex flex-col items-center justify-center px-6 py-10 text-center lg:py-12',
-                index < stats.length - 1 && 'border-r border-bone-200'
+                index < stats.length - 1 && 'border-r border-gold-200/50'
               )}
             >
               <span className="font-serif text-3xl italic text-gold-600 md:text-4xl">{stat.value}</span>
@@ -216,8 +220,8 @@ export function MansourMotorsLanding() {
         </div>
       </section>
 
-      {/* Featured Vehicles Section (Dark) */}
-      <section className="relative px-6 py-24 lg:px-12 lg:py-32 bg-noir-950 dark-grain">
+      {/* Featured Vehicles Section */}
+      <section className="relative bg-surface-dim px-6 py-24 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
@@ -225,7 +229,7 @@ export function MansourMotorsLanding() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                className="mb-3 block text-[10px] font-bold uppercase tracking-[0.2em] text-gold-400"
+                className="mb-3 block text-[10px] font-bold uppercase tracking-[0.2em] text-gold-600"
               >
                 Sélection Premium
               </motion.span>
@@ -233,9 +237,9 @@ export function MansourMotorsLanding() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="font-serif text-4xl italic text-white md:text-5xl"
+                className="font-serif text-4xl italic text-noir-950 md:text-5xl"
               >
-                Véhicules <span className="text-gold-400 not-italic font-sans font-extrabold uppercase text-[0.75em] tracking-tight">en Vedette</span>
+                Véhicules <span className="text-gold-600 not-italic font-sans font-extrabold uppercase text-[0.75em] tracking-tight">en Vedette</span>
               </motion.h2>
             </div>
             <motion.div
@@ -245,7 +249,7 @@ export function MansourMotorsLanding() {
             >
               <Link
                 to="/mansour-motors/vehicules"
-                className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold-400 transition-colors hover:text-gold-300"
+                className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold-600 transition-colors hover:text-gold-700"
               >
                 Tout voir
                 <ArrowUpRight className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" weight="bold" />
@@ -267,33 +271,34 @@ export function MansourMotorsLanding() {
                   params={{ vehicleId: vehicle.id }}
                   className="group block"
                 >
-                  <div className="relative overflow-hidden bg-noir-900 border border-white/[0.06] transition-colors hover:border-white/10">
-                    <div className="aspect-[4/3] overflow-hidden">
+                  <div className="overflow-hidden border border-noir-100 bg-white shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1 group-hover:border-gold-200">
+                    <div className="relative aspect-[4/3] overflow-hidden">
                       <img
                         src={vehicle.image}
                         alt={`${vehicle.make} ${vehicle.model}`}
-                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
                       />
-                    </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/40 to-transparent pointer-events-none" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-                      <h3 className="mb-1 font-serif text-2xl italic text-white">
-                        {vehicle.make}{' '}
-                        <span className="font-sans font-semibold not-italic text-gold-400">
-                          {vehicle.model}
-                        </span>
-                      </h3>
-                      <p className="mb-3 text-xs font-medium uppercase tracking-wider text-white/50">
-                        {vehicle.year} · {vehicle.transmission} · {vehicle.fuelType}
-                      </p>
-                      <div className="flex items-center justify-between border-t border-white/[0.06] pt-4 mt-2">
-                        <p className="text-xl font-bold text-gold-400">
-                          {formatPrice(vehicle.price)}
+                      <div className="absolute inset-0 bg-gradient-to-t from-noir-950/80 via-noir-950/20 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100" />
+                      <div className="absolute bottom-0 left-0 right-0 p-5 transform transition-transform duration-500 group-hover:-translate-y-1">
+                        <h3 className="font-serif text-xl italic text-white">
+                          {vehicle.make}{' '}
+                          <span className="font-sans font-semibold not-italic text-gold-300 transition-colors group-hover:text-gold-400">
+                            {vehicle.model}
+                          </span>
+                        </h3>
+                        <p className="mt-1 text-[10px] font-medium uppercase tracking-wider text-white/70">
+                          {vehicle.year} · {vehicle.transmission} · {vehicle.fuelType}
                         </p>
-                        <span className="flex h-8 w-8 items-center justify-center bg-white/5 text-white/40 transition-all group-hover:bg-gold-400 group-hover:text-noir-950">
-                          <ArrowUpRight className="h-4 w-4" weight="bold" />
-                        </span>
                       </div>
+                    </div>
+                    <div className="flex items-center justify-between p-5 bg-white relative overflow-hidden">
+                      <div className="absolute inset-0 bg-gold-50/0 transition-colors duration-500 group-hover:bg-gold-50/50" />
+                      <p className="relative z-10 text-lg font-bold text-noir-950">
+                        {formatPrice(vehicle.price)}
+                      </p>
+                      <span className="relative z-10 flex h-8 w-8 items-center justify-center bg-gold-50 text-gold-600 transition-all duration-500 group-hover:bg-gold-400 group-hover:text-noir-950 group-hover:rotate-45 group-hover:shadow-[0_0_10px_rgba(207,181,59,0.4)]">
+                        <ArrowUpRight className="h-4 w-4" weight="bold" />
+                      </span>
                     </div>
                   </div>
                 </Link>
@@ -303,9 +308,8 @@ export function MansourMotorsLanding() {
         </div>
       </section>
 
-      {/* Services Section (Light) */}
-      <section id="services" className="relative bg-bone-50 px-6 py-24 lg:px-12 lg:py-32 page-grain-light">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gold-600/[0.03] via-transparent to-transparent" />
+      {/* Services Section */}
+      <section id="services" className="relative bg-white px-6 py-24 lg:px-12 lg:py-32">
         <div className="relative mx-auto max-w-7xl">
           <div className="mb-16">
             <motion.span
@@ -326,7 +330,7 @@ export function MansourMotorsLanding() {
             </motion.h2>
           </div>
 
-          <div className="grid gap-px overflow-hidden border border-bone-200 bg-bone-200 md:grid-cols-2">
+          <div className="grid gap-px overflow-hidden border border-noir-100 bg-noir-100 md:grid-cols-2">
             {services.map((service, index) => (
               <motion.div
                 key={service.title}
@@ -334,23 +338,23 @@ export function MansourMotorsLanding() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08 }}
-                className="group relative bg-white p-8 transition-colors hover:bg-bone-50 lg:p-12"
+                className="group relative bg-white p-8 transition-all duration-300 hover:bg-gold-50/50 hover:shadow-md lg:p-12 hover:-translate-y-1 z-0 hover:z-10"
               >
                 <div className="mb-8 flex items-center justify-between">
-                  <service.icon className="h-10 w-10 text-gold-600 transition-transform duration-300 group-hover:scale-110" weight="duotone" />
-                  <span className="font-serif text-2xl italic text-noir-200 group-hover:text-gold-200 transition-colors">{service.stat}</span>
+                  <service.icon className="h-10 w-10 text-gold-600 transition-transform duration-500 ease-out group-hover:scale-110 group-hover:rotate-3" weight="duotone" />
+                  <span className="font-serif text-2xl italic text-noir-100 group-hover:text-gold-300 transition-colors duration-300">{service.stat}</span>
                 </div>
-                <h3 className="mb-3 text-lg font-bold text-noir-950">{service.title}</h3>
+                <h3 className="mb-3 text-lg font-bold text-noir-950 transition-colors group-hover:text-gold-700">{service.title}</h3>
                 <p className="text-sm leading-relaxed text-noir-500">{service.description}</p>
-                <div className="mt-6 h-px w-0 bg-gold-400 transition-all duration-500 group-hover:w-12" />
+                <div className="mt-6 h-px w-0 bg-gold-400 transition-all duration-500 ease-out group-hover:w-16" />
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Contact/Showroom Section (Light) */}
-      <section id="contact" className="relative px-6 py-24 lg:px-12 lg:py-32 bg-white page-grain-light border-t border-bone-200">
+      {/* Contact/Showroom Section */}
+      <section id="contact" className="relative bg-surface-dim px-6 py-24 lg:px-12 lg:py-32">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-12 lg:grid-cols-2">
             <motion.div
@@ -364,7 +368,7 @@ export function MansourMotorsLanding() {
               <h2 className="mb-6 font-serif text-4xl italic text-noir-950 md:text-5xl">
                 Notre <span className="text-gold-600 not-italic font-sans font-extrabold uppercase text-[0.75em] tracking-tight">Showroom</span>
               </h2>
-              <p className="mb-10 text-base leading-relaxed text-noir-600">
+              <p className="mb-10 text-base leading-relaxed text-noir-500">
                 Notre équipe d'experts est à votre disposition pour vous accompagner dans le
                 choix du véhicule parfait. Venez découvrir notre showroom et profitez d'un
                 service personnalisé.
@@ -372,11 +376,11 @@ export function MansourMotorsLanding() {
 
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div className="flex items-start gap-4 group">
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-bone-100 text-gold-600 transition-colors group-hover:bg-gold-600 group-hover:text-white">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-gold-50 text-gold-600 transition-colors group-hover:bg-gold-400 group-hover:text-noir-950">
                     <MapPin weight="fill" size={18} />
                   </div>
                   <div>
-                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-noir-900">Adresse</h4>
+                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-noir-950">Adresse</h4>
                     <p className="text-sm text-noir-500">
                       Avenue Cheikh Anta Diop<br />Dakar, Sénégal
                     </p>
@@ -384,11 +388,11 @@ export function MansourMotorsLanding() {
                 </div>
 
                 <div className="flex items-start gap-4 group">
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-bone-100 text-gold-600 transition-colors group-hover:bg-gold-600 group-hover:text-white">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-gold-50 text-gold-600 transition-colors group-hover:bg-gold-400 group-hover:text-noir-950">
                     <Clock weight="fill" size={18} />
                   </div>
                   <div>
-                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-noir-900">Horaires</h4>
+                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-noir-950">Horaires</h4>
                     <p className="text-sm text-noir-500">
                       Lun–Ven: 8h–18h<br />Sam: 9h–17h
                     </p>
@@ -396,21 +400,21 @@ export function MansourMotorsLanding() {
                 </div>
 
                 <div className="flex items-start gap-4 group">
-                  <a href="tel:+221331234567" className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-bone-100 text-gold-600 transition-colors group-hover:bg-gold-600 group-hover:text-white">
+                  <a href="tel:+221331234567" className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-gold-50 text-gold-600 transition-colors group-hover:bg-gold-400 group-hover:text-noir-950">
                     <Phone weight="fill" size={18} />
                   </a>
                   <div>
-                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-noir-900">Téléphone</h4>
+                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-noir-950">Téléphone</h4>
                     <a href="tel:+221331234567" className="text-sm text-noir-500 hover:text-gold-600 transition-colors">+221 33 123 45 67</a>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4 group">
-                  <a href="mailto:motors@mansour.sn" className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-bone-100 text-gold-600 transition-colors group-hover:bg-gold-600 group-hover:text-white">
+                  <a href="mailto:motors@mansour.sn" className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-gold-50 text-gold-600 transition-colors group-hover:bg-gold-400 group-hover:text-noir-950">
                     <Envelope weight="fill" size={18} />
                   </a>
                   <div>
-                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-noir-900">Email</h4>
+                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-noir-950">Email</h4>
                     <a href="mailto:motors@mansour.sn" className="text-sm text-noir-500 hover:text-gold-600 transition-colors">motors@mansour.sn</a>
                   </div>
                 </div>
@@ -421,7 +425,7 @@ export function MansourMotorsLanding() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative overflow-hidden bg-bone-100"
+              className="relative overflow-hidden shadow-lg"
             >
               <div className="aspect-[4/3] overflow-hidden">
                 <img
