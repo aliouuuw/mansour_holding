@@ -5,12 +5,12 @@ import {
   Car01Icon,
   PackageIcon,
   UserMultiple02Icon,
-  TrendingUp01Icon,
+  ChartUpIcon,
   Menu01Icon,
   ArrowDown01Icon,
   Building03Icon,
   Logout01Icon,
-  User01Icon,
+  UserIcon,
   Notification02Icon,
 } from 'hugeicons-react'
 import { cn } from '@/lib/utils'
@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils'
 const motorsNavItems = [
   { label: 'Tableau de bord', href: '/dashboard/motors', icon: DashboardSquare01Icon },
   { label: 'Inventaire', href: '/dashboard/motors/inventory', icon: PackageIcon },
-  { label: 'Ventes', href: '/dashboard/motors/sales', icon: TrendingUp01Icon },
+  { label: 'Ventes', href: '/dashboard/motors/sales', icon: ChartUpIcon },
   { label: 'Clients', href: '/dashboard/motors/customers', icon: UserMultiple02Icon },
 ]
 
@@ -145,7 +145,7 @@ export function DashboardLayout() {
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-gold-400" />
             </button>
             <button className="flex items-center gap-2 rounded-sm p-2 text-noir-600 hover:bg-surface-dim transition-colors lg:hidden">
-              <User01Icon className="h-5 w-5" />
+              <UserIcon className="h-5 w-5" />
             </button>
           </div>
         </header>

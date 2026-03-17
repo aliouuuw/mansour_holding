@@ -4,7 +4,7 @@ import {
   Home01Icon,
   Key01Icon,
   Wrench01Icon,
-  TrendingUp01Icon,
+  ChartUpIcon,
   UserMultiple02Icon,
   DollarCircleIcon,
   ArrowUpRight01Icon,
@@ -49,7 +49,7 @@ const businessCards = [
 
 const kpis = [
   { label: 'Chiffre d\'affaires total', value: formatPrice(178500000), change: '+12.5%', icon: DollarCircleIcon, color: 'text-jade-700 bg-jade-50' },
-  { label: 'Entreprises actives', value: '1 / 7', change: 'Phase 1', icon: TrendingUp01Icon, color: 'text-steel-700 bg-steel-50' },
+  { label: 'Entreprises actives', value: '1 / 7', change: 'Phase 1', icon: ChartUpIcon, color: 'text-steel-700 bg-steel-50' },
   { label: 'Clients totaux', value: formatNumber(6), change: '+3 ce mois', icon: UserMultiple02Icon, color: 'text-gold-700 bg-gold-50' },
   { label: 'Transactions', value: formatNumber(8), change: '2 conclues', icon: ArrowUpRight01Icon, color: 'text-amber-700 bg-amber-50' },
 ]
