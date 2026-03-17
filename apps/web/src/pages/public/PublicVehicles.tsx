@@ -35,17 +35,17 @@ function FilterSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full appearance-none border border-white/10 bg-white/5 px-4 py-3 pr-10 text-sm font-medium text-white focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all"
+        className="w-full appearance-none border border-bone-200 bg-white px-4 py-3 pr-10 text-sm font-medium text-noir-950 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all shadow-sm"
       >
-        <option value="" className="bg-noir-900 text-white">{label}</option>
+        <option value="" className="bg-white text-noir-500">{label}</option>
         {options.map((opt) => (
-          <option key={opt} value={opt} className="bg-noir-900 text-white">
+          <option key={opt} value={opt} className="bg-white text-noir-950">
             {opt}
           </option>
         ))}
       </select>
       <CaretDown
-        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gold-400/60"
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gold-600"
         weight="bold"
         size={14}
       />
@@ -67,23 +67,22 @@ function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: n
         params={{ vehicleId: vehicle.id }}
         className="block"
       >
-        <div className="relative overflow-hidden border border-white/[0.06] bg-noir-900 transition-colors hover:border-white/10">
-          <div className="relative aspect-[16/10] overflow-hidden">
+        <div className="relative overflow-hidden bg-white transition-all duration-500 hover:shadow-lux-light-md border border-transparent hover:border-bone-200">
+          <div className="relative aspect-[16/10] overflow-hidden bg-bone-100">
             <img
               src={vehicle.image}
               alt={`${vehicle.make} ${vehicle.model}`}
-              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-noir-900 via-noir-900/20 to-transparent" />
-
+            
             <div className="absolute top-4 right-4">
               {vehicle.status === 'available' ? (
-                <span className="inline-flex items-center gap-1.5 bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-400 border border-emerald-500/20 backdrop-blur-sm">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="inline-flex items-center gap-1.5 bg-white/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-success-600 backdrop-blur-md shadow-sm">
+                  <span className="h-1.5 w-1.5 rounded-full bg-success-500 animate-pulse" />
                   Disponible
                 </span>
               ) : (
-                <span className="bg-white/10 text-white/70 px-3 py-1 text-[10px] font-bold uppercase tracking-widest border border-white/10 backdrop-blur-sm">
+                <span className="inline-flex items-center gap-1.5 bg-noir-950/80 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-md">
                   {vehicle.status === 'reserved' ? 'Réservé' : 'Vendu'}
                 </span>
               )}
@@ -91,32 +90,38 @@ function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: n
           </div>
 
           <div className="p-6">
-            <div className="mb-4">
-              <h3 className="font-serif text-xl italic text-white">
-                {vehicle.make} <span className="text-gold-400 not-italic font-sans font-semibold">{vehicle.model}</span>
-              </h3>
-              <div className="mt-2.5 flex flex-wrap gap-4 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/40">
-                <span className="flex items-center gap-1.5">
-                  <CalendarBlank className="text-gold-400/50" weight="fill" size={12} /> {vehicle.year}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <GasPump className="text-gold-400/50" weight="fill" size={12} /> {vehicle.fuelType}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <SteeringWheel className="text-gold-400/50" weight="fill" size={12} /> {vehicle.transmission}
-                </span>
+            <div className="mb-4 flex items-start justify-between">
+              <div>
+                <h3 className="font-serif text-2xl italic text-noir-950">
+                  {vehicle.make} <span className="text-gold-600 not-italic font-sans font-bold text-[0.8em]">{vehicle.model}</span>
+                </h3>
               </div>
+              <span className="text-lg font-bold text-noir-950">
+                {formatPrice(vehicle.price)}
+              </span>
+            </div>
+            
+            <div className="mb-5 flex flex-wrap gap-4 text-[10px] font-semibold uppercase tracking-[0.12em] text-noir-500">
+              <span className="flex items-center gap-1.5">
+                <CalendarBlank className="text-gold-400" weight="fill" size={14} /> {vehicle.year}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <GasPump className="text-gold-400" weight="fill" size={14} /> {vehicle.fuelType}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <SteeringWheel className="text-gold-400" weight="fill" size={14} /> {vehicle.transmission}
+              </span>
             </div>
 
-            <p className="mb-5 line-clamp-2 text-sm font-light leading-relaxed text-white/35">
+            <p className="mb-6 line-clamp-2 text-sm font-light leading-relaxed text-noir-600">
               {vehicle.description}
             </p>
 
-            <div className="flex items-center justify-between border-t border-white/[0.06] pt-5">
-              <span className="text-lg font-bold text-gold-400">
-                {formatPrice(vehicle.price)}
+            <div className="flex items-center justify-between border-t border-bone-200 pt-5">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold-600 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-2">
+                Découvrir
               </span>
-              <span className="flex h-8 w-8 items-center justify-center bg-white/5 text-white/40 transition-all group-hover:bg-gold-400 group-hover:text-noir-950">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-bone-100 text-noir-400 transition-all duration-300 group-hover:bg-gold-400 group-hover:text-white group-hover:-rotate-45">
                 <ArrowUpRight className="h-4 w-4" weight="bold" />
               </span>
             </div>
@@ -178,11 +183,11 @@ export function PublicVehicles() {
   }
 
   return (
-    <div className="min-h-screen bg-noir-950 font-sans text-white selection:bg-gold-400 selection:text-noir-950 page-grain">
+    <div className="min-h-screen bg-bone-50 font-sans text-noir-950 selection:bg-gold-400 selection:text-noir-950 page-grain-light">
       <PublicNavbar />
 
-      {/* Hero Section */}
-      <section className="relative px-6 pt-32 pb-16 lg:px-12 lg:pt-40 lg:pb-20">
+      {/* Hero Section (Dark for contrast) */}
+      <section className="relative px-6 pt-32 pb-16 lg:px-12 lg:pt-40 lg:pb-24 bg-noir-950 dark-grain">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -206,32 +211,32 @@ export function PublicVehicles() {
       </section>
 
       {/* Filters & Content */}
-      <section className="px-6 pb-24 lg:px-12">
+      <section className="px-6 py-16 lg:px-12 lg:py-24">
         <div className="mx-auto max-w-7xl">
           {/* Controls */}
-          <div className="mb-10 flex flex-col gap-4 border-b border-white/[0.06] pb-8 lg:flex-row lg:items-center lg:justify-between">
+          <div className="mb-10 flex flex-col gap-4 border-b border-bone-200 pb-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full max-w-md">
-              <MagnifyingGlass className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30" />
+              <MagnifyingGlass className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-noir-400" />
               <input
                 type="text"
                 placeholder="Rechercher une marque, un modèle..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full border border-white/10 bg-white/5 py-3 pl-11 pr-4 text-sm text-white placeholder-white/30 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all"
+                className="w-full border border-bone-200 bg-white py-3 pl-11 pr-4 text-sm text-noir-950 placeholder-noir-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all shadow-sm"
               />
             </div>
 
-            <div className="flex items-center gap-4">
-              <span className="text-xs font-semibold text-white/30 uppercase tracking-wider">
+            <div className="flex items-center justify-between gap-6 lg:justify-end">
+              <span className="text-xs font-semibold text-noir-400 uppercase tracking-wider">
                 {filteredVehicles.length} véhicule{filteredVehicles.length !== 1 ? 's' : ''}
               </span>
               <button
                 onClick={() => setIsFiltersOpen(!isFiltersOpen)}
                 className={cn(
-                  'flex items-center gap-2 border px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-all',
+                  'flex items-center gap-2 px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-all',
                   isFiltersOpen || activeFiltersCount > 0
-                    ? 'border-gold-400 bg-gold-400 text-noir-950'
-                    : 'border-white/10 bg-white/5 text-white/60 hover:border-white/20 hover:text-white'
+                    ? 'bg-gold-400 text-white shadow-lux-glow'
+                    : 'border border-bone-200 bg-white text-noir-600 hover:border-gold-400 hover:text-gold-600 shadow-sm'
                 )}
               >
                 <Faders size={14} weight="bold" />
@@ -248,9 +253,9 @@ export function PublicVehicles() {
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="mb-10 overflow-hidden"
+                className="mb-12 overflow-hidden"
               >
-                <div className="grid grid-cols-1 gap-3 border border-white/[0.06] bg-noir-900/50 p-6 md:grid-cols-2 lg:grid-cols-5">
+                <div className="grid grid-cols-1 gap-4 border border-bone-200 bg-white p-6 md:grid-cols-2 lg:grid-cols-5 shadow-sm">
                   <FilterSelect label="Marque" value={make} onChange={setMake} options={makes} />
                   <FilterSelect label="Année" value={year} onChange={setYear} options={years.map(String)} />
                   <FilterSelect label="Carburant" value={fuelType} onChange={setFuelType} options={fuelTypes} />
@@ -261,7 +266,7 @@ export function PublicVehicles() {
                       placeholder="Prix max (FCFA)"
                       value={priceMax}
                       onChange={(e) => setPriceMax(e.target.value)}
-                      className="w-full border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white placeholder-white/30 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all"
+                      className="w-full border border-bone-200 bg-white px-4 py-3 text-sm font-medium text-noir-950 placeholder-noir-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all shadow-sm"
                     />
                   </div>
                 </div>
@@ -269,7 +274,7 @@ export function PublicVehicles() {
                   <div className="mt-4 flex justify-end">
                     <button
                       onClick={clearFilters}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-gold-400 transition-colors"
+                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-noir-400 hover:text-gold-600 transition-colors"
                     >
                       <X size={12} weight="bold" /> Réinitialiser
                     </button>
@@ -282,7 +287,7 @@ export function PublicVehicles() {
           {/* Grid */}
           <div className="min-h-[400px]">
             {filteredVehicles.length > 0 ? (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                 {filteredVehicles.map((vehicle, i) => (
                   <VehicleCard key={vehicle.id} vehicle={vehicle} index={i} />
                 ))}
@@ -293,16 +298,16 @@ export function PublicVehicles() {
                 animate={{ opacity: 1 }}
                 className="flex flex-col items-center justify-center py-32 text-center"
               >
-                <div className="mb-6 flex h-20 w-20 items-center justify-center border border-white/[0.06] bg-white/[0.02]">
-                  <CarProfile className="h-8 w-8 text-white/15" weight="duotone" />
+                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-sm border border-bone-200">
+                  <CarProfile className="h-8 w-8 text-noir-300" weight="duotone" />
                 </div>
-                <h3 className="font-serif text-2xl italic text-white/60">Aucun résultat</h3>
-                <p className="mt-3 max-w-sm text-sm text-white/30">
+                <h3 className="font-serif text-2xl italic text-noir-950">Aucun résultat</h3>
+                <p className="mt-3 max-w-sm text-sm text-noir-500">
                   Aucun véhicule ne correspond à vos critères. Modifiez vos filtres ou votre recherche.
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="mt-8 border border-white/10 bg-white/5 px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-white/60 transition-all hover:border-gold-400 hover:text-gold-400"
+                  className="mt-8 border border-bone-200 bg-white px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-noir-600 transition-all hover:border-gold-400 hover:text-gold-600 shadow-sm"
                 >
                   Effacer les filtres
                 </button>

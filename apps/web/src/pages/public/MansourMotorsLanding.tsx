@@ -24,7 +24,7 @@ function RevealText({
   className,
   delay = 0,
 }: {
-  children: string
+  children: React.ReactNode
   className?: string
   delay?: number
 }) {
@@ -115,13 +115,14 @@ export function MansourMotorsLanding() {
   const featuredVehicles = vehicles.filter((v) => v.status === 'available').slice(0, 3)
 
   return (
-    <div ref={containerRef} className="relative bg-noir-950 page-grain">
+    <div ref={containerRef} className="relative bg-bone-50">
+      {/* Navbar defaults to dark mode styling since hero is dark */}
       <PublicNavbar />
 
-      {/* Hero Section — Cinematic with Background Image */}
+      {/* Hero Section — Cinematic with Background Image (Dark) */}
       <motion.section
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative flex min-h-screen items-end overflow-hidden pb-24 lg:pb-32"
+        className="relative flex min-h-screen items-end overflow-hidden pb-24 lg:pb-32 dark-grain bg-noir-950"
       >
         {/* Background Image */}
         <motion.div style={{ y: heroY }} className="absolute inset-0 -top-24">
@@ -193,8 +194,8 @@ export function MansourMotorsLanding() {
         </div>
       </motion.section>
 
-      {/* Stats Strip */}
-      <section className="relative border-y border-white/[0.06] bg-noir-900/50">
+      {/* Stats Strip (Light) */}
+      <section className="relative border-y border-bone-200 bg-white page-grain-light">
         <div className="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, index) => (
             <motion.div
@@ -205,18 +206,18 @@ export function MansourMotorsLanding() {
               transition={{ delay: index * 0.08 }}
               className={cn(
                 'flex flex-col items-center justify-center px-6 py-10 text-center lg:py-12',
-                index < stats.length - 1 && 'border-r border-white/[0.06]'
+                index < stats.length - 1 && 'border-r border-bone-200'
               )}
             >
-              <span className="font-serif text-3xl italic text-gold-400 md:text-4xl">{stat.value}</span>
-              <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">{stat.label}</span>
+              <span className="font-serif text-3xl italic text-gold-600 md:text-4xl">{stat.value}</span>
+              <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.15em] text-noir-400">{stat.label}</span>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* Featured Vehicles Section */}
-      <section className="relative px-6 py-24 lg:px-12 lg:py-32">
+      {/* Featured Vehicles Section (Dark) */}
+      <section className="relative px-6 py-24 lg:px-12 lg:py-32 bg-noir-950 dark-grain">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
@@ -266,7 +267,7 @@ export function MansourMotorsLanding() {
                   params={{ vehicleId: vehicle.id }}
                   className="group block"
                 >
-                  <div className="relative overflow-hidden">
+                  <div className="relative overflow-hidden bg-noir-900 border border-white/[0.06] transition-colors hover:border-white/10">
                     <div className="aspect-[4/3] overflow-hidden">
                       <img
                         src={vehicle.image}
@@ -274,8 +275,8 @@ export function MansourMotorsLanding() {
                         className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       />
                     </div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/40 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <div className="absolute inset-0 bg-gradient-to-t from-noir-950 via-noir-950/40 to-transparent pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
                       <h3 className="mb-1 font-serif text-2xl italic text-white">
                         {vehicle.make}{' '}
                         <span className="font-sans font-semibold not-italic text-gold-400">
@@ -285,11 +286,11 @@ export function MansourMotorsLanding() {
                       <p className="mb-3 text-xs font-medium uppercase tracking-wider text-white/50">
                         {vehicle.year} · {vehicle.transmission} · {vehicle.fuelType}
                       </p>
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between border-t border-white/[0.06] pt-4 mt-2">
                         <p className="text-xl font-bold text-gold-400">
                           {formatPrice(vehicle.price)}
                         </p>
-                        <span className="flex h-8 w-8 items-center justify-center bg-white/10 text-white transition-all group-hover:bg-gold-400 group-hover:text-noir-950">
+                        <span className="flex h-8 w-8 items-center justify-center bg-white/5 text-white/40 transition-all group-hover:bg-gold-400 group-hover:text-noir-950">
                           <ArrowUpRight className="h-4 w-4" weight="bold" />
                         </span>
                       </div>
@@ -302,16 +303,16 @@ export function MansourMotorsLanding() {
         </div>
       </section>
 
-      {/* Services Section */}
-      <section id="services" className="relative bg-noir-900 px-6 py-24 lg:px-12 lg:py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gold-400/[0.03] via-transparent to-transparent" />
+      {/* Services Section (Light) */}
+      <section id="services" className="relative bg-bone-50 px-6 py-24 lg:px-12 lg:py-32 page-grain-light">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gold-600/[0.03] via-transparent to-transparent" />
         <div className="relative mx-auto max-w-7xl">
           <div className="mb-16">
             <motion.span
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              className="mb-3 block text-[10px] font-bold uppercase tracking-[0.2em] text-gold-400"
+              className="mb-3 block text-[10px] font-bold uppercase tracking-[0.2em] text-gold-600"
             >
               Ce que nous offrons
             </motion.span>
@@ -319,13 +320,13 @@ export function MansourMotorsLanding() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="max-w-lg font-serif text-4xl italic text-white md:text-5xl"
+              className="max-w-lg font-serif text-4xl italic text-noir-950 md:text-5xl"
             >
-              Nos <span className="text-gold-400 not-italic font-sans font-extrabold uppercase text-[0.75em] tracking-tight">Services</span>
+              Nos <span className="text-gold-600 not-italic font-sans font-extrabold uppercase text-[0.75em] tracking-tight">Services</span>
             </motion.h2>
           </div>
 
-          <div className="grid gap-px overflow-hidden border border-white/[0.06] bg-white/[0.06] md:grid-cols-2">
+          <div className="grid gap-px overflow-hidden border border-bone-200 bg-bone-200 md:grid-cols-2">
             {services.map((service, index) => (
               <motion.div
                 key={service.title}
@@ -333,14 +334,14 @@ export function MansourMotorsLanding() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08 }}
-                className="group relative bg-noir-900 p-8 transition-colors hover:bg-noir-800/50 lg:p-12"
+                className="group relative bg-white p-8 transition-colors hover:bg-bone-50 lg:p-12"
               >
                 <div className="mb-8 flex items-center justify-between">
-                  <service.icon className="h-10 w-10 text-gold-400 transition-transform duration-300 group-hover:scale-110" weight="duotone" />
-                  <span className="font-serif text-2xl italic text-white/10 group-hover:text-white/20 transition-colors">{service.stat}</span>
+                  <service.icon className="h-10 w-10 text-gold-600 transition-transform duration-300 group-hover:scale-110" weight="duotone" />
+                  <span className="font-serif text-2xl italic text-noir-200 group-hover:text-gold-200 transition-colors">{service.stat}</span>
                 </div>
-                <h3 className="mb-3 text-lg font-bold text-white">{service.title}</h3>
-                <p className="text-sm leading-relaxed text-white/50">{service.description}</p>
+                <h3 className="mb-3 text-lg font-bold text-noir-950">{service.title}</h3>
+                <p className="text-sm leading-relaxed text-noir-500">{service.description}</p>
                 <div className="mt-6 h-px w-0 bg-gold-400 transition-all duration-500 group-hover:w-12" />
               </motion.div>
             ))}
@@ -348,8 +349,8 @@ export function MansourMotorsLanding() {
         </div>
       </section>
 
-      {/* Contact/Showroom Section */}
-      <section id="contact" className="relative px-6 py-24 lg:px-12 lg:py-32">
+      {/* Contact/Showroom Section (Light) */}
+      <section id="contact" className="relative px-6 py-24 lg:px-12 lg:py-32 bg-white page-grain-light border-t border-bone-200">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-12 lg:grid-cols-2">
             <motion.div
@@ -357,13 +358,13 @@ export function MansourMotorsLanding() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <span className="mb-3 block text-[10px] font-bold uppercase tracking-[0.2em] text-gold-400">
+              <span className="mb-3 block text-[10px] font-bold uppercase tracking-[0.2em] text-gold-600">
                 Rendez-nous visite
               </span>
-              <h2 className="mb-6 font-serif text-4xl italic text-white md:text-5xl">
-                Notre <span className="text-gold-400 not-italic font-sans font-extrabold uppercase text-[0.75em] tracking-tight">Showroom</span>
+              <h2 className="mb-6 font-serif text-4xl italic text-noir-950 md:text-5xl">
+                Notre <span className="text-gold-600 not-italic font-sans font-extrabold uppercase text-[0.75em] tracking-tight">Showroom</span>
               </h2>
-              <p className="mb-10 text-base leading-relaxed text-white/50">
+              <p className="mb-10 text-base leading-relaxed text-noir-600">
                 Notre équipe d'experts est à votre disposition pour vous accompagner dans le
                 choix du véhicule parfait. Venez découvrir notre showroom et profitez d'un
                 service personnalisé.
@@ -371,46 +372,46 @@ export function MansourMotorsLanding() {
 
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div className="flex items-start gap-4 group">
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-white/5 text-gold-400 transition-colors group-hover:bg-gold-400 group-hover:text-noir-950">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-bone-100 text-gold-600 transition-colors group-hover:bg-gold-600 group-hover:text-white">
                     <MapPin weight="fill" size={18} />
                   </div>
                   <div>
-                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-white/70">Adresse</h4>
-                    <p className="text-sm text-white/40">
+                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-noir-900">Adresse</h4>
+                    <p className="text-sm text-noir-500">
                       Avenue Cheikh Anta Diop<br />Dakar, Sénégal
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4 group">
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-white/5 text-gold-400 transition-colors group-hover:bg-gold-400 group-hover:text-noir-950">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-bone-100 text-gold-600 transition-colors group-hover:bg-gold-600 group-hover:text-white">
                     <Clock weight="fill" size={18} />
                   </div>
                   <div>
-                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-white/70">Horaires</h4>
-                    <p className="text-sm text-white/40">
+                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-noir-900">Horaires</h4>
+                    <p className="text-sm text-noir-500">
                       Lun–Ven: 8h–18h<br />Sam: 9h–17h
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4 group">
-                  <a href="tel:+221331234567" className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-white/5 text-gold-400 transition-colors group-hover:bg-gold-400 group-hover:text-noir-950">
+                  <a href="tel:+221331234567" className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-bone-100 text-gold-600 transition-colors group-hover:bg-gold-600 group-hover:text-white">
                     <Phone weight="fill" size={18} />
                   </a>
                   <div>
-                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-white/70">Téléphone</h4>
-                    <a href="tel:+221331234567" className="text-sm text-white/40 hover:text-gold-400 transition-colors">+221 33 123 45 67</a>
+                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-noir-900">Téléphone</h4>
+                    <a href="tel:+221331234567" className="text-sm text-noir-500 hover:text-gold-600 transition-colors">+221 33 123 45 67</a>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4 group">
-                  <a href="mailto:motors@mansour.sn" className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-white/5 text-gold-400 transition-colors group-hover:bg-gold-400 group-hover:text-noir-950">
+                  <a href="mailto:motors@mansour.sn" className="flex h-10 w-10 flex-shrink-0 items-center justify-center bg-bone-100 text-gold-600 transition-colors group-hover:bg-gold-600 group-hover:text-white">
                     <Envelope weight="fill" size={18} />
                   </a>
                   <div>
-                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-white/70">Email</h4>
-                    <a href="mailto:motors@mansour.sn" className="text-sm text-white/40 hover:text-gold-400 transition-colors">motors@mansour.sn</a>
+                    <h4 className="mb-1 text-xs font-bold uppercase tracking-wider text-noir-900">Email</h4>
+                    <a href="mailto:motors@mansour.sn" className="text-sm text-noir-500 hover:text-gold-600 transition-colors">motors@mansour.sn</a>
                   </div>
                 </div>
               </div>
@@ -420,7 +421,7 @@ export function MansourMotorsLanding() {
               initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="relative overflow-hidden"
+              className="relative overflow-hidden bg-bone-100"
             >
               <div className="aspect-[4/3] overflow-hidden">
                 <img
@@ -429,7 +430,6 @@ export function MansourMotorsLanding() {
                   className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                 />
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-noir-950/30 to-transparent pointer-events-none" />
             </motion.div>
           </div>
         </div>
