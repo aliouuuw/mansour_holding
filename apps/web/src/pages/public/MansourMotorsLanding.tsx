@@ -17,6 +17,7 @@ import { PublicNavbar } from '@/components/public/PublicNavbar'
 import { PublicFooter } from '@/components/public/PublicFooter'
 import { vehicles } from '@/data/mock'
 import { formatPrice, cn } from '@/lib/utils'
+import { scrollToTopOnMount } from '@/lib/scroll'
 
 function RevealText({
   children,
@@ -92,7 +93,7 @@ export function MansourMotorsLanding() {
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100])
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    scrollToTopOnMount(50)
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -121,7 +122,7 @@ export function MansourMotorsLanding() {
       {/* Hero Section — Cinematic with Background Video */}
       <motion.section
         style={{ opacity: heroOpacity, scale: heroScale }}
-        className="relative flex min-h-screen items-end overflow-hidden pb-24 lg:pb-32"
+        className="relative h-screen w-full overflow-hidden"
       >
         {/* Background Video */}
         <motion.div style={{ y: heroY }} className="absolute inset-0 -top-24">
@@ -138,8 +139,8 @@ export function MansourMotorsLanding() {
           <div className="absolute inset-0 bg-noir-950/30" />
         </motion.div>
 
-        <div className="relative z-10 w-full px-6 lg:px-12">
-          <div className="mx-auto max-w-7xl">
+        <div className="relative z-10 flex h-screen flex-col justify-between px-6 pb-12 pt-32 lg:px-12">
+          <div className="max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -147,26 +148,24 @@ export function MansourMotorsLanding() {
               className="mb-8 flex items-center gap-4"
             >
               <span className="h-px w-16 bg-gradient-to-r from-gold-400 to-transparent" />
-              <span className="text-xs font-black uppercase tracking-[0.3em] text-transparent bg-clip-text bg-gradient-to-r from-gold-300 to-gold-500 drop-shadow-sm">
+              <span className="text-xs font-black uppercase tracking-[0.3em] text-gold-400">
                 Mansour Motors — Dakar
               </span>
             </motion.div>
 
-            <h1 className="mb-10 max-w-5xl font-sans text-[4rem] font-black uppercase leading-[0.85] tracking-[-0.03em] text-white md:text-[6rem] lg:text-[8rem] drop-shadow-2xl">
-              <RevealText delay={0.3} className="text-white">L'Excellence</RevealText>
-              <br />
-              <RevealText delay={0.4} className="bg-gradient-to-br from-white via-white to-white/70 bg-clip-text text-transparent">Automobile</RevealText>
-              <br />
-              <span className="font-serif italic text-gold-400 normal-case text-[0.75em] tracking-normal">
-                <RevealText delay={0.5}>à Dakar</RevealText>
-              </span>
+            <h1 className="max-w-5xl font-sans text-[2.5rem] font-black uppercase leading-[0.88] tracking-[-0.03em] text-white sm:text-[3.5rem] md:text-[5.8rem] lg:text-[8rem] pb-4">
+              <RevealText delay={0.1} className="block text-white">L'Excellence</RevealText>
+              <RevealText delay={0.2} className="block">Automobile</RevealText>
+              <RevealText delay={0.3} className="block font-serif italic lowercase text-gold-400 normal-case text-[0.85em]">
+                à Dakar
+              </RevealText>
             </h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="mb-12 max-w-2xl text-lg font-light leading-relaxed text-white/80 md:text-xl drop-shadow-md"
+              transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="mb-8 max-w-2xl text-lg font-light leading-relaxed text-white/80 md:text-xl"
             >
               Concessionnaire automobile premium offrant une sélection exclusive de véhicules
               neufs et d'occasion certifiés, accompagnée de services de financement et
@@ -176,25 +175,23 @@ export function MansourMotorsLanding() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 1, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col gap-5 sm:flex-row"
             >
               <Link
                 to="/mansour-motors/vehicules"
-                className="group relative inline-flex items-center justify-center gap-3 overflow-hidden bg-gold-400 px-8 py-4.5 text-[13px] font-black uppercase tracking-[0.2em] text-noir-950 transition-all duration-500 hover:scale-105 hover:bg-gold-300 hover:shadow-[0_0_40px_rgba(207,181,59,0.4)]"
+                className="group relative inline-flex items-center justify-center gap-3 overflow-hidden bg-gold-400 px-8 py-4 text-[13px] font-black uppercase tracking-[0.2em] text-noir-950 transition-all hover:bg-gold-300 hover:shadow-lg hover:shadow-gold-400/20"
               >
                 <span className="relative z-10 flex items-center gap-3">
                   Voir le Catalogue
-                  <ArrowRight01Icon className="h-4 w-4 transition-transform duration-500 ease-out group-hover:translate-x-2" />
+                  <ArrowRight01Icon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </span>
-                <div className="absolute inset-0 z-0 bg-gradient-to-r from-transparent via-white/30 to-transparent translate-x-[-100%] transition-transform duration-700 ease-out group-hover:translate-x-[100%]" />
               </Link>
               <a
                 href="#contact"
-                className="group relative inline-flex items-center justify-center gap-3 border border-white/20 bg-white/5 px-8 py-4.5 text-[13px] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-md transition-all duration-500 hover:border-white/50 hover:bg-white/10 hover:scale-105"
+                className="group inline-flex items-center justify-center gap-3 border border-white/20 bg-white/5 px-8 py-4 text-[13px] font-bold uppercase tracking-[0.2em] text-white backdrop-blur-sm transition-all hover:border-white/50 hover:bg-white/10"
               >
                 Nous Contacter
-                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-white/0 via-white/5 to-white/0 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
               </a>
             </motion.div>
           </div>

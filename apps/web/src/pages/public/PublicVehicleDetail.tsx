@@ -21,13 +21,14 @@ import { formatPrice, formatNumber } from '@/lib/utils'
 import { PublicNavbar } from '@/components/public/PublicNavbar'
 import { PublicFooter } from '@/components/public/PublicFooter'
 import { motion } from 'framer-motion'
+import { scrollToTopOnMount } from '@/lib/scroll'
 
 export function PublicVehicleDetail() {
   const { vehicleId } = useParams({ strict: false })
   const vehicle = vehicles.find((v) => v.id === vehicleId)
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    scrollToTopOnMount(50)
   }, [vehicleId])
 
   if (!vehicle) {
@@ -147,9 +148,9 @@ export function PublicVehicleDetail() {
                       <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center bg-gold-50 text-gold-600 transition-all duration-300 group-hover:bg-gold-400 group-hover:text-noir-950 group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-md">
                         <spec.icon className="h-4 w-4" />
                       </div>
-                      <div className="transition-transform duration-300 group-hover:translate-x-1">
+                      <div className="min-w-0 transition-transform duration-300 group-hover:translate-x-1">
                         <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-noir-400 mb-1 transition-colors duration-300 group-hover:text-gold-600">{spec.label}</p>
-                        <p className="text-sm font-medium text-noir-950">{spec.value}</p>
+                        <p className="text-sm font-medium text-noir-950 break-all">{spec.value}</p>
                       </div>
                     </motion.div>
                   ))}

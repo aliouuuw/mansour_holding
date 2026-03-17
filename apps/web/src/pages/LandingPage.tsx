@@ -21,6 +21,7 @@ import Lenis from 'lenis'
 import { PublicNavbar } from '@/components/public/PublicNavbar'
 import { PublicFooter } from '@/components/public/PublicFooter'
 import { cn } from '@/lib/utils'
+import { scrollToTopOnMount } from '@/lib/scroll'
 
 // --- Utility Components ---
 
@@ -220,7 +221,7 @@ function Hero() {
             </span>
           </motion.div>
 
-          <h1 className="max-w-5xl font-sans text-[3.5rem] font-extrabold uppercase leading-[0.88] tracking-[-0.03em] text-white md:text-[5.8rem] lg:text-[8rem] pb-4">
+          <h1 className="max-w-5xl font-sans text-[2.5rem] font-extrabold uppercase leading-[0.88] tracking-[-0.03em] text-white sm:text-[3.5rem] md:text-[5.8rem] lg:text-[8rem] pb-4">
             <RevealText delay={0.1} className="block font-serif italic lowercase text-silver-200 normal-case text-[0.85em]">
               L'Autorité
             </RevealText>
@@ -417,7 +418,7 @@ function About() {
 
 export function LandingPage() {
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    scrollToTopOnMount(50)
   }, [])
 
   useEffect(() => {

@@ -14,6 +14,7 @@ import {
 } from 'hugeicons-react'
 import { vehicles } from '@/data/mock'
 import { formatPrice, cn } from '@/lib/utils'
+import { scrollToTopOnMount } from '@/lib/scroll'
 import { PublicNavbar } from '@/components/public/PublicNavbar'
 import { PublicFooter } from '@/components/public/PublicFooter'
 
@@ -130,7 +131,7 @@ export function PublicVehicles() {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false)
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    scrollToTopOnMount(50)
   }, [])
 
   // Filters state
