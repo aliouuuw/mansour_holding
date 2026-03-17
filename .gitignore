@@ -1,5 +1,6 @@
 node_modules
 .windsurf
+.agents
 AGENTS.md
 README_RW.md
 .env
