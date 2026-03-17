@@ -8,15 +8,15 @@ import {
   useMotionValue,
 } from 'framer-motion'
 import {
-  ArrowUpRight,
-  CarProfile,
-  HardHat,
-  House,
-  Key,
-  Scissors,
-  Sparkle,
-  CaretRight,
-} from '@phosphor-icons/react'
+  ArrowUpRight01Icon,
+  Car01Icon,
+  ConstructionIcon,
+  Home01Icon,
+  Key01Icon,
+  Scissors01Icon,
+  SparklesIcon,
+  ArrowRight02Icon,
+} from 'hugeicons-react'
 import Lenis from 'lenis'
 import { PublicNavbar } from '@/components/public/PublicNavbar'
 import { PublicFooter } from '@/components/public/PublicFooter'
@@ -116,7 +116,7 @@ const businesses = [
     description: 'Concessionnaire automobile premium',
     longDescription:
       'Une sélection exclusive de véhicules neufs et d’occasion certifiés pour une clientèle exigeante.',
-    icon: CarProfile,
+    icon: Car01Icon,
     image:
       'https://images.unsplash.com/photo-1563720360172-67b8f3dce741?q=80&w=2070&auto=format&fit=crop',
     colSpan: 'md:col-span-2 lg:col-span-2',
@@ -129,7 +129,7 @@ const businesses = [
     description: 'Biens d’exception',
     longDescription:
       'Découvrez des résidences et espaces commerciaux situés dans les quartiers les plus prisés.',
-    icon: House,
+    icon: Home01Icon,
     image:
       'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2053&auto=format&fit=crop',
     colSpan: 'md:col-span-1 lg:col-span-1',
@@ -140,7 +140,7 @@ const businesses = [
     name: 'Mansour Location',
     description: 'Mobilité sans contraintes',
     longDescription: 'Location courte et longue durée de véhicules de prestige.',
-    icon: Key,
+    icon: Key01Icon,
     image:
       'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop',
     colSpan: 'md:col-span-1 lg:col-span-1',
@@ -151,7 +151,7 @@ const businesses = [
     name: 'Mansour Construction',
     description: 'Bâtir l’avenir',
     longDescription: 'Grands projets résidentiels et commerciaux.',
-    icon: HardHat,
+    icon: ConstructionIcon,
     image:
       'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2070&auto=format&fit=crop',
     colSpan: 'md:col-span-2 lg:col-span-2',
@@ -162,7 +162,7 @@ const businesses = [
     name: 'Mansour Grooming',
     description: 'Soins pour hommes',
     longDescription: 'L’art du soin au masculin.',
-    icon: Scissors,
+    icon: Scissors01Icon,
     image:
       'https://images.unsplash.com/photo-1621607512214-68297480165e?q=80&w=2070&auto=format&fit=crop',
     colSpan: 'md:col-span-2 lg:col-span-2',
@@ -173,7 +173,7 @@ const businesses = [
     name: 'Mansour Parfums',
     description: 'Fragrances rares',
     longDescription: 'Une collection olfactive unique.',
-    icon: Sparkle,
+    icon: SparklesIcon,
     image:
       'https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=2080&auto=format&fit=crop',
     colSpan: 'md:col-span-2 lg:col-span-1',
@@ -329,11 +329,11 @@ function Portfolio() {
 
               <div className="relative z-10 flex justify-between pointer-events-none">
                 <div className="rounded-full bg-white/10 p-2 backdrop-blur-md transition-transform duration-500 group-hover:scale-110">
-                  <biz.icon className="h-5 w-5 text-gold-400" weight="fill" />
+                  <biz.icon className="h-5 w-5 text-gold-400" />
                 </div>
                 {biz.ready ? (
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-noir-950 transition-all duration-500 group-hover:rotate-45 group-hover:bg-gold-400 group-hover:shadow-[0_0_15px_rgba(207,181,59,0.5)]">
-                    <ArrowUpRight className="h-4 w-4" weight="bold" />
+                    <ArrowUpRight01Icon className="h-4 w-4" />
                   </div>
                 ) : (
                   <span className="rounded-full bg-noir-900/50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-silver-400 backdrop-blur-md">
@@ -352,7 +352,7 @@ function Portfolio() {
                     <p className="text-sm text-silver-400">{biz.longDescription}</p>
                     {biz.ready && (
                       <div className="mt-4 inline-flex items-center gap-2 border-b border-gold-400 pb-1 text-xs font-bold uppercase tracking-widest text-gold-400 transition-colors group-hover:text-gold-300">
-                        Explorer <CaretRight className="transition-transform group-hover:translate-x-1" weight="bold" />
+                        Explorer <ArrowRight02Icon className="transition-transform group-hover:translate-x-1" />
                       </div>
                     )}
                   </div>
