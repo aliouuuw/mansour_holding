@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import { Link } from '@tanstack/react-router'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import {
@@ -12,12 +12,10 @@ import {
   Mail01Icon,
   ArrowUpRight01Icon,
 } from 'hugeicons-react'
-import Lenis from 'lenis'
 import { PublicNavbar } from '@/components/public/PublicNavbar'
 import { PublicFooter } from '@/components/public/PublicFooter'
 import { vehicles } from '@/data/mock'
 import { formatPrice, cn } from '@/lib/utils'
-import { scrollToTopOnMount } from '@/lib/scroll'
 
 function RevealText({
   children,
@@ -92,26 +90,6 @@ export function MansourMotorsLanding() {
   const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95])
   const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100])
 
-  useEffect(() => {
-    scrollToTopOnMount(50)
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      smoothWheel: true,
-    })
-
-    function raf(time: number) {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
-    }
-
-    requestAnimationFrame(raf)
-
-    return () => {
-      lenis.destroy()
-    }
-  }, [])
 
   const featuredVehicles = vehicles.filter((v) => v.status === 'available').slice(0, 3)
 

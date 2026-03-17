@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import { Link } from '@tanstack/react-router'
 import {
   motion,
@@ -17,11 +17,9 @@ import {
   SparklesIcon,
   ArrowRight02Icon,
 } from 'hugeicons-react'
-import Lenis from 'lenis'
 import { PublicNavbar } from '@/components/public/PublicNavbar'
 import { PublicFooter } from '@/components/public/PublicFooter'
 import { cn } from '@/lib/utils'
-import { scrollToTopOnMount } from '@/lib/scroll'
 
 // --- Utility Components ---
 
@@ -417,25 +415,6 @@ function About() {
 
 
 export function LandingPage() {
-  useEffect(() => {
-    scrollToTopOnMount(50)
-  }, [])
-
-  useEffect(() => {
-    const lenis = new Lenis()
-
-    function raf(time: number) {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
-    }
-
-    requestAnimationFrame(raf)
-
-    return () => {
-      lenis.destroy()
-    }
-  }, [])
-
   return (
     <div className="min-h-screen bg-surface-dim font-sans selection:bg-gold-400 selection:text-noir-950 page-grain">
       <PublicNavbar />

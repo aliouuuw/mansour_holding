@@ -3,7 +3,10 @@ import {
   createRootRoute,
   createRoute,
   Outlet,
+  useRouterState,
 } from '@tanstack/react-router'
+import { useEffect, useRef } from 'react'
+import Lenis from 'lenis'
 import { LandingPage } from '@/pages/LandingPage'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { DashboardHome } from '@/pages/dashboard/DashboardHome'
@@ -18,8 +21,48 @@ import { PublicVehicles } from '@/pages/public/PublicVehicles'
 import { PublicVehicleDetail } from '@/pages/public/PublicVehicleDetail'
 import { MansourMotorsLanding } from '@/pages/public/MansourMotorsLanding'
 
+function RootComponent() {
+  const lenisRef = useRef<Lenis | null>(null)
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
+
+  // Initialize Lenis once globally
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    })
+    lenisRef.current = lenis
+
+    function raf(time: number) {
+      lenis.raf(time)
+      requestAnimationFrame(raf)
+    }
+    const rafId = requestAnimationFrame(raf)
+
+    return () => {
+      cancelAnimationFrame(rafId)
+      lenis.destroy()
+      lenisRef.current = null
+    }
+  }, [])
+
+  // Scroll to top on every route change
+  useEffect(() => {
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(0, { immediate: true })
+    } else {
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+    }
+  }, [pathname])
+
+  return <Outlet />
+}
+
 const rootRoute = createRootRoute({
-  component: () => <Outlet />,
+  component: RootComponent,
 })
 
 const landingRoute = createRoute({
@@ -134,7 +177,7 @@ const routeTree = rootRoute.addChildren([
 export const router = createRouter({ 
   routeTree,
   defaultPreload: 'intent',
-  scrollRestoration: true,
+  scrollRestoration: false,
 })
 
 declare module '@tanstack/react-router' {

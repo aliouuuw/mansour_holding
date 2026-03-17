@@ -15,21 +15,15 @@ import {
   ArrowRight02Icon,
   Car01Icon,
 } from 'hugeicons-react'
-import { useEffect } from 'react'
 import { vehicles } from '@/data/mock'
 import { formatPrice, formatNumber } from '@/lib/utils'
 import { PublicNavbar } from '@/components/public/PublicNavbar'
 import { PublicFooter } from '@/components/public/PublicFooter'
 import { motion } from 'framer-motion'
-import { scrollToTopOnMount } from '@/lib/scroll'
 
 export function PublicVehicleDetail() {
   const { vehicleId } = useParams({ strict: false })
   const vehicle = vehicles.find((v) => v.id === vehicleId)
-
-  useEffect(() => {
-    scrollToTopOnMount(50)
-  }, [vehicleId])
 
   if (!vehicle) {
     return (

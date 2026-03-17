@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { Link } from '@tanstack/react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -14,7 +14,6 @@ import {
 } from 'hugeicons-react'
 import { vehicles } from '@/data/mock'
 import { formatPrice, cn } from '@/lib/utils'
-import { scrollToTopOnMount } from '@/lib/scroll'
 import { PublicNavbar } from '@/components/public/PublicNavbar'
 import { PublicFooter } from '@/components/public/PublicFooter'
 
@@ -129,10 +128,6 @@ function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: n
 export function PublicVehicles() {
   const [search, setSearch] = useState('')
   const [isFiltersOpen, setIsFiltersOpen] = useState(false)
-
-  useEffect(() => {
-    scrollToTopOnMount(50)
-  }, [])
 
   // Filters state
   const [make, setMake] = useState('')
