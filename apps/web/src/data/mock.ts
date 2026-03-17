@@ -58,7 +58,7 @@ export const vehicles: Vehicle[] = [
     color: 'Blanc Perle',
     vin: 'JTMAB3FV5RD123456',
     description: 'Land Cruiser 300 GR Sport, full options, cuir, toit ouvrant, caméra 360°',
-    image: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800&h=600&fit=crop',
+    image: 'https://www.stuttcars.com/wp-content/uploads/2016/04/2013_Porsche_Panamera4S-1-1024.jpg',
   },
   {
     id: 'v2',
@@ -88,7 +88,7 @@ export const vehicles: Vehicle[] = [
     color: 'Gris Minéral',
     vin: '5UXCR6C05P9B34567',
     description: 'X7 Excellence, 6 places, toit panoramique Sky Lounge, Bowers & Wilkins Diamond',
-    image: 'https://images.unsplash.com/photo-1655196601602-054593845c46?w=800&h=600&fit=crop',
+    image: 'https://hips.hearstapps.com/hmg-prod/images/2023-bmw-x7-xdrive-40i134-641c5b3ca7165.jpg?crop=0.699xw:0.589xh;0.239xw,0.310xh&resize=1200:*',
   },
   {
     id: 'v4',
@@ -133,7 +133,7 @@ export const vehicles: Vehicle[] = [
     color: 'Blanc Perle',
     vin: 'JTJBM7FX5R5678901',
     description: 'Land Cruiser 300 ZX, full options, caméra 360°, suspension KDSS, cuir semi-aniline',
-    image: 'https://images.unsplash.com/photo-1629897048514-3dd74151aeaf?w=800&h=600&fit=crop',
+    image: 'https://www.toyotanews.eu/hu/grafika-artykulu/2044-item-.jpg?featured=1&rsize=com_rrrcontent.articleimage&filename=article_2963_2963_oDtYX9vV.jpg',
   },
   {
     id: 'v7',
@@ -149,21 +149,6 @@ export const vehicles: Vehicle[] = [
     vin: 'KM8J3CAL5PU789012',
     description: 'A8 L 60 TFSI quattro, exécutif avec relaxation pack, Bang & Olufsen 3D Advanced',
     image: 'https://images.unsplash.com/photo-1603584173870-7f23fdae1b7a?w=800&h=600&fit=crop',
-  },
-  {
-    id: 'v8',
-    make: 'Porsche',
-    model: 'Panamera 4S',
-    year: 2024,
-    mileage: 3500,
-    price: 55000000,
-    status: 'available',
-    fuelType: 'Essence',
-    transmission: 'PDK',
-    color: 'Gris Quartzite',
-    vin: 'WP0AE2A79PL123456',
-    description: 'Panamera 4S Executive, allongé, sièges arrière à réglage électrique, PDLS Plus',
-    image: 'https://images.unsplash.com/photo-1503376763036-066120622c74?w=800&h=600&fit=crop',
   },
 ]
 
