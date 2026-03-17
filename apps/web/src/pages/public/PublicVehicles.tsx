@@ -2,16 +2,16 @@ import { useState, useMemo, useEffect } from 'react'
 import { Link } from '@tanstack/react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  MagnifyingGlass,
-  Faders,
-  CaretDown,
-  CalendarBlank,
-  GasPump,
-  SteeringWheel,
-  ArrowUpRight,
-  X,
-  CarProfile,
-} from '@phosphor-icons/react'
+  Search01Icon,
+  FilterIcon,
+  ArrowDown01Icon,
+  Calendar01Icon,
+  Fuel01Icon,
+  SteeringIcon,
+  ArrowUpRight01Icon,
+  Cancel01Icon,
+  Car01Icon,
+} from 'hugeicons-react'
 import { vehicles } from '@/data/mock'
 import { formatPrice, cn } from '@/lib/utils'
 import { PublicNavbar } from '@/components/public/PublicNavbar'
@@ -44,10 +44,8 @@ function FilterSelect({
           </option>
         ))}
       </select>
-      <CaretDown
-        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gold-600/60"
-        weight="bold"
-        size={14}
+      <ArrowDown01Icon
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gold-600/60 h-3.5 w-3.5"
       />
     </div>
   )
@@ -97,13 +95,13 @@ function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: n
               </h3>
               <div className="mt-2.5 flex flex-wrap gap-4 text-[10px] font-semibold uppercase tracking-[0.12em] text-noir-400">
                 <span className="flex items-center gap-1.5 transition-colors group-hover:text-noir-600">
-                  <CalendarBlank className="text-gold-600/50 transition-colors group-hover:text-gold-600" weight="fill" size={12} /> {vehicle.year}
+                  <Calendar01Icon className="text-gold-600/50 transition-colors group-hover:text-gold-600 h-3 w-3" /> {vehicle.year}
                 </span>
                 <span className="flex items-center gap-1.5 transition-colors group-hover:text-noir-600">
-                  <GasPump className="text-gold-600/50 transition-colors group-hover:text-gold-600" weight="fill" size={12} /> {vehicle.fuelType}
+                  <Fuel01Icon className="text-gold-600/50 transition-colors group-hover:text-gold-600 h-3 w-3" /> {vehicle.fuelType}
                 </span>
                 <span className="flex items-center gap-1.5 transition-colors group-hover:text-noir-600">
-                  <SteeringWheel className="text-gold-600/50 transition-colors group-hover:text-gold-600" weight="fill" size={12} /> {vehicle.transmission}
+                  <SteeringIcon className="text-gold-600/50 transition-colors group-hover:text-gold-600 h-3 w-3" /> {vehicle.transmission}
                 </span>
               </div>
             </div>
@@ -117,7 +115,7 @@ function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: n
                 {formatPrice(vehicle.price)}
               </span>
               <span className="flex h-8 w-8 items-center justify-center bg-gold-50 text-gold-600 transition-all duration-500 group-hover:bg-gold-400 group-hover:text-noir-950 group-hover:rotate-45 group-hover:shadow-[0_0_10px_rgba(207,181,59,0.4)]">
-                <ArrowUpRight className="h-4 w-4" weight="bold" />
+                <ArrowUpRight01Icon className="h-4 w-4" />
               </span>
             </div>
           </div>
@@ -215,7 +213,7 @@ export function PublicVehicles() {
           {/* Controls */}
           <div className="mb-10 flex flex-col gap-4 border-b border-noir-100 pb-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full max-w-md">
-              <MagnifyingGlass className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-noir-400" />
+              <Search01Icon className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-noir-400" />
               <input
                 type="text"
                 placeholder="Rechercher une marque, un modèle..."
@@ -238,7 +236,7 @@ export function PublicVehicles() {
                     : 'border-noir-200 bg-white text-noir-600 hover:border-gold-300 hover:text-noir-950 hover:bg-gold-50'
                 )}
               >
-                <Faders size={14} weight="bold" />
+                <FilterIcon className="h-3.5 w-3.5" />
                 Filtres {activeFiltersCount > 0 && `(${activeFiltersCount})`}
               </button>
             </div>
@@ -275,7 +273,7 @@ export function PublicVehicles() {
                       onClick={clearFilters}
                       className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-noir-400 hover:text-gold-600 transition-colors"
                     >
-                      <X size={12} weight="bold" /> Réinitialiser
+                      <Cancel01Icon className="h-3 w-3" /> Réinitialiser
                     </button>
                   </div>
                 )}
@@ -298,7 +296,7 @@ export function PublicVehicles() {
                 className="flex flex-col items-center justify-center py-32 text-center"
               >
                 <div className="mb-6 flex h-20 w-20 items-center justify-center border border-noir-100 bg-white">
-                  <CarProfile className="h-8 w-8 text-noir-200" weight="duotone" />
+                  <Car01Icon className="h-8 w-8 text-noir-200" />
                 </div>
                 <h3 className="font-serif text-2xl italic text-noir-950">Aucun résultat</h3>
                 <p className="mt-3 max-w-sm text-sm text-noir-500">

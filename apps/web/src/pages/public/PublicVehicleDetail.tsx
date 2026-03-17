@@ -1,20 +1,20 @@
 import { Link, useParams } from '@tanstack/react-router'
 import {
-  ArrowLeft,
-  ArrowRight,
-  ArrowUpRight,
-  CalendarBlank,
-  GasPump,
-  Gauge,
-  Palette,
-  Hash,
-  SteeringWheel,
-  Phone,
-  Envelope,
-  WhatsappLogo,
-  CaretRight,
-  CarProfile,
-} from '@phosphor-icons/react'
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  ArrowUpRight01Icon,
+  Calendar01Icon,
+  Fuel01Icon,
+  DashboardSpeed01Icon,
+  PaintBoardIcon,
+  HashtagIcon,
+  SteeringIcon,
+  TelephoneIcon,
+  Mail01Icon,
+  WhatsappIcon,
+  ArrowRight02Icon,
+  Car01Icon,
+} from 'hugeicons-react'
 import { useEffect } from 'react'
 import { vehicles } from '@/data/mock'
 import { formatPrice, formatNumber } from '@/lib/utils'
@@ -36,7 +36,7 @@ export function PublicVehicleDetail() {
         <PublicNavbar />
         <div className="flex flex-1 flex-col items-center justify-center gap-4">
           <div className="flex h-20 w-20 items-center justify-center border border-noir-100 bg-white">
-            <CarProfile className="h-8 w-8 text-noir-200" weight="duotone" />
+            <Car01Icon className="h-8 w-8 text-noir-200" />
           </div>
           <p className="font-serif text-2xl italic text-noir-950">Véhicule non trouvé</p>
           <Link
@@ -52,12 +52,12 @@ export function PublicVehicleDetail() {
   }
 
   const specs = [
-    { label: 'Année', value: vehicle.year.toString(), icon: CalendarBlank },
-    { label: 'Kilométrage', value: `${formatNumber(vehicle.mileage)} km`, icon: Gauge },
-    { label: 'Carburant', value: vehicle.fuelType, icon: GasPump },
-    { label: 'Transmission', value: vehicle.transmission, icon: SteeringWheel },
-    { label: 'Couleur', value: vehicle.color, icon: Palette },
-    { label: 'VIN', value: vehicle.vin, icon: Hash },
+    { label: 'Année', value: vehicle.year.toString(), icon: Calendar01Icon },
+    { label: 'Kilométrage', value: `${formatNumber(vehicle.mileage)} km`, icon: DashboardSpeed01Icon },
+    { label: 'Carburant', value: vehicle.fuelType, icon: Fuel01Icon },
+    { label: 'Transmission', value: vehicle.transmission, icon: SteeringIcon },
+    { label: 'Couleur', value: vehicle.color, icon: PaintBoardIcon },
+    { label: 'VIN', value: vehicle.vin, icon: HashtagIcon },
   ]
 
   return (
@@ -71,11 +71,11 @@ export function PublicVehicleDetail() {
             <Link to="/mansour-motors" className="text-noir-400 hover:text-gold-600 transition-colors">
               Motors
             </Link>
-            <CaretRight className="h-3 w-3 text-noir-300" weight="bold" />
+            <ArrowRight02Icon className="h-3 w-3 text-noir-300" />
             <Link to="/mansour-motors/vehicules" className="text-noir-400 hover:text-gold-600 transition-colors">
               Véhicules
             </Link>
-            <CaretRight className="h-3 w-3 text-noir-300" weight="bold" />
+            <ArrowRight02Icon className="h-3 w-3 text-noir-300" />
             <span className="text-noir-700">{vehicle.make} {vehicle.model}</span>
           </nav>
 
@@ -100,7 +100,7 @@ export function PublicVehicleDetail() {
                   to="/mansour-motors/vehicules"
                   className="absolute top-5 left-5 flex items-center gap-2 bg-white/90 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-noir-700 backdrop-blur-sm transition-all hover:bg-white hover:text-gold-600 shadow-sm"
                 >
-                  <ArrowLeft className="h-3.5 w-3.5" weight="bold" />
+                  <ArrowLeft01Icon className="h-3.5 w-3.5" />
                   Catalogue
                 </Link>
               </motion.div>
@@ -145,7 +145,7 @@ export function PublicVehicleDetail() {
                       className="group flex items-start gap-3 cursor-default"
                     >
                       <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center bg-gold-50 text-gold-600 transition-all duration-300 group-hover:bg-gold-400 group-hover:text-noir-950 group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-md">
-                        <spec.icon size={16} weight="fill" />
+                        <spec.icon className="h-4 w-4" />
                       </div>
                       <div className="transition-transform duration-300 group-hover:translate-x-1">
                         <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-noir-400 mb-1 transition-colors duration-300 group-hover:text-gold-600">{spec.label}</p>
@@ -234,7 +234,7 @@ export function PublicVehicleDetail() {
                   <div className="space-y-3">
                     <a href="tel:+221331234567" className="flex items-center gap-3 group">
                       <div className="flex h-9 w-9 items-center justify-center bg-gold-50 text-gold-600 transition-all duration-300 group-hover:bg-gold-400 group-hover:text-noir-950 group-hover:scale-110 group-hover:-rotate-6 group-hover:shadow-md">
-                        <Phone weight="fill" size={16} />
+                        <TelephoneIcon className="h-4 w-4" />
                       </div>
                       <span className="text-sm text-noir-500 transition-all duration-300 group-hover:text-gold-600 group-hover:translate-x-1 font-medium">
                         +221 33 123 45 67
@@ -242,7 +242,7 @@ export function PublicVehicleDetail() {
                     </a>
                     <a href="mailto:motors@mansour.sn" className="flex items-center gap-3 group">
                       <div className="flex h-9 w-9 items-center justify-center bg-gold-50 text-gold-600 transition-all duration-300 group-hover:bg-gold-400 group-hover:text-noir-950 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-md">
-                        <Envelope weight="fill" size={16} />
+                        <Mail01Icon className="h-4 w-4" />
                       </div>
                       <span className="text-sm text-noir-500 transition-all duration-300 group-hover:text-gold-600 group-hover:translate-x-1 font-medium">
                         motors@mansour.sn
@@ -250,7 +250,7 @@ export function PublicVehicleDetail() {
                     </a>
                     <a href="https://wa.me/221771234567" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
                       <div className="flex h-9 w-9 items-center justify-center bg-gold-50 text-gold-600 transition-all duration-300 group-hover:bg-gold-400 group-hover:text-noir-950 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-md">
-                        <WhatsappLogo weight="fill" size={16} />
+                        <WhatsappIcon className="h-4 w-4" />
                       </div>
                       <span className="text-sm text-noir-500 transition-all duration-300 group-hover:text-gold-600 group-hover:translate-x-1 font-medium">
                         WhatsApp
@@ -292,7 +292,7 @@ export function PublicVehicleDetail() {
               className="group hidden items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold-600 transition-colors hover:text-gold-700 sm:inline-flex"
             >
               Voir tout le catalogue
-              <ArrowRight className="transition-transform group-hover:translate-x-1" weight="bold" />
+              <ArrowRight01Icon className="transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
@@ -341,7 +341,7 @@ export function PublicVehicleDetail() {
                             {formatPrice(otherVehicle.price)}
                           </p>
                           <span className="relative z-10 flex h-7 w-7 items-center justify-center bg-gold-50 text-gold-600 transition-all duration-500 group-hover:bg-gold-400 group-hover:text-noir-950 group-hover:rotate-45 group-hover:shadow-[0_0_10px_rgba(207,181,59,0.4)]">
-                            <ArrowUpRight className="h-3.5 w-3.5" weight="bold" />
+                            <ArrowUpRight01Icon className="h-3.5 w-3.5" />
                           </span>
                         </div>
                       </div>
@@ -357,7 +357,7 @@ export function PublicVehicleDetail() {
               className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gold-600 transition-colors hover:text-gold-700"
             >
               Voir tout le catalogue
-              <ArrowRight className="transition-transform group-hover:translate-x-1" weight="bold" />
+              <ArrowRight01Icon className="transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
         </div>

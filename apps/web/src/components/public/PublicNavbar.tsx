@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { useScroll, useAnimationFrame, motion, AnimatePresence } from 'framer-motion'
-import { Buildings, List, X, CarProfile } from '@phosphor-icons/react'
+import { Building03Icon, Menu01Icon, Cancel01Icon, Car01Icon } from 'hugeicons-react'
 import { cn } from '@/lib/utils'
 
 const holdingLinks = [
@@ -58,7 +58,7 @@ export function PublicNavbar() {
         {/* Brand */}
         <div className="flex items-center gap-6">
           <Link to="/" className="flex items-center gap-2.5 hover-trigger group">
-            <Buildings className={cn('h-5 w-5 transition-transform duration-300 group-hover:scale-110', useDarkText && !isMobileMenuOpen ? 'text-gold-600' : 'text-gold-400')} weight="duotone" />
+            <Building03Icon className={cn('h-5 w-5 transition-transform duration-300 group-hover:scale-110', useDarkText && !isMobileMenuOpen ? 'text-gold-600' : 'text-gold-400')} />
             <span className={cn('text-[11px] font-bold uppercase tracking-[0.18em]', useDarkText && !isMobileMenuOpen ? 'text-noir-950' : 'text-white')}>
               Mansour
             </span>
@@ -72,7 +72,7 @@ export function PublicNavbar() {
             >
               <span className={cn(useDarkText ? 'text-noir-300' : 'text-white/20')}>/</span>
               <Link to="/mansour-motors" className="flex items-center gap-1.5 hover-trigger group">
-                <CarProfile className={cn('h-4 w-4', useDarkText ? 'text-gold-600' : 'text-gold-400')} weight="fill" />
+                <Car01Icon className={cn('h-4 w-4', useDarkText ? 'text-gold-600' : 'text-gold-400')} />
                 <span className={cn('text-[11px] font-bold uppercase tracking-[0.18em]', useDarkText ? 'text-gold-600' : 'text-gold-400')}>
                   Motors
                 </span>
@@ -138,11 +138,11 @@ export function PublicNavbar() {
           <AnimatePresence mode="wait">
             {isMobileMenuOpen ? (
               <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                <X className="h-6 w-6" weight="bold" />
+                <Cancel01Icon className="h-6 w-6" />
               </motion.div>
             ) : (
               <motion.div key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.2 }}>
-                <List className="h-6 w-6" weight="bold" />
+                <Menu01Icon className="h-6 w-6" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -166,7 +166,7 @@ export function PublicNavbar() {
                 transition={{ delay: 0.05 }}
                 className="mb-8 flex items-center gap-2 border-b border-white/10 pb-4"
               >
-                <CarProfile className="h-5 w-5 text-gold-400" weight="fill" />
+                <Car01Icon className="h-5 w-5 text-gold-400" />
                 <span className="text-xs font-bold uppercase tracking-[0.2em] text-gold-400">Mansour Motors</span>
               </motion.div>
             )}

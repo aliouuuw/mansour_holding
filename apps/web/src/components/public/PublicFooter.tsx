@@ -1,14 +1,14 @@
 import { Link } from '@tanstack/react-router'
 import {
-  Buildings,
-  Phone,
-  Envelope,
-  MapPin,
-  ArrowUp,
-  LinkedinLogo,
-  InstagramLogo,
-  XLogo,
-} from '@phosphor-icons/react'
+  Building03Icon,
+  TelephoneIcon,
+  Mail01Icon,
+  Location01Icon,
+  ArrowUp01Icon,
+  Linkedin01Icon,
+  NewTwitterIcon,
+  InstagramIcon,
+} from 'hugeicons-react'
 
 const businessLinks = [
   { label: 'Mansour Motors', to: '/mansour-motors' },
@@ -40,7 +40,7 @@ export function PublicFooter() {
           <div className="mb-16 flex items-start justify-between">
             <div>
               <Link to="/" className="flex items-center gap-3 hover-trigger group">
-                <Buildings className="h-7 w-7 text-gold-400 transition-transform duration-300 group-hover:scale-110" weight="duotone" />
+                <Building03Icon className="h-7 w-7 text-gold-400 transition-transform duration-300 group-hover:scale-110" />
                 <span className="text-sm font-bold uppercase tracking-[0.18em] text-white">
                   Mansour Holding
                 </span>
@@ -55,7 +55,7 @@ export function PublicFooter() {
               className="group flex h-10 w-10 items-center justify-center border border-white/10 text-white/40 transition-all hover:border-gold-400 hover:text-gold-400"
               aria-label="Retour en haut"
             >
-              <ArrowUp className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" weight="bold" />
+              <ArrowUp01Icon className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
             </button>
           </div>
 
@@ -108,18 +108,18 @@ export function PublicFooter() {
               <ul className="space-y-4">
                 <li>
                   <a href="tel:+221331234567" className="flex items-center gap-3 text-sm text-white/50 transition-colors hover:text-white hover-trigger">
-                    <Phone className="h-4 w-4 flex-shrink-0 text-gold-400/60" weight="fill" />
+                    <TelephoneIcon className="h-4 w-4 flex-shrink-0 text-gold-400/60" />
                     +221 33 123 45 67
                   </a>
                 </li>
                 <li>
                   <a href="mailto:contact@mansour.sn" className="flex items-center gap-3 text-sm text-white/50 transition-colors hover:text-white hover-trigger">
-                    <Envelope className="h-4 w-4 flex-shrink-0 text-gold-400/60" weight="fill" />
+                    <Mail01Icon className="h-4 w-4 flex-shrink-0 text-gold-400/60" />
                     contact@mansour.sn
                   </a>
                 </li>
                 <li className="flex items-center gap-3 text-sm text-white/50">
-                  <MapPin className="h-4 w-4 flex-shrink-0 text-gold-400/60" weight="fill" />
+                  <Location01Icon className="h-4 w-4 flex-shrink-0 text-gold-400/60" />
                   Avenue Cheikh Anta Diop, Dakar, Sénégal
                 </li>
               </ul>
@@ -133,9 +133,9 @@ export function PublicFooter() {
             </p>
             <div className="flex items-center gap-4">
               {[
-                { icon: LinkedinLogo, label: 'LinkedIn', href: '#' },
-                { icon: XLogo, label: 'X', href: '#' },
-                { icon: InstagramLogo, label: 'Instagram', href: '#' },
+                { icon: Linkedin01Icon, label: 'LinkedIn', href: '#' },
+                { icon: NewTwitterIcon, label: 'X', href: '#' },
+                { icon: InstagramIcon, label: 'Instagram', href: '#' },
               ].map((social) => (
                 <a
                   key={social.label}
@@ -143,7 +143,7 @@ export function PublicFooter() {
                   aria-label={social.label}
                   className="flex h-9 w-9 items-center justify-center border border-white/[0.06] text-white/30 transition-all hover:border-gold-400/30 hover:text-gold-400 hover-trigger"
                 >
-                  <social.icon className="h-4 w-4" weight="bold" />
+                  <social.icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
