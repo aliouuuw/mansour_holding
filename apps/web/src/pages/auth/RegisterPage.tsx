@@ -2,19 +2,15 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { Building03Icon, ViewIcon, ViewOffIcon } from 'hugeicons-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { signUp } from '@/lib/auth.js'
 
-const registerSchema = z.object({
-  firstName: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères'),
-  lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
-  email: z.string().email('Adresse email invalide'),
-  phone: z.string().min(8, 'Numéro de téléphone invalide'),
-  password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
-})
-
-type RegisterForm = z.infer<typeof registerSchema>
+type RegisterForm = {
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  password: string
+}
 
 export function RegisterPage() {
   const navigate = useNavigate()
@@ -26,14 +22,11 @@ export function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterForm>({
-    resolver: zodResolver(registerSchema),
-  })
+  } = useForm<RegisterForm>()
 
   const onSubmit = async (data: RegisterForm) => {
     setError(null)
     setIsLoading(true)
-
     try {
       const result = await signUp.email({
         email: data.email,
@@ -41,13 +34,10 @@ export function RegisterPage() {
         name: `${data.firstName} ${data.lastName}`,
         callbackURL: '/dashboard',
       })
-
       if (result.error) {
-        setError(result.error.message || 'Erreur d\'inscription')
+        setError(result.error.message || "Erreur d'inscription")
         return
       }
-
-      // Redirect to dashboard on success
       navigate({ to: '/dashboard' })
     } catch (err) {
       setError('Une erreur est survenue. Veuillez réessayer.')
@@ -58,137 +48,118 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left panel */}
-      <div className="hidden w-1/2 bg-gradient-to-br from-primary-950 via-primary-900 to-primary-800 lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <div className="flex items-center gap-3">
-          <Building03Icon className="h-8 w-8 text-primary-300" />
-          <span className="text-xl font-bold text-white">Mansour Holding</span>
-        </div>
-        <div>
-          <h2 className="text-3xl font-bold text-white">
-            Rejoignez la plateforme Mansour Holding
-          </h2>
-          <p className="mt-4 text-lg text-primary-200">
-            Créez votre compte et commencez à gérer vos activités dès aujourd'hui.
-          </p>
-        </div>
-        <p className="text-sm text-primary-300">© 2026 Mansour Holding</p>
-      </div>
-
-      {/* Right panel - form */}
-      <div className="flex w-full items-center justify-center px-4 lg:w-1/2">
+    <div className="flex min-h-screen bg-noir-950">
+      <div className="flex w-full items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
-          <div className="mb-8 lg:hidden">
-            <div className="flex items-center gap-2">
-              <Building03Icon className="h-7 w-7 text-primary-600" />
-              <span className="text-lg font-bold text-primary-950">Mansour Holding</span>
+          <div className="mb-12 flex flex-col items-center">
+            <Link to="/" className="flex items-center gap-3 mb-8">
+              <Building03Icon className="h-8 w-8 text-gold-400" />
+              <span className="text-xl font-bold uppercase tracking-widest text-white">Mansour Holding</span>
+            </Link>
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-white">Créer un compte</h1>
+              <p className="mt-3 text-sm text-silver-400">
+                Remplissez le formulaire pour créer votre espace
+              </p>
             </div>
           </div>
 
-          <h1 className="text-2xl font-bold text-primary-950">Créer un compte</h1>
-          <p className="mt-2 text-sm text-muted">
-            Remplissez le formulaire pour créer votre espace
-          </p>
-
           {error && (
-            <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-600">
+            <div className="mb-6 rounded-sm border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
               {error}
             </div>
           )}
 
-          <form className="mt-8 space-y-5" onSubmit={handleSubmit(onSubmit)}>
+          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-primary-900">Prénom</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-silver-400 mb-2">Prénom</label>
                 <input
                   type="text"
                   placeholder="Aliou"
-                  className="mt-1.5 w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
-                  {...register('firstName')}
+                  className="w-full rounded-sm border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none transition-colors focus:border-gold-400 focus:bg-white/10"
+                  {...register('firstName', { required: 'Prénom requis', minLength: { value: 2, message: 'Minimum 2 caractères' } })}
                 />
-                {errors.firstName && (
-                  <p className="mt-1 text-xs text-red-600">{errors.firstName.message}</p>
-                )}
+                {errors.firstName && <p className="mt-1 text-xs text-red-400">{errors.firstName.message}</p>}
               </div>
               <div>
-                <label className="block text-sm font-medium text-primary-900">Nom</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-silver-400 mb-2">Nom</label>
                 <input
                   type="text"
                   placeholder="Wade"
-                  className="mt-1.5 w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
-                  {...register('lastName')}
+                  className="w-full rounded-sm border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none transition-colors focus:border-gold-400 focus:bg-white/10"
+                  {...register('lastName', { required: 'Nom requis', minLength: { value: 2, message: 'Minimum 2 caractères' } })}
                 />
-                {errors.lastName && (
-                  <p className="mt-1 text-xs text-red-600">{errors.lastName.message}</p>
-                )}
+                {errors.lastName && <p className="mt-1 text-xs text-red-400">{errors.lastName.message}</p>}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-primary-900">Adresse email</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-silver-400 mb-2">Adresse Email</label>
               <input
                 type="email"
                 placeholder="votre@email.com"
-                className="mt-1.5 w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
-                {...register('email')}
+                className="w-full rounded-sm border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none transition-colors focus:border-gold-400 focus:bg-white/10"
+                {...register('email', {
+                  required: 'Email requis',
+                  pattern: { value: /\S+@\S+\.\S+/, message: 'Adresse email invalide' },
+                })}
               />
-              {errors.email && (
-                <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
-              )}
+              {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-primary-900">Téléphone</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-silver-400 mb-2">Téléphone</label>
               <input
                 type="tel"
                 placeholder="+221 77 123 45 67"
-                className="mt-1.5 w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
-                {...register('phone')}
+                className="w-full rounded-sm border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none transition-colors focus:border-gold-400 focus:bg-white/10"
+                {...register('phone', { required: 'Téléphone requis', minLength: { value: 8, message: 'Numéro invalide' } })}
               />
-              {errors.phone && (
-                <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p>
-              )}
+              {errors.phone && <p className="mt-1 text-xs text-red-400">{errors.phone.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-primary-900">Mot de passe</label>
-              <div className="relative mt-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-silver-400 mb-2">Mot de Passe</label>
+              <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
-                  className="w-full rounded-lg border border-border bg-white px-4 py-2.5 pr-10 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
-                  {...register('password')}
+                  className="w-full rounded-sm border border-white/10 bg-white/5 px-4 py-3 pr-10 text-sm text-white placeholder-white/30 outline-none transition-colors focus:border-gold-400 focus:bg-white/10"
+                  {...register('password', {
+                    required: 'Mot de passe requis',
+                    minLength: { value: 8, message: 'Le mot de passe doit contenir au moins 8 caractères' },
+                  })}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-primary-900"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-silver-400 hover:text-white"
                 >
                   {showPassword ? <ViewOffIcon className="h-4 w-4" /> : <ViewIcon className="h-4 w-4" />}
                 </button>
               </div>
-              {errors.password && (
-                <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>
-              )}
-              <p className="mt-1.5 text-xs text-muted">Minimum 8 caractères</p>
+              {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
+              <p className="mt-1.5 text-xs text-silver-500">Minimum 8 caractères</p>
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="block w-full rounded-lg bg-primary-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="block w-full rounded-sm bg-gold-400 px-6 py-4 text-center text-xs font-bold uppercase tracking-[0.2em] text-noir-950 shadow-sm hover:bg-gold-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Création...' : 'Créer mon compte'}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-muted">
-            Déjà un compte ?{' '}
-            <Link to="/login" className="font-semibold text-primary-600 hover:text-primary-700">
-              Se connecter
-            </Link>
-          </p>
+          <div className="mt-8 text-center">
+            <p className="text-sm text-silver-400">
+              Déjà un compte ?{' '}
+              <Link to="/login" className="font-semibold text-gold-400 hover:text-gold-300">
+                Se connecter
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

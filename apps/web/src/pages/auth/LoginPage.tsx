@@ -2,17 +2,13 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { Building03Icon, ViewIcon, ViewOffIcon } from 'hugeicons-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { signIn } from '@/lib/auth.js'
 
-const loginSchema = z.object({
-  email: z.string().email('Adresse email invalide'),
-  password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
-  rememberMe: z.boolean().optional(),
-})
-
-type LoginForm = z.infer<typeof loginSchema>
+type LoginForm = {
+  email: string
+  password: string
+  rememberMe?: boolean
+}
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -24,14 +20,11 @@ export function LoginPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
-  })
+  } = useForm<LoginForm>()
 
   const onSubmit = async (data: LoginForm) => {
     setError(null)
     setIsLoading(true)
-
     try {
       const result = await signIn.email({
         email: data.email,
@@ -39,13 +32,10 @@ export function LoginPage() {
         callbackURL: '/dashboard',
         rememberMe: data.rememberMe,
       })
-
       if (result.error) {
         setError(result.error.message || 'Erreur de connexion')
         return
       }
-
-      // Redirect to dashboard on success
       navigate({ to: '/dashboard' })
     } catch (err) {
       setError('Une erreur est survenue. Veuillez réessayer.')
@@ -57,7 +47,6 @@ export function LoginPage() {
 
   return (
     <div className="flex min-h-screen bg-noir-950">
-      {/* Centered form */}
       <div className="flex w-full items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
           <div className="mb-12 flex flex-col items-center">
@@ -88,7 +77,10 @@ export function LoginPage() {
                 type="email"
                 placeholder="votre@email.com"
                 className="w-full rounded-sm border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none transition-colors focus:border-gold-400 focus:bg-white/10 focus:ring-2 focus:ring-gold-400/20"
-                {...register('email')}
+                {...register('email', {
+                  required: 'Adresse email requise',
+                  pattern: { value: /\S+@\S+\.\S+/, message: 'Adresse email invalide' },
+                })}
               />
               {errors.email && (
                 <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
@@ -109,7 +101,10 @@ export function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   className="w-full rounded-sm border border-white/10 bg-white/5 px-4 py-3 pr-10 text-sm text-white placeholder-white/30 outline-none transition-colors focus:border-gold-400 focus:bg-white/10 focus:ring-2 focus:ring-gold-400/20"
-                  {...register('password')}
+                  {...register('password', {
+                    required: 'Mot de passe requis',
+                    minLength: { value: 8, message: 'Le mot de passe doit contenir au moins 8 caractères' },
+                  })}
                 />
                 <button
                   type="button"
