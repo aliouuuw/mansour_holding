@@ -1,9 +1,61 @@
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { Building03Icon, ViewIcon, ViewOffIcon } from 'hugeicons-react'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { signUp } from '@/lib/auth.js'
+
+const registerSchema = z.object({
+  firstName: z.string().min(2, 'Le prénom doit contenir au moins 2 caractères'),
+  lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
+  email: z.string().email('Adresse email invalide'),
+  phone: z.string().min(8, 'Numéro de téléphone invalide'),
+  password: z.string().min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
+})
+
+type RegisterForm = z.infer<typeof registerSchema>
 
 export function RegisterPage() {
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterForm>({
+    resolver: zodResolver(registerSchema),
+  })
+
+  const onSubmit = async (data: RegisterForm) => {
+    setError(null)
+    setIsLoading(true)
+
+    try {
+      const result = await signUp.email({
+        email: data.email,
+        password: data.password,
+        name: `${data.firstName} ${data.lastName}`,
+        callbackURL: '/dashboard',
+      })
+
+      if (result.error) {
+        setError(result.error.message || 'Erreur d\'inscription')
+        return
+      }
+
+      // Redirect to dashboard on success
+      navigate({ to: '/dashboard' })
+    } catch (err) {
+      setError('Une erreur est survenue. Veuillez réessayer.')
+      console.error('Register error:', err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -39,7 +91,13 @@ export function RegisterPage() {
             Remplissez le formulaire pour créer votre espace
           </p>
 
-          <form className="mt-8 space-y-5" onSubmit={(e) => e.preventDefault()}>
+          {error && (
+            <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-600">
+              {error}
+            </div>
+          )}
+
+          <form className="mt-8 space-y-5" onSubmit={handleSubmit(onSubmit)}>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-primary-900">Prénom</label>
@@ -47,7 +105,11 @@ export function RegisterPage() {
                   type="text"
                   placeholder="Aliou"
                   className="mt-1.5 w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
+                  {...register('firstName')}
                 />
+                {errors.firstName && (
+                  <p className="mt-1 text-xs text-red-600">{errors.firstName.message}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-primary-900">Nom</label>
@@ -55,7 +117,11 @@ export function RegisterPage() {
                   type="text"
                   placeholder="Wade"
                   className="mt-1.5 w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
+                  {...register('lastName')}
                 />
+                {errors.lastName && (
+                  <p className="mt-1 text-xs text-red-600">{errors.lastName.message}</p>
+                )}
               </div>
             </div>
 
@@ -65,7 +131,11 @@ export function RegisterPage() {
                 type="email"
                 placeholder="votre@email.com"
                 className="mt-1.5 w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
+                {...register('email')}
               />
+              {errors.email && (
+                <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
+              )}
             </div>
 
             <div>
@@ -74,7 +144,11 @@ export function RegisterPage() {
                 type="tel"
                 placeholder="+221 77 123 45 67"
                 className="mt-1.5 w-full rounded-lg border border-border bg-white px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
+                {...register('phone')}
               />
+              {errors.phone && (
+                <p className="mt-1 text-xs text-red-600">{errors.phone.message}</p>
+              )}
             </div>
 
             <div>
@@ -84,6 +158,7 @@ export function RegisterPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="••••••••"
                   className="w-full rounded-lg border border-border bg-white px-4 py-2.5 pr-10 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
+                  {...register('password')}
                 />
                 <button
                   type="button"
@@ -93,15 +168,19 @@ export function RegisterPage() {
                   {showPassword ? <ViewOffIcon className="h-4 w-4" /> : <ViewIcon className="h-4 w-4" />}
                 </button>
               </div>
+              {errors.password && (
+                <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>
+              )}
               <p className="mt-1.5 text-xs text-muted">Minimum 8 caractères</p>
             </div>
 
-            <Link
-              to="/dashboard"
-              className="block w-full rounded-lg bg-primary-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-primary-700 transition-colors"
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="block w-full rounded-lg bg-primary-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Créer mon compte
-            </Link>
+              {isLoading ? 'Création...' : 'Créer mon compte'}
+            </button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted">

@@ -317,7 +317,7 @@ export function PublicVehicles() {
                 onClick={clearFilters}
                 className="font-motors text-[11px] font-medium uppercase tracking-[0.1em] text-noir-400 hover:text-gold-600 transition-colors"
               >
-                Effacer les filtres
+                Réinitialiser les filtres
               </button>
             )}
           </div>
@@ -334,7 +334,7 @@ export function PublicVehicles() {
               <Search01Icon className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-noir-400" />
               <input
                 type="text"
-                placeholder="Rechercher par marque, modèle..."
+                placeholder="Rechercher par marque ou modèle"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full border border-noir-200 bg-white py-3 pl-11 pr-4 font-motors text-sm text-noir-900 placeholder-noir-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/20 transition-all"
@@ -370,7 +370,7 @@ export function PublicVehicles() {
                 exit={{ opacity: 0, height: 0 }}
                 className="mb-6 flex flex-wrap items-center gap-2"
               >
-                <span className="font-motors text-[11px] uppercase tracking-[0.1em] text-noir-400 mr-2">Filtres actifs:</span>
+                <span className="font-motors text-[11px] uppercase tracking-[0.1em] text-noir-400 mr-2">Filtres actifs :</span>
                 {activeFilters.map((filter, i) => (
                   <ActiveFilterPill key={i} label={filter.label} onRemove={filter.clear} />
                 ))}
@@ -391,13 +391,13 @@ export function PublicVehicles() {
                 <div className="border border-noir-200 bg-surface-dim p-6">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
                     <FilterSelect label="Toutes les marques" value={make} onChange={setMake} options={makes} />
-                    <FilterSelect label="Année" value={year} onChange={setYear} options={years.map(String)} />
-                    <FilterSelect label="Carburant" value={fuelType} onChange={setFuelType} options={fuelTypes} />
-                    <FilterSelect label="Transmission" value={transmission} onChange={setTransmission} options={transmissions} />
+                    <FilterSelect label="Toutes les années" value={year} onChange={setYear} options={years.map(String)} />
+                    <FilterSelect label="Tous les carburants" value={fuelType} onChange={setFuelType} options={fuelTypes} />
+                    <FilterSelect label="Toutes les transmissions" value={transmission} onChange={setTransmission} options={transmissions} />
                     <div className="relative w-full">
                       <input
                         type="number"
-                        placeholder="Prix maximum (FCFA)"
+                        placeholder="Prix maximum (F CFA)"
                         value={priceMax}
                         onChange={(e) => setPriceMax(e.target.value)}
                         className="w-full border border-noir-200 bg-white px-4 py-3 font-motors text-sm text-noir-900 placeholder-noir-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/20 transition-all"

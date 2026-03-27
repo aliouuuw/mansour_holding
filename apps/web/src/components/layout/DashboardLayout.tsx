@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Outlet, Link, useMatchRoute } from '@tanstack/react-router'
+import { Outlet, Link, useMatchRoute, Navigate } from '@tanstack/react-router'
 import {
   DashboardSquare01Icon,
   Car01Icon,
@@ -14,6 +14,7 @@ import {
   Notification02Icon,
 } from 'hugeicons-react'
 import { cn } from '@/lib/utils'
+import { useSession, signOut } from '@/lib/auth.js'
 
 const motorsNavItems = [
   { label: 'Tableau de bord', href: '/dashboard/motors', icon: DashboardSquare01Icon },
@@ -25,6 +26,38 @@ const motorsNavItems = [
 export function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const matchRoute = useMatchRoute()
+  const { data, isPending } = useSession()
+
+  // Show loading state while checking session
+  if (isPending) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface-dim">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gold-400" />
+          <p className="text-sm text-silver-400">Chargement...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Redirect to login if not authenticated
+  if (!data?.user) {
+    return <Navigate to="/login" />
+  }
+
+  const user = data.user
+  const userInitials = user.name
+    ? user.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+    : 'U'
+  const userName = user.name || 'Utilisateur'
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-surface-dim">
@@ -106,18 +139,19 @@ export function DashboardLayout() {
         <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 p-4">
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold-400 text-sm font-bold text-noir-950">
-              AW
+              {userInitials}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="truncate text-sm font-medium">Aliou Wade</p>
-              <p className="truncate text-xs text-silver-400">Administrateur</p>
+              <p className="truncate text-sm font-medium">{userName}</p>
+              <p className="truncate text-xs text-silver-400">{user.email}</p>
             </div>
-            <Link
-              to="/login"
+            <button
+              onClick={handleLogout}
               className="rounded-sm p-1.5 text-silver-400 hover:bg-white/5 hover:text-white transition-colors"
+              title="Se déconnecter"
             >
               <Logout01Icon className="h-4 w-4" />
-            </Link>
+            </button>
           </div>
         </div>
       </aside>
@@ -135,7 +169,7 @@ export function DashboardLayout() {
 
           <div className="hidden lg:block">
             <h2 className="text-sm font-medium text-noir-500">
-              Bienvenue, <span className="text-noir-950 font-semibold">Aliou</span>
+              Bienvenue, <span className="text-noir-950 font-semibold">{userName.split(' ')[0]}</span>
             </h2>
           </div>
 

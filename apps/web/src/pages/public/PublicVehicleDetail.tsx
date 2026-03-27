@@ -1,5 +1,5 @@
 import { Link, useParams } from '@tanstack/react-router'
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, useMemo } from 'react'
 import {
   ArrowLeft01Icon,
   ArrowRight01Icon,
@@ -34,6 +34,39 @@ export function PublicVehicleDetail() {
   })
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+
+  // All hooks must be called before any early return
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [direction, setDirection] = useState(0)
+
+  const allImages = useMemo(() =>
+    vehicle?.images && vehicle.images.length > 0 ? vehicle.images : [vehicle?.image || '']
+  , [vehicle])
+
+  const nextImage = useCallback(() => {
+    setDirection(1)
+    setCurrentImageIndex((prev) => (prev + 1) % allImages.length)
+  }, [allImages.length])
+
+  const prevImage = useCallback(() => {
+    setDirection(-1)
+    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length)
+  }, [allImages.length])
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? '100%' : '-100%',
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? '100%' : '-100%',
+      opacity: 0,
+    }),
+  }
 
   if (!vehicle) {
     return (
@@ -86,36 +119,6 @@ export function PublicVehicleDetail() {
     },
   }
   const status = statusConfig[vehicle.status as keyof typeof statusConfig] || statusConfig.sold
-
-  // Get all images for the vehicle (single image or multiple)
-  const allImages = vehicle.images && vehicle.images.length > 0 ? vehicle.images : [vehicle.image]
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-  const [direction, setDirection] = useState(0)
-
-  const nextImage = useCallback(() => {
-    setDirection(1)
-    setCurrentImageIndex((prev) => (prev + 1) % allImages.length)
-  }, [allImages.length])
-
-  const prevImage = useCallback(() => {
-    setDirection(-1)
-    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length)
-  }, [allImages.length])
-
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? '100%' : '-100%',
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? '100%' : '-100%',
-      opacity: 0,
-    }),
-  }
 
   return (
     <div ref={containerRef} className="motors-theme min-h-screen bg-white font-motors">
@@ -363,7 +366,7 @@ export function PublicVehicleDetail() {
                 <div className="relative border border-noir-200 bg-surface-dim p-7 overflow-hidden">
                   <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent" />
                   <h3 className="mb-1.5 font-motors-display text-lg uppercase tracking-[0.04em] text-noir-950">
-                    Acquérir ce véhicule
+                    Demander des informations
                   </h3>
                   <p className="mb-6 font-motors text-xs font-light text-noir-500">
                     Un conseiller privé vous recontactera sous 24h.
