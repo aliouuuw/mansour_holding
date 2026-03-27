@@ -10,9 +10,7 @@ function createAuth() {
       schema: schema,
     }),
     advanced: {
-      database: {
-        generateId: 'uuid',
-      },
+      generateId: () => crypto.randomUUID(),
     },
     emailAndPassword: {
       enabled: true,
