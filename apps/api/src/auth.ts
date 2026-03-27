@@ -8,9 +8,6 @@ export const auth = betterAuth({
     provider: 'pg',
     schema: schema,
   }),
-  advanced: {
-    generateId: () => crypto.randomUUID(),
-  },
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
