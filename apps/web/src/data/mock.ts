@@ -12,6 +12,7 @@ export interface Vehicle {
   vin: string
   description: string
   image: string
+  images?: string[] // Multiple images for gallery/slider
 }
 
 export interface Customer {
@@ -59,6 +60,11 @@ export const vehicles: Vehicle[] = [
     vin: 'JTMAB3FV5RD123456',
     description: 'Land Cruiser 300 GR Sport, full options, cuir, toit ouvrant, caméra 360°',
     image: 'https://www.stuttcars.com/wp-content/uploads/2016/04/2013_Porsche_Panamera4S-1-1024.jpg',
+    images: [
+      'https://www.stuttcars.com/wp-content/uploads/2016/04/2013_Porsche_Panamera4S-1-1024.jpg',
+      'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&h=600&fit=crop',
+      'https://hips.hearstapps.com/hmg-prod/images/2023-bmw-x7-xdrive-40i134-641c5b3ca7165.jpg?crop=0.699xw:0.589xh;0.239xw,0.310xh&resize=1200:*',
+    ],
   },
   {
     id: 'v2',

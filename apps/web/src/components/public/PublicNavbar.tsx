@@ -93,7 +93,7 @@ export function PublicNavbar() {
                 className={cn(
                   'relative px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors hover-trigger',
                   isActive
-                    ? useDarkText ? (isMotorsSection ? 'text-rosso-600' : 'text-gold-600') : (isMotorsSection ? 'text-rosso-500' : 'text-gold-400')
+                    ? useDarkText ? 'text-gold-600' : 'text-gold-400'
                     : useDarkText ? 'text-noir-500 hover:text-noir-950' : 'text-white/70 hover:text-white'
                 )}
               >
@@ -101,7 +101,7 @@ export function PublicNavbar() {
                 {isActive && (
                   <motion.span
                     layoutId="nav-indicator"
-                    className={cn('absolute bottom-0 left-4 right-4 h-px', useDarkText ? (isMotorsSection ? 'bg-rosso-600' : 'bg-gold-600') : (isMotorsSection ? 'bg-rosso-500' : 'bg-gold-400'))}
+                    className={cn('absolute bottom-0 left-4 right-4 h-px', useDarkText ? 'bg-gold-600' : 'bg-gold-400')}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   />
                 )}
@@ -120,12 +120,7 @@ export function PublicNavbar() {
           </Link>
           <Link
             to="/dashboard"
-            className={cn(
-              "ml-1 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] transition-all hover-trigger",
-              isMotorsSection 
-                ? "bg-rosso-600 text-white hover:bg-rosso-500 hover:shadow-rosso-sm" 
-                : "bg-gold-400 text-noir-950 hover:bg-gold-300"
-            )}
+            className="ml-1 bg-gold-400 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-noir-950 transition-all hover:bg-gold-300 hover-trigger"
           >
             Espace Pro
           </Link>

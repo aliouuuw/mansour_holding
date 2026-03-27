@@ -32,7 +32,7 @@
   --color-gold-600: #9A7B2C;
   --color-gold-700: #7A6122;
 
-  /* ── Motors Theme (Carbon & Cyan — Automotive Performance) ── */
+  /* ── Motors Theme (Carbon & Gold — Automotive Performance) ── */
   --color-carbon-950: #050505;
   --color-carbon-900: #0C0C0C;
   --color-carbon-800: #141416;
@@ -44,17 +44,6 @@
   --color-carbon-200: #A1A1B0;
   --color-carbon-100: #D4D4DD;
   --color-carbon-50:  #ECECF0;
-
-  --color-rosso-50:  #FEF2F2;
-  --color-rosso-100: #FEE2E2;
-  --color-rosso-200: #FECACA;
-  --color-rosso-300: #FCA5A5;
-  --color-rosso-400: #F87171;
-  --color-rosso-500: #EF4444;
-  --color-rosso-600: #DC2626;
-  --color-rosso-700: #B91C1C;
-  --color-rosso-800: #991B1B;
-  --color-rosso-900: #7F1D1D;
 
   --color-silver-50:  #FAFAFA;
   --color-silver-100: #F0F0F2;
@@ -92,8 +81,8 @@
   --shadow-lg: 0 10px 15px -3px rgba(10, 10, 10, 0.08), 0 4px 6px -4px rgba(10, 10, 10, 0.04);
   --shadow-xl: 0 20px 25px -5px rgba(10, 10, 10, 0.1), 0 8px 10px -6px rgba(10, 10, 10, 0.04);
   --shadow-2xl: 0 25px 50px -12px rgba(10, 10, 10, 0.2);
-  --shadow-rosso: 0 0 30px rgba(220, 38, 38, 0.3);
-  --shadow-rosso-sm: 0 0 15px rgba(220, 38, 38, 0.2);
+  --shadow-gold: 0 0 30px rgba(200, 168, 78, 0.3);
+  --shadow-gold-sm: 0 0 15px rgba(200, 168, 78, 0.2);
 }
 
 /* ── Keyframe Animations ── */
@@ -102,9 +91,24 @@
   50% { box-shadow: 0 0 40px rgba(200, 168, 78, 0.4); }
 }
 
-@keyframes pulse-rosso {
-  0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.15); }
-  50% { box-shadow: 0 0 50px rgba(220, 38, 38, 0.35); }
+@keyframes pulse-motors-gold {
+  0%, 100% { box-shadow: 0 0 20px rgba(200, 168, 78, 0.15); }
+  50% { box-shadow: 0 0 50px rgba(200, 168, 78, 0.35); }
+}
+
+@keyframes reveal-up {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes horizontal-scroll-hint {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
 }
 
 @keyframes draw-line {
@@ -198,9 +202,9 @@
 }
 
 /* ── Motors Theme Utilities ── */
-.cyan-divider {
+.motors-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, #00E5FF 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, #C8A84E 50%, transparent 100%);
 }
 
 .motors-corner {
@@ -213,7 +217,7 @@
   position: absolute;
   width: 20px;
   height: 20px;
-  border-color: #00E5FF;
+  border-color: #C8A84E;
   transition: all 0.4s ease;
 }
 
@@ -229,6 +233,20 @@
   right: -1px;
   border-width: 0 1px 1px 0;
   border-style: solid;
+}
+
+/* ── Motors Horizontal Scroll ── */
+.motors-scroll-track {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.motors-scroll-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Motors Section Reveal ── */
+.motors-reveal {
+  animation: reveal-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* ── Noise/Grain Texture ── */
@@ -262,8 +280,8 @@
   background-clip: text;
 }
 
-.gradient-text-cyan {
-  background: linear-gradient(135deg, #00E5FF 0%, #80F9FF 50%, #00E5FF 100%);
+.gradient-text-motors {
+  background: linear-gradient(135deg, #C8A84E 0%, #E8D9A0 50%, #C8A84E 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -295,8 +313,8 @@
 
 /* Motors pages selection */
 .motors-theme ::selection {
-  background-color: #DC2626;
-  color: #050505;
+  background-color: #C8A84E;
+  color: #0A0A0A;
 }
 
 /* ── Focus Visible ── */
@@ -306,7 +324,7 @@
 }
 
 .motors-theme :focus-visible {
-  outline-color: #DC2626;
+  outline-color: #C8A84E;
 }
 
 /* ── Hover Trigger (cursor) ── */
@@ -330,12 +348,13 @@
 }
 
 .btn-motors-primary {
-  background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
-  color: #FFFFFF;
+  background: #C8A84E;
+  color: #0A0A0A;
 }
 
 .btn-motors-primary:hover {
-  box-shadow: 0 0 30px rgba(220, 38, 38, 0.4);
+  background: #D4C06E;
+  box-shadow: 0 0 30px rgba(200, 168, 78, 0.4);
   transform: translateY(-1px);
 }
 
@@ -343,22 +362,22 @@
   position: relative;
   background: transparent;
   color: #E0E0E5;
-  border: 1px solid rgba(220, 38, 38, 0.3);
+  border: 1px solid rgba(200, 168, 78, 0.3);
 }
 
 .btn-motors-outline:hover {
-  border-color: #DC2626;
-  background: rgba(220, 38, 38, 0.05);
-  box-shadow: 0 0 20px rgba(220, 38, 38, 0.15);
+  border-color: #C8A84E;
+  background: rgba(200, 168, 78, 0.05);
+  box-shadow: 0 0 20px rgba(200, 168, 78, 0.15);
 }
 
 /* ── Motors Glow Effects ── */
-.glow-rosso {
-  box-shadow: 0 0 30px rgba(220, 38, 38, 0.3);
+.glow-gold {
+  box-shadow: 0 0 30px rgba(200, 168, 78, 0.3);
 }
 
-.glow-rosso-sm {
-  box-shadow: 0 0 15px rgba(220, 38, 38, 0.2);
+.glow-gold-sm {
+  box-shadow: 0 0 15px rgba(200, 168, 78, 0.2);
 }
 
 /* ── Image Hover Zoom ── */

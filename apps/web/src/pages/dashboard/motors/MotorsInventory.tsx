@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
+import { motion } from 'framer-motion'
 import { Search01Icon, Add01Icon, FilterIcon, ViewIcon } from 'hugeicons-react'
 import { cn, formatPrice, formatNumber } from '@/lib/utils'
 import {
@@ -26,35 +27,35 @@ const columns = [
       <img
         src={info.row.original.image}
         alt={`${info.row.original.make} ${info.row.original.model}`}
-        className="h-12 w-16 rounded-lg object-cover"
+        className="h-14 w-20 object-cover"
       />
     ),
-    size: 80,
+    size: 90,
   }),
   columnHelper.accessor((row) => `${row.make} ${row.model}`, {
     id: 'name',
     header: 'Véhicule',
     cell: (info) => (
       <div>
-        <p className="font-medium text-primary-900">{info.getValue()}</p>
-        <p className="text-xs text-muted">{info.row.original.vin}</p>
+        <p className="font-medium text-noir-950">{info.getValue()}</p>
+        <p className="text-xs text-noir-500 font-mono">{info.row.original.vin}</p>
       </div>
     ),
   }),
   columnHelper.accessor('year', {
     header: 'Année',
-    cell: (info) => <span className="text-sm">{info.getValue()}</span>,
+    cell: (info) => <span className="text-sm text-noir-700">{info.getValue()}</span>,
   }),
   columnHelper.accessor('mileage', {
     header: 'Kilométrage',
     cell: (info) => (
-      <span className="text-sm">{formatNumber(info.getValue())} km</span>
+      <span className="text-sm text-noir-700">{formatNumber(info.getValue())} km</span>
     ),
   }),
   columnHelper.accessor('price', {
     header: 'Prix',
     cell: (info) => (
-      <span className="text-sm font-semibold text-primary-900">
+      <span className="text-sm font-semibold text-noir-950">
         {formatPrice(info.getValue())}
       </span>
     ),
@@ -64,7 +65,7 @@ const columns = [
     cell: (info) => (
       <span
         className={cn(
-          'inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium',
+          'inline-flex px-2.5 py-1 text-xs font-medium uppercase tracking-wider',
           vehicleStatusColors[info.getValue()]
         )}
       >
@@ -79,7 +80,7 @@ const columns = [
       <Link
         to="/dashboard/motors/inventory/$vehicleId"
         params={{ vehicleId: info.row.original.id }}
-        className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium text-primary-600 hover:bg-primary-50 transition-colors"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gold-600 hover:text-gold-700 hover:bg-gold-50 transition-colors"
       >
         <ViewIcon className="h-3.5 w-3.5" />
         Voir
@@ -106,15 +107,21 @@ export function MotorsInventory() {
   })
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="space-y-6"
+    >
+      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-primary-950">Inventaire</h1>
-          <p className="mt-1 text-sm text-muted">
+          <h1 className="font-motors-display text-2xl font-medium text-noir-950">Inventaire</h1>
+          <p className="mt-1 text-sm text-noir-500">
             {vehicles.length} véhicules · {vehicles.filter((v) => v.status === 'available').length} disponibles
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-700 transition-colors">
+        <button className="inline-flex items-center gap-2 bg-noir-950 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-noir-800 transition-colors">
           <Add01Icon className="h-4 w-4" />
           Ajouter un véhicule
         </button>
@@ -123,26 +130,26 @@ export function MotorsInventory() {
       {/* Filters */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="relative flex-1">
-          <Search01Icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+          <Search01Icon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-noir-400" />
           <input
             type="text"
             placeholder="Rechercher un véhicule..."
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
-            className="w-full rounded-lg border border-border bg-white py-2.5 pl-10 pr-4 text-sm outline-none transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
+            className="w-full border border-noir-200 bg-white py-2.5 pl-10 pr-4 text-sm text-noir-900 outline-none transition-all focus:border-gold-400 focus:ring-1 focus:ring-gold-400/20"
           />
         </div>
         <div className="flex items-center gap-2">
-          <FilterIcon className="h-4 w-4 text-muted" />
+          <FilterIcon className="h-4 w-4 text-noir-400" />
           {['all', 'available', 'reserved', 'sold'].map((status) => (
             <button
               key={status}
               onClick={() => setStatusFilter(status)}
               className={cn(
-                'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                'px-3 py-1.5 text-xs font-medium uppercase tracking-wider transition-colors',
                 statusFilter === status
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-surface-bright text-muted hover:bg-surface-dim'
+                  ? 'bg-noir-950 text-white'
+                  : 'bg-white border border-noir-200 text-noir-600 hover:border-noir-300 hover:text-noir-900'
               )}
             >
               {status === 'all' ? 'Tous' : vehicleStatusLabels[status as Vehicle['status']]}
@@ -152,16 +159,16 @@ export function MotorsInventory() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-xl border border-border bg-white shadow-sm">
+      <div className="overflow-hidden border border-noir-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="border-b border-border bg-surface-dim">
+                <tr key={headerGroup.id} className="border-b border-noir-200 bg-surface-dim">
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted"
+                      className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-noir-500"
                     >
                       {header.isPlaceholder
                         ? null
@@ -171,25 +178,31 @@ export function MotorsInventory() {
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-y divide-border">
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-surface-dim/50 transition-colors">
+            <tbody className="divide-y divide-noir-100">
+              {table.getRowModel().rows.map((row, index) => (
+                <motion.tr
+                  key={row.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, delay: index * 0.03 }}
+                  className="hover:bg-surface-dim/50 transition-colors"
+                >
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-3">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
         </div>
         {table.getRowModel().rows.length === 0 && (
-          <div className="py-12 text-center text-sm text-muted">
-            Aucun véhicule trouvé
+          <div className="py-12 text-center">
+            <p className="text-sm text-noir-500">Aucun véhicule trouvé</p>
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }

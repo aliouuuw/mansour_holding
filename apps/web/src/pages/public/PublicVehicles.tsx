@@ -8,16 +8,19 @@ import {
   Calendar01Icon,
   Fuel01Icon,
   SteeringIcon,
-  ArrowUpRight01Icon,
+  ArrowRight01Icon,
   Cancel01Icon,
   Car01Icon,
+  ArrowLeft01Icon,
+  ArrowRight02Icon,
 } from 'hugeicons-react'
 import { vehicles } from '@/data/mock'
 import { formatPrice, cn } from '@/lib/utils'
-import { PublicNavbar } from '@/components/public/PublicNavbar'
-import { PublicFooter } from '@/components/public/PublicFooter'
+import { MotorsNavbar } from '@/components/motors/MotorsNavbar'
+import { MotorsFooter } from '@/components/motors/MotorsFooter'
 
-// --- Components ---
+// Cinematic hero background for the vehicles page
+const HERO_IMAGE = 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2800&auto=format&fit=crop'
 
 function FilterSelect({
   label,
@@ -35,7 +38,7 @@ function FilterSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full appearance-none border border-noir-200 bg-white px-4 py-3 pr-10 text-sm font-medium text-noir-900 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all"
+        className="w-full appearance-none border border-noir-200 bg-white px-4 py-3 pr-10 font-motors text-sm font-medium text-noir-900 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/20 transition-all"
       >
         <option value="">{label}</option>
         {options.map((opt) => (
@@ -45,7 +48,7 @@ function FilterSelect({
         ))}
       </select>
       <ArrowDown01Icon
-        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gold-600/60 h-3.5 w-3.5"
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-noir-400 h-3.5 w-3.5 group-hover:text-gold-600 transition-colors"
       />
     </div>
   )
@@ -54,78 +57,98 @@ function FilterSelect({
 function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.06, duration: 0.5 }}
-      className="group relative"
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{
+        delay: index * 0.08,
+        duration: 0.6,
+        ease: [0.16, 1, 0.3, 1]
+      }}
+      className="group"
     >
       <Link
         to="/mansour-motors/vehicules/$vehicleId"
         params={{ vehicleId: vehicle.id }}
-        className="block h-full"
+        className="block"
       >
-        <div className="flex flex-col h-full overflow-hidden border border-white/10 bg-carbon-900 shadow-sm transition-all duration-500 hover:shadow-rosso hover:-translate-y-2 hover:border-rosso-500/50 rounded-sm">
-          <div className="relative aspect-[16/10] overflow-hidden bg-carbon-800">
-            <img
+        <div className="relative overflow-hidden bg-white transition-all duration-500 hover:shadow-2xl">
+          {/* Image container with cinematic aspect */}
+          <div className="relative aspect-[16/10] overflow-hidden">
+            <motion.img
               src={vehicle.image}
               alt={`${vehicle.make} ${vehicle.model}`}
-              className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+              className="h-full w-full object-cover"
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-carbon-950/90 via-carbon-950/20 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100" />
 
-            {/* Hover overlay */}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 bg-rosso-900/40 backdrop-blur-[2px] transition-all duration-500 group-hover:opacity-100">
-              <span className="translate-y-4 btn-motors btn-motors-primary px-6 py-3 text-xs text-white backdrop-blur-md transition-transform duration-500 group-hover:translate-y-0">
-                Découvrir
-              </span>
-            </div>
+            {/* Cinematic gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-noir-950/80 via-noir-950/20 to-transparent" />
 
-            <div className="absolute top-4 right-4 z-10 transform transition-transform duration-500 group-hover:-translate-y-1">
+            {/* Status badge - floating */}
+            <div className="absolute top-4 right-4">
               {vehicle.status === 'available' ? (
-                <span className="inline-flex items-center gap-1.5 bg-emerald-500/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-400 border border-emerald-500/30 backdrop-blur-md shadow-sm">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                <span className="inline-flex items-center gap-1.5 bg-emerald-500/90 px-3 py-1.5 font-motors text-[10px] font-bold uppercase tracking-[0.15em] text-white backdrop-blur-sm">
+                  <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
                   Disponible
                 </span>
+              ) : vehicle.status === 'reserved' ? (
+                <span className="bg-amber-500/90 text-white px-3 py-1.5 font-motors text-[10px] font-bold uppercase tracking-[0.15em] backdrop-blur-sm">
+                  Réservé
+                </span>
               ) : (
-                <span className="bg-white/10 text-white/80 px-3 py-1 text-[10px] font-bold uppercase tracking-widest border border-white/20 backdrop-blur-md shadow-sm">
-                  {vehicle.status === 'reserved' ? 'Réservé' : 'Vendu'}
+                <span className="bg-noir-500/90 text-white px-3 py-1.5 font-motors text-[10px] font-bold uppercase tracking-[0.15em] backdrop-blur-sm">
+                  Vendu
                 </span>
               )}
             </div>
-          </div>
 
-          <div className="flex flex-col flex-1 p-6 relative bg-carbon-900 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-rosso-900/0 via-rosso-900/20 to-rosso-900/0 translate-x-[-100%] transition-transform duration-1000 ease-out group-hover:translate-x-[100%]" />
-            <div className="mb-4 transform transition-transform duration-500 group-hover:-translate-y-1 relative z-10">
-              <h3 className="font-motors-display font-bold text-xl text-white">
-                {vehicle.make} <span className="text-rosso-400 not-italic font-sans font-black transition-colors group-hover:text-rosso-500">{vehicle.model}</span>
+            {/* Vehicle info overlay - bottom */}
+            <div className="absolute bottom-0 left-0 right-0 p-5">
+              <h3 className="font-motors-display text-xl font-medium text-white tracking-wide">
+                {vehicle.make}{' '}
+                <span className="text-white/70">{vehicle.model}</span>
               </h3>
-              <div className="mt-2.5 flex flex-wrap gap-4 text-[10px] font-bold uppercase tracking-[0.12em] text-silver-400">
-                <span className="flex items-center gap-1.5 transition-colors group-hover:text-white">
-                  <Calendar01Icon className="text-rosso-500/70 transition-colors group-hover:text-rosso-500 h-3 w-3" /> {vehicle.year}
+              <div className="mt-2 flex flex-wrap items-center gap-4 font-motors text-[10px] font-medium uppercase tracking-[0.12em] text-white/60">
+                <span className="flex items-center gap-1.5">
+                  <Calendar01Icon className="h-3 w-3" /> {vehicle.year}
                 </span>
-                <span className="flex items-center gap-1.5 transition-colors group-hover:text-white">
-                  <Fuel01Icon className="text-rosso-500/70 transition-colors group-hover:text-rosso-500 h-3 w-3" /> {vehicle.fuelType}
+                <span className="w-1 h-1 rounded-full bg-white/30" />
+                <span className="flex items-center gap-1.5">
+                  <Fuel01Icon className="h-3 w-3" /> {vehicle.fuelType}
                 </span>
-                <span className="flex items-center gap-1.5 transition-colors group-hover:text-white">
-                  <SteeringIcon className="text-rosso-500/70 transition-colors group-hover:text-rosso-500 h-3 w-3" /> {vehicle.transmission}
+                <span className="w-1 h-1 rounded-full bg-white/30" />
+                <span className="flex items-center gap-1.5">
+                  <SteeringIcon className="h-3 w-3" /> {vehicle.transmission}
                 </span>
               </div>
             </div>
 
-            <p className="mb-5 line-clamp-2 text-sm font-light leading-relaxed text-silver-300 transform transition-transform duration-500 group-hover:-translate-y-1 relative z-10 flex-1">
-              {vehicle.description}
-            </p>
+            {/* Hover reveal - price and CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileHover={{ opacity: 1, y: 0 }}
+              className="absolute inset-0 flex items-center justify-center bg-noir-950/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            >
+              <span className="flex items-center gap-2 font-motors text-[11px] font-bold uppercase tracking-[0.2em] text-white">
+                Voir les détails
+                <ArrowRight01Icon className="h-4 w-4" />
+              </span>
+            </motion.div>
+          </div>
 
-            <div className="flex items-center justify-between border-t border-white/10 pt-5 relative z-10">
-              <span className="text-lg font-black text-white transform transition-transform duration-500 group-hover:-translate-y-0.5">
+          {/* Card footer - price */}
+          <div className="flex items-center justify-between px-5 py-4 bg-white border-t border-noir-100">
+            <div>
+              <p className="font-motors text-[10px] font-medium uppercase tracking-[0.15em] text-noir-400 mb-0.5">Prix</p>
+              <span className="font-motors-display text-xl font-medium text-noir-950">
                 {formatPrice(vehicle.price)}
               </span>
-              <span className="flex h-8 w-8 items-center justify-center bg-carbon-800 text-rosso-500 transition-all duration-500 group-hover:bg-rosso-600 group-hover:text-white group-hover:-rotate-45 group-hover:shadow-[0_0_15px_rgba(220,38,38,0.4)] rounded-full">
-                <ArrowUpRight01Icon className="h-4 w-4" />
-              </span>
             </div>
+            <span className="flex h-10 w-10 items-center justify-center bg-gold-50 text-gold-600 transition-all duration-300 group-hover:bg-gold-400 group-hover:text-noir-950">
+              <ArrowRight01Icon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+            </span>
           </div>
         </div>
       </Link>
@@ -133,24 +156,40 @@ function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: n
   )
 }
 
+function ActiveFilterPill({ label, onRemove }: { label: string; onRemove: () => void }) {
+  return (
+    <motion.span
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      className="inline-flex items-center gap-2 bg-gold-50 border border-gold-200 px-3 py-1.5 font-motors text-[11px] text-noir-800"
+    >
+      {label}
+      <button
+        onClick={onRemove}
+        className="text-noir-400 hover:text-noir-700 transition-colors"
+      >
+        <Cancel01Icon className="h-3 w-3" />
+      </button>
+    </motion.span>
+  )
+}
+
 export function PublicVehicles() {
   const [search, setSearch] = useState('')
   const [isFiltersOpen, setIsFiltersOpen] = useState(false)
 
-  // Filters state
   const [make, setMake] = useState('')
   const [year, setYear] = useState('')
   const [fuelType, setFuelType] = useState('')
   const [transmission, setTransmission] = useState('')
   const [priceMax, setPriceMax] = useState('')
 
-  // Derived options
   const makes = useMemo(() => Array.from(new Set(vehicles.map(v => v.make))).sort(), [])
   const years = useMemo(() => Array.from(new Set(vehicles.map(v => v.year))).sort((a, b) => b - a), [])
   const fuelTypes = useMemo(() => Array.from(new Set(vehicles.map(v => v.fuelType))).sort(), [])
   const transmissions = useMemo(() => Array.from(new Set(vehicles.map(v => v.transmission))).sort(), [])
 
-  // Filtering logic
   const filteredVehicles = useMemo(() => {
     return vehicles.filter(v => {
       const q = search.toLowerCase()
@@ -173,7 +212,13 @@ export function PublicVehicles() {
     })
   }, [search, make, year, fuelType, transmission, priceMax])
 
-  const activeFiltersCount = [make, year, fuelType, transmission, priceMax].filter(Boolean).length
+  const activeFilters = [
+    make && { label: make, clear: () => setMake('') },
+    year && { label: year, clear: () => setYear('') },
+    fuelType && { label: fuelType, clear: () => setFuelType('') },
+    transmission && { label: transmission, clear: () => setTransmission('') },
+    priceMax && { label: `Max ${formatPrice(parseInt(priceMax))}`, clear: () => setPriceMax('') },
+  ].filter(Boolean) as { label: string; clear: () => void }[]
 
   const clearFilters = () => {
     setMake('')
@@ -184,67 +229,154 @@ export function PublicVehicles() {
   }
 
   return (
-    <div className="min-h-screen bg-carbon-950 font-sans text-white motors-theme page-grain">
-      <PublicNavbar />
+    <div className="motors-theme min-h-screen bg-white font-motors">
+      <MotorsNavbar />
 
-      {/* Hero Section */}
-      <section className="relative bg-carbon-950 px-6 pt-32 pb-16 lg:px-12 lg:pt-40 lg:pb-20">
-        <div className="mx-auto max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <div className="mb-4 flex items-center gap-3">
-              <span className="h-px w-10 bg-rosso-600" />
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-rosso-500">
-                Mansour Motors — Catalogue
+      {/* Cinematic Dark Hero */}
+      <section className="relative h-[50vh] min-h-[380px] w-full overflow-hidden lg:h-[55vh]">
+        {/* Background Image */}
+        <motion.div
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute inset-0"
+        >
+          <img
+            src={HERO_IMAGE}
+            alt="Premium vehicles"
+            className="h-full w-full object-cover"
+          />
+        </motion.div>
+
+        {/* Cinematic overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-carbon-950 via-carbon-950/60 to-carbon-950/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-carbon-950/80 via-transparent to-carbon-950/40" />
+
+        {/* Content */}
+        <div className="relative h-full flex flex-col justify-end px-6 pb-12 lg:px-16 lg:pb-16">
+          <div className="mx-auto max-w-7xl w-full">
+            {/* Breadcrumb */}
+            <motion.nav
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mb-6 flex items-center gap-2 font-motors text-[11px] font-medium uppercase tracking-[0.12em]"
+            >
+              <Link to="/mansour-motors" className="text-silver-400 hover:text-gold-400 transition-colors">
+                Motors
+              </Link>
+              <ArrowRight02Icon className="h-3 w-3 text-silver-600" />
+              <span className="text-silver-200">Catalogue</span>
+            </motion.nav>
+
+            {/* Title */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <span className="mb-3 block font-motors text-[11px] font-medium uppercase tracking-[0.3em] text-gold-400">
+                Collection Premium
               </span>
-            </div>
-            <h1 className="font-motors-display font-bold text-4xl text-white md:text-6xl uppercase">
-              Véhicules <span className="text-transparent bg-clip-text bg-gradient-to-r from-rosso-500 to-rosso-700 not-italic font-sans font-black uppercase text-[0.75em] tracking-tight">d'Exception</span>
-            </h1>
-            <p className="mt-4 max-w-xl text-base font-light text-silver-300 md:text-lg">
-              Découvrez notre sélection de véhicules premium, neufs et d'occasion certifiés.
-            </p>
-          </motion.div>
+              <h1 className="font-motors-display text-4xl uppercase tracking-[0.02em] text-white md:text-5xl lg:text-6xl">
+                Nos <span className="text-silver-400">Véhicules</span>
+              </h1>
+              <p className="mt-4 max-w-md font-motors text-base font-light text-silver-300 md:text-lg">
+                Une sélection rigoureuse de véhicules d'exception, inspectés et certifiés Mansour Motors.
+              </p>
+            </motion.div>
+
+            {/* Back link */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="mt-8"
+            >
+              <Link
+                to="/mansour-motors"
+                className="inline-flex items-center gap-2 font-motors text-[11px] font-medium uppercase tracking-[0.15em] text-silver-400 hover:text-white transition-colors"
+              >
+                <ArrowLeft01Icon className="h-3.5 w-3.5" />
+                Retour à l'accueil
+              </Link>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Filters & Content */}
-      <section className="px-6 pb-24 lg:px-12">
-        <div className="mx-auto max-w-7xl">
-          {/* Controls */}
-          <div className="mb-10 flex flex-col gap-4 border-b border-white/10 pb-8 lg:flex-row lg:items-center lg:justify-between">
+      {/* Vehicle Count Bar */}
+      <section className="border-b border-noir-100 bg-surface-dim">
+        <div className="mx-auto max-w-7xl px-6 py-4 lg:px-16">
+          <div className="flex items-center justify-between">
+            <p className="font-motors text-[11px] font-medium uppercase tracking-[0.15em] text-noir-500">
+              <span className="text-noir-950 font-semibold">{filteredVehicles.length}</span> véhicule{filteredVehicles.length !== 1 ? 's' : ''} disponible{filteredVehicles.length !== 1 ? 's' : ''}
+            </p>
+            {activeFilters.length > 0 && (
+              <button
+                onClick={clearFilters}
+                className="font-motors text-[11px] font-medium uppercase tracking-[0.1em] text-noir-400 hover:text-gold-600 transition-colors"
+              >
+                Effacer les filtres
+              </button>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content - Light Section */}
+      <main className="bg-white">
+        <div className="mx-auto max-w-7xl px-6 py-10 lg:px-16 lg:py-14">
+          {/* Search & Filter Controls */}
+          <div className="mb-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            {/* Search */}
             <div className="relative w-full max-w-md">
-              <Search01Icon className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-silver-400" />
+              <Search01Icon className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-noir-400" />
               <input
                 type="text"
-                placeholder="Rechercher une marque, un modèle..."
+                placeholder="Rechercher par marque, modèle..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full border border-white/10 bg-carbon-900 py-3 pl-11 pr-4 text-sm text-white placeholder-silver-500 focus:border-rosso-500 focus:outline-none focus:ring-1 focus:ring-rosso-500/30 transition-all"
+                className="w-full border border-noir-200 bg-white py-3 pl-11 pr-4 font-motors text-sm text-noir-900 placeholder-noir-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/20 transition-all"
               />
             </div>
 
-            <div className="flex items-center gap-4">
-              <span className="text-xs font-bold text-silver-400 uppercase tracking-wider">
-                {filteredVehicles.length} véhicule{filteredVehicles.length !== 1 ? 's' : ''}
-              </span>
-              <button
-                onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                className={cn(
-                  'flex items-center gap-2 border px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-300',
-                  isFiltersOpen || activeFiltersCount > 0
-                    ? 'border-rosso-500 bg-rosso-600 text-white shadow-rosso-sm'
-                    : 'border-white/10 bg-carbon-900 text-silver-300 hover:border-rosso-500/50 hover:text-white hover:bg-carbon-800'
-                )}
-              >
-                <FilterIcon className="h-3.5 w-3.5" />
-                Filtres {activeFiltersCount > 0 && `(${activeFiltersCount})`}
-              </button>
-            </div>
+            {/* Filter Toggle */}
+            <button
+              onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+              className={cn(
+                'flex items-center gap-2 border px-5 py-3 font-motors text-[11px] font-bold uppercase tracking-[0.12em] transition-all duration-300',
+                isFiltersOpen || activeFilters.length > 0
+                  ? 'border-gold-400 bg-gold-400 text-noir-950'
+                  : 'border-noir-200 bg-white text-noir-600 hover:border-noir-300 hover:text-noir-900'
+              )}
+            >
+              <FilterIcon className="h-3.5 w-3.5" />
+              Filtres
+              {activeFilters.length > 0 && (
+                <span className="ml-1 flex h-5 w-5 items-center justify-center bg-noir-950 text-white text-[10px] rounded-full">
+                  {activeFilters.length}
+                </span>
+              )}
+            </button>
           </div>
+
+          {/* Active Filters */}
+          <AnimatePresence>
+            {activeFilters.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-6 flex flex-wrap items-center gap-2"
+              >
+                <span className="font-motors text-[11px] uppercase tracking-[0.1em] text-noir-400 mr-2">Filtres actifs:</span>
+                {activeFilters.map((filter, i) => (
+                  <ActiveFilterPill key={i} label={filter.label} onRemove={filter.clear} />
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Filter Panel */}
           <AnimatePresence>
@@ -253,39 +385,31 @@ export function PublicVehicles() {
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 className="mb-10 overflow-hidden"
               >
-                <div className="grid grid-cols-1 gap-3 border border-white/10 bg-carbon-950 p-6 md:grid-cols-2 lg:grid-cols-5">
-                  <FilterSelect label="Marque" value={make} onChange={setMake} options={makes} />
-                  <FilterSelect label="Année" value={year} onChange={setYear} options={years.map(String)} />
-                  <FilterSelect label="Carburant" value={fuelType} onChange={setFuelType} options={fuelTypes} />
-                  <FilterSelect label="Transmission" value={transmission} onChange={setTransmission} options={transmissions} />
-                  <div className="relative w-full">
-                    <input
-                      type="number"
-                      placeholder="Prix max (FCFA)"
-                      value={priceMax}
-                      onChange={(e) => setPriceMax(e.target.value)}
-                      className="w-full border border-white/10 bg-carbon-900 px-4 py-3 text-sm font-medium text-white placeholder-silver-500 focus:border-rosso-500 focus:outline-none focus:ring-1 focus:ring-rosso-500/30 transition-all"
-                    />
+                <div className="border border-noir-200 bg-surface-dim p-6">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
+                    <FilterSelect label="Toutes les marques" value={make} onChange={setMake} options={makes} />
+                    <FilterSelect label="Année" value={year} onChange={setYear} options={years.map(String)} />
+                    <FilterSelect label="Carburant" value={fuelType} onChange={setFuelType} options={fuelTypes} />
+                    <FilterSelect label="Transmission" value={transmission} onChange={setTransmission} options={transmissions} />
+                    <div className="relative w-full">
+                      <input
+                        type="number"
+                        placeholder="Prix maximum (FCFA)"
+                        value={priceMax}
+                        onChange={(e) => setPriceMax(e.target.value)}
+                        className="w-full border border-noir-200 bg-white px-4 py-3 font-motors text-sm text-noir-900 placeholder-noir-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/20 transition-all"
+                      />
+                    </div>
                   </div>
                 </div>
-                {activeFiltersCount > 0 && (
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      onClick={clearFilters}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-silver-400 hover:text-rosso-500 transition-colors"
-                    >
-                      <Cancel01Icon className="h-3 w-3" /> Réinitialiser
-                    </button>
-                  </div>
-                )}
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Grid */}
+          {/* Vehicle Grid */}
           <div className="min-h-[400px]">
             {filteredVehicles.length > 0 ? (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -297,28 +421,28 @@ export function PublicVehicles() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex flex-col items-center justify-center py-32 text-center"
+                className="flex flex-col items-center justify-center py-24 text-center"
               >
-                <div className="mb-6 flex h-20 w-20 items-center justify-center border border-white/10 bg-carbon-900">
-                  <Car01Icon className="h-8 w-8 text-silver-500" />
+                <div className="mb-6 flex h-20 w-20 items-center justify-center border border-noir-200 bg-surface-dim">
+                  <Car01Icon className="h-8 w-8 text-noir-400" />
                 </div>
-                <h3 className="font-motors-display font-bold text-2xl text-white">Aucun résultat</h3>
-                <p className="mt-3 max-w-sm text-sm text-silver-400">
-                  Aucun véhicule ne correspond à vos critères. Modifiez vos filtres ou votre recherche.
+                <h3 className="font-motors-display text-xl uppercase tracking-wide text-noir-950">Aucun résultat</h3>
+                <p className="mt-3 max-w-sm font-motors text-sm text-noir-500">
+                  Aucun véhicule ne correspond à vos critères actuels.
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="mt-8 border border-white/10 bg-carbon-900 px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-silver-300 transition-all hover:border-rosso-500 hover:text-white"
+                  className="mt-6 border border-noir-200 bg-white px-6 py-3 font-motors text-[11px] font-bold uppercase tracking-widest text-noir-600 transition-all hover:border-gold-400 hover:text-gold-600"
                 >
-                  Effacer les filtres
+                  Réinitialiser les filtres
                 </button>
               </motion.div>
             )}
           </div>
         </div>
-      </section>
+      </main>
 
-      <PublicFooter />
+      <MotorsFooter />
     </div>
   )
 }

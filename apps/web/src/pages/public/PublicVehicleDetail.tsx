@@ -1,8 +1,8 @@
 import { Link, useParams } from '@tanstack/react-router'
+import { useRef, useState, useCallback } from 'react'
 import {
   ArrowLeft01Icon,
   ArrowRight01Icon,
-  ArrowUpRight01Icon,
   Calendar01Icon,
   Fuel01Icon,
   DashboardSpeed01Icon,
@@ -14,34 +14,44 @@ import {
   WhatsappIcon,
   ArrowRight02Icon,
   Car01Icon,
+  CheckmarkCircle01Icon,
+  Clock01Icon,
+  Tag01Icon,
 } from 'hugeicons-react'
 import { vehicles } from '@/data/mock'
-import { formatPrice, formatNumber } from '@/lib/utils'
-import { PublicNavbar } from '@/components/public/PublicNavbar'
-import { PublicFooter } from '@/components/public/PublicFooter'
-import { motion } from 'framer-motion'
+import { formatPrice, formatNumber, cn } from '@/lib/utils'
+import { MotorsNavbar } from '@/components/motors/MotorsNavbar'
+import { MotorsFooter } from '@/components/motors/MotorsFooter'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 
 export function PublicVehicleDetail() {
   const { vehicleId } = useParams({ strict: false })
   const vehicle = vehicles.find((v) => v.id === vehicleId)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start start', 'end start']
+  })
+  const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
   if (!vehicle) {
     return (
-      <div className="min-h-screen bg-surface-dim font-sans text-noir-950 selection:bg-gold-400 selection:text-noir-950 flex flex-col page-grain">
-        <PublicNavbar />
+      <div className="motors-theme min-h-screen bg-carbon-950 font-motors text-silver-100 flex flex-col">
+        <MotorsNavbar />
         <div className="flex flex-1 flex-col items-center justify-center gap-4">
-          <div className="flex h-20 w-20 items-center justify-center border border-noir-100 bg-white">
-            <Car01Icon className="h-8 w-8 text-noir-200" />
+          <div className="flex h-20 w-20 items-center justify-center border border-white/[0.06] bg-carbon-900">
+            <Car01Icon className="h-8 w-8 text-silver-600" />
           </div>
-          <p className="font-serif text-2xl italic text-noir-950">Véhicule non trouvé</p>
+          <p className="font-motors-display text-xl uppercase tracking-wide text-white">Véhicule non trouvé</p>
           <Link
             to="/mansour-motors/vehicules"
-            className="mt-4 text-xs font-bold uppercase tracking-widest text-gold-600 hover:text-noir-950 transition-colors"
+            className="mt-4 font-motors text-xs font-bold uppercase tracking-widest text-gold-600 hover:text-gold-500 transition-colors"
           >
             Retour au catalogue
           </Link>
         </div>
-        <PublicFooter />
+        <MotorsFooter />
       </div>
     )
   }
@@ -55,201 +65,390 @@ export function PublicVehicleDetail() {
     { label: 'VIN', value: vehicle.vin, icon: HashtagIcon },
   ]
 
+  const statusConfig = {
+    available: {
+      icon: CheckmarkCircle01Icon,
+      label: 'Disponible immédiatement',
+      className: 'bg-emerald-500 text-white',
+      pulse: true,
+    },
+    reserved: {
+      icon: Clock01Icon,
+      label: 'Réservé',
+      className: 'bg-amber-500 text-white',
+      pulse: false,
+    },
+    sold: {
+      icon: Tag01Icon,
+      label: 'Vendu',
+      className: 'bg-noir-500 text-white',
+      pulse: false,
+    },
+  }
+  const status = statusConfig[vehicle.status as keyof typeof statusConfig] || statusConfig.sold
+
+  // Get all images for the vehicle (single image or multiple)
+  const allImages = vehicle.images && vehicle.images.length > 0 ? vehicle.images : [vehicle.image]
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [direction, setDirection] = useState(0)
+
+  const nextImage = useCallback(() => {
+    setDirection(1)
+    setCurrentImageIndex((prev) => (prev + 1) % allImages.length)
+  }, [allImages.length])
+
+  const prevImage = useCallback(() => {
+    setDirection(-1)
+    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length)
+  }, [allImages.length])
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? '100%' : '-100%',
+      opacity: 0,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: number) => ({
+      x: direction < 0 ? '100%' : '-100%',
+      opacity: 0,
+    }),
+  }
+
   return (
-    <div className="min-h-screen bg-surface-dim font-sans text-noir-950 selection:bg-gold-400 selection:text-noir-950 page-grain">
-      <PublicNavbar />
+    <div ref={containerRef} className="motors-theme min-h-screen bg-white font-motors">
+      <MotorsNavbar />
 
-      <main className="pt-28 pb-24 px-6 lg:px-12 lg:pt-32">
-        <div className="mx-auto max-w-7xl">
-          {/* Breadcrumb */}
-          <nav className="mb-10 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em]">
-            <Link to="/mansour-motors" className="text-noir-400 hover:text-gold-600 transition-colors">
-              Motors
-            </Link>
-            <ArrowRight02Icon className="h-3 w-3 text-noir-300" />
-            <Link to="/mansour-motors/vehicules" className="text-noir-400 hover:text-gold-600 transition-colors">
-              Véhicules
-            </Link>
-            <ArrowRight02Icon className="h-3 w-3 text-noir-300" />
-            <span className="text-noir-700">{vehicle.make} {vehicle.model}</span>
-          </nav>
+      {/* Full-bleed Hero Image Slider with Parallax */}
+      <section className="relative h-[60vh] min-h-[400px] w-full overflow-hidden lg:h-[70vh]">
+        {/* Image Slider */}
+        <motion.div
+          style={{ y: heroY }}
+          className="absolute inset-0 -top-20"
+        >
+          <AnimatePresence initial={false} custom={direction} mode="popLayout">
+            <motion.div
+              key={currentImageIndex}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute inset-0"
+            >
+              <img
+                src={allImages[currentImageIndex]}
+                alt={`${vehicle.make} ${vehicle.model} - Image ${currentImageIndex + 1}`}
+                className="h-full w-full object-cover"
+              />
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
 
-          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-            {/* Left Column: Images & Specs */}
-            <div className="lg:col-span-8 space-y-12">
-              {/* Main Image */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="relative overflow-hidden shadow-rosso-sm aspect-[16/10] bg-carbon-900 border border-white/10"
-              >
-                <img
-                  src={vehicle.image}
-                  alt={`${vehicle.make} ${vehicle.model}`}
-                  className="h-full w-full object-cover"
+        {/* Cinematic overlays with scroll-based opacity */}
+        <motion.div
+          style={{ opacity: heroOpacity }}
+          className="absolute inset-0 bg-gradient-to-t from-carbon-950 via-carbon-950/50 to-carbon-950/30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-carbon-950/70 via-transparent to-carbon-950/30" />
+
+        {/* Back button */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <Link
+            to="/mansour-motors/vehicules"
+            className="absolute top-24 left-6 z-10 flex items-center gap-2 border border-white/10 bg-carbon-950/60 px-4 py-2.5 font-motors text-[10px] font-bold uppercase tracking-[0.15em] text-silver-300 backdrop-blur-sm transition-all hover:border-gold-400/50 hover:text-white lg:left-16"
+          >
+            <ArrowLeft01Icon className="h-3.5 w-3.5" />
+            Catalogue
+          </Link>
+        </motion.div>
+
+        {/* Slider Navigation - Only show when multiple images */}
+        {allImages.length > 1 && (
+          <>
+            {/* Previous Button */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              onClick={prevImage}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-20 flex h-12 w-12 items-center justify-center bg-carbon-950/60 text-white backdrop-blur-sm border border-white/10 transition-all hover:bg-gold-400 hover:text-noir-950 hover:border-gold-400 lg:left-8"
+            >
+              <ArrowLeft01Icon className="h-5 w-5" />
+            </motion.button>
+
+            {/* Next Button */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              onClick={nextImage}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-20 flex h-12 w-12 items-center justify-center bg-carbon-950/60 text-white backdrop-blur-sm border border-white/10 transition-all hover:bg-gold-400 hover:text-noir-950 hover:border-gold-400 lg:right-8"
+            >
+              <ArrowRight01Icon className="h-5 w-5" />
+            </motion.button>
+
+            {/* Image Counter / Dots */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="absolute bottom-28 right-6 z-20 flex items-center gap-2 lg:right-16"
+            >
+              {allImages.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setDirection(index > currentImageIndex ? 1 : -1)
+                    setCurrentImageIndex(index)
+                  }}
+                  className={cn(
+                    'h-1.5 transition-all duration-300',
+                    index === currentImageIndex
+                      ? 'w-8 bg-gold-400'
+                      : 'w-1.5 bg-white/50 hover:bg-white/80'
+                  )}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-carbon-950/50 to-transparent pointer-events-none" />
-                {/* Back button overlay */}
-                <Link
-                  to="/mansour-motors/vehicules"
-                  className="absolute top-5 left-5 flex items-center gap-2 bg-carbon-900/90 border border-white/10 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-silver-300 backdrop-blur-md transition-all hover:bg-carbon-800 hover:text-white hover:border-rosso-500 shadow-sm"
-                >
-                  <ArrowLeft01Icon className="h-3.5 w-3.5" />
-                  Catalogue
-                </Link>
-              </motion.div>
+              ))}
+            </motion.div>
 
-              {/* Description */}
+            {/* Image Count Badge */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7 }}
+              className="absolute top-24 right-6 z-20 bg-carbon-950/60 px-3 py-1.5 backdrop-blur-sm border border-white/10 lg:right-16"
+            >
+              <span className="font-motors text-[11px] font-medium text-white">
+                {currentImageIndex + 1} / {allImages.length}
+              </span>
+            </motion.div>
+          </>
+        )}
+
+        {/* Vehicle name overlay */}
+        <div className="absolute bottom-0 left-0 right-0 px-6 pb-10 lg:px-16 lg:pb-14">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <nav className="mb-4 flex items-center gap-2 font-motors text-[11px] font-medium uppercase tracking-[0.15em]">
+              <Link to="/mansour-motors" className="text-silver-500 hover:text-gold-400 transition-colors">
+                Motors
+              </Link>
+              <ArrowRight02Icon className="h-3 w-3 text-silver-600" />
+              <Link to="/mansour-motors/vehicules" className="text-silver-500 hover:text-gold-400 transition-colors">
+                Véhicules
+              </Link>
+              <ArrowRight02Icon className="h-3 w-3 text-silver-600" />
+              <span className="text-silver-300">{vehicle.make} {vehicle.model}</span>
+            </nav>
+            <h1 className="font-motors-display text-3xl uppercase tracking-[0.02em] text-white sm:text-4xl md:text-5xl lg:text-6xl">
+              {vehicle.make}{' '}
+              <span className="text-silver-400">{vehicle.model}</span>
+            </h1>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="mt-3 font-motors text-sm text-silver-400 uppercase tracking-[0.1em]"
+            >
+              {vehicle.year} · {vehicle.transmission} · {vehicle.fuelType}
+            </motion.p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Specs Strip - Refined */}
+      <section className="relative bg-carbon-900">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-400/30 to-transparent" />
+        <div className="mx-auto max-w-7xl">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 divide-x divide-white/[0.04]">
+            {specs.map((spec, index) => (
+              <motion.div
+                key={spec.label}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                className="group flex flex-col items-center justify-center px-4 py-7 text-center transition-all duration-300 hover:bg-white/[0.03]"
+              >
+                <div className="mb-3 flex h-10 w-10 items-center justify-center border border-white/[0.08] transition-all duration-300 group-hover:border-gold-400/40 group-hover:bg-gold-400/10">
+                  <spec.icon className="h-4 w-4 text-silver-500 transition-colors duration-300 group-hover:text-gold-400" />
+                </div>
+                <p className="font-motors text-[10px] font-medium uppercase tracking-[0.2em] text-silver-600 mb-1">{spec.label}</p>
+                <p className="font-motors text-sm font-bold text-white">{spec.value}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold-400/30 to-transparent" />
+      </section>
+
+      {/* Main Content — Light section */}
+      <main className="px-6 py-16 lg:px-16 lg:py-24 bg-white">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+            {/* Left: Description & Details */}
+            <div className="lg:col-span-7 space-y-12">
+              {/* Price & Status - Using status config */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="space-y-5"
+                className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-noir-100 pb-8"
               >
-                <h2 className="font-motors-display font-bold text-3xl text-white uppercase">
-                  L'Excellence <span className="text-transparent bg-clip-text bg-gradient-to-r from-rosso-500 to-rosso-700 not-italic font-sans font-black uppercase text-[0.65em] tracking-tight">Détaillée</span>
-                </h2>
-                <div className="space-y-4 text-base font-light leading-relaxed text-silver-300">
-                  <p>{vehicle.description}</p>
-                  <p>
-                    Ce véhicule incarne le standard de qualité Mansour Motors. Inspecté rigoureusement
-                    sur plus de 100 points de contrôle, il bénéficie de notre garantie d'excellence.
-                    Une opportunité rare d'acquérir une pièce d'exception.
+                <div>
+                  <p className="font-motors text-[10px] font-medium uppercase tracking-[0.2em] text-noir-400 mb-1">Prix</p>
+                  <p className="font-motors-display text-3xl text-noir-950 lg:text-4xl">
+                    {formatPrice(vehicle.price)}
                   </p>
+                </div>
+                <div>
+                  <span className={cn(
+                    "inline-flex items-center gap-2 px-4 py-2.5 font-motors text-[10px] font-bold uppercase tracking-[0.15em]",
+                    status.className
+                  )}>
+                    {status.pulse && <span className="h-2 w-2 rounded-full bg-white animate-pulse" />}
+                    <status.icon className="h-3.5 w-3.5" />
+                    {status.label}
+                  </span>
                 </div>
               </motion.div>
 
-              {/* Specs Grid */}
+              {/* Description - Editorial styling */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="border-t border-white/10 pt-10"
+                className="space-y-6"
               >
-                <h3 className="mb-8 text-[10px] font-bold uppercase tracking-[0.2em] text-rosso-500">
-                  Caractéristiques Techniques
-                </h3>
-                <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
-                  {specs.map((spec, index) => (
-                    <motion.div
-                      key={spec.label}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 + index * 0.05 }}
-                      className="group flex items-start gap-3 cursor-default"
-                    >
-                      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center bg-carbon-800 text-rosso-500 transition-all duration-300 group-hover:bg-rosso-600 group-hover:text-white group-hover:scale-110 group-hover:-rotate-3 group-hover:shadow-[0_0_15px_rgba(220,38,38,0.4)] rounded-sm">
-                        <spec.icon className="h-4 w-4" />
-                      </div>
-                      <div className="min-w-0 transition-transform duration-300 group-hover:translate-x-1">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-silver-500 mb-1 transition-colors duration-300 group-hover:text-rosso-400">{spec.label}</p>
-                        <p className="text-sm font-bold text-white break-all">{spec.value}</p>
-                      </div>
-                    </motion.div>
-                  ))}
+                <div className="flex items-center gap-4">
+                  <div className="h-px flex-1 bg-noir-200" />
+                  <h2 className="font-motors-display text-lg uppercase tracking-[0.08em] text-gold-600">
+                    Description
+                  </h2>
+                  <div className="h-px flex-1 bg-noir-200" />
+                </div>
+                <div className="space-y-4 font-motors text-base font-light leading-[1.8] text-noir-600">
+                  <p className="text-lg text-noir-800 font-light">{vehicle.description}</p>
+                  <p>
+                    Ce véhicule incarne le standard de qualité Mansour Motors. Chaque unité est inspectée rigoureusement
+                    sur plus de 100 points de contrôle par nos techniciens certifiés. Il bénéficie de notre garantie d'excellence
+                    et d'un service après-vente premium.
+                  </p>
+                  <p className="text-noir-500 italic">
+                    Une opportunité rare d'acquérir une pièce d'exception, disponible immédiatement dans notre showroom de Dakar.
+                  </p>
                 </div>
               </motion.div>
             </div>
 
-            {/* Right Column: Sticky Sidebar */}
-            <div className="lg:col-span-4">
+            {/* Right: Sticky Sidebar */}
+            <div className="lg:col-span-5">
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.15 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
                 className="sticky top-28 space-y-8"
               >
-                {/* Header Info */}
-                <div>
-                  <h1 className="font-motors-display font-bold text-3xl text-white uppercase leading-tight lg:text-4xl">
-                    {vehicle.make} <span className="block not-italic text-rosso-500 font-sans font-black uppercase text-[0.65em] tracking-tight">{vehicle.model}</span>
-                  </h1>
-                  <p className="mt-4 text-2xl font-black text-white tracking-tight lg:text-3xl">
-                    {formatPrice(vehicle.price)}
-                  </p>
-                  <div className="mt-4">
-                    {vehicle.status === 'available' ? (
-                      <span className="inline-flex items-center gap-1.5 bg-emerald-500/20 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-emerald-400 border border-emerald-500/30">
-                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        Disponible immédiatement
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white/80 border border-white/20">
-                        {vehicle.status === 'reserved' ? 'Réservé' : 'Vendu'}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Contact Form */}
-                <div className="border border-white/10 bg-carbon-900 p-7 shadow-sm">
-                  <h3 className="mb-1.5 font-motors-display font-bold text-xl text-white uppercase">Acquérir ce véhicule</h3>
-                  <p className="mb-6 text-xs font-light text-silver-400">
+                {/* Contact Form - Refined */}
+                <div className="relative border border-noir-200 bg-surface-dim p-7 overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-gold-400/50 to-transparent" />
+                  <h3 className="mb-1.5 font-motors-display text-lg uppercase tracking-[0.04em] text-noir-950">
+                    Acquérir ce véhicule
+                  </h3>
+                  <p className="mb-6 font-motors text-xs font-light text-noir-500">
                     Un conseiller privé vous recontactera sous 24h.
                   </p>
 
-                  <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
-                    <input
-                      type="text"
-                      placeholder="Nom complet"
-                      className="w-full border border-white/10 bg-carbon-950 px-4 py-3 text-sm text-white placeholder-silver-500 focus:border-rosso-500 focus:bg-carbon-900 focus:outline-none focus:ring-1 focus:ring-rosso-500/30 transition-all hover:border-white/20"
-                    />
-                    <input
-                      type="tel"
-                      placeholder="Téléphone"
-                      className="w-full border border-white/10 bg-carbon-950 px-4 py-3 text-sm text-white placeholder-silver-500 focus:border-rosso-500 focus:bg-carbon-900 focus:outline-none focus:ring-1 focus:ring-rosso-500/30 transition-all hover:border-white/20"
-                    />
-                    <input
-                      type="email"
-                      placeholder="Email"
-                      className="w-full border border-white/10 bg-carbon-950 px-4 py-3 text-sm text-white placeholder-silver-500 focus:border-rosso-500 focus:bg-carbon-900 focus:outline-none focus:ring-1 focus:ring-rosso-500/30 transition-all hover:border-white/20"
-                    />
+                  <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder="Nom complet"
+                        className="w-full border border-noir-200 bg-white px-4 py-3.5 font-motors text-sm text-noir-900 placeholder-noir-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/20 transition-all"
+                      />
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="tel"
+                        placeholder="Téléphone"
+                        className="w-full border border-noir-200 bg-white px-4 py-3.5 font-motors text-sm text-noir-900 placeholder-noir-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/20 transition-all"
+                      />
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        className="w-full border border-noir-200 bg-white px-4 py-3.5 font-motors text-sm text-noir-900 placeholder-noir-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/20 transition-all"
+                      />
+                    </div>
                     <textarea
-                      rows={3}
+                      rows={4}
                       placeholder="Message (facultatif)"
-                      className="w-full border border-white/10 bg-carbon-950 px-4 py-3 text-sm text-white placeholder-silver-500 focus:border-rosso-500 focus:bg-carbon-900 focus:outline-none focus:ring-1 focus:ring-rosso-500/30 transition-all hover:border-white/20 resize-none"
+                      className="w-full border border-noir-200 bg-white px-4 py-3.5 font-motors text-sm text-noir-900 placeholder-noir-400 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/20 transition-all resize-none"
                     />
                     <motion.button
                       type="submit"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="w-full btn-motors btn-motors-primary px-6 py-4 text-[10px] mt-2"
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
+                      className="w-full bg-gold-400 px-6 py-4 font-motors text-[11px] font-bold uppercase tracking-[0.2em] text-noir-950 transition-all hover:bg-gold-300 hover:shadow-gold mt-2"
                     >
                       Demander un rendez-vous
                     </motion.button>
                   </form>
                 </div>
 
-                {/* Direct Contact */}
-                <div className="space-y-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-rosso-500">
-                    Contact Direct
-                  </p>
-                  <div className="space-y-3">
-                    <a href="tel:+221331234567" className="flex items-center gap-3 group">
-                      <div className="flex h-9 w-9 items-center justify-center bg-carbon-800 text-rosso-500 transition-all duration-300 group-hover:bg-rosso-600 group-hover:text-white group-hover:scale-110 group-hover:-rotate-6 group-hover:shadow-md rounded-sm">
-                        <TelephoneIcon className="h-4 w-4" />
+                {/* Direct Contact - Refined */}
+                <div className="space-y-5">
+                  <div className="flex items-center gap-4">
+                    <div className="h-px flex-1 bg-noir-200" />
+                    <p className="font-motors text-[11px] font-medium uppercase tracking-[0.2em] text-gold-600">
+                      Contact Direct
+                    </p>
+                    <div className="h-px flex-1 bg-noir-200" />
+                  </div>
+                  <div className="space-y-4">
+                    <a href="tel:+221331234567" className="flex items-center gap-4 group">
+                      <div className="flex h-11 w-11 items-center justify-center border border-noir-200 text-noir-400 transition-all duration-300 group-hover:border-gold-400 group-hover:bg-gold-50 group-hover:text-gold-600">
+                        <TelephoneIcon className="h-5 w-5" />
                       </div>
-                      <span className="text-sm text-silver-400 transition-all duration-300 group-hover:text-rosso-400 group-hover:translate-x-1 font-medium">
-                        +221 33 123 45 67
-                      </span>
+                      <div>
+                        <p className="font-motors text-[10px] uppercase tracking-[0.1em] text-noir-400">Téléphone</p>
+                        <span className="font-motors text-base text-noir-700 transition-all duration-300 group-hover:text-noir-950 font-medium">
+                          +221 33 123 45 67
+                        </span>
+                      </div>
                     </a>
-                    <a href="mailto:motors@mansour.sn" className="flex items-center gap-3 group">
-                      <div className="flex h-9 w-9 items-center justify-center bg-carbon-800 text-rosso-500 transition-all duration-300 group-hover:bg-rosso-600 group-hover:text-white group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-md rounded-sm">
-                        <Mail01Icon className="h-4 w-4" />
+                    <a href="mailto:motors@mansour.sn" className="flex items-center gap-4 group">
+                      <div className="flex h-11 w-11 items-center justify-center border border-noir-200 text-noir-400 transition-all duration-300 group-hover:border-gold-400 group-hover:bg-gold-50 group-hover:text-gold-600">
+                        <Mail01Icon className="h-5 w-5" />
                       </div>
-                      <span className="text-sm text-silver-400 transition-all duration-300 group-hover:text-rosso-400 group-hover:translate-x-1 font-medium">
-                        motors@mansour.sn
-                      </span>
+                      <div>
+                        <p className="font-motors text-[10px] uppercase tracking-[0.1em] text-noir-400">Email</p>
+                        <span className="font-motors text-base text-noir-700 transition-all duration-300 group-hover:text-noir-950 font-medium">
+                          motors@mansour.sn
+                        </span>
+                      </div>
                     </a>
-                    <a href="https://wa.me/221771234567" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                      <div className="flex h-9 w-9 items-center justify-center bg-carbon-800 text-rosso-500 transition-all duration-300 group-hover:bg-rosso-600 group-hover:text-white group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-md rounded-sm">
-                        <WhatsappIcon className="h-4 w-4" />
+                    <a href="https://wa.me/221771234567" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 group">
+                      <div className="flex h-11 w-11 items-center justify-center border border-noir-200 text-noir-400 transition-all duration-300 group-hover:border-gold-400 group-hover:bg-gold-50 group-hover:text-gold-600">
+                        <WhatsappIcon className="h-5 w-5" />
                       </div>
-                      <span className="text-sm text-silver-400 transition-all duration-300 group-hover:text-rosso-400 group-hover:translate-x-1 font-medium">
-                        WhatsApp
-                      </span>
+                      <div>
+                        <p className="font-motors text-[10px] uppercase tracking-[0.1em] text-noir-400">WhatsApp</p>
+                        <span className="font-motors text-base text-noir-700 transition-all duration-300 group-hover:text-noir-950 font-medium">
+                          +221 77 123 45 67
+                        </span>
+                      </div>
                     </a>
                   </div>
                 </div>
@@ -259,16 +458,17 @@ export function PublicVehicleDetail() {
         </div>
       </main>
 
-      {/* Other Vehicles Carousel */}
-      <section className="bg-carbon-900 border-t border-white/10 px-6 py-16 lg:px-12 lg:py-24">
+      {/* Related Vehicles - Refined */}
+      <section className="relative bg-carbon-900 px-6 py-16 lg:px-16 lg:py-24 overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-400/30 to-transparent" />
         <div className="mx-auto max-w-7xl">
-          <div className="mb-10 flex items-end justify-between">
+          <div className="mb-12 flex items-end justify-between">
             <div>
               <motion.span
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-rosso-500"
+                className="mb-3 block font-motors text-[11px] font-medium uppercase tracking-[0.25em] text-gold-400"
               >
                 Découvrir plus
               </motion.span>
@@ -277,66 +477,75 @@ export function PublicVehicleDetail() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="font-motors-display font-bold text-3xl text-white uppercase md:text-4xl"
+                className="font-motors-display text-2xl uppercase tracking-[0.02em] text-white md:text-3xl"
               >
-                AUTRES <span className="text-transparent bg-clip-text bg-gradient-to-r from-rosso-500 to-rosso-700 not-italic font-sans font-black uppercase text-[0.75em] tracking-tight">VÉHICULES</span>
+                Autres <span className="text-silver-400">véhicules</span>
               </motion.h2>
             </div>
             <Link
               to="/mansour-motors/vehicules"
-              className="group hidden items-center gap-2 text-xs font-bold uppercase tracking-widest text-silver-400 transition-colors hover:text-rosso-400 sm:inline-flex"
+              className="group hidden items-center gap-2 font-motors text-[11px] font-bold uppercase tracking-[0.15em] text-silver-400 transition-colors hover:text-white sm:inline-flex"
             >
               Voir tout le catalogue
-              <ArrowRight01Icon className="transition-transform group-hover:translate-x-1 text-rosso-500" />
+              <ArrowRight01Icon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
 
           <div className="relative">
-            <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-carbon-700 scrollbar-track-transparent snap-x snap-mandatory">
+            <div className="flex gap-6 overflow-x-auto pb-4 motors-scroll-track snap-x snap-mandatory">
               {vehicles
                 .filter((v) => v.id !== vehicleId && v.status === 'available')
                 .slice(0, 5)
                 .map((otherVehicle, index) => (
                   <motion.div
                     key={otherVehicle.id}
-                    initial={{ opacity: 0, x: 20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: index * 0.08 }}
-                    className="group w-[280px] flex-shrink-0 snap-start"
+                    transition={{ delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    className="group w-[300px] flex-shrink-0 snap-start md:w-[340px]"
                   >
                     <Link
                       to="/mansour-motors/vehicules/$vehicleId"
                       params={{ vehicleId: otherVehicle.id }}
-                      className="block h-full"
+                      className="block"
                     >
-                      <div className="flex flex-col h-full overflow-hidden border border-white/10 bg-carbon-950 shadow-sm transition-all duration-500 hover:shadow-rosso-sm hover:-translate-y-1 hover:border-rosso-500/50 rounded-sm">
-                        <div className="relative aspect-[4/3] overflow-hidden bg-carbon-800">
-                          <img
+                      <div className="relative overflow-hidden bg-carbon-950 transition-all duration-500 hover:shadow-2xl hover:shadow-gold-400/10">
+                        <div className="relative aspect-[16/10] overflow-hidden">
+                          <motion.img
                             src={otherVehicle.image}
                             alt={`${otherVehicle.make} ${otherVehicle.model}`}
-                            className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+                            className="h-full w-full object-cover"
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-carbon-950/90 via-carbon-950/30 to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 p-4">
-                            <h3 className="font-motors-display font-bold text-lg text-white">
+
+                          {/* Hover reveal */}
+                          <motion.div className="absolute inset-0 flex items-center justify-center bg-carbon-950/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <span className="flex items-center gap-2 font-motors text-[11px] font-bold uppercase tracking-[0.2em] text-white">
+                              Voir détails
+                              <ArrowRight01Icon className="h-4 w-4" />
+                            </span>
+                          </motion.div>
+
+                          {/* Info overlay */}
+                          <div className="absolute bottom-0 left-0 right-0 p-5">
+                            <h3 className="font-motors text-lg font-medium text-white tracking-wide">
                               {otherVehicle.make}{' '}
-                              <span className="font-sans font-black not-italic text-rosso-400">
-                                {otherVehicle.model}
-                              </span>
+                              <span className="text-white/70">{otherVehicle.model}</span>
                             </h3>
-                            <p className="text-[10px] font-bold uppercase tracking-wider text-silver-400">
-                              {otherVehicle.year} <span className="text-rosso-600 px-1">•</span> {otherVehicle.transmission}
+                            <p className="mt-1 font-motors text-[10px] font-medium uppercase tracking-[0.12em] text-white/60">
+                              {otherVehicle.year} · {otherVehicle.transmission}
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center justify-between p-4 relative overflow-hidden bg-carbon-950 mt-auto">
-                          <div className="absolute inset-0 bg-gradient-to-r from-rosso-900/0 via-rosso-900/20 to-rosso-900/0 translate-x-[-100%] transition-transform duration-1000 ease-out group-hover:translate-x-[100%]" />
-                          <p className="relative z-10 text-base font-black text-white">
+                        <div className="flex items-center justify-between px-5 py-4 bg-carbon-950 border-t border-white/[0.04]">
+                          <p className="font-motors text-base font-medium text-white">
                             {formatPrice(otherVehicle.price)}
                           </p>
-                          <span className="relative z-10 flex h-7 w-7 items-center justify-center bg-carbon-800 text-rosso-500 transition-all duration-500 group-hover:bg-rosso-600 group-hover:text-white group-hover:-rotate-45 group-hover:shadow-[0_0_15px_rgba(220,38,38,0.4)] rounded-full">
-                            <ArrowUpRight01Icon className="h-3.5 w-3.5" />
+                          <span className="flex h-9 w-9 items-center justify-center bg-gold-400/10 text-gold-400 transition-all duration-300 group-hover:bg-gold-400 group-hover:text-carbon-950">
+                            <ArrowRight01Icon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
                           </span>
                         </div>
                       </div>
@@ -344,21 +553,22 @@ export function PublicVehicleDetail() {
                   </motion.div>
                 ))}
             </div>
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-20 bg-gradient-to-l from-carbon-900 to-transparent" />
           </div>
 
-          <div className="mt-6 sm:hidden">
+          <div className="mt-8 sm:hidden text-center">
             <Link
               to="/mansour-motors/vehicules"
-              className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-silver-400 transition-colors hover:text-rosso-400"
+              className="group inline-flex items-center gap-2 font-motors text-[11px] font-bold uppercase tracking-[0.15em] text-gold-400 transition-colors hover:text-gold-300"
             >
               Voir tout le catalogue
-              <ArrowRight01Icon className="transition-transform group-hover:translate-x-1 text-rosso-500" />
+              <ArrowRight01Icon className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
         </div>
       </section>
 
-      <PublicFooter />
+      <MotorsFooter />
     </div>
   )
 }

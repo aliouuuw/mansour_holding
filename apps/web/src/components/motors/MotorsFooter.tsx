@@ -9,11 +9,10 @@ import {
   InstagramIcon,
 } from 'hugeicons-react'
 
-const navLinks = [
+const footerLinks = [
   { label: 'Véhicules', to: '/mansour-motors/vehicules' },
   { label: 'Services', to: '/mansour-motors#services' },
   { label: 'Showroom', to: '/mansour-motors#contact' },
-  { label: 'Connexion', to: '/login' },
 ]
 
 export function MotorsFooter() {
@@ -22,106 +21,108 @@ export function MotorsFooter() {
   }
 
   return (
-    <footer className="relative bg-carbon-950 text-white overflow-hidden">
-      {/* Cyan accent line */}
-      <div className="cyan-divider" />
+    <footer className="relative bg-carbon-950 font-motors">
+      <div className="gold-divider" />
 
-      {/* Subtle grid pattern overlay */}
-      <div className="absolute inset-0 opacity-[0.02]" style={{
-        backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-        backgroundSize: '60px 60px',
-      }} />
-
-      <div className="relative z-10 px-6 py-16 lg:px-12 lg:py-24">
+      <div className="px-6 py-16 lg:px-12 lg:py-24">
         <div className="mx-auto max-w-7xl">
-          {/* Top Row */}
-          <div className="mb-14 flex items-start justify-between">
+          {/* Top: Brand + Back to top */}
+          <div className="mb-16 flex items-start justify-between">
             <div>
-              <Link to="/mansour-motors" className="group flex items-center gap-3">
-                <span className="font-motors-display text-sm font-bold uppercase tracking-[0.08em] text-white transition-colors group-hover:text-cyan-400">
-                  Mansour Motors
+              <Link to="/mansour-motors" className="group inline-flex items-center gap-2">
+                <span className="font-motors-display text-[12px] font-bold uppercase tracking-[0.25em] text-white transition-colors group-hover:text-gold-400">
+                  Mansour
+                </span>
+                <span className="h-3.5 w-px bg-white/20" />
+                <span className="font-motors-display text-[12px] font-bold uppercase tracking-[0.25em] text-gold-400 transition-colors group-hover:text-gold-300">
+                  Motors
                 </span>
               </Link>
-              <p className="mt-4 max-w-sm font-motors text-sm font-light leading-relaxed text-silver-600">
-                L'excellence automobile à Dakar. Véhicules premium neufs et d'occasion certifiés.
+              <p className="mt-5 max-w-xs text-sm font-light leading-relaxed text-silver-500">
+                Concessionnaire automobile premium à Dakar.
+                L'excellence au service de la performance.
               </p>
             </div>
             <button
               onClick={scrollToTop}
-              className="group flex h-10 w-10 items-center justify-center border border-white/10 text-silver-600 transition-all hover:border-cyan-400/50 hover:text-cyan-400 rounded-sm"
+              className="group flex h-10 w-10 items-center justify-center border border-white/10 text-silver-500 transition-all hover:border-gold-400 hover:text-gold-400"
               aria-label="Retour en haut"
             >
               <ArrowUp01Icon className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
             </button>
           </div>
 
-          {/* Link Grid */}
-          <div className="mb-14 grid grid-cols-1 gap-10 md:grid-cols-3">
+          {/* Links Grid */}
+          <div className="mb-16 grid grid-cols-1 gap-10 md:grid-cols-3">
             <div>
-              <h4 className="mb-5 font-motors text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-400">
+              <h4 className="mb-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-400">
                 Navigation
               </h4>
-              <ul className="space-y-2.5">
-                {navLinks.map((item) => (
+              <ul className="space-y-3">
+                {footerLinks.map((item) => (
                   <li key={item.label}>
                     <Link
                       to={item.to.split('#')[0] as any}
                       hash={item.to.includes('#') ? item.to.split('#')[1] : undefined}
-                      className="font-motors text-sm text-silver-500 transition-colors hover:text-white"
+                      className="text-sm text-silver-500 transition-colors hover:text-white"
                     >
                       {item.label}
                     </Link>
                   </li>
                 ))}
+                <li>
+                  <Link
+                    to="/"
+                    className="text-sm text-silver-600 transition-colors hover:text-silver-400"
+                  >
+                    ← Mansour Holding
+                  </Link>
+                </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="mb-5 font-motors text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-400">
+              <h4 className="mb-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-400">
                 Contact
               </h4>
-              <ul className="space-y-3">
+              <ul className="space-y-4">
                 <li>
-                  <a href="tel:+221331234567" className="flex items-center gap-3 font-motors text-sm text-silver-500 transition-colors hover:text-white">
-                    <TelephoneIcon className="h-4 w-4 flex-shrink-0 text-cyan-400/40" />
+                  <a href="tel:+221331234567" className="flex items-center gap-3 text-sm text-silver-500 transition-colors hover:text-white">
+                    <TelephoneIcon className="h-4 w-4 flex-shrink-0 text-gold-400/60" />
                     +221 33 123 45 67
                   </a>
                 </li>
                 <li>
-                  <a href="mailto:motors@mansour.sn" className="flex items-center gap-3 font-motors text-sm text-silver-500 transition-colors hover:text-white">
-                    <Mail01Icon className="h-4 w-4 flex-shrink-0 text-cyan-400/40" />
+                  <a href="mailto:motors@mansour.sn" className="flex items-center gap-3 text-sm text-silver-500 transition-colors hover:text-white">
+                    <Mail01Icon className="h-4 w-4 flex-shrink-0 text-gold-400/60" />
                     motors@mansour.sn
                   </a>
                 </li>
-                <li className="flex items-center gap-3 font-motors text-sm text-silver-500">
-                  <Location01Icon className="h-4 w-4 flex-shrink-0 text-cyan-400/40" />
+                <li className="flex items-center gap-3 text-sm text-silver-500">
+                  <Location01Icon className="h-4 w-4 flex-shrink-0 text-gold-400/60" />
                   Avenue Cheikh Anta Diop, Dakar
                 </li>
               </ul>
             </div>
 
             <div>
-              <h4 className="mb-5 font-motors text-[10px] font-bold uppercase tracking-[0.25em] text-cyan-400">
-                Groupe Mansour
+              <h4 className="mb-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-400">
+                Horaires
               </h4>
-              <p className="font-motors text-sm text-silver-600 leading-relaxed mb-4">
-                Mansour Motors fait partie du groupe Mansour Holding, un conglomérat diversifié basé à Dakar.
-              </p>
-              <Link
-                to="/"
-                className="font-motors text-xs font-medium uppercase tracking-[0.15em] text-silver-500 transition-colors hover:text-cyan-400"
-              >
-                mansourholding.com →
-              </Link>
+              <div className="space-y-2 text-sm text-silver-500">
+                <p>Lundi – Vendredi: <span className="text-silver-300">8h – 18h</span></p>
+                <p>Samedi: <span className="text-silver-300">9h – 17h</span></p>
+                <p>Dimanche: <span className="text-silver-600">Fermé</span></p>
+              </div>
             </div>
           </div>
 
-          {/* Bottom Bar */}
+          {/* Bottom bar */}
           <div className="flex flex-col items-center justify-between gap-6 border-t border-white/[0.06] pt-8 md:flex-row">
-            <p className="font-motors text-xs text-silver-700">
-              © {new Date().getFullYear()} Mansour Motors. Tous droits réservés.
+            <p className="text-xs text-silver-600">
+              © {new Date().getFullYear()} Mansour Motors — Dakar, Sénégal
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               {[
                 { icon: Linkedin01Icon, label: 'LinkedIn', href: '#' },
                 { icon: NewTwitterIcon, label: 'X', href: '#' },
@@ -131,9 +132,9 @@ export function MotorsFooter() {
                   key={social.label}
                   href={social.href}
                   aria-label={social.label}
-                  className="flex h-8 w-8 items-center justify-center border border-white/[0.06] text-silver-600 transition-all hover:border-cyan-400/30 hover:text-cyan-400 rounded-sm"
+                  className="flex h-9 w-9 items-center justify-center border border-white/[0.06] text-silver-600 transition-all hover:border-gold-400/30 hover:text-gold-400"
                 >
-                  <social.icon className="h-3.5 w-3.5" />
+                  <social.icon className="h-4 w-4" />
                 </a>
               ))}
             </div>
