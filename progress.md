@@ -4,6 +4,91 @@ This file tracks all implementation cycles, decisions, and learnings during deve
 
 ---
 
+## [Feature] Complete Auth Implementation + Monorepo Infrastructure
+
+* **Status:** Completed
+* **Date:** 2026-03-27
+* **Commit:** `71f722b` - feat: complete monorepo scaffolding and auth implementation
+* **Summary:** Completed all infrastructure tasks and full authentication system implementation.
+
+### Infrastructure Changes
+* **Monorepo Setup:**
+  - Root `package.json` with Bun workspaces (`apps/*`, `packages/*`)
+  - Root `tsconfig.json` with project references
+  - Updated `.gitignore` to exclude dist, build, and IDE files
+* **packages/shared:** Zod validators for all entities
+  - `idSchema` - UUID validation
+  - `userSchema`, `createUserSchema`, `updateUserSchema` - User validation
+  - `vehicleSchema`, `createVehicleSchema`, `updateVehicleSchema` - Vehicle validation
+  - `customerSchema`, `createCustomerSchema`, `updateCustomerSchema` - Customer validation
+  - `dealSchema`, `createDealSchema`, `updateDealSchema` - Deal validation
+  - All enums exported (userRole, vehicleStatus, fuelType, transmission, customerSource, dealStatus)
+* **packages/database:** Drizzle ORM schemas
+  - `auth.ts` - Users, Sessions, Accounts, Verifications tables for better-auth
+  - `vehicles.ts` - Vehicles table with enums (status, fuelType, transmission)
+  - `customers.ts` - Customers table with source enum
+  - `deals.ts` - Deals table with status enum and FK relationships
+  - Migration file `0000_first_spectrum.sql` generated
+* **packages/domain:** Placeholder package ready for business logic
+* **apps/api:** Hono framework with full auth setup
+  - Health check endpoint at `GET /api/health`
+  - Database connection using Drizzle + postgres.js
+  - better-auth configured with Drizzle adapter at `/api/auth/*`
+  - CORS and logger middleware
+  - Migration, seed, and utility scripts
+
+### Authentication Implementation
+* **Server-side (apps/api):**
+  - `auth.ts` - better-auth configuration with email/password provider
+  - Drizzle adapter connected to PostgreSQL
+  - Session management with secure cookies
+  - Environment-based configuration for secrets and baseURL
+* **Client-side (apps/web):**
+  - `lib/auth.ts` - better-auth React client with `signIn`, `signUp`, `signOut`, `useSession`
+  - `components/auth/AuthGuard.tsx` - Protected route component
+  - `pages/auth/LoginPage.tsx` - Functional login with React Hook Form + Zod
+  - `pages/auth/RegisterPage.tsx` - Functional registration with name support
+* **Dashboard Integration:**
+  - `DashboardLayout.tsx` - Full auth integration with user display and logout
+  - Redirects to `/login` when not authenticated
+  - Shows user initials, name, and email in sidebar
+  - Logout button with error handling
+
+### UX Improvements
+* Fixed French typography (space before colons: `Filtres actifs :`)
+* Standardized filter labels (consistent `Toutes les...` pattern)
+* Updated CTA copy (`Demander des informations` vs `Acquérir ce véhicule`)
+* Fixed React Hook violations in `PublicVehicleDetail.tsx`
+
+### Verification Results
+* ✅ `bun install` succeeds from root
+* ✅ `bunx tsc --noEmit` passes for root and all packages
+* ✅ `cd apps/web && bunx tsc --noEmit` passes
+* ✅ `cd apps/api && bunx tsc --noEmit` passes
+* ✅ Auth routes mounted at `/api/auth/*`
+* ✅ Login/Register pages connected to better-auth client
+* ✅ Dashboard protected with auth check
+
+### PRD Tasks Completed
+* ✅ Monorepo project structure
+* ✅ Web app foundation (already existed)
+* ✅ API foundation (Hono + Drizzle)
+* ✅ Shared packages setup
+* ✅ Database schema for auth (better-auth tables)
+* ✅ better-auth server configuration
+* ✅ Auth UI (login and register pages)
+* ✅ Protected routes and auth guard
+* ✅ Dashboard shell layout (auth integrated)
+
+### Next Priority
+1. Connect dashboard pages to real API endpoints (replace mock data)
+2. Implement Vehicle CRUD API endpoints
+3. Implement Vehicle list/detail pages with TanStack Table
+4. Implement Customer CRUD
+5. Implement Sales/Deals pipeline
+
+---
+
 ## [UX] Vehicles Page Copy Clarity Improvements
 
 * **Status:** Completed
