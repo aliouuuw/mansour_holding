@@ -1,5 +1,5 @@
 import { pgTable, uuid, varchar, integer, timestamp, jsonb, text, pgEnum } from 'drizzle-orm/pg-core'
-import { users } from './auth'
+import { user } from './auth'
 
 /**
  * Vehicle status enum
@@ -34,7 +34,7 @@ export const vehicles = pgTable('vehicles', {
   description: text('description'),
   images: jsonb('images').$type<string[]>().notNull().default([]),
   organizationId: uuid('organization_id'),
-  createdBy: uuid('created_by').references(() => users.id),
+  createdBy: varchar('created_by', { length: 36 }).references(() => user.id),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 })

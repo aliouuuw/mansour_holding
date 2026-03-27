@@ -1,5 +1,5 @@
-import { pgTable, uuid, integer, timestamp, text, pgEnum } from 'drizzle-orm/pg-core'
-import { users } from './auth'
+import { pgTable, uuid, integer, timestamp, text, pgEnum, varchar } from 'drizzle-orm/pg-core'
+import { user } from './auth'
 import { vehicles } from './vehicles'
 import { customers } from './customers'
 
@@ -19,9 +19,9 @@ export const deals = pgTable('deals', {
   customerId: uuid('customer_id')
     .notNull()
     .references(() => customers.id, { onDelete: 'cascade' }),
-  salesPersonId: uuid('sales_person_id')
+  salesPersonId: varchar('sales_person_id', { length: 36 })
     .notNull()
-    .references(() => users.id),
+    .references(() => user.id),
   status: dealStatusEnum('status').notNull().default('lead'),
   price: integer('price').notNull(),
   notes: text('notes'),

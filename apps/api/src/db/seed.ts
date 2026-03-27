@@ -1,26 +1,11 @@
-import { drizzle } from 'drizzle-orm/postgres-js'
-import postgres from 'postgres'
 import { config } from 'dotenv'
-import bcrypt from 'bcrypt'
+import { eq } from 'drizzle-orm'
+import { auth } from '../auth'
+import { db } from './index'
 import * as schema from './schema-for-migrations'
 
 // Load environment variables from .env file
 config({ path: '../../.env' })
-
-const connectionString = process.env.DATABASE_URL
-
-if (!connectionString) {
-  throw new Error('DATABASE_URL environment variable is not set')
-}
-
-// Disable prefetch as it is not supported for "Transaction" pool mode
-const client = postgres(connectionString, { prepare: false })
-const db = drizzle(client, { schema })
-
-// Generate a nanoId-like ID (better-auth uses 21 char nanoId, we use 36 for UUID-like)
-function generateId() {
-  return crypto.randomUUID()
-}
 
 async function seed() {
   console.log('Starting database seed...')
@@ -31,40 +16,27 @@ async function seed() {
   
   try {
     // Check if admin user already exists
-    const existingUser = await db.query.user.findFirst({
-      where: (user, { eq }) => eq(user.email, adminEmail)
-    })
+    const [existingUser] = await db
+      .select({ id: schema.user.id, email: schema.user.email })
+      .from(schema.user)
+      .where(eq(schema.user.email, adminEmail))
+      .limit(1)
     
     if (existingUser) {
-      console.log(`Admin user already exists: ${adminEmail}`)
-      await client.end()
-      return
+      console.log(`Removing existing admin user so credentials can be recreated safely: ${adminEmail}`)
+
+      await db.delete(schema.account).where(eq(schema.account.userId, existingUser.id))
+      await db.delete(schema.session).where(eq(schema.session.userId, existingUser.id))
+      await db.delete(schema.user).where(eq(schema.user.id, existingUser.id))
     }
     
     console.log(`Creating admin user: ${adminEmail}`)
-    
-    // Generate IDs
-    const userId = generateId()
-    const accountId = generateId()
-    
-    // Hash password with bcrypt
-    const hashedPassword = await bcrypt.hash(adminPassword, 10)
-    
-    // Create admin user directly with Drizzle
-    await db.insert(schema.user).values({
-      id: userId,
-      email: adminEmail,
-      name: adminName,
-      emailVerified: true,
-    })
-    
-    // Create account with password for email/password auth
-    await db.insert(schema.account).values({
-      id: accountId,
-      userId: userId,
-      accountId: adminEmail,
-      providerId: 'credential',
-      password: hashedPassword,
+    await auth.api.signUpEmail({
+      body: {
+        email: adminEmail,
+        password: adminPassword,
+        name: adminName,
+      },
     })
     
     console.log('✅ Admin user created successfully!')
@@ -73,8 +45,6 @@ async function seed() {
   } catch (error) {
     console.error('❌ Seed failed:', error)
     throw error
-  } finally {
-    await client.end()
   }
 }
 

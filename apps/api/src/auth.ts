@@ -12,6 +12,11 @@ export const auth = betterAuth({
     provider: 'pg', // PostgreSQL
     schema: schema,
   }),
+  advanced: {
+    database: {
+      generateId: 'uuid',
+    },
+  },
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
@@ -19,6 +24,11 @@ export const auth = betterAuth({
   socialProviders: {},
   secret: process.env.BETTER_AUTH_SECRET || 'your-secret-key-change-in-production',
   baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+  trustedOrigins: [
+    process.env.FRONTEND_URL || 'http://localhost:5173',
+    'http://localhost:5173',
+    'http://localhost:3000',
+  ],
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',

@@ -4,6 +4,79 @@ This file tracks all implementation cycles, decisions, and learnings during deve
 
 ---
 
+## [Bug Fix] Dashboard Redirect Infinite Update Loop
+
+* **Status:** Completed
+* **Date:** 2026-03-27
+* **Issue:** Visiting [`/dashboard`](apps/web/src/router.tsx:118) while unauthenticated redirected to [`/login`](apps/web/src/router.tsx:76) but also threw `Maximum update depth exceeded` from TanStack Router transition handling.
+* **Root Cause:** [`DashboardLayout()`](apps/web/src/components/layout/DashboardLayout.tsx:26) rendered [`<Navigate />`](apps/web/src/components/layout/DashboardLayout.tsx:45) directly from the protected layout while the session hook was resolving the unauthorized dashboard route. That render-time redirect path could repeatedly trigger router state updates during the same transition.
+* **Fix Applied:**
+  - Replaced render-time [`<Navigate />`](apps/web/src/components/layout/DashboardLayout.tsx:45) usage in [`DashboardLayout()`](apps/web/src/components/layout/DashboardLayout.tsx:26) with an effect-driven [`useNavigate()`](apps/web/src/components/layout/DashboardLayout.tsx:2) redirect
+  - Used `replace: true` so the unauthorized dashboard entry is removed from history during redirect to [`/login`](apps/web/src/router.tsx:76)
+  - Returned `null` for the unauthorized render branch so the layout no longer tries to mount while navigation is being committed
+* **Verification Results:**
+  - ✅ `cd apps/web && bunx tsc --noEmit` passes
+  - ✅ Browser check: opening `http://localhost:5173/dashboard` as an unauthenticated user lands on the login page without the previous infinite update console error
+* **Result:** Success - unauthenticated dashboard access now redirects cleanly to login without triggering the React maximum update depth failure
+
+---
+
+## [Bug Fix] Runtime Auth Schema Mismatch
+
+* **Status:** Completed
+* **Date:** 2026-03-27
+* **Issue:** [`bun run db:seed`](apps/api/package.json:14) still failed after moving to [`auth.api.signUpEmail()`](apps/api/src/db/seed.ts:1) with `PostgresError: invalid input syntax for type uuid`.
+* **Root Cause:** Runtime Drizzle schema exported by [`packages/database/src/schema/auth.ts`](packages/database/src/schema/auth.ts:1) did not match the migrated auth tables. The package schema used plural table names with UUID auth IDs, while the actual auth migration and better-auth runtime expect singular tables with string IDs.
+* **Fix Applied:**
+  - Align shared auth schema in [`packages/database/src/schema/auth.ts`](packages/database/src/schema/auth.ts:1) with the real migration structure
+  - Switched auth IDs and foreign keys from UUID to varchar(36)
+  - Renamed shared auth tables to singular names: `user`, `session`, `account`, `verification`
+  - Updated references in [`packages/database/src/schema/vehicles.ts`](packages/database/src/schema/vehicles.ts:1) and [`packages/database/src/schema/deals.ts`](packages/database/src/schema/deals.ts:1)
+  - Added better-auth advanced database ID generation in [`apps/api/src/auth.ts`](apps/api/src/auth.ts:15) so runtime-created auth records use UUIDs compatible with the current schema expectations
+* **Verification Results:**
+  - ✅ [`bunx tsc --noEmit`](apps/api/package.json:11) passes in [`apps/api`](apps/api/package.json)
+  - ✅ [`bunx tsc --noEmit`](apps/web/package.json:11) passes in [`apps/web`](apps/web/package.json)
+  - ✅ [`bun run db:seed`](apps/api/package.json:14) completed successfully
+  - ✅ Frontend auth basics were browser-tested: login, logout, and protected-route redirection
+* **Result:** Success - auth runtime schema, ID generation, and seed flow are now aligned with better-auth and verified
+
+---
+
+## [Bug Fix] Auth Seed Password Hash Compatibility
+
+* **Status:** Completed
+* **Date:** 2026-03-27
+* **Issue:** Login failed with `BetterAuthError: Invalid password hash` after the origin fix was applied.
+* **Root Cause:** [`apps/api/src/db/seed.ts`](apps/api/src/db/seed.ts) was creating auth records manually and hashing passwords with bcrypt. better-auth expects passwords to be created through its own signup flow so the stored hash format matches its verifier.
+* **Fix Applied:**
+  - Removed manual bcrypt hashing and direct account insertion from [`apps/api/src/db/seed.ts`](apps/api/src/db/seed.ts)
+  - Reused [`auth.api.signUpEmail()`](apps/api/src/auth.ts:10) from better-auth to create the admin user with the correct password hash format
+  - Added cleanup logic in the seed so an existing admin user and related auth records are deleted before recreating the account with a valid hash
+* **Verification Results:**
+  - ✅ `cd apps/api && bunx tsc --noEmit` passes
+* **Result:** Success - seeded admin credentials are now compatible with better-auth sign-in
+
+---
+
+## [Bug Fix] Auth "Invalid origin" 403 Error
+
+* **Status:** Completed
+* **Date:** 2026-03-27
+* **Issue:** Login requests returning `403 Forbidden` with "Invalid origin" error
+* **Error:** `POST http://localhost:3000/api/auth/sign-in/email 403 (Forbidden)`
+* **Root Cause:** better-auth requires `trustedOrigins` configuration to allow cross-origin requests. The frontend runs on `http://localhost:5173` while the API runs on `http://localhost:3000`. Without explicit trusted origins, better-auth rejects all cross-origin auth requests.
+* **Fix Applied:**
+  - Added `trustedOrigins` array to `apps/api/src/auth.ts` betterAuth configuration
+  - Includes `FRONTEND_URL` env variable (defaults to `http://localhost:5173`)
+  - Also explicitly includes `http://localhost:5173` and `http://localhost:3000` as fallbacks
+* **Files Modified:**
+  - `apps/api/src/auth.ts` - Added trustedOrigins configuration
+* **Verification:**
+  - ✅ Type check passes: `cd apps/api && bunx tsc --noEmit` (exit code 0)
+* **Result:** Success - Auth requests from frontend origin are now accepted
+
+---
+
 ## [Feature] Complete Auth Implementation + Monorepo Infrastructure
 
 * **Status:** Completed

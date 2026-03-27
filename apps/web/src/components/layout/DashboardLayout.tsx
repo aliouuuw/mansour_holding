@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Outlet, Link, useMatchRoute, Navigate } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+import { Outlet, Link, useMatchRoute, useNavigate } from '@tanstack/react-router'
 import {
   DashboardSquare01Icon,
   Car01Icon,
@@ -26,7 +26,14 @@ const motorsNavItems = [
 export function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const matchRoute = useMatchRoute()
+  const navigate = useNavigate()
   const { data, isPending } = useSession()
+
+  useEffect(() => {
+    if (!isPending && !data?.user) {
+      void navigate({ to: '/login', replace: true })
+    }
+  }, [data?.user, isPending, navigate])
 
   // Show loading state while checking session
   if (isPending) {
@@ -42,7 +49,7 @@ export function DashboardLayout() {
 
   // Redirect to login if not authenticated
   if (!data?.user) {
-    return <Navigate to="/login" />
+    return null
   }
 
   const user = data.user
