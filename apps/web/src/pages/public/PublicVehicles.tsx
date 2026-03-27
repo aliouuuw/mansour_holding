@@ -8,14 +8,14 @@ import {
   Calendar01Icon,
   Fuel01Icon,
   SteeringIcon,
-  ArrowUpRight01Icon,
+  ArrowRight01Icon,
   Cancel01Icon,
   Car01Icon,
 } from 'hugeicons-react'
 import { vehicles } from '@/data/mock'
 import { formatPrice, cn } from '@/lib/utils'
-import { PublicNavbar } from '@/components/public/PublicNavbar'
-import { PublicFooter } from '@/components/public/PublicFooter'
+import { MotorsNavbar } from '@/components/motors/MotorsNavbar'
+import { MotorsFooter } from '@/components/motors/MotorsFooter'
 
 // --- Components ---
 
@@ -35,7 +35,7 @@ function FilterSelect({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full appearance-none border border-noir-200 bg-white px-4 py-3 pr-10 text-sm font-medium text-noir-900 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all"
+        className="w-full appearance-none border border-white/[0.06] bg-carbon-800 px-4 py-3 pr-10 font-motors text-sm font-medium text-silver-200 focus:border-cyan-400/40 focus:outline-none focus:ring-1 focus:ring-cyan-400/20 transition-all rounded-sm"
       >
         <option value="">{label}</option>
         {options.map((opt) => (
@@ -45,7 +45,7 @@ function FilterSelect({
         ))}
       </select>
       <ArrowDown01Icon
-        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gold-600/60 h-3.5 w-3.5"
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-cyan-400/40 h-3.5 w-3.5"
       />
     </div>
   )
@@ -54,10 +54,10 @@ function FilterSelect({
 function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ delay: index * 0.06, duration: 0.5 }}
+      transition={{ delay: index * 0.06, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="group relative"
     >
       <Link
@@ -65,57 +65,64 @@ function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: n
         params={{ vehicleId: vehicle.id }}
         className="block"
       >
-        <div className="overflow-hidden border border-noir-100 bg-white shadow-sm transition-all duration-500 hover:shadow-xl hover:-translate-y-1 hover:border-gold-200">
-          <div className="relative aspect-[16/10] overflow-hidden">
+        <div className="overflow-hidden border border-white/[0.06] bg-carbon-800 transition-all duration-500 hover:border-cyan-400/20 hover:shadow-[0_0_40px_rgba(0,229,255,0.06)] rounded-sm">
+          <div className="relative aspect-[16/10] overflow-hidden bg-carbon-700">
             <img
               src={vehicle.image}
               alt={`${vehicle.make} ${vehicle.model}`}
-              className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
+              className="h-full w-full object-cover transition-all duration-700 ease-out group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-noir-950/80 via-noir-950/20 to-transparent opacity-80 transition-opacity duration-500 group-hover:opacity-100" />
+            <div className="absolute inset-0 bg-gradient-to-t from-carbon-950 via-carbon-950/30 to-transparent opacity-70 group-hover:opacity-80 transition-opacity duration-500" />
 
-            <div className="absolute top-4 right-4 transform transition-transform duration-500 group-hover:-translate-y-1">
+            <div className="absolute top-4 right-4">
               {vehicle.status === 'available' ? (
-                <span className="inline-flex items-center gap-1.5 bg-emerald-50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-emerald-700 border border-emerald-200 backdrop-blur-md shadow-sm">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                <span className="inline-flex items-center gap-1.5 bg-carbon-950/70 backdrop-blur-xl px-3 py-1.5 font-motors text-[10px] font-bold uppercase tracking-[0.15em] text-cyan-400 border border-cyan-400/20 rounded-sm">
+                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(0,229,255,0.6)]" />
                   Disponible
                 </span>
               ) : (
-                <span className="bg-white/90 text-noir-600 px-3 py-1 text-[10px] font-bold uppercase tracking-widest border border-noir-200 backdrop-blur-md shadow-sm">
+                <span className="bg-carbon-950/70 backdrop-blur-xl text-silver-400 px-3 py-1.5 font-motors text-[10px] font-bold uppercase tracking-[0.15em] border border-white/10 rounded-sm">
                   {vehicle.status === 'reserved' ? 'Réservé' : 'Vendu'}
                 </span>
               )}
             </div>
+
+            {/* Hover overlay */}
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-all duration-400 group-hover:opacity-100 z-10">
+              <span className="translate-y-3 bg-cyan-400/10 border border-cyan-400/30 px-5 py-2.5 font-motors text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-300 backdrop-blur-md transition-transform duration-400 group-hover:translate-y-0 rounded-sm">
+                Découvrir
+              </span>
+            </div>
           </div>
 
-          <div className="p-6 relative bg-white transition-colors duration-500 group-hover:bg-gold-50/10">
-            <div className="mb-4 transform transition-transform duration-500 group-hover:-translate-y-1">
-              <h3 className="font-serif text-xl italic text-noir-950">
-                {vehicle.make} <span className="text-gold-600 not-italic font-sans font-semibold transition-colors group-hover:text-gold-700">{vehicle.model}</span>
+          <div className="p-5 border-t border-white/[0.04]">
+            <div className="mb-3">
+              <h3 className="font-motors text-lg font-bold text-white">
+                {vehicle.make} <span className="text-cyan-400">{vehicle.model}</span>
               </h3>
-              <div className="mt-2.5 flex flex-wrap gap-4 text-[10px] font-semibold uppercase tracking-[0.12em] text-noir-400">
-                <span className="flex items-center gap-1.5 transition-colors group-hover:text-noir-600">
-                  <Calendar01Icon className="text-gold-600/50 transition-colors group-hover:text-gold-600 h-3 w-3" /> {vehicle.year}
+              <div className="mt-2 flex flex-wrap gap-4 font-motors text-[10px] font-medium uppercase tracking-[0.12em] text-silver-500">
+                <span className="flex items-center gap-1.5">
+                  <Calendar01Icon className="text-cyan-400/40 h-3 w-3" /> {vehicle.year}
                 </span>
-                <span className="flex items-center gap-1.5 transition-colors group-hover:text-noir-600">
-                  <Fuel01Icon className="text-gold-600/50 transition-colors group-hover:text-gold-600 h-3 w-3" /> {vehicle.fuelType}
+                <span className="flex items-center gap-1.5">
+                  <Fuel01Icon className="text-cyan-400/40 h-3 w-3" /> {vehicle.fuelType}
                 </span>
-                <span className="flex items-center gap-1.5 transition-colors group-hover:text-noir-600">
-                  <SteeringIcon className="text-gold-600/50 transition-colors group-hover:text-gold-600 h-3 w-3" /> {vehicle.transmission}
+                <span className="flex items-center gap-1.5">
+                  <SteeringIcon className="text-cyan-400/40 h-3 w-3" /> {vehicle.transmission}
                 </span>
               </div>
             </div>
 
-            <p className="mb-5 line-clamp-2 text-sm font-light leading-relaxed text-noir-500 transform transition-transform duration-500 group-hover:-translate-y-1">
+            <p className="mb-4 line-clamp-2 font-motors text-sm font-light leading-relaxed text-silver-500">
               {vehicle.description}
             </p>
 
-            <div className="flex items-center justify-between border-t border-noir-100 pt-5 relative">
-              <span className="text-lg font-bold text-noir-950 transform transition-transform duration-500 group-hover:-translate-y-0.5">
+            <div className="flex items-center justify-between border-t border-white/[0.04] pt-4">
+              <span className="font-motors text-lg font-bold text-white">
                 {formatPrice(vehicle.price)}
               </span>
-              <span className="flex h-8 w-8 items-center justify-center bg-gold-50 text-gold-600 transition-all duration-500 group-hover:bg-gold-400 group-hover:text-noir-950 group-hover:rotate-45 group-hover:shadow-[0_0_10px_rgba(207,181,59,0.4)]">
-                <ArrowUpRight01Icon className="h-4 w-4" />
+              <span className="flex h-9 w-9 items-center justify-center border border-white/[0.08] text-silver-500 transition-all duration-400 group-hover:border-cyan-400 group-hover:text-cyan-400 group-hover:shadow-[0_0_15px_rgba(0,229,255,0.2)] rounded-sm">
+                <ArrowRight01Icon className="h-4 w-4 transition-transform duration-300 group-hover:-rotate-45" />
               </span>
             </div>
           </div>
@@ -176,27 +183,30 @@ export function PublicVehicles() {
   }
 
   return (
-    <div className="min-h-screen bg-surface-dim font-sans text-noir-950 selection:bg-gold-400 selection:text-noir-950 page-grain">
-      <PublicNavbar />
+    <div className="motors-theme min-h-screen bg-carbon-950 font-motors">
+      <MotorsNavbar />
 
       {/* Hero Section */}
-      <section className="relative bg-surface-dim px-6 pt-32 pb-16 lg:px-12 lg:pt-40 lg:pb-20">
-        <div className="mx-auto max-w-7xl">
+      <section className="relative bg-carbon-950 px-6 pt-32 pb-16 lg:px-12 lg:pt-40 lg:pb-20 overflow-hidden">
+        {/* Decorative background */}
+        <div className="absolute top-0 left-1/3 w-[500px] h-[300px] bg-cyan-400/[0.03] rounded-full blur-[120px] pointer-events-none" />
+
+        <div className="mx-auto max-w-7xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
           >
             <div className="mb-4 flex items-center gap-3">
-              <span className="h-px w-10 bg-gold-500" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gold-600">
+              <span className="h-px w-10 bg-cyan-400" />
+              <span className="font-motors text-[11px] font-bold uppercase tracking-[0.25em] text-cyan-400">
                 Mansour Motors — Catalogue
               </span>
             </div>
-            <h1 className="font-serif text-4xl italic text-noir-950 md:text-6xl">
-              Véhicules <span className="text-gold-600 not-italic font-sans font-extrabold uppercase text-[0.75em] tracking-tight">d'Exception</span>
+            <h1 className="font-motors-display text-4xl font-bold uppercase tracking-tight text-white md:text-6xl">
+              Véhicules <span className="gradient-text-cyan">d'Exception</span>
             </h1>
-            <p className="mt-4 max-w-xl text-base font-light text-noir-500 md:text-lg">
+            <p className="mt-4 max-w-xl font-motors text-base font-light text-silver-400 md:text-lg">
               Découvrez notre sélection de véhicules premium, neufs et d'occasion certifiés.
             </p>
           </motion.div>
@@ -207,29 +217,29 @@ export function PublicVehicles() {
       <section className="px-6 pb-24 lg:px-12">
         <div className="mx-auto max-w-7xl">
           {/* Controls */}
-          <div className="mb-10 flex flex-col gap-4 border-b border-noir-100 pb-8 lg:flex-row lg:items-center lg:justify-between">
+          <div className="mb-10 flex flex-col gap-4 border-b border-white/[0.06] pb-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="relative w-full max-w-md">
-              <Search01Icon className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-noir-400" />
+              <Search01Icon className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-silver-600" />
               <input
                 type="text"
                 placeholder="Rechercher une marque, un modèle..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full border border-noir-200 bg-white py-3 pl-11 pr-4 text-sm text-noir-900 placeholder-noir-400 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all"
+                className="w-full border border-white/[0.06] bg-carbon-800 py-3 pl-11 pr-4 font-motors text-sm text-silver-200 placeholder-silver-600 focus:border-cyan-400/40 focus:outline-none focus:ring-1 focus:ring-cyan-400/20 transition-all rounded-sm"
               />
             </div>
 
             <div className="flex items-center gap-4">
-              <span className="text-xs font-semibold text-noir-400 uppercase tracking-wider">
+              <span className="font-motors text-xs font-medium text-silver-600 uppercase tracking-wider">
                 {filteredVehicles.length} véhicule{filteredVehicles.length !== 1 ? 's' : ''}
               </span>
               <button
                 onClick={() => setIsFiltersOpen(!isFiltersOpen)}
                 className={cn(
-                  'flex items-center gap-2 border px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-300',
+                  'flex items-center gap-2 border px-5 py-2.5 font-motors text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-300 rounded-sm',
                   isFiltersOpen || activeFiltersCount > 0
-                    ? 'border-gold-400 bg-gold-400 text-noir-950 shadow-[0_0_15px_rgba(207,181,59,0.3)]'
-                    : 'border-noir-200 bg-white text-noir-600 hover:border-gold-300 hover:text-noir-950 hover:bg-gold-50'
+                    ? 'border-cyan-400 bg-cyan-400 text-carbon-950 shadow-[0_0_20px_rgba(0,229,255,0.3)]'
+                    : 'border-white/[0.08] bg-carbon-800 text-silver-400 hover:border-cyan-400/30 hover:text-cyan-400'
                 )}
               >
                 <FilterIcon className="h-3.5 w-3.5" />
@@ -248,7 +258,7 @@ export function PublicVehicles() {
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 className="mb-10 overflow-hidden"
               >
-                <div className="grid grid-cols-1 gap-3 border border-noir-100 bg-white p-6 md:grid-cols-2 lg:grid-cols-5">
+                <div className="grid grid-cols-1 gap-3 border border-white/[0.06] bg-carbon-900 p-6 md:grid-cols-2 lg:grid-cols-5 rounded-sm">
                   <FilterSelect label="Marque" value={make} onChange={setMake} options={makes} />
                   <FilterSelect label="Année" value={year} onChange={setYear} options={years.map(String)} />
                   <FilterSelect label="Carburant" value={fuelType} onChange={setFuelType} options={fuelTypes} />
@@ -259,7 +269,7 @@ export function PublicVehicles() {
                       placeholder="Prix max (FCFA)"
                       value={priceMax}
                       onChange={(e) => setPriceMax(e.target.value)}
-                      className="w-full border border-noir-200 bg-white px-4 py-3 text-sm font-medium text-noir-900 placeholder-noir-400 focus:border-gold-500 focus:outline-none focus:ring-1 focus:ring-gold-400/30 transition-all"
+                      className="w-full border border-white/[0.06] bg-carbon-800 px-4 py-3 font-motors text-sm font-medium text-silver-200 placeholder-silver-600 focus:border-cyan-400/40 focus:outline-none focus:ring-1 focus:ring-cyan-400/20 transition-all rounded-sm"
                     />
                   </div>
                 </div>
@@ -267,7 +277,7 @@ export function PublicVehicles() {
                   <div className="mt-4 flex justify-end">
                     <button
                       onClick={clearFilters}
-                      className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-noir-400 hover:text-gold-600 transition-colors"
+                      className="flex items-center gap-2 font-motors text-[10px] font-bold uppercase tracking-widest text-silver-500 hover:text-cyan-400 transition-colors"
                     >
                       <Cancel01Icon className="h-3 w-3" /> Réinitialiser
                     </button>
@@ -291,16 +301,16 @@ export function PublicVehicles() {
                 animate={{ opacity: 1 }}
                 className="flex flex-col items-center justify-center py-32 text-center"
               >
-                <div className="mb-6 flex h-20 w-20 items-center justify-center border border-noir-100 bg-white">
-                  <Car01Icon className="h-8 w-8 text-noir-200" />
+                <div className="mb-6 flex h-20 w-20 items-center justify-center border border-white/[0.06] bg-carbon-800 rounded-sm">
+                  <Car01Icon className="h-8 w-8 text-silver-600" />
                 </div>
-                <h3 className="font-serif text-2xl italic text-noir-950">Aucun résultat</h3>
-                <p className="mt-3 max-w-sm text-sm text-noir-500">
+                <h3 className="font-motors-display text-2xl font-bold uppercase text-white">Aucun résultat</h3>
+                <p className="mt-3 max-w-sm font-motors text-sm text-silver-500">
                   Aucun véhicule ne correspond à vos critères. Modifiez vos filtres ou votre recherche.
                 </p>
                 <button
                   onClick={clearFilters}
-                  className="mt-8 border border-noir-200 bg-white px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-noir-600 transition-all hover:border-gold-400 hover:text-gold-600"
+                  className="mt-8 border border-white/[0.08] bg-carbon-800 px-6 py-3 font-motors text-[10px] font-bold uppercase tracking-widest text-silver-400 transition-all hover:border-cyan-400/30 hover:text-cyan-400 rounded-sm"
                 >
                   Effacer les filtres
                 </button>
@@ -310,7 +320,7 @@ export function PublicVehicles() {
         </div>
       </section>
 
-      <PublicFooter />
+      <MotorsFooter />
     </div>
   )
 }

@@ -1,19 +1,18 @@
 import { useState } from 'react'
 import { Link, useRouterState } from '@tanstack/react-router'
 import { useScroll, useAnimationFrame, motion, AnimatePresence } from 'framer-motion'
-import { Building03Icon, Menu01Icon, Cancel01Icon } from 'hugeicons-react'
+import { Menu01Icon, Cancel01Icon } from 'hugeicons-react'
 import { cn } from '@/lib/utils'
 
 const navLinks = [
-  { label: 'Motors', to: '/mansour-motors' },
-  { label: 'À propos', to: '/#about' },
-  { label: 'Contact', to: '/#contact' },
+  { label: 'Véhicules', to: '/mansour-motors/vehicules' },
+  { label: 'Services', to: '/mansour-motors#services' },
+  { label: 'Showroom', to: '/mansour-motors#contact' },
 ]
 
-// Pages that have dark hero sections (navbar starts transparent with white text)
-const darkHeroPages = ['/']
+const darkHeroPages = ['/mansour-motors']
 
-export function PublicNavbar() {
+export function MotorsNavbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const { scrollY } = useScroll()
@@ -21,15 +20,11 @@ export function PublicNavbar() {
   const currentPath = routerState.location.pathname
 
   const hasDarkHero = darkHeroPages.includes(currentPath)
-
-  // On dark hero pages: start transparent, go to white on scroll
-  // On light pages: always show solid white navbar
   const showSolidBg = isScrolled || !hasDarkHero
-  const useDarkText = showSolidBg
 
   useAnimationFrame(() => {
-    if (scrollY.get() > 50 && !isScrolled) setIsScrolled(true)
-    if (scrollY.get() <= 50 && isScrolled) setIsScrolled(false)
+    if (scrollY.get() > 60 && !isScrolled) setIsScrolled(true)
+    if (scrollY.get() <= 60 && isScrolled) setIsScrolled(false)
   })
 
   return (
@@ -38,66 +33,73 @@ export function PublicNavbar() {
         className={cn(
           'fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-5 transition-all duration-500 lg:px-12',
           showSolidBg || isMobileMenuOpen
-            ? 'py-3.5 backdrop-blur-xl border-b shadow-xs'
+            ? 'py-3 backdrop-blur-2xl border-b'
             : 'bg-transparent',
           showSolidBg && !isMobileMenuOpen
-            ? 'bg-white/95 border-noir-100'
+            ? 'bg-carbon-950/90 border-white/[0.04]'
             : isMobileMenuOpen
-              ? 'bg-noir-950/95 border-white/[0.04]'
+              ? 'bg-carbon-950/98 border-white/[0.04]'
               : 'border-transparent'
         )}
       >
         {/* Brand */}
-        <div className="flex items-center gap-6">
-          <Link to="/" className="flex items-center gap-2.5 hover-trigger group">
-            <Building03Icon className={cn('h-5 w-5 transition-transform duration-300 group-hover:scale-110', useDarkText && !isMobileMenuOpen ? 'text-gold-600' : 'text-gold-400')} />
-            <span className={cn('text-[11px] font-bold uppercase tracking-[0.18em]', useDarkText && !isMobileMenuOpen ? 'text-noir-950' : 'text-white')}>
+        <div className="flex items-center gap-5">
+          <Link to="/" className="group flex items-center gap-2 opacity-50 hover:opacity-80 transition-opacity">
+            <span className="text-[10px] font-motors font-medium uppercase tracking-[0.2em] text-silver-400">
               Mansour
             </span>
           </Link>
 
+          <span className="text-silver-700">/</span>
+
+          <Link to="/mansour-motors" className="group flex items-center gap-2.5">
+            <span className="font-motors-display text-[13px] font-bold uppercase tracking-[0.08em] text-white transition-colors group-hover:text-cyan-400">
+              Motors
+            </span>
+          </Link>
         </div>
 
         {/* Desktop Navigation */}
         <div className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => {
-            const isActive = currentPath === link.to || (link.to !== '/' && currentPath.startsWith(link.to.split('#')[0]) && link.to.split('#')[0] !== '/mansour-motors' && link.to.split('#')[0] !== '/')
+            const linkBase = link.to.split('#')[0]
+            const isActive = currentPath === linkBase || (linkBase !== '/mansour-motors' && currentPath.startsWith(linkBase))
             return (
               <Link
                 key={link.to}
-                to={link.to.split('#')[0] as any}
+                to={linkBase as any}
                 hash={link.to.includes('#') ? link.to.split('#')[1] : undefined}
                 className={cn(
-                  'relative px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors hover-trigger',
+                  'relative px-4 py-2 font-motors text-[11px] font-medium uppercase tracking-[0.15em] transition-all duration-300',
                   isActive
-                    ? useDarkText ? 'text-gold-600' : 'text-gold-400'
-                    : useDarkText ? 'text-noir-500 hover:text-noir-950' : 'text-white/70 hover:text-white'
+                    ? 'text-cyan-400'
+                    : 'text-silver-400 hover:text-white'
                 )}
               >
                 {link.label}
                 {isActive && (
                   <motion.span
-                    layoutId="nav-indicator"
-                    className={cn('absolute bottom-0 left-4 right-4 h-px', useDarkText ? 'bg-gold-600' : 'bg-gold-400')}
+                    layoutId="motors-nav-indicator"
+                    className="absolute bottom-0 left-4 right-4 h-px bg-cyan-400"
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   />
                 )}
               </Link>
             )
           })}
-          <div className={cn('ml-4 h-4 w-px', useDarkText ? 'bg-noir-200' : 'bg-white/10')} />
+
+          <div className="ml-5 h-4 w-px bg-white/10" />
+
           <Link
             to="/login"
-            className={cn(
-              'ml-3 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors hover-trigger',
-              useDarkText ? 'text-noir-500 hover:text-noir-950' : 'text-white/70 hover:text-white'
-            )}
+            className="ml-3 px-4 py-2 font-motors text-[11px] font-medium uppercase tracking-[0.15em] text-silver-500 transition-colors hover:text-white"
           >
             Connexion
           </Link>
+
           <Link
             to="/dashboard"
-            className="ml-1 bg-gold-400 px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-noir-950 transition-all hover:bg-gold-300 hover-trigger"
+            className="btn-motors btn-motors-primary ml-2 px-5 py-2 text-[10px] font-bold tracking-[0.2em] rounded-sm"
           >
             Espace Pro
           </Link>
@@ -105,10 +107,7 @@ export function PublicNavbar() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className={cn(
-            'relative z-50 flex h-11 w-11 items-center justify-center md:hidden',
-            isMobileMenuOpen ? 'text-white' : useDarkText ? 'text-noir-950' : 'text-white'
-          )}
+          className="relative z-50 flex h-11 w-11 items-center justify-center text-white md:hidden"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label={isMobileMenuOpen ? 'Fermer le menu' : 'Ouvrir le menu'}
         >
@@ -134,8 +133,14 @@ export function PublicNavbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 flex flex-col justify-between bg-noir-950 px-6 pb-12 pt-28 md:hidden"
+            className="fixed inset-0 z-40 flex flex-col justify-between bg-carbon-950 px-6 pb-12 pt-28 md:hidden"
           >
+            <div className="mb-8 flex items-center gap-3 border-b border-cyan-400/20 pb-4">
+              <span className="font-motors-display text-xs font-bold uppercase tracking-[0.1em] text-cyan-400">
+                Mansour Motors
+              </span>
+            </div>
+
             <div className="flex flex-col gap-1">
               {navLinks.map((link, i) => (
                 <motion.div
@@ -148,7 +153,7 @@ export function PublicNavbar() {
                     to={link.to.split('#')[0] as any}
                     hash={link.to.includes('#') ? link.to.split('#')[1] : undefined}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="block py-3 text-3xl font-bold uppercase tracking-wide text-white transition-colors hover:text-gold-400"
+                    className="block py-3 font-motors-display text-2xl font-bold uppercase tracking-wide text-white transition-colors hover:text-cyan-400"
                   >
                     {link.label}
                   </Link>
@@ -162,18 +167,18 @@ export function PublicNavbar() {
               transition={{ delay: 0.35 }}
               className="space-y-3"
             >
-              <div className="gold-divider mb-6" />
+              <div className="cyan-divider mb-6" />
               <Link
                 to="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block py-3 text-center text-xs font-bold uppercase tracking-[0.2em] text-white/60 transition-colors hover:text-white"
+                className="block py-3 text-center font-motors text-xs font-medium uppercase tracking-[0.2em] text-silver-500 transition-colors hover:text-white"
               >
                 Connexion
               </Link>
               <Link
                 to="/dashboard"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block bg-gold-400 px-6 py-4 text-center text-xs font-bold uppercase tracking-[0.25em] text-noir-950"
+                className="btn-motors btn-motors-primary block w-full py-4 text-center text-xs font-bold tracking-[0.25em] rounded-sm"
               >
                 Espace Pro
               </Link>
