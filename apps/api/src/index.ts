@@ -10,10 +10,12 @@ app.use('*', logger())
 app.use('*', cors({
   origin: (origin) => {
     const allowed = [
-      process.env.FRONTEND_URL || 'http://localhost:5173',
+      'https://mansour-holding.vercel.app',
+      process.env.FRONTEND_URL,
       'http://localhost:5173',
-    ]
-    return allowed.includes(origin) ? origin : allowed[0]
+      'http://localhost:3000',
+    ].filter(Boolean) as string[]
+    return allowed.includes(origin) ? origin : null
   },
   credentials: true,
 }))
