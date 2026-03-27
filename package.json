@@ -1,0 +1,34 @@
+{
+  "name": "mansour-holding",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "bun run --cwd apps/web dev",
+    "dev:api": "bun run --cwd apps/api dev",
+    "build": "bun run build:shared && bun run build:database && bun run build:domain && bun run build:web && bun run build:api",
+    "build:web": "bun run --cwd apps/web build",
+    "build:api": "bun run --cwd apps/api build",
+    "build:shared": "bun run --cwd packages/shared build",
+    "build:database": "bun run --cwd packages/database build",
+    "build:domain": "bun run --cwd packages/domain build",
+    "type-check": "bun run --cwd packages/shared type-check && bun run --cwd packages/database type-check && bun run --cwd packages/domain type-check && bun run --cwd apps/api type-check && bun run --cwd apps/web type-check",
+    "db:generate": "bun run --cwd apps/api db:generate",
+    "db:migrate": "bun run --cwd apps/api db:migrate",
+    "db:push": "bun run --cwd apps/api db:push",
+    "db:studio": "bun run --cwd apps/api db:studio",
+    "lint": "bun run --cwd apps/web lint && bun run --cwd apps/api lint",
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules apps/*/dist packages/*/dist"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
+  }
+}

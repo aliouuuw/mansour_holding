@@ -4,6 +4,109 @@ This file tracks all implementation cycles, decisions, and learnings during deve
 
 ---
 
+## [UX] Vehicles Page Copy Clarity Improvements
+
+* **Status:** Completed
+* **Date:** 2026-03-27
+* **Task:** Review and improve UX copy clarity on `/mansour-motors/vehicules` per clarify skill guidelines
+* **Issues Identified:**
+  1. **Inconsistent Filter Labels** - "Toutes les marques" had descriptive prefix, but "Année", "Carburant", "Transmission" were bare nouns
+  2. **Inconsistent Clear/Reset Terminology** - "Effacer les filtres" vs "Réinitialiser les filtres" created confusion
+  3. **Price Format Mismatch** - Input used "(FCFA)" but displayed prices use "F CFA" format
+  4. **Search Placeholder** - Used ellipsis (...) which is less clear than explicit "ou"
+  5. **French Typography** - Missing space before colon in "Filtres actifs:"
+* **Changes Applied to `apps/web/src/pages/public/PublicVehicles.tsx`:**
+  - `Rechercher par marque, modèle...` → `Rechercher par marque ou modèle` (explicit, no ellipsis)
+  - `Effacer les filtres` → `Réinitialiser les filtres` (consistent with empty state button)
+  - `Filtres actifs:` → `Filtres actifs :` (French typography - space before colon)
+  - `Année` → `Toutes les années` (consistent filter pattern)
+  - `Carburant` → `Tous les carburants` (consistent filter pattern)
+  - `Transmission` → `Toutes les transmissions` (consistent filter pattern)
+  - `Prix maximum (FCFA)` → `Prix maximum (F CFA)` (matches displayed price format)
+* **Additional Changes to `apps/web/src/pages/public/PublicVehicleDetail.tsx`:**
+  - `Acquérir ce véhicule` → `Demander des informations` (more professional, clearer intent)
+  - **Fixed React Hook violations**: Moved `useState` and `useCallback` hooks before the early return to comply with React Rules of Hooks
+* **Principles Applied (from clarify skill):**
+  - **Be consistent**: All filter labels now follow same "Toutes les..." pattern
+  - **Be specific**: Search placeholder uses "ou" instead of vague ellipsis
+  - **Be concise**: Maintained brevity while improving clarity
+* **Verification Results:**
+  - ✅ Type check passes: `cd apps/web && bunx tsc --noEmit` (exit code 0)
+* **Result:** Success - Filter UX copy is now consistent and clearer
+
+---
+
+## [Bug Fix] TypeScript Import Extension Errors (Project-wide)
+
+* **Status:** Completed
+* **Date:** 2026-03-27
+* **Issue:** TypeScript errors: `Cannot find module '.../.js'` across multiple packages. Affected files reported in packages/shared, packages/database, apps/api, and apps/web.
+* **Root Cause:** Import statements used `.js` extensions when referencing TypeScript files (`.ts`). While ES modules conventionally use `.js` extensions for the compiled output, TypeScript's module resolution with `"moduleResolution": "bundler"` couldn't resolve these imports during type checking.
+* **Fix Applied:**
+  - Removed `.js` extensions from all local TypeScript imports project-wide
+  - Files modified:
+    - `packages/shared/src/index.ts` (5 imports)
+    - `packages/shared/src/schemas/vehicle.ts` (1 import)
+    - `packages/shared/src/schemas/user.ts` (1 import)
+    - `packages/shared/src/schemas/customer.ts` (1 import)
+    - `packages/shared/src/schemas/deal.ts` (1 import)
+    - `packages/database/src/index.ts` (4 imports)
+    - `packages/database/src/schema/vehicles.ts` (1 import)
+    - `packages/database/src/schema/deals.ts` (3 imports)
+    - `apps/api/src/index.ts` (2 imports)
+    - `apps/api/src/auth.ts` (2 imports)
+    - `apps/api/src/db/index.ts` (1 import)
+    - `apps/api/src/db/delete-admin.ts` (1 import)
+    - `apps/api/src/db/seed.ts` (1 import)
+    - `apps/api/src/db/verify-admin.ts` (1 import)
+* **Verification Results:**
+  - ✅ `npx tsc --build` from root passes with exit code 0
+  - ✅ No TypeScript errors across all packages
+* **Result:** Success - All module resolution issues resolved project-wide
+
+---
+
+## [Infrastructure] Monorepo Setup Complete
+
+* **Status:** Completed
+* **Date:** 2026-03-27
+* **Changes:**
+  - Created root `package.json` with Bun workspaces configuration (`apps/*`, `packages/*`)
+  - Created root `tsconfig.json` with project references for all packages
+  - Set up `packages/shared` with Zod validators:
+    - `idSchema` - UUID validation
+    - `userSchema`, `createUserSchema`, `updateUserSchema` - User validation
+    - `vehicleSchema`, `createVehicleSchema`, `updateVehicleSchema` - Vehicle validation
+    - `customerSchema`, `createCustomerSchema`, `updateCustomerSchema` - Customer validation
+    - `dealSchema`, `createDealSchema`, `updateDealSchema` - Deal validation
+    - All enums exported (userRole, vehicleStatus, fuelType, transmission, customerSource, dealStatus)
+  - Set up `packages/database` with Drizzle ORM schemas:
+    - `auth.ts` - Users, Sessions, Accounts, Verifications tables for better-auth
+    - `vehicles.ts` - Vehicles table with enums (status, fuelType, transmission)
+    - `customers.ts` - Customers table with source enum
+    - `deals.ts` - Deals table with status enum and FK relationships
+  - Set up `packages/domain` as placeholder for business logic
+  - Created `apps/api` with Hono framework:
+    - Health check endpoint at `GET /api/health`
+    - Database connection module using Drizzle + postgres.js
+    - Migration script using Drizzle Kit
+    - CORS middleware configured
+    - Logger middleware
+* **Verification Results:**
+  - ✅ `bun install` succeeds from root
+  - ✅ `bun run build` succeeds for all packages
+  - ✅ `bun run type-check` passes for all packages
+  - ✅ `bunx tsc --noEmit` from root compiles successfully
+  - ✅ All workspace packages are importable
+* **PRD Tasks Completed:**
+  - ✅ Monorepo project structure
+  - ✅ Web app foundation (already existed)
+  - ✅ API foundation (Hono + Drizzle)
+  - ✅ Shared packages setup
+* **Result:** Success - Infrastructure is ready for auth implementation
+
+---
+
 ## [Status Check] Project State Analysis
 
 * **Status:** Completed
