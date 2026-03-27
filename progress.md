@@ -1,5 +1,44 @@
 # Project Progress Log
 
+## [Infrastructure] CI/CD + Deployment Stabilization
+
+* **Status:** Completed
+* **Date:** 2026-03-27
+* **Commits:** `87658dd` → `5bdf22e`
+
+### What was done
+* Migrated API from Bun HTTP server to **Cloudflare Workers** with Neon HTTP driver (`@neondatabase/serverless`) — Workers doesn't support TCP so `postgres.js` had to go
+* Fixed Workers validation-time crash: `db` and `auth` were initializing at module load (throwing on missing env vars before secrets are injected). Wrapped both in lazy `Proxy` pattern so they only initialize on first request
+* Added `wrangler.toml` with R2 bucket binding (`mansour-assets`) for future image uploads
+* Set up **GitHub Actions** CI workflow (`.github/workflows/deploy-api.yml`) — auto-deploys Worker on push to `main` when `apps/api/**`, `packages/**`, or `bun.lock` change
+* Fixed Workers bundler error: `apps/api/src/db/schema.ts` was re-exporting from `@mansour/database` workspace package whose `dist/` doesn't exist in CI — redirected to local `schema-for-migrations.ts`
+* Fixed Vercel build: Zod v4 (`3.25.x`) was resolving via `better-auth` transitive deps, breaking `@hookform/resolvers` type compatibility. Resolved by removing `zod` and `@hookform/resolvers` from auth forms entirely — switched to `react-hook-form` native validation (no external schema library needed for simple auth forms)
+* Added `installCommand: bun install --no-cache` to `apps/web/vercel.json` to prevent Vercel from using stale cached lockfiles
+
+### Production URLs
+* **Frontend:** `https://mansour-holding.vercel.app`
+* **API:** `https://mansour-api.mansour-holding.workers.dev`
+
+### Secrets configured on Worker
+* `DATABASE_URL` — Neon PostgreSQL
+* `BETTER_AUTH_SECRET`
+* `BETTER_AUTH_URL` — `https://mansour-api.mansour-holding.workers.dev`
+* `FRONTEND_URL` — `https://mansour-holding.vercel.app`
+
+### Vercel env vars required
+* `VITE_API_URL=https://mansour-api.mansour-holding.workers.dev`
+
+### GitHub secrets required
+* `CLOUDFLARE_API_TOKEN` — Edit Cloudflare Workers template token
+
+### Verification
+* ✅ `bun run deploy` succeeds locally
+* ✅ GitHub Actions deploys Worker on push
+* ✅ Vercel builds frontend cleanly
+* ✅ `bunx tsc --noEmit` passes in both `apps/api` and `apps/web`
+
+---
+
 ## [Infrastructure] Cloudflare Workers Deployment
 
 * **Status:** Completed
