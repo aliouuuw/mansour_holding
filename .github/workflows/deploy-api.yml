@@ -22,12 +22,6 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Build packages (dependency order)
-        run: |
-          bun run build --cwd packages/shared
-          bun run build --cwd packages/database
-          bun run build --cwd packages/domain
-
       - name: Deploy to Cloudflare Workers
         run: bunx wrangler deploy
         working-directory: apps/api
