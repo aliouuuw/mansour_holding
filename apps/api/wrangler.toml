@@ -1,0 +1,19 @@
+name = "mansour-api"
+main = "src/index.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+preview_urls = false
+
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "mansour-assets"
+
+# Secrets are set via `wrangler secret put` or the Cloudflare dashboard:
+# - DATABASE_URL
+# - BETTER_AUTH_SECRET
+# - BETTER_AUTH_URL  (https://mansour-api.mansour-holding.workers.dev)
+# - FRONTEND_URL     (https://mansour-holding.vercel.app)
+
+[dev]
+port = 3000

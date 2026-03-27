@@ -1,5 +1,46 @@
 # Project Progress Log
 
+## [Infrastructure] Cloudflare Workers Deployment
+
+* **Status:** Completed
+* **Date:** 2026-03-27
+* **Summary:** Migrated API from Bun HTTP server to Cloudflare Workers. API is now live at `https://mansour-api.mansour-holding.workers.dev`.
+
+### Changes
+* Swapped `postgres.js` driver for `@neondatabase/serverless` (Neon HTTP driver — required for Workers edge runtime, no TCP)
+* Made DB and auth initialization lazy via `Proxy` pattern — Workers validates modules at deploy time before secrets are injected, so top-level throws on missing env vars would crash the deploy
+* Updated `drizzle.config.ts` to use `dialect: 'postgresql'` and `url` (new drizzle-kit API)
+* Replaced Bun HTTP server export (`export default { port, fetch }`) with plain Hono app export (`export default app`) for Workers compatibility
+* Added `wrangler.toml` with R2 bucket binding (`mansour-assets`) and Workers config
+* Added `wrangler` as dev dependency, updated scripts: `dev` now uses `wrangler dev`, added `deploy`
+* Added production `trustedOrigins` to better-auth: `mansour-holding.vercel.app` and `mansour-api.mansour-holding.workers.dev`
+
+### Cloudflare Resources Created
+* Workers subdomain: `mansour-holding.workers.dev`
+* Worker: `mansour-api` → `https://mansour-api.mansour-holding.workers.dev`
+* R2 bucket: `mansour-assets` (for future vehicle image uploads)
+
+### Secrets configured on Worker
+* `DATABASE_URL` — Neon PostgreSQL connection string
+* `BETTER_AUTH_SECRET` — auth signing secret
+* `BETTER_AUTH_URL` — `https://mansour-api.mansour-holding.workers.dev`
+* `FRONTEND_URL` — `https://mansour-holding.vercel.app`
+
+### Vercel action required
+* Add env var `VITE_API_URL=https://mansour-api.mansour-holding.workers.dev` and redeploy
+
+### Verification
+* ✅ `bunx tsc --noEmit` passes in `apps/api`
+* ✅ `bun run deploy` succeeds — Worker live at `https://mansour-api.mansour-holding.workers.dev`
+* ✅ Dry-run bundle: 500.59 KiB gzipped
+
+### Next
+* Verify `/api/health` on production URL
+* Test auth (login/register) on live Vercel frontend against live Worker
+* Then proceed to Vehicle CRUD API endpoints
+
+---
+
 This file tracks all implementation cycles, decisions, and learnings during development.
 
 ---

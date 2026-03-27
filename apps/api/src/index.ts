@@ -1,7 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
-import { db } from './db/index'
 import { auth } from './auth'
 
 const app = new Hono()
@@ -9,7 +8,13 @@ const app = new Hono()
 // Middleware
 app.use('*', logger())
 app.use('*', cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin) => {
+    const allowed = [
+      process.env.FRONTEND_URL || 'http://localhost:5173',
+      'http://localhost:5173',
+    ]
+    return allowed.includes(origin) ? origin : allowed[0]
+  },
   credentials: true,
 }))
 
@@ -38,12 +43,4 @@ app.onError((err, c) => {
   return c.json({ error: 'Internal server error' }, 500)
 })
 
-// Start server
-const port = process.env.PORT ? parseInt(process.env.PORT) : 3000
-
-console.log(`Starting server on port ${port}...`)
-
-export default {
-  port,
-  fetch: app.fetch,
-}
+export default app
