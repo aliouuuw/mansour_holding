@@ -27,16 +27,16 @@ export function PublicVehicleDetail() {
 
   if (!vehicle) {
     return (
-      <div className="min-h-screen bg-carbon-950 font-motors text-white motors-theme flex flex-col">
+      <div className="min-h-screen bg-surface-dim font-sans text-noir-950 selection:bg-gold-400 selection:text-noir-950 flex flex-col page-grain">
         <PublicNavbar />
         <div className="flex flex-1 flex-col items-center justify-center gap-4">
-          <div className="flex h-20 w-20 items-center justify-center border border-carbon-800 bg-carbon-900">
-            <Car01Icon className="h-8 w-8 text-carbon-600" />
+          <div className="flex h-20 w-20 items-center justify-center border border-noir-100 bg-white">
+            <Car01Icon className="h-8 w-8 text-noir-200" />
           </div>
-          <p className="font-motors-display text-xl font-bold uppercase tracking-wider text-white">Véhicule non trouvé</p>
+          <p className="font-serif text-2xl italic text-noir-950">Véhicule non trouvé</p>
           <Link
             to="/mansour-motors/vehicules"
-            className="mt-4 text-xs font-bold uppercase tracking-widest text-cyan-400 hover:text-white transition-colors"
+            className="mt-4 text-xs font-bold uppercase tracking-widest text-gold-600 hover:text-noir-950 transition-colors"
           >
             Retour au catalogue
           </Link>
@@ -56,22 +56,22 @@ export function PublicVehicleDetail() {
   ]
 
   return (
-    <div className="min-h-screen bg-carbon-950 font-motors text-white motors-theme">
+    <div className="min-h-screen bg-surface-dim font-sans text-noir-950 selection:bg-gold-400 selection:text-noir-950 page-grain">
       <PublicNavbar />
 
       <main className="pt-28 pb-24 px-6 lg:px-12 lg:pt-32">
         <div className="mx-auto max-w-7xl">
           {/* Breadcrumb */}
-          <nav className="mb-10 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em]">
-            <Link to="/mansour-motors" className="text-silver-600 hover:text-cyan-400 transition-colors">
+          <nav className="mb-10 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.12em]">
+            <Link to="/mansour-motors" className="text-noir-400 hover:text-gold-600 transition-colors">
               Motors
             </Link>
-            <ArrowRight02Icon className="h-3 w-3 text-carbon-600" />
-            <Link to="/mansour-motors/vehicules" className="text-silver-600 hover:text-cyan-400 transition-colors">
+            <ArrowRight02Icon className="h-3 w-3 text-noir-300" />
+            <Link to="/mansour-motors/vehicules" className="text-noir-400 hover:text-gold-600 transition-colors">
               Véhicules
             </Link>
-            <ArrowRight02Icon className="h-3 w-3 text-carbon-600" />
-            <span className="text-silver-300">{vehicle.make} {vehicle.model}</span>
+            <ArrowRight02Icon className="h-3 w-3 text-noir-300" />
+            <span className="text-noir-700">{vehicle.make} {vehicle.model}</span>
           </nav>
 
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
@@ -82,21 +82,18 @@ export function PublicVehicleDetail() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="relative overflow-hidden aspect-[16/10] border border-carbon-800"
+                className="relative overflow-hidden shadow-rosso-sm aspect-[16/10] bg-carbon-900 border border-white/10"
               >
                 <img
                   src={vehicle.image}
                   alt={`${vehicle.make} ${vehicle.model}`}
                   className="h-full w-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-carbon-950/40 to-transparent pointer-events-none" />
-                {/* Corner accents */}
-                <div className="absolute top-4 right-4 h-8 w-8 border-t border-r border-cyan-500/30 pointer-events-none" />
-                <div className="absolute bottom-4 left-4 h-8 w-8 border-b border-l border-cyan-500/30 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-carbon-950/50 to-transparent pointer-events-none" />
                 {/* Back button overlay */}
                 <Link
                   to="/mansour-motors/vehicules"
-                  className="absolute top-5 left-5 flex items-center gap-2 bg-carbon-950/80 backdrop-blur-md border border-carbon-800 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-silver-300 transition-all hover:border-cyan-500/50 hover:text-cyan-400"
+                  className="absolute top-5 left-5 flex items-center gap-2 bg-carbon-900/90 border border-white/10 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-silver-300 backdrop-blur-md transition-all hover:bg-carbon-800 hover:text-white hover:border-rosso-500 shadow-sm"
                 >
                   <ArrowLeft01Icon className="h-3.5 w-3.5" />
                   Catalogue
@@ -110,14 +107,10 @@ export function PublicVehicleDetail() {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="space-y-5"
               >
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="h-px w-8 bg-cyan-500" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-500">À propos</span>
-                </div>
-                <h2 className="font-motors-display text-2xl font-bold uppercase tracking-tight text-white md:text-3xl">
-                  L'Excellence <span className="text-cyan-400">Détaillée</span>
+                <h2 className="font-motors-display font-bold text-3xl text-white uppercase">
+                  L'Excellence <span className="text-transparent bg-clip-text bg-gradient-to-r from-rosso-500 to-rosso-700 not-italic font-sans font-black uppercase text-[0.65em] tracking-tight">Détaillée</span>
                 </h2>
-                <div className="space-y-4 text-sm font-light leading-relaxed text-silver-400">
+                <div className="space-y-4 text-base font-light leading-relaxed text-silver-300">
                   <p>{vehicle.description}</p>
                   <p>
                     Ce véhicule incarne le standard de qualité Mansour Motors. Inspecté rigoureusement
@@ -132,26 +125,26 @@ export function PublicVehicleDetail() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="border-t border-carbon-800 pt-10"
+                className="border-t border-white/10 pt-10"
               >
-                <h3 className="mb-8 text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-500">
+                <h3 className="mb-8 text-[10px] font-bold uppercase tracking-[0.2em] text-rosso-500">
                   Caractéristiques Techniques
                 </h3>
-                <div className="grid grid-cols-2 gap-px md:grid-cols-3 bg-carbon-800 border border-carbon-800">
+                <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
                   {specs.map((spec, index) => (
                     <motion.div
                       key={spec.label}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 + index * 0.05 }}
-                      className="group flex items-start gap-3 bg-carbon-900 p-5 cursor-default transition-colors duration-300 hover:bg-carbon-800"
+                      className="group flex items-start gap-3 cursor-default"
                     >
-                      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center border border-carbon-700 text-silver-500 transition-all duration-300 group-hover:border-cyan-500 group-hover:text-cyan-400">
+                      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center bg-carbon-800 text-rosso-500 transition-all duration-300 group-hover:bg-rosso-600 group-hover:text-white group-hover:scale-110 group-hover:-rotate-3 group-hover:shadow-[0_0_15px_rgba(220,38,38,0.4)] rounded-sm">
                         <spec.icon className="h-4 w-4" />
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-silver-600 mb-1 transition-colors duration-300 group-hover:text-cyan-400">{spec.label}</p>
-                        <p className="text-sm font-medium text-silver-200 break-all">{spec.value}</p>
+                      <div className="min-w-0 transition-transform duration-300 group-hover:translate-x-1">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-silver-500 mb-1 transition-colors duration-300 group-hover:text-rosso-400">{spec.label}</p>
+                        <p className="text-sm font-bold text-white break-all">{spec.value}</p>
                       </div>
                     </motion.div>
                   ))}
@@ -169,21 +162,20 @@ export function PublicVehicleDetail() {
               >
                 {/* Header Info */}
                 <div>
-                  <h1 className="font-motors-display text-3xl font-bold uppercase tracking-tighter text-white leading-none mb-2">
-                    {vehicle.make}
+                  <h1 className="font-motors-display font-bold text-3xl text-white uppercase leading-tight lg:text-4xl">
+                    {vehicle.make} <span className="block not-italic text-rosso-500 font-sans font-black uppercase text-[0.65em] tracking-tight">{vehicle.model}</span>
                   </h1>
-                  <span className="block text-xl font-bold text-cyan-400 tracking-wide mb-6">{vehicle.model}</span>
-                  <p className="text-2xl font-bold text-white tracking-tight lg:text-3xl">
+                  <p className="mt-4 text-2xl font-black text-white tracking-tight lg:text-3xl">
                     {formatPrice(vehicle.price)}
                   </p>
                   <div className="mt-4">
                     {vehicle.status === 'available' ? (
-                      <span className="inline-flex items-center gap-1.5 bg-carbon-900 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-emerald-400 border border-emerald-500/30">
-                        <span className="h-1.5 w-1.5 bg-emerald-400 animate-pulse" />
+                      <span className="inline-flex items-center gap-1.5 bg-emerald-500/20 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-emerald-400 border border-emerald-500/30">
+                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                         Disponible immédiatement
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 bg-carbon-900 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-silver-500 border border-carbon-700">
+                      <span className="inline-flex items-center gap-1.5 bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white/80 border border-white/20">
                         {vehicle.status === 'reserved' ? 'Réservé' : 'Vendu'}
                       </span>
                     )}
@@ -191,9 +183,9 @@ export function PublicVehicleDetail() {
                 </div>
 
                 {/* Contact Form */}
-                <div className="border border-carbon-800 bg-carbon-900 p-7">
-                  <h3 className="mb-1.5 font-bold text-lg text-white">Acquérir ce véhicule</h3>
-                  <p className="mb-6 text-xs font-light text-silver-500">
+                <div className="border border-white/10 bg-carbon-900 p-7 shadow-sm">
+                  <h3 className="mb-1.5 font-motors-display font-bold text-xl text-white uppercase">Acquérir ce véhicule</h3>
+                  <p className="mb-6 text-xs font-light text-silver-400">
                     Un conseiller privé vous recontactera sous 24h.
                   </p>
 
@@ -201,28 +193,28 @@ export function PublicVehicleDetail() {
                     <input
                       type="text"
                       placeholder="Nom complet"
-                      className="w-full border border-carbon-700 bg-carbon-800 px-4 py-3 text-sm text-silver-200 placeholder-silver-600 focus:border-cyan-500 focus:outline-none transition-all"
+                      className="w-full border border-white/10 bg-carbon-950 px-4 py-3 text-sm text-white placeholder-silver-500 focus:border-rosso-500 focus:bg-carbon-900 focus:outline-none focus:ring-1 focus:ring-rosso-500/30 transition-all hover:border-white/20"
                     />
                     <input
                       type="tel"
                       placeholder="Téléphone"
-                      className="w-full border border-carbon-700 bg-carbon-800 px-4 py-3 text-sm text-silver-200 placeholder-silver-600 focus:border-cyan-500 focus:outline-none transition-all"
+                      className="w-full border border-white/10 bg-carbon-950 px-4 py-3 text-sm text-white placeholder-silver-500 focus:border-rosso-500 focus:bg-carbon-900 focus:outline-none focus:ring-1 focus:ring-rosso-500/30 transition-all hover:border-white/20"
                     />
                     <input
                       type="email"
                       placeholder="Email"
-                      className="w-full border border-carbon-700 bg-carbon-800 px-4 py-3 text-sm text-silver-200 placeholder-silver-600 focus:border-cyan-500 focus:outline-none transition-all"
+                      className="w-full border border-white/10 bg-carbon-950 px-4 py-3 text-sm text-white placeholder-silver-500 focus:border-rosso-500 focus:bg-carbon-900 focus:outline-none focus:ring-1 focus:ring-rosso-500/30 transition-all hover:border-white/20"
                     />
                     <textarea
                       rows={3}
                       placeholder="Message (facultatif)"
-                      className="w-full border border-carbon-700 bg-carbon-800 px-4 py-3 text-sm text-silver-200 placeholder-silver-600 focus:border-cyan-500 focus:outline-none transition-all resize-none"
+                      className="w-full border border-white/10 bg-carbon-950 px-4 py-3 text-sm text-white placeholder-silver-500 focus:border-rosso-500 focus:bg-carbon-900 focus:outline-none focus:ring-1 focus:ring-rosso-500/30 transition-all hover:border-white/20 resize-none"
                     />
                     <motion.button
                       type="submit"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="btn-motors btn-motors-primary w-full py-4 text-[10px] mt-2"
+                      className="w-full btn-motors btn-motors-primary px-6 py-4 text-[10px] mt-2"
                     >
                       Demander un rendez-vous
                     </motion.button>
@@ -231,31 +223,31 @@ export function PublicVehicleDetail() {
 
                 {/* Direct Contact */}
                 <div className="space-y-4">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-500">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-rosso-500">
                     Contact Direct
                   </p>
                   <div className="space-y-3">
                     <a href="tel:+221331234567" className="flex items-center gap-3 group">
-                      <div className="flex h-9 w-9 items-center justify-center border border-carbon-700 text-silver-500 transition-all duration-300 group-hover:border-cyan-500 group-hover:text-cyan-400">
+                      <div className="flex h-9 w-9 items-center justify-center bg-carbon-800 text-rosso-500 transition-all duration-300 group-hover:bg-rosso-600 group-hover:text-white group-hover:scale-110 group-hover:-rotate-6 group-hover:shadow-md rounded-sm">
                         <TelephoneIcon className="h-4 w-4" />
                       </div>
-                      <span className="text-sm text-silver-400 transition-colors duration-300 group-hover:text-cyan-400 font-medium">
+                      <span className="text-sm text-silver-400 transition-all duration-300 group-hover:text-rosso-400 group-hover:translate-x-1 font-medium">
                         +221 33 123 45 67
                       </span>
                     </a>
                     <a href="mailto:motors@mansour.sn" className="flex items-center gap-3 group">
-                      <div className="flex h-9 w-9 items-center justify-center border border-carbon-700 text-silver-500 transition-all duration-300 group-hover:border-cyan-500 group-hover:text-cyan-400">
+                      <div className="flex h-9 w-9 items-center justify-center bg-carbon-800 text-rosso-500 transition-all duration-300 group-hover:bg-rosso-600 group-hover:text-white group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-md rounded-sm">
                         <Mail01Icon className="h-4 w-4" />
                       </div>
-                      <span className="text-sm text-silver-400 transition-colors duration-300 group-hover:text-cyan-400 font-medium">
+                      <span className="text-sm text-silver-400 transition-all duration-300 group-hover:text-rosso-400 group-hover:translate-x-1 font-medium">
                         motors@mansour.sn
                       </span>
                     </a>
                     <a href="https://wa.me/221771234567" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
-                      <div className="flex h-9 w-9 items-center justify-center border border-carbon-700 text-silver-500 transition-all duration-300 group-hover:border-cyan-500 group-hover:text-cyan-400">
+                      <div className="flex h-9 w-9 items-center justify-center bg-carbon-800 text-rosso-500 transition-all duration-300 group-hover:bg-rosso-600 group-hover:text-white group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-md rounded-sm">
                         <WhatsappIcon className="h-4 w-4" />
                       </div>
-                      <span className="text-sm text-silver-400 transition-colors duration-300 group-hover:text-cyan-400 font-medium">
+                      <span className="text-sm text-silver-400 transition-all duration-300 group-hover:text-rosso-400 group-hover:translate-x-1 font-medium">
                         WhatsApp
                       </span>
                     </a>
@@ -268,7 +260,7 @@ export function PublicVehicleDetail() {
       </main>
 
       {/* Other Vehicles Carousel */}
-      <section className="bg-carbon-900 border-t border-carbon-800 px-6 py-16 lg:px-12 lg:py-24">
+      <section className="bg-carbon-900 border-t border-white/10 px-6 py-16 lg:px-12 lg:py-24">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 flex items-end justify-between">
             <div>
@@ -276,7 +268,7 @@ export function PublicVehicleDetail() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                className="mb-2 block text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-500"
+                className="mb-2 block text-[10px] font-bold uppercase tracking-[0.2em] text-rosso-500"
               >
                 Découvrir plus
               </motion.span>
@@ -285,22 +277,22 @@ export function PublicVehicleDetail() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="font-motors-display text-2xl font-bold uppercase tracking-tight text-white md:text-3xl"
+                className="font-motors-display font-bold text-3xl text-white uppercase md:text-4xl"
               >
-                Autres <span className="text-cyan-400">Véhicules</span>
+                AUTRES <span className="text-transparent bg-clip-text bg-gradient-to-r from-rosso-500 to-rosso-700 not-italic font-sans font-black uppercase text-[0.75em] tracking-tight">VÉHICULES</span>
               </motion.h2>
             </div>
             <Link
               to="/mansour-motors/vehicules"
-              className="group hidden items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-silver-400 transition-colors hover:text-cyan-400 sm:inline-flex"
+              className="group hidden items-center gap-2 text-xs font-bold uppercase tracking-widest text-silver-400 transition-colors hover:text-rosso-400 sm:inline-flex"
             >
               Voir tout le catalogue
-              <ArrowRight01Icon className="transition-transform group-hover:translate-x-1" />
+              <ArrowRight01Icon className="transition-transform group-hover:translate-x-1 text-rosso-500" />
             </Link>
           </div>
 
           <div className="relative">
-            <div className="flex gap-5 overflow-x-auto pb-4 snap-x snap-mandatory" style={{ scrollbarWidth: 'none' }}>
+            <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-carbon-700 scrollbar-track-transparent snap-x snap-mandatory">
               {vehicles
                 .filter((v) => v.id !== vehicleId && v.status === 'available')
                 .slice(0, 5)
@@ -316,31 +308,34 @@ export function PublicVehicleDetail() {
                     <Link
                       to="/mansour-motors/vehicules/$vehicleId"
                       params={{ vehicleId: otherVehicle.id }}
-                      className="block"
+                      className="block h-full"
                     >
-                      <div className="overflow-hidden border border-carbon-800 bg-carbon-950 transition-all duration-500 hover:border-cyan-500/30">
+                      <div className="flex flex-col h-full overflow-hidden border border-white/10 bg-carbon-950 shadow-sm transition-all duration-500 hover:shadow-rosso-sm hover:-translate-y-1 hover:border-rosso-500/50 rounded-sm">
                         <div className="relative aspect-[4/3] overflow-hidden bg-carbon-800">
                           <img
                             src={otherVehicle.image}
                             alt={`${otherVehicle.make} ${otherVehicle.model}`}
                             className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-carbon-950/80 via-carbon-950/20 to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-carbon-950/90 via-carbon-950/30 to-transparent" />
                           <div className="absolute bottom-0 left-0 right-0 p-4">
-                            <h3 className="font-motors-display text-sm font-bold uppercase tracking-wider text-white">
-                              {otherVehicle.make}
+                            <h3 className="font-motors-display font-bold text-lg text-white">
+                              {otherVehicle.make}{' '}
+                              <span className="font-sans font-black not-italic text-rosso-400">
+                                {otherVehicle.model}
+                              </span>
                             </h3>
-                            <span className="text-xs font-bold text-cyan-400">{otherVehicle.model}</span>
-                            <p className="text-[9px] font-bold uppercase tracking-wider text-silver-600 mt-1">
-                              {otherVehicle.year} · {otherVehicle.transmission}
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-silver-400">
+                              {otherVehicle.year} <span className="text-rosso-600 px-1">•</span> {otherVehicle.transmission}
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center justify-between p-4 border-t border-carbon-800">
-                          <p className="text-sm font-bold text-white">
+                        <div className="flex items-center justify-between p-4 relative overflow-hidden bg-carbon-950 mt-auto">
+                          <div className="absolute inset-0 bg-gradient-to-r from-rosso-900/0 via-rosso-900/20 to-rosso-900/0 translate-x-[-100%] transition-transform duration-1000 ease-out group-hover:translate-x-[100%]" />
+                          <p className="relative z-10 text-base font-black text-white">
                             {formatPrice(otherVehicle.price)}
                           </p>
-                          <span className="flex h-7 w-7 items-center justify-center border border-carbon-700 text-silver-500 transition-all duration-500 group-hover:border-cyan-500 group-hover:bg-cyan-500 group-hover:text-carbon-950">
+                          <span className="relative z-10 flex h-7 w-7 items-center justify-center bg-carbon-800 text-rosso-500 transition-all duration-500 group-hover:bg-rosso-600 group-hover:text-white group-hover:-rotate-45 group-hover:shadow-[0_0_15px_rgba(220,38,38,0.4)] rounded-full">
                             <ArrowUpRight01Icon className="h-3.5 w-3.5" />
                           </span>
                         </div>
@@ -354,10 +349,10 @@ export function PublicVehicleDetail() {
           <div className="mt-6 sm:hidden">
             <Link
               to="/mansour-motors/vehicules"
-              className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-cyan-400 transition-colors hover:text-white"
+              className="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-silver-400 transition-colors hover:text-rosso-400"
             >
               Voir tout le catalogue
-              <ArrowRight01Icon className="transition-transform group-hover:translate-x-1" />
+              <ArrowRight01Icon className="transition-transform group-hover:translate-x-1 text-rosso-500" />
             </Link>
           </div>
         </div>
