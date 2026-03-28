@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { XmarkIcon } from 'hugeicons-react'
+import { Cancel01Icon } from 'hugeicons-react'
 
 interface ConfirmDialogProps {
   isOpen: boolean
@@ -59,7 +59,7 @@ export function ConfirmDialog({
                   disabled={isLoading}
                   className="text-white/40 hover:text-white/60 transition-colors disabled:opacity-50"
                 >
-                  <XmarkIcon className="w-5 h-5" />
+                  <Cancel01Icon className="w-5 h-5" />
                 </button>
               </div>
 
