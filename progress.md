@@ -1,5 +1,38 @@
 # Project Progress Log
 
+## [UX] Confirmation Dialogs for Destructive Actions
+
+* **Status:** Completed
+* **Date:** 2026-03-28
+
+### What was done
+* Created reusable `ConfirmDialog` component with French UI
+* Replaced browser `confirm()` with custom dialog in vehicle delete flow
+* Added loading state during deletion
+* Dialog includes title, message, confirm/cancel buttons, and variant styling
+
+### Changes
+* `apps/web/src/components/ui/ConfirmDialog.tsx` — New reusable confirmation dialog
+* `apps/web/src/pages/dashboard/motors/MotorsVehicleDetail.tsx` — Replaced `confirm()` with `ConfirmDialog`
+
+### Dialog features
+* Animated backdrop and modal (Framer Motion)
+* Three variants: danger (red), warning (yellow), info (gold)
+* Loading state with disabled buttons
+* French labels: "Confirmer", "Annuler", "En cours..."
+* Luxury design matching app theme (noir-900 background, gold accents)
+
+### Verification
+* ✅ `bunx tsc --noEmit` passes in `apps/web`
+* ✅ Vehicle delete now shows confirmation dialog before deletion
+* ✅ Holding dashboard already wired with live Motors data (revenue, vehicles, customers)
+
+### Notes
+* Customer and deal delete don't exist yet (no delete buttons in UI)
+* Holding dashboard Motors card shows live data; other business cards are placeholder (as intended)
+
+---
+
 ## [Security + UX] Rate Limiting, Error Boundary, Dead Code Cleanup
 
 * **Status:** Completed

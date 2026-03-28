@@ -13,6 +13,7 @@ import { cn, formatPrice, formatNumber } from '@/lib/utils'
 import { vehiclesApi, type VehicleStatus } from '@/lib/api'
 import { VehicleForm, type VehicleFormValues } from '@/components/motors/VehicleForm'
 import { useToast } from '@/components/ui/Toast'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 
 const statusLabels: Record<VehicleStatus, string> = { available: 'Disponible', reserved: 'Réservé', sold: 'Vendu' }
 const statusColors: Record<VehicleStatus, string> = {
@@ -33,6 +34,7 @@ export function MotorsVehicleDetail() {
   const [activeIdx, setActiveIdx] = useState(0)
   const [direction, setDirection] = useState(0)
   const [editing, setEditing] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const { data: vehicle, isLoading, error } = useQuery({
     queryKey: ['vehicle', vehicleId],
@@ -67,9 +69,14 @@ export function MotorsVehicleDetail() {
       qc.invalidateQueries({ queryKey: ['public-featured-vehicles'] })
       qc.removeQueries({ queryKey: ['vehicle', vehicleId] })
       qc.removeQueries({ queryKey: ['public-vehicle', vehicleId] })
+      setShowDeleteDialog(false)
+      toast('Véhicule supprimé')
       void navigate({ to: '/dashboard/motors/inventory' })
     },
-    onError: (e) => toast((e as Error).message, 'error'),
+    onError: (e) => {
+      toast((e as Error).message, 'error')
+      setShowDeleteDialog(false)
+    },
   })
 
   const uploadMutation = useMutation({
@@ -166,10 +173,10 @@ export function MotorsVehicleDetail() {
           className="inline-flex items-center gap-2 border border-noir-200 px-3 py-2 text-sm font-medium text-noir-700 hover:bg-surface-dim transition-colors">
           <Edit01Icon className="h-4 w-4" /> Modifier
         </button>
-        <button onClick={() => confirm(`Supprimer ${vehicle.make} ${vehicle.model} ?`) && deleteMutation.mutate()}
+        <button onClick={() => setShowDeleteDialog(true)}
           disabled={deleteMutation.isPending}
           className="inline-flex items-center gap-2 border border-red-200 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors">
-          <Delete01Icon className="h-4 w-4" /> {deleteMutation.isPending ? '...' : 'Supprimer'}
+          <Delete01Icon className="h-4 w-4" /> Supprimer
         </button>
       </div>
 
@@ -294,6 +301,18 @@ export function MotorsVehicleDetail() {
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={() => deleteMutation.mutate()}
+        title="Supprimer ce véhicule"
+        message={`Êtes-vous sûr de vouloir supprimer ${vehicle?.make} ${vehicle?.model} ? Cette action est irréversible.`}
+        confirmText="Supprimer"
+        cancelText="Annuler"
+        variant="danger"
+        isLoading={deleteMutation.isPending}
+      />
     </div>
   )
 }
