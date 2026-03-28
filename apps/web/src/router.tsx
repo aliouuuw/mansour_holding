@@ -13,8 +13,10 @@ import { DashboardHome } from '@/pages/dashboard/DashboardHome'
 import { MotorsDashboard } from '@/pages/dashboard/motors/MotorsDashboard'
 import { MotorsInventory } from '@/pages/dashboard/motors/MotorsInventory'
 import { MotorsVehicleDetail } from '@/pages/dashboard/motors/MotorsVehicleDetail'
+import { MotorsVehicleNew } from '@/pages/dashboard/motors/MotorsVehicleNew'
 import { MotorsSales } from '@/pages/dashboard/motors/MotorsSales'
 import { MotorsCustomers } from '@/pages/dashboard/motors/MotorsCustomers'
+import { MotorsCustomerDetail } from '@/pages/dashboard/motors/MotorsCustomerDetail'
 import { LoginPage } from '@/pages/auth/LoginPage'
 import { RegisterPage } from '@/pages/auth/RegisterPage'
 import { PublicVehicles } from '@/pages/public/PublicVehicles'
@@ -137,6 +139,12 @@ const motorsInventoryRoute = createRoute({
   component: MotorsInventory,
 })
 
+const motorsVehicleNewRoute = createRoute({
+  getParentRoute: () => dashboardRoute,
+  path: '/motors/inventory/new',
+  component: MotorsVehicleNew,
+})
+
 const motorsVehicleDetailRoute = createRoute({
   getParentRoute: () => dashboardRoute,
   path: '/motors/inventory/$vehicleId',
@@ -155,6 +163,12 @@ const motorsCustomersRoute = createRoute({
   component: MotorsCustomers,
 })
 
+const motorsCustomerDetailRoute = createRoute({
+  getParentRoute: () => dashboardRoute,
+  path: '/motors/customers/$customerId',
+  component: MotorsCustomerDetail,
+})
+
 const routeTree = rootRoute.addChildren([
   landingRoute,
   loginRoute,
@@ -168,9 +182,11 @@ const routeTree = rootRoute.addChildren([
     dashboardIndexRoute,
     motorsDashboardRoute,
     motorsInventoryRoute,
+    motorsVehicleNewRoute,
     motorsVehicleDetailRoute,
     motorsSalesRoute,
     motorsCustomersRoute,
+    motorsCustomerDetailRoute,
   ]),
 ])
 

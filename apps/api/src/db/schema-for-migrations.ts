@@ -82,6 +82,7 @@ export const vehicles = pgTable('vehicles', {
   vin: varchar('vin', { length: 17 }),
   description: text('description'),
   images: jsonb('images').$type<string[]>().notNull().default([]),
+  extras: jsonb('extras').$type<Record<string, string>>().notNull().default({}),
   organizationId: uuid('organization_id'),
   createdBy: varchar('created_by', { length: 36 }).references(() => user.id),
   createdAt: timestamp('created_at').notNull().defaultNow(),

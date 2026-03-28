@@ -1,5 +1,5 @@
 import { Link, useParams } from '@tanstack/react-router'
-import { useRef, useState, useCallback, useMemo } from 'react'
+import { useRef, useState, useCallback, useMemo, useEffect } from 'react'
 import {
   ArrowLeft01Icon,
   ArrowRight01Icon,
@@ -17,16 +17,58 @@ import {
   CheckmarkCircle01Icon,
   Clock01Icon,
   Tag01Icon,
+  StarIcon,
 } from 'hugeicons-react'
-import { vehicles } from '@/data/mock'
+import { vehicles as mockVehicles } from '@/data/mock'
+import { vehiclesApi, type ApiVehicle } from '@/lib/api'
 import { formatPrice, formatNumber, cn } from '@/lib/utils'
 import { MotorsNavbar } from '@/components/motors/MotorsNavbar'
 import { MotorsFooter } from '@/components/motors/MotorsFooter'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 
+const fuelLabels: Record<string, string> = {
+  gasoline: 'Essence', diesel: 'Diesel', hybrid: 'Hybride', electric: 'Électrique',
+}
+const transLabels: Record<string, string> = {
+  manual: 'Manuelle', automatic: 'Automatique', cvt: 'CVT',
+}
+
+// Normalise mock or API vehicle into a common shape
+interface NormVehicle {
+  id: string
+  make: string
+  model: string
+  year: number
+  mileage: number
+  price: number
+  status: 'available' | 'reserved' | 'sold'
+  fuelType: string
+  transmission: string
+  color: string
+  vin: string | null
+  description: string | null
+  images: string[]
+  extras: Record<string, string>
+}
+
+function normFromApi(v: ApiVehicle): NormVehicle {
+  return { ...v, extras: v.extras ?? {} }
+}
+
+function normFromMock(v: typeof mockVehicles[0]): NormVehicle {
+  return {
+    id: v.id, make: v.make, model: v.model, year: v.year,
+    mileage: v.mileage, price: v.price,
+    status: v.status as NormVehicle['status'],
+    fuelType: v.fuelType, transmission: v.transmission,
+    color: v.color, vin: v.vin ?? null, description: v.description ?? null,
+    images: v.images ?? (v.image ? [v.image] : []),
+    extras: {},
+  }
+}
+
 export function PublicVehicleDetail() {
   const { vehicleId } = useParams({ strict: false })
-  const vehicle = vehicles.find((v) => v.id === vehicleId)
   const containerRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -35,12 +77,28 @@ export function PublicVehicleDetail() {
   const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '30%'])
   const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
-  // All hooks must be called before any early return
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [direction, setDirection] = useState(0)
+  const [vehicle, setVehicle] = useState<NormVehicle | null>(null)
+  const [notFound, setNotFound] = useState(false)
+
+  // Try API first (UUID), fall back to mock (v1, v2…)
+  useEffect(() => {
+    if (!vehicleId) return
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(vehicleId)
+    if (isUUID) {
+      vehiclesApi.get(vehicleId)
+        .then((v) => setVehicle(normFromApi(v)))
+        .catch(() => setNotFound(true))
+    } else {
+      const mock = mockVehicles.find((v) => v.id === vehicleId)
+      if (mock) setVehicle(normFromMock(mock))
+      else setNotFound(true)
+    }
+  }, [vehicleId])
 
   const allImages = useMemo(() =>
-    vehicle?.images && vehicle.images.length > 0 ? vehicle.images : [vehicle?.image || '']
+    vehicle?.images?.length ? vehicle.images : []
   , [vehicle])
 
   const nextImage = useCallback(() => {
@@ -54,21 +112,12 @@ export function PublicVehicleDetail() {
   }, [allImages.length])
 
   const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? '100%' : '-100%',
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? '100%' : '-100%',
-      opacity: 0,
-    }),
+    enter: (direction: number) => ({ x: direction > 0 ? '100%' : '-100%', opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (direction: number) => ({ x: direction < 0 ? '100%' : '-100%', opacity: 0 }),
   }
 
-  if (!vehicle) {
+  if (notFound || (!vehicle && vehicleId)) {
     return (
       <div className="motors-theme min-h-screen bg-carbon-950 font-motors text-silver-100 flex flex-col">
         <MotorsNavbar />
@@ -77,10 +126,7 @@ export function PublicVehicleDetail() {
             <Car01Icon className="h-8 w-8 text-silver-600" />
           </div>
           <p className="font-motors-display text-xl uppercase tracking-wide text-white">Véhicule non trouvé</p>
-          <Link
-            to="/mansour-motors/vehicules"
-            className="mt-4 font-motors text-xs font-bold uppercase tracking-widest text-gold-600 hover:text-gold-500 transition-colors"
-          >
+          <Link to="/mansour-motors/vehicules" className="mt-4 font-motors text-xs font-bold uppercase tracking-widest text-gold-600 hover:text-gold-500 transition-colors">
             Retour au catalogue
           </Link>
         </div>
@@ -89,14 +135,34 @@ export function PublicVehicleDetail() {
     )
   }
 
-  const specs = [
+  // Loading state
+  if (!vehicle) {
+    return (
+      <div className="motors-theme min-h-screen bg-carbon-950 font-motors flex flex-col">
+        <MotorsNavbar />
+        <div className="flex flex-1 items-center justify-center">
+          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gold-400" />
+        </div>
+        <MotorsFooter />
+      </div>
+    )
+  }
+
+  const coreSpecs = [
     { label: 'Année', value: vehicle.year.toString(), icon: Calendar01Icon },
     { label: 'Kilométrage', value: `${formatNumber(vehicle.mileage)} km`, icon: DashboardSpeed01Icon },
-    { label: 'Carburant', value: vehicle.fuelType, icon: Fuel01Icon },
-    { label: 'Transmission', value: vehicle.transmission, icon: SteeringIcon },
+    { label: 'Carburant', value: fuelLabels[vehicle.fuelType] ?? vehicle.fuelType, icon: Fuel01Icon },
+    { label: 'Transmission', value: transLabels[vehicle.transmission] ?? vehicle.transmission, icon: SteeringIcon },
     { label: 'Couleur', value: vehicle.color, icon: PaintBoardIcon },
-    { label: 'VIN', value: vehicle.vin, icon: HashtagIcon },
+    ...(vehicle.vin ? [{ label: 'VIN', value: vehicle.vin, icon: HashtagIcon }] : []),
   ]
+
+  // Extras become additional spec tiles
+  const extraSpecs = Object.entries(vehicle.extras ?? {}).map(([key, value]) => ({
+    label: key, value, icon: StarIcon,
+  }))
+
+  const specs = [...coreSpecs, ...extraSpecs]
 
   const statusConfig = {
     available: {
@@ -274,7 +340,7 @@ export function PublicVehicleDetail() {
       <section className="relative bg-carbon-900">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-400/30 to-transparent" />
         <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 divide-x divide-white/[0.04]">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 divide-x divide-white/[0.04]">
             {specs.map((spec, index) => (
               <motion.div
                 key={spec.label}

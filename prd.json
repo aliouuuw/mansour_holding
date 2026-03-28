@@ -108,7 +108,7 @@
         "Routes mounted in apps/api/src/index.ts — verify with grep 'vehicles'",
         "Type check passes — verify with `cd apps/api && bunx tsc --noEmit`"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "group": "motors-inventory",
@@ -122,7 +122,7 @@
         "Fetches from /api/vehicles — verify with grep 'useQuery\\|fetch'",
         "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "group": "motors-inventory",
@@ -135,7 +135,7 @@
         "French labels used — verify with grep (e.g., 'Marque', 'Modèle', 'Prix')",
         "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "group": "motors-inventory",
@@ -148,7 +148,7 @@
         "Redirects on success — verify with grep 'navigate'",
         "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "group": "motors-inventory",
@@ -160,7 +160,7 @@
         "Returns public URL and updates vehicle images jsonb — verify by reading handler",
         "Type check passes — verify with `cd apps/api && bunx tsc --noEmit`"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "group": "motors-crm",
@@ -172,7 +172,7 @@
         "Search by name/email/phone supported — verify with grep 'search\\|like\\|ilike'",
         "Type check passes — verify with `cd apps/api && bunx tsc --noEmit`"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "group": "motors-crm",
@@ -185,7 +185,7 @@
         "French labels used — verify with grep (e.g., 'Nom', 'Prénom', 'Téléphone')",
         "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "group": "motors-sales",

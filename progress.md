@@ -1,5 +1,111 @@
 # Project Progress Log
 
+## [Feature] Vehicle Full CRUD + Image Upload
+
+* **Status:** Completed
+* **Date:** 2026-03-28
+
+### What was done
+* API: `POST /api/vehicles/:id/images` — multipart → S3Client → R2 → appends URL to `images[]` in DB
+* API: added R2 env var stubs to `apps/api/.env` (commented, needs real values)
+* Web: `VehicleForm` shared component (`apps/web/src/components/motors/VehicleForm.tsx`) — React Hook Form, all fields, French labels
+* Web: `MotorsVehicleNew` at `/dashboard/motors/inventory/new` — creates vehicle, redirects to detail
+* Web: `MotorsVehicleDetail` — full view/edit toggle, delete with confirm dialog, image upload via hidden file input
+* Web: "Ajouter un véhicule" button in inventory list now links to `/new`
+* Router: added `motorsVehicleNewRoute`
+
+### R2 setup required (before image upload works)
+Fill in `apps/api/.env`:
+- `R2_ENDPOINT` — from Cloudflare dashboard → R2 → Manage R2 API tokens
+- `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` — R2 API token
+- `R2_BUCKET_NAME=mansour-assets`
+- `R2_PUBLIC_URL` — enable public access on the bucket, copy the URL
+
+### Verification
+* ✅ `bunx tsc --noEmit` passes in `apps/api`
+* ✅ `bunx tsc --noEmit` passes in `apps/web`
+
+### Next
+* Sales pipeline API + Kanban board
+
+---
+
+## [Feature] Customer CRUD API + Pages
+
+* **Status:** Completed
+* **Date:** 2026-03-28
+
+### What was done
+* Created `apps/api/src/routes/customers.ts` — 5 endpoints, auth-gated, search by firstName/lastName/email/phone via `ilike`, pagination
+* Mounted at `/api/customers` in `index.ts`
+* Added `ApiCustomer`, `CustomerSource`, `customersApi` to `apps/web/src/lib/api.ts`
+* Built `MotorsCustomers.tsx` — TanStack Table, debounced search, pagination, French labels (Nom, Email, Téléphone, Source, Ajouté le)
+* Built `MotorsCustomerDetail.tsx` — contact info, notes, source/date meta, action buttons
+* Added `/motors/customers/$customerId` route to `router.tsx`
+
+### Verification
+* ✅ `bunx tsc --noEmit` passes in `apps/api` (exit code 0)
+* ✅ `bunx tsc --noEmit` passes in `apps/web` (exit code 0)
+
+### Next
+* Sales pipeline API endpoints (`apps/api/src/routes/deals.ts`) + Kanban board
+
+---
+
+## [Feature] Vehicle List + Detail Pages
+
+* **Status:** Completed
+* **Date:** 2026-03-28
+
+### What was done
+* Created `apps/web/src/lib/api.ts` — typed fetch client with bearer token support, `vehiclesApi.list/get/create/update/delete`
+* Rewrote `MotorsInventory.tsx` to fetch from `GET /api/vehicles` with:
+  - Debounced search (300ms), status filter buttons, pagination controls
+  - Loading spinner, error banner, empty state
+  - TanStack Table with image thumbnail, make/model, year, mileage, price, status columns
+* Rewrote `MotorsVehicleDetail.tsx` to fetch from `GET /api/vehicles/:id` with:
+  - Image gallery with thumbnail strip
+  - Specs grid with French labels (fuelType/transmission mapped to French)
+  - Loading/error/not-found states
+
+### Verification
+* ✅ `MotorsInventory.tsx` uses `useReactTable`, fetches from `/api/vehicles`
+* ✅ Search, status filter, pagination all wired
+* ✅ `MotorsVehicleDetail.tsx` fetches from `/api/vehicles/:id`
+* ✅ `bunx tsc --noEmit` passes in `apps/web` (exit code 0)
+
+### Next
+* Customer CRUD API endpoints (`apps/api/src/routes/customers.ts`)
+
+---
+
+## [Feature] Vehicle CRUD API Endpoints
+
+* **Status:** Completed
+* **Date:** 2026-03-28
+
+### What was done
+* Created `apps/api/src/routes/vehicles.ts` with all 5 CRUD endpoints:
+  - `GET /api/vehicles` — list with pagination (`page`, `limit`) and filters (`status`, `search`)
+  - `GET /api/vehicles/:id` — single vehicle by UUID
+  - `POST /api/vehicles` — create, sets `createdBy` from session
+  - `PUT /api/vehicles/:id` — update, strips immutable fields, bumps `updatedAt`
+  - `DELETE /api/vehicles/:id` — delete, returns 404 if not found
+* All routes protected by auth middleware using `auth.api.getSession()`
+* Mounted at `/api/vehicles` in `apps/api/src/index.ts`
+
+### Verification
+* ✅ `apps/api/src/routes/vehicles.ts` exists with all 5 endpoints
+* ✅ Auth middleware applied to all routes via `vehiclesRoute.use('*', ...)`
+* ✅ Pagination (`page`, `limit`, `offset`) on list endpoint
+* ✅ Routes mounted in `index.ts` via `app.route('/api/vehicles', vehiclesRoute)`
+* ✅ `bunx tsc --noEmit` passes in `apps/api` (exit code 0)
+
+### Next
+* Vehicle list page with TanStack Table at `/dashboard/motors/inventory`
+
+---
+
 ## [Infrastructure] Koyeb Deployment + Auth Cross-Domain Fix
 
 * **Status:** Completed
