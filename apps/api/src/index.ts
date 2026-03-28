@@ -4,6 +4,7 @@ import { logger } from 'hono/logger'
 import { auth } from './auth'
 import vehiclesRoute from './routes/vehicles'
 import customersRoute from './routes/customers'
+import dealsRoute from './routes/deals'
 
 const app = new Hono()
 
@@ -32,7 +33,7 @@ app.on(['POST', 'GET'], '/api/auth/*', (c) => {
 
 app.route('/api/vehicles', vehiclesRoute)
 app.route('/api/customers', customersRoute)
-// TODO: Mount deal routes at /api/deals
+app.route('/api/deals', dealsRoute)
 
 app.notFound((c) => c.json({ error: 'Not found' }, 404))
 app.onError((err, c) => {

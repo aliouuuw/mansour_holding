@@ -4,11 +4,13 @@ import { motion } from 'framer-motion'
 import { ArrowLeft01Icon } from 'hugeicons-react'
 import { vehiclesApi } from '@/lib/api'
 import { VehicleForm, type VehicleFormValues } from '@/components/motors/VehicleForm'
+import { useToast } from '@/components/ui/Toast'
 
 export function MotorsVehicleNew() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const toast = useToast()
 
   const handleSubmit = async (values: VehicleFormValues) => {
     setLoading(true)
@@ -21,6 +23,7 @@ export function MotorsVehicleNew() {
         images: [],
         extras: Object.fromEntries(values.extras.map(({ key, value }) => [key, value])),
       })
+      toast('Véhicule créé avec succès')
       void navigate({ to: '/dashboard/motors/inventory/$vehicleId', params: { vehicleId: vehicle.id } })
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Erreur lors de la création')

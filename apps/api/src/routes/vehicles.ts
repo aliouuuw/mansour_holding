@@ -1,4 +1,4 @@
-import { Hono } from 'hono'
+import { Hono, type Context, type Next } from 'hono'
 import { eq, and, ilike, sql } from 'drizzle-orm'
 import { db } from '../db/index'
 import { vehicles } from '../db/schema'
@@ -65,17 +65,15 @@ async function uploadToR2(key: string, body: Uint8Array, contentType: string): P
   }
 }
 
-// Auth middleware for all routes
-vehiclesRoute.use('*', async (c, next) => {
+// Auth middleware — applied selectively to write routes only
+async function requireAuth(c: Context, next: Next) {
   const session = await auth.api.getSession({ headers: c.req.raw.headers })
-  if (!session) {
-    return c.json({ error: 'Unauthorized' }, 401)
-  }
+  if (!session) return c.json({ error: 'Unauthorized' }, 401)
   c.set('session' as never, session)
   await next()
-})
+}
 
-// GET /api/vehicles — list with pagination and filters
+// GET /api/vehicles — public, list with pagination and filters
 vehiclesRoute.get('/', async (c) => {
   const { page = '1', limit = '20', status, search } = c.req.query()
   const pageNum = Math.max(1, parseInt(page))
@@ -101,16 +99,16 @@ vehiclesRoute.get('/', async (c) => {
   })
 })
 
-// GET /api/vehicles/:id
+// GET /api/vehicles/:id — public
 vehiclesRoute.get('/:id', async (c) => {
-  const id = c.req.param('id')
+  const id = c.req.param('id') as string
   const [vehicle] = await db.select().from(vehicles).where(eq(vehicles.id, id))
   if (!vehicle) return c.json({ error: 'Vehicle not found' }, 404)
   return c.json(vehicle)
 })
 
 // POST /api/vehicles
-vehiclesRoute.post('/', async (c) => {
+vehiclesRoute.post('/', requireAuth, async (c) => {
   const body = await c.req.json()
   const session = c.get('session' as never) as Awaited<ReturnType<typeof auth.api.getSession>>
 
@@ -123,8 +121,8 @@ vehiclesRoute.post('/', async (c) => {
 })
 
 // PUT /api/vehicles/:id
-vehiclesRoute.put('/:id', async (c) => {
-  const id = c.req.param('id')
+vehiclesRoute.put('/:id', requireAuth, async (c) => {
+  const id = c.req.param('id') as string
   const body = await c.req.json()
 
   // strip immutable fields
@@ -141,16 +139,16 @@ vehiclesRoute.put('/:id', async (c) => {
 })
 
 // DELETE /api/vehicles/:id
-vehiclesRoute.delete('/:id', async (c) => {
-  const id = c.req.param('id')
+vehiclesRoute.delete('/:id', requireAuth, async (c) => {
+  const id = c.req.param('id') as string
   const [deleted] = await db.delete(vehicles).where(eq(vehicles.id, id)).returning()
   if (!deleted) return c.json({ error: 'Vehicle not found' }, 404)
   return c.json({ success: true })
 })
 
 // POST /api/vehicles/:id/images — multipart upload to R2
-vehiclesRoute.post('/:id/images', async (c) => {
-  const id = c.req.param('id')
+vehiclesRoute.post('/:id/images', requireAuth, async (c) => {
+  const id = c.req.param('id') as string
   const [vehicle] = await db.select().from(vehicles).where(eq(vehicles.id, id))
   if (!vehicle) return c.json({ error: 'Vehicle not found' }, 404)
 

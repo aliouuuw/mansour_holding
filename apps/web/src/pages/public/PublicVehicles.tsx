@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link } from '@tanstack/react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -14,10 +14,17 @@ import {
   ArrowLeft01Icon,
   ArrowRight02Icon,
 } from 'hugeicons-react'
-import { vehicles } from '@/data/mock'
+import { publicVehiclesApi, type ApiVehicle } from '@/lib/api'
 import { formatPrice, cn } from '@/lib/utils'
 import { MotorsNavbar } from '@/components/motors/MotorsNavbar'
 import { MotorsFooter } from '@/components/motors/MotorsFooter'
+
+const fuelLabels: Record<string, string> = {
+  gasoline: 'Essence', diesel: 'Diesel', hybrid: 'Hybride', electric: 'Électrique',
+}
+const transLabels: Record<string, string> = {
+  manual: 'Manuelle', automatic: 'Automatique', cvt: 'CVT',
+}
 
 // Cinematic hero background for the vehicles page
 const HERO_IMAGE = 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2800&auto=format&fit=crop'
@@ -27,11 +34,13 @@ function FilterSelect({
   value,
   onChange,
   options,
+  displayOptions,
 }: {
   label: string
   value: string
   onChange: (value: string) => void
   options: string[]
+  displayOptions?: string[]
 }) {
   return (
     <div className="relative group w-full">
@@ -41,9 +50,9 @@ function FilterSelect({
         className="w-full appearance-none border border-noir-200 bg-white px-4 py-3 pr-10 font-motors text-sm font-medium text-noir-900 focus:border-gold-400 focus:outline-none focus:ring-1 focus:ring-gold-400/20 transition-all"
       >
         <option value="">{label}</option>
-        {options.map((opt) => (
+        {options.map((opt, i) => (
           <option key={opt} value={opt}>
-            {opt}
+            {displayOptions?.[i] ?? opt}
           </option>
         ))}
       </select>
@@ -54,7 +63,10 @@ function FilterSelect({
   )
 }
 
-function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: number }) {
+function VehicleCard({ vehicle, index }: { vehicle: ApiVehicle; index: number }) {
+  const thumb = vehicle.images?.[0]
+  const fuelLabel = fuelLabels[vehicle.fuelType] ?? vehicle.fuelType
+  const transLabel = transLabels[vehicle.transmission] ?? vehicle.transmission
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -75,13 +87,19 @@ function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: n
         <div className="relative overflow-hidden bg-white transition-all duration-500 hover:shadow-2xl">
           {/* Image container with cinematic aspect */}
           <div className="relative aspect-[16/10] overflow-hidden">
-            <motion.img
-              src={vehicle.image}
-              alt={`${vehicle.make} ${vehicle.model}`}
-              className="h-full w-full object-cover"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            />
+            {thumb ? (
+              <motion.img
+                src={thumb}
+                alt={`${vehicle.make} ${vehicle.model}`}
+                className="h-full w-full object-cover"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              />
+            ) : (
+              <div className="h-full w-full bg-noir-100 flex items-center justify-center">
+                <Car01Icon className="h-10 w-10 text-noir-300" />
+              </div>
+            )}
 
             {/* Cinematic gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-noir-950/80 via-noir-950/20 to-transparent" />
@@ -116,11 +134,11 @@ function VehicleCard({ vehicle, index }: { vehicle: typeof vehicles[0]; index: n
                 </span>
                 <span className="w-1 h-1 rounded-full bg-white/30" />
                 <span className="flex items-center gap-1.5">
-                  <Fuel01Icon className="h-3 w-3" /> {vehicle.fuelType}
+                  <Fuel01Icon className="h-3 w-3" /> {fuelLabel}
                 </span>
                 <span className="w-1 h-1 rounded-full bg-white/30" />
                 <span className="flex items-center gap-1.5">
-                  <SteeringIcon className="h-3 w-3" /> {vehicle.transmission}
+                  <SteeringIcon className="h-3 w-3" /> {transLabel}
                 </span>
               </div>
             </div>
@@ -176,6 +194,8 @@ function ActiveFilterPill({ label, onRemove }: { label: string; onRemove: () => 
 }
 
 export function PublicVehicles() {
+  const [allVehicles, setAllVehicles] = useState<ApiVehicle[]>([])
+  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [isFiltersOpen, setIsFiltersOpen] = useState(false)
 
@@ -185,38 +205,43 @@ export function PublicVehicles() {
   const [transmission, setTransmission] = useState('')
   const [priceMax, setPriceMax] = useState('')
 
-  const makes = useMemo(() => Array.from(new Set(vehicles.map(v => v.make))).sort(), [])
-  const years = useMemo(() => Array.from(new Set(vehicles.map(v => v.year))).sort((a, b) => b - a), [])
-  const fuelTypes = useMemo(() => Array.from(new Set(vehicles.map(v => v.fuelType))).sort(), [])
-  const transmissions = useMemo(() => Array.from(new Set(vehicles.map(v => v.transmission))).sort(), [])
+  useEffect(() => {
+    publicVehiclesApi.list({ limit: 200 })
+      .then((res) => setAllVehicles(res.data))
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [])
+
+  const makes = useMemo(() => Array.from(new Set(allVehicles.map(v => v.make))).sort(), [allVehicles])
+  const years = useMemo(() => Array.from(new Set(allVehicles.map(v => v.year))).sort((a, b) => b - a), [allVehicles])
+  const fuelTypes = useMemo(() => Array.from(new Set(allVehicles.map(v => v.fuelType))).sort(), [allVehicles])
+  const transmissions = useMemo(() => Array.from(new Set(allVehicles.map(v => v.transmission))).sort(), [allVehicles])
 
   const filteredVehicles = useMemo(() => {
-    return vehicles.filter(v => {
+    return allVehicles.filter(v => {
       const q = search.toLowerCase()
       const matchesSearch =
         v.make.toLowerCase().includes(q) ||
         v.model.toLowerCase().includes(q) ||
         v.year.toString().includes(q)
-
       const matchesMake = make ? v.make === make : true
       const matchesYear = year ? v.year.toString() === year : true
       const matchesFuel = fuelType ? v.fuelType === fuelType : true
       const matchesTransmission = transmission ? v.transmission === transmission : true
       const matchesPrice = priceMax ? v.price <= parseInt(priceMax) : true
-
       return matchesSearch && matchesMake && matchesYear && matchesFuel && matchesTransmission && matchesPrice
     }).sort((a, b) => {
       if (a.status === 'available' && b.status !== 'available') return -1
       if (a.status !== 'available' && b.status === 'available') return 1
       return 0
     })
-  }, [search, make, year, fuelType, transmission, priceMax])
+  }, [allVehicles, search, make, year, fuelType, transmission, priceMax])
 
   const activeFilters = [
     make && { label: make, clear: () => setMake('') },
     year && { label: year, clear: () => setYear('') },
-    fuelType && { label: fuelType, clear: () => setFuelType('') },
-    transmission && { label: transmission, clear: () => setTransmission('') },
+    fuelType && { label: fuelLabels[fuelType] ?? fuelType, clear: () => setFuelType('') },
+    transmission && { label: transLabels[transmission] ?? transmission, clear: () => setTransmission('') },
     priceMax && { label: `Max ${formatPrice(parseInt(priceMax))}`, clear: () => setPriceMax('') },
   ].filter(Boolean) as { label: string; clear: () => void }[]
 
@@ -310,7 +335,11 @@ export function PublicVehicles() {
         <div className="mx-auto max-w-7xl px-6 py-4 lg:px-16">
           <div className="flex items-center justify-between">
             <p className="font-motors text-[11px] font-medium uppercase tracking-[0.15em] text-noir-500">
-              <span className="text-noir-950 font-semibold">{filteredVehicles.length}</span> véhicule{filteredVehicles.length !== 1 ? 's' : ''} disponible{filteredVehicles.length !== 1 ? 's' : ''}
+              {loading ? (
+                <span className="text-noir-400">Chargement...</span>
+              ) : (
+                <><span className="text-noir-950 font-semibold">{filteredVehicles.length}</span> véhicule{filteredVehicles.length !== 1 ? 's' : ''}</>
+              )}
             </p>
             {activeFilters.length > 0 && (
               <button
@@ -392,8 +421,8 @@ export function PublicVehicles() {
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
                     <FilterSelect label="Toutes les marques" value={make} onChange={setMake} options={makes} />
                     <FilterSelect label="Toutes les années" value={year} onChange={setYear} options={years.map(String)} />
-                    <FilterSelect label="Tous les carburants" value={fuelType} onChange={setFuelType} options={fuelTypes} />
-                    <FilterSelect label="Toutes les transmissions" value={transmission} onChange={setTransmission} options={transmissions} />
+                    <FilterSelect label="Tous les carburants" value={fuelType} onChange={setFuelType} options={fuelTypes} displayOptions={fuelTypes.map(f => fuelLabels[f] ?? f)} />
+                    <FilterSelect label="Toutes les transmissions" value={transmission} onChange={setTransmission} options={transmissions} displayOptions={transmissions.map(t => transLabels[t] ?? t)} />
                     <div className="relative w-full">
                       <input
                         type="number"
@@ -411,7 +440,19 @@ export function PublicVehicles() {
 
           {/* Vehicle Grid */}
           <div className="min-h-[400px]">
-            {filteredVehicles.length > 0 ? (
+            {loading ? (
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="aspect-[16/10] bg-noir-100" />
+                    <div className="border-t border-noir-100 bg-white px-5 py-4">
+                      <div className="h-4 w-2/3 bg-noir-100 rounded" />
+                      <div className="mt-2 h-3 w-1/3 bg-noir-100 rounded" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : filteredVehicles.length > 0 ? (
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {filteredVehicles.map((vehicle, i) => (
                   <VehicleCard key={vehicle.id} vehicle={vehicle} index={i} />

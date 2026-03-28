@@ -11,6 +11,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { cn, formatPrice, formatNumber } from '@/lib/utils'
 import { vehiclesApi, type ApiVehicle, type VehicleStatus } from '@/lib/api'
 import { VehicleForm, type VehicleFormValues } from '@/components/motors/VehicleForm'
+import { useToast } from '@/components/ui/Toast'
 
 const statusLabels: Record<VehicleStatus, string> = {
   available: 'Disponible', reserved: 'Réservé', sold: 'Vendu',
@@ -31,6 +32,7 @@ export function MotorsVehicleDetail() {
   const { vehicleId } = useParams({ strict: false })
   const navigate = useNavigate()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const toast = useToast()
 
   const [vehicle, setVehicle] = useState<ApiVehicle | null>(null)
   const [loading, setLoading] = useState(true)
@@ -71,6 +73,7 @@ export function MotorsVehicleDetail() {
       })
       setVehicle(updated)
       setEditing(false)
+      toast('Véhicule mis à jour')
     } catch (e) {
       setActionError(e instanceof Error ? e.message : 'Erreur lors de la sauvegarde')
     } finally {
@@ -99,6 +102,7 @@ export function MotorsVehicleDetail() {
       const result = await vehiclesApi.uploadImage(vehicle.id, file)
       setVehicle((v) => v ? { ...v, images: result.images } : v)
       setActiveIdx(result.images.length - 1)
+      toast('Photo ajoutée')
     } catch (e) {
       setActionError(e instanceof Error ? e.message : "Erreur lors de l'upload")
     } finally {

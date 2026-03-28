@@ -145,3 +145,70 @@ export const customersApi = {
   delete: (id: string) =>
     request<{ success: boolean }>(`/api/customers/${id}`, { method: 'DELETE' }),
 }
+
+// ---- Public (no-auth) vehicle fetch ----
+export const publicVehiclesApi = {
+  list: (filters: VehicleFilters = {}) => {
+    const params = new URLSearchParams()
+    if (filters.page) params.set('page', String(filters.page))
+    if (filters.limit) params.set('limit', String(filters.limit))
+    if (filters.status) params.set('status', filters.status)
+    if (filters.search) params.set('search', filters.search)
+    const qs = params.toString()
+    return fetch(`${BASE_URL}/api/vehicles${qs ? `?${qs}` : ''}`, { credentials: 'include' })
+      .then((r) => r.json() as Promise<VehicleListResponse>)
+  },
+  get: (id: string) =>
+    fetch(`${BASE_URL}/api/vehicles/${id}`, { credentials: 'include' })
+      .then((r) => r.json() as Promise<ApiVehicle>),
+}
+
+// ---- Deal types ----
+export type DealStatus = 'lead' | 'negotiation' | 'closed-won' | 'closed-lost'
+
+export interface ApiDeal {
+  id: string
+  vehicleId: string
+  customerId: string
+  salesPersonId: string
+  status: DealStatus
+  price: number
+  notes: string | null
+  testDriveDate: string | null
+  closedAt: string | null
+  organizationId: string | null
+  createdAt: string
+  updatedAt: string
+  // joined fields
+  vehicleName: string | null
+  customerName: string | null
+  customerPhone: string | null
+}
+
+export interface DealSummary {
+  lead: number
+  negotiation: number
+  'closed-won': number
+  'closed-lost': number
+  totalRevenue: number
+}
+
+// ---- Deals API ----
+export const dealsApi = {
+  list: (params: { page?: number; limit?: number; status?: DealStatus } = {}) => {
+    const qs = new URLSearchParams()
+    if (params.page) qs.set('page', String(params.page))
+    if (params.limit) qs.set('limit', String(params.limit))
+    if (params.status) qs.set('status', params.status)
+    const q = qs.toString()
+    return request<{ data: ApiDeal[]; pagination: { total: number; pages: number; page: number; limit: number } }>(`/api/deals${q ? `?${q}` : ''}`)
+  },
+  summary: () => request<DealSummary>('/api/deals/summary'),
+  get: (id: string) => request<ApiDeal>(`/api/deals/${id}`),
+  create: (data: Omit<ApiDeal, 'id' | 'createdAt' | 'updatedAt' | 'salesPersonId' | 'organizationId' | 'vehicleName' | 'customerName' | 'customerPhone'>) =>
+    request<ApiDeal>('/api/deals', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id: string, data: Partial<ApiDeal>) =>
+    request<ApiDeal>(`/api/deals/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id: string) =>
+    request<{ success: boolean }>(`/api/deals/${id}`, { method: 'DELETE' }),
+}
