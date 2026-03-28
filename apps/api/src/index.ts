@@ -5,6 +5,7 @@ import { auth } from './auth'
 import vehiclesRoute from './routes/vehicles'
 import customersRoute from './routes/customers'
 import dealsRoute from './routes/deals'
+import { rateLimit } from './middleware/rateLimit'
 
 const app = new Hono()
 
@@ -21,6 +22,12 @@ app.use('*', cors({
     return allowed.includes(origin) ? origin : null
   },
   credentials: true,
+}))
+
+// Rate limiting: 100 requests per 15 minutes per IP
+app.use('*', rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // 100 requests per window
 }))
 
 app.get('/api/health', (c) => {

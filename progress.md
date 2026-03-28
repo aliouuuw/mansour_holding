@@ -1,5 +1,48 @@
 # Project Progress Log
 
+## [Security + UX] Rate Limiting, Error Boundary, Dead Code Cleanup
+
+* **Status:** Completed
+* **Date:** 2026-03-28
+
+### What was done
+* Added in-memory rate limiting middleware (100 requests per 15 minutes per IP)
+* Created React ErrorBoundary component with French error UI
+* Removed mock data fallback from PublicVehicleDetail (all vehicles now UUID-based)
+* Deleted dead code file `apps/web/src/data/mock.ts`
+
+### Changes
+* `apps/api/src/middleware/rateLimit.ts` — New rate limiting middleware with configurable windows
+* `apps/api/src/index.ts` — Applied rate limiting globally (100 req/15min)
+* `apps/web/src/components/ErrorBoundary.tsx` — New error boundary with French UI
+* `apps/web/src/main.tsx` — Wrapped app with ErrorBoundary
+* `apps/web/src/pages/public/PublicVehicleDetail.tsx` — Removed mock fallback, UUID-only
+* Deleted `apps/web/src/data/mock.ts`
+
+### Rate limiting details
+* Window: 15 minutes
+* Limit: 100 requests per IP
+* Headers: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`, `Retry-After`
+* Response: 429 with retry-after seconds
+* Note: In-memory store (for production, consider Redis)
+
+### Error boundary features
+* Catches all React errors app-wide
+* French error message: "Une erreur s'est produite"
+* Shows technical details in collapsible section
+* Refresh button to reload page
+* Luxury design matching app theme
+
+### Verification
+* ✅ `bunx tsc --noEmit` passes in `apps/api`
+* ✅ `bunx tsc --noEmit` passes in `apps/web`
+
+### Remaining polish items
+* Confirmation dialogs for destructive actions
+* Holding dashboard live data for Motors card
+
+---
+
 ## [Security] API Input Validation with Zod
 
 * **Status:** Completed

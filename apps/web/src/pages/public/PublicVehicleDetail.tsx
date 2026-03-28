@@ -20,7 +20,6 @@ import {
   Tag01Icon,
   StarIcon,
 } from 'hugeicons-react'
-import { vehicles as mockVehicles } from '@/data/mock'
 import { vehiclesApi, publicVehiclesApi, type ApiVehicle } from '@/lib/api'
 import { formatPrice, formatNumber, cn } from '@/lib/utils'
 import { MotorsNavbar } from '@/components/motors/MotorsNavbar'
@@ -56,18 +55,6 @@ function normFromApi(v: ApiVehicle): NormVehicle {
   return { ...v, extras: v.extras ?? {} }
 }
 
-function normFromMock(v: typeof mockVehicles[0]): NormVehicle {
-  return {
-    id: v.id, make: v.make, model: v.model, year: v.year,
-    mileage: v.mileage, price: v.price,
-    status: v.status as NormVehicle['status'],
-    fuelType: v.fuelType, transmission: v.transmission,
-    color: v.color, vin: v.vin ?? null, description: v.description ?? null,
-    images: v.images ?? (v.image ? [v.image] : []),
-    extras: {},
-  }
-}
-
 export function PublicVehicleDetail() {
   const { vehicleId } = useParams({ strict: false })
   const containerRef = useRef<HTMLDivElement>(null)
@@ -81,19 +68,11 @@ export function PublicVehicleDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [direction, setDirection] = useState(0)
 
-  // Try API first (UUID), fall back to mock (v1, v2…)
-  const isUUID = vehicleId ? /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(vehicleId) : false
-
   const { data: vehicle, isLoading, isError } = useQuery({
     queryKey: ['public-vehicle', vehicleId],
     queryFn: async (): Promise<NormVehicle> => {
-      if (isUUID) {
-        const v = await vehiclesApi.get(vehicleId!)
-        return normFromApi(v)
-      }
-      const mock = mockVehicles.find((v) => v.id === vehicleId)
-      if (mock) return normFromMock(mock)
-      throw new Error('Not found')
+      const v = await vehiclesApi.get(vehicleId!)
+      return normFromApi(v)
     },
     enabled: !!vehicleId,
     staleTime: 60_000,
