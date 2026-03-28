@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Add01Icon, Loading03Icon, UserIcon, Car01Icon, DollarCircleIcon } from 'hugeicons-react'
@@ -91,9 +92,10 @@ export function MotorsSales() {
             {totalActive} affaire{totalActive !== 1 ? 's' : ''} en cours · {formatPrice(totalWon)} conclus
           </p>
         </div>
-        <button className="inline-flex items-center gap-2 bg-noir-950 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-noir-800 transition-colors">
+        <Link to="/dashboard/motors/sales/new"
+          className="inline-flex items-center gap-2 bg-noir-950 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-noir-800 transition-colors">
           <Add01Icon className="h-4 w-4" /> Nouvelle affaire
-        </button>
+        </Link>
       </div>
 
       {error && <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{(error as Error).message}</div>}

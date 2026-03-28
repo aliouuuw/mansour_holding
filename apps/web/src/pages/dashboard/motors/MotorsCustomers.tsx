@@ -77,9 +77,10 @@ export function MotorsCustomers() {
           <h1 className="font-motors-display text-2xl font-medium text-noir-950">Clients</h1>
           <p className="mt-1 text-sm text-noir-500">{pagination.total} clients enregistrés</p>
         </div>
-        <button className="inline-flex items-center gap-2 bg-noir-950 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-noir-800 transition-colors">
+        <Link to="/dashboard/motors/customers/new"
+          className="inline-flex items-center gap-2 bg-noir-950 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-noir-800 transition-colors">
           <Add01Icon className="h-4 w-4" /> Nouveau client
-        </button>
+        </Link>
       </div>
 
       <div className="relative max-w-md">

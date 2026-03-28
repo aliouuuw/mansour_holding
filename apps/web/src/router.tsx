@@ -23,7 +23,9 @@ const MotorsVehicleNew = lazy(() => import('@/pages/dashboard/motors/MotorsVehic
 const MotorsVehicleDetail = lazy(() => import('@/pages/dashboard/motors/MotorsVehicleDetail').then(m => ({ default: m.MotorsVehicleDetail })))
 const MotorsSales = lazy(() => import('@/pages/dashboard/motors/MotorsSales').then(m => ({ default: m.MotorsSales })))
 const MotorsCustomers = lazy(() => import('@/pages/dashboard/motors/MotorsCustomers').then(m => ({ default: m.MotorsCustomers })))
+const MotorsCustomerNew = lazy(() => import('@/pages/dashboard/motors/MotorsCustomerNew').then(m => ({ default: m.MotorsCustomerNew })))
 const MotorsCustomerDetail = lazy(() => import('@/pages/dashboard/motors/MotorsCustomerDetail').then(m => ({ default: m.MotorsCustomerDetail })))
+const MotorsDealNew = lazy(() => import('@/pages/dashboard/motors/MotorsDealNew').then(m => ({ default: m.MotorsDealNew })))
 
 function PageLoader() {
   return (
@@ -92,7 +94,9 @@ const motorsVehicleNewRoute = createRoute({ getParentRoute: () => dashboardRoute
 const motorsVehicleDetailRoute = createRoute({ getParentRoute: () => dashboardRoute, path: '/motors/inventory/$vehicleId', component: MotorsVehicleDetail })
 const motorsSalesRoute = createRoute({ getParentRoute: () => dashboardRoute, path: '/motors/sales', component: MotorsSales })
 const motorsCustomersRoute = createRoute({ getParentRoute: () => dashboardRoute, path: '/motors/customers', component: MotorsCustomers })
+const motorsCustomerNewRoute = createRoute({ getParentRoute: () => dashboardRoute, path: '/motors/customers/new', component: MotorsCustomerNew })
 const motorsCustomerDetailRoute = createRoute({ getParentRoute: () => dashboardRoute, path: '/motors/customers/$customerId', component: MotorsCustomerDetail })
+const motorsDealNewRoute = createRoute({ getParentRoute: () => dashboardRoute, path: '/motors/sales/new', component: MotorsDealNew })
 
 const routeTree = rootRoute.addChildren([
   landingRoute,
@@ -111,7 +115,9 @@ const routeTree = rootRoute.addChildren([
     motorsVehicleDetailRoute,
     motorsSalesRoute,
     motorsCustomersRoute,
+    motorsCustomerNewRoute,
     motorsCustomerDetailRoute,
+    motorsDealNewRoute,
   ]),
 ])
 

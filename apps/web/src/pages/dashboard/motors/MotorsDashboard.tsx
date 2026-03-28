@@ -101,7 +101,7 @@ export function MotorsDashboard() {
             className="inline-flex items-center gap-2 border border-noir-200 bg-white px-4 py-2.5 text-sm font-medium text-noir-900 shadow-sm hover:bg-surface-dim hover:border-noir-300 transition-all">
             <Car01Icon className="h-4 w-4" /> Inventaire
           </Link>
-          <Link to="/dashboard/motors/sales"
+          <Link to="/dashboard/motors/sales/new"
             className="inline-flex items-center gap-2 bg-gold-400 px-4 py-2.5 text-sm font-semibold text-noir-950 shadow-sm hover:bg-gold-300 transition-all">
             <Add01Icon className="h-4 w-4" /> Nouvelle affaire
           </Link>
