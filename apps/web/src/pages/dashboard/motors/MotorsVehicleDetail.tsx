@@ -58,8 +58,8 @@ export function MotorsVehicleDetail() {
 
   const deleteMutation = useMutation({
     mutationFn: () => vehiclesApi.delete(vehicle!.id),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['vehicles'] })
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: ['vehicles'] })
       void navigate({ to: '/dashboard/motors/inventory' })
     },
     onError: (e) => toast((e as Error).message, 'error'),
