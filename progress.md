@@ -1,5 +1,31 @@
 # Project Progress Log
 
+## [Checkpoint] Post-PRD Polish — Real Data Everywhere + Performance
+
+* **Status:** Completed
+* **Date:** 2026-03-28
+* **Commits:** `c09e87d` → `2574f33`
+
+### Summary
+All mock data eliminated from the app. Every page now fetches from the real API.
+
+### Changes since last checkpoint
+* Holding dashboard (`/dashboard`) wired to real API — KPIs show live revenue, vehicle count, customer count, deal stats
+* Public vehicle detail "Autres véhicules" section now fetches real available vehicles from API (was mock)
+* Public vehicle detail: extras moved from specs strip to dedicated "Équipements" section in content area
+* Cache invalidation audit: fixed vehicle create not invalidating list, deal moves not invalidating summary, customer detail still on old fetch pattern
+* Seeded 8 real Mansour Motors vehicles with Unsplash images and extras
+
+### Current state
+* 27/27 PRD tasks complete
+* Zero mock data in any live page (mock only used as fallback for legacy `v1`/`v2` URLs)
+* TanStack Query on all data-fetching pages
+* Route code-splitting: 289KB core + per-page chunks
+* DB indexes on vehicles and customers tables
+* R2 image upload working (local + production)
+
+---
+
 ## [Performance + Data] TanStack Query, Code Splitting, Motors Dashboard Wired
 
 * **Status:** Completed
