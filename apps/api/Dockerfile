@@ -7,7 +7,7 @@ COPY packages/ ./packages/
 COPY apps/api/ ./apps/api/
 
 # Install all dependencies
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # Start the API
 WORKDIR /app/apps/api
