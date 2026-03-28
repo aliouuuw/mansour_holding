@@ -88,7 +88,7 @@
         "French labels used — verify with grep for French words",
         "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "group": "motors-inventory",
@@ -198,7 +198,7 @@
         "Summary endpoint returns counts per status — verify by reading handler",
         "Type check passes — verify with `cd apps/api && bunx tsc --noEmit`"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "group": "motors-sales",
@@ -211,7 +211,7 @@
         "Fetches deals from API — verify with grep 'useQuery\\|fetch'",
         "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "group": "motors-dashboard",
@@ -225,7 +225,7 @@
         "Fetches from API — verify with grep 'useQuery\\|fetch'",
         "Type check passes — verify with `cd apps/web && bunx tsc --noEmit`"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

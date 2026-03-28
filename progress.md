@@ -1,5 +1,32 @@
 # Project Progress Log
 
+## [Performance + Data] TanStack Query, Code Splitting, Motors Dashboard Wired
+
+* **Status:** Completed
+* **Date:** 2026-03-28
+
+### What was done
+* Installed `@tanstack/react-query` — replaced all manual `useState`/`useEffect` fetch loops across 8 pages
+* Route code-splitting via `React.lazy` + `Suspense` — bundle went from 773KB single chunk to 289KB core + 5-23KB per page
+* API cache headers (`Cache-Control: public, max-age=60, stale-while-revalidate=300`) on public vehicle GET endpoints
+* DB indexes: `vehicles(status)`, `vehicles(make,model)`, `customers(email)`, `customers(phone)`, `customers(name)` — pushed to Neon
+* Preconnect hints for Koyeb API, Unsplash, R2 in `index.html`
+* Image lazy loading (`loading=lazy`, `decoding=async`) on all vehicle thumbnails
+* `MotorsDashboard` fully wired to real API — KPIs, pipeline, recent deals, top vehicles all live
+* Cache invalidation audit: fixed 4 issues (vehicle create, vehicle update/delete/upload not invalidating public + list caches, customer detail still on old pattern, deal moves not invalidating summary)
+* Seeded 8 real Mansour Motors vehicles (LC300, Range Rover, BMW X7, Lexus LX, Mercedes GLE, Hilux, Jaguar F-Pace, LC300 ZX)
+* Public catalog + landing page wired to real API
+
+### PRD completion: 27/27 tasks ✅
+
+### Next priorities (beyond PRD)
+* Holding overview dashboard wired to real API (currently placeholder — acceptable per PRD)
+* Customer create form
+* Toast on all remaining mutation flows
+* Image reordering (drag to reorder gallery)
+
+---
+
 ## [Feature] Vehicle Full CRUD + Image Upload
 
 * **Status:** Completed
