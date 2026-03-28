@@ -11,6 +11,7 @@ app.use('*', cors({
     const allowed = [
       process.env.FRONTEND_URL || 'http://localhost:5173',
       'https://mansour-holding.vercel.app',
+      'https://integral-adel-wadeweb-04b62073.koyeb.app',
       'http://localhost:5173',
       'http://localhost:3000',
     ]
