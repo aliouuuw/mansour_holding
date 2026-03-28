@@ -3,6 +3,8 @@ import { eq, or, ilike, and, sql } from 'drizzle-orm'
 import { db } from '../db/index'
 import { customers } from '../db/schema'
 import { auth } from '../auth'
+import { createCustomerSchema, updateCustomerSchema } from '@mansour/shared'
+import { ZodError } from 'zod'
 
 const customersRoute = new Hono()
 
@@ -49,22 +51,37 @@ customersRoute.get('/:id', async (c) => {
 
 // POST /api/customers
 customersRoute.post('/', async (c) => {
-  const body = await c.req.json()
-  const [customer] = await db.insert(customers).values(body).returning()
-  return c.json(customer, 201)
+  try {
+    const body = await c.req.json()
+    const validated = createCustomerSchema.parse(body)
+    const [customer] = await db.insert(customers).values(validated).returning()
+    return c.json(customer, 201)
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return c.json({ error: 'Validation failed', details: err.errors }, 400)
+    }
+    throw err
+  }
 })
 
 // PUT /api/customers/:id
 customersRoute.put('/:id', async (c) => {
-  const body = await c.req.json()
-  const { id: _id, createdAt: _ca, ...updates } = body
-  const [customer] = await db
-    .update(customers)
-    .set({ ...updates, updatedAt: new Date() })
-    .where(eq(customers.id, c.req.param('id')))
-    .returning()
-  if (!customer) return c.json({ error: 'Customer not found' }, 404)
-  return c.json(customer)
+  try {
+    const body = await c.req.json()
+    const validated = updateCustomerSchema.parse(body)
+    const [customer] = await db
+      .update(customers)
+      .set({ ...validated, updatedAt: new Date() })
+      .where(eq(customers.id, c.req.param('id')))
+      .returning()
+    if (!customer) return c.json({ error: 'Customer not found' }, 404)
+    return c.json(customer)
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return c.json({ error: 'Validation failed', details: err.errors }, 400)
+    }
+    throw err
+  }
 })
 
 // DELETE /api/customers/:id

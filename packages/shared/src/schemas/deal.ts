@@ -29,10 +29,11 @@ export const dealSchema = z.object({
 export type Deal = z.infer<typeof dealSchema>
 
 /**
- * Create deal input schema
+ * Create deal input schema (salesPersonId is set server-side from session)
  */
 export const createDealSchema = dealSchema.omit({
   id: true,
+  salesPersonId: true,
   createdAt: true,
   updatedAt: true,
 })

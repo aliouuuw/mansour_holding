@@ -3,6 +3,8 @@ import { eq, and, ilike, sql } from 'drizzle-orm'
 import { db } from '../db/index'
 import { vehicles } from '../db/schema'
 import { auth } from '../auth'
+import { createVehicleSchema, updateVehicleSchema } from '@mansour/shared'
+import { ZodError } from 'zod'
 
 const vehiclesRoute = new Hono()
 
@@ -111,33 +113,49 @@ vehiclesRoute.get('/:id', async (c) => {
 
 // POST /api/vehicles
 vehiclesRoute.post('/', requireAuth, async (c) => {
-  const body = await c.req.json()
-  const session = c.get('session' as never) as Awaited<ReturnType<typeof auth.api.getSession>>
+  try {
+    const body = await c.req.json()
+    const validated = createVehicleSchema.parse(body)
+    const session = c.get('session' as never) as Awaited<ReturnType<typeof auth.api.getSession>>
+    if (!session?.user?.id) {
+      return c.json({ error: 'Unauthorized' }, 401)
+    }
 
-  const [vehicle] = await db
-    .insert(vehicles)
-    .values({ ...body, createdBy: session?.user.id })
-    .returning()
+    const [vehicle] = await db
+      .insert(vehicles)
+      .values({ ...validated, createdBy: session.user.id })
+      .returning()
 
-  return c.json(vehicle, 201)
+    return c.json(vehicle, 201)
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return c.json({ error: 'Validation failed', details: err.errors }, 400)
+    }
+    throw err
+  }
 })
 
 // PUT /api/vehicles/:id
 vehiclesRoute.put('/:id', requireAuth, async (c) => {
-  const id = c.req.param('id') as string
-  const body = await c.req.json()
+  try {
+    const id = c.req.param('id') as string
+    const body = await c.req.json()
+    const validated = updateVehicleSchema.parse(body)
 
-  // strip immutable fields
-  const { id: _id, createdAt: _ca, createdBy: _cb, ...updates } = body
+    const [vehicle] = await db
+      .update(vehicles)
+      .set({ ...validated, updatedAt: new Date() })
+      .where(eq(vehicles.id, id))
+      .returning()
 
-  const [vehicle] = await db
-    .update(vehicles)
-    .set({ ...updates, updatedAt: new Date() })
-    .where(eq(vehicles.id, id))
-    .returning()
-
-  if (!vehicle) return c.json({ error: 'Vehicle not found' }, 404)
-  return c.json(vehicle)
+    if (!vehicle) return c.json({ error: 'Vehicle not found' }, 404)
+    return c.json(vehicle)
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return c.json({ error: 'Validation failed', details: err.errors }, 400)
+    }
+    throw err
+  }
 })
 
 // DELETE /api/vehicles/:id

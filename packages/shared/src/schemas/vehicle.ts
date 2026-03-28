@@ -39,7 +39,9 @@ export const vehicleSchema = z.object({
   vin: z.string().min(17).max(17).nullable(),
   description: z.string().nullable(),
   images: z.array(z.string().url()),
-  organizationId: idSchema,
+  extras: z.record(z.string()).optional(),
+  organizationId: idSchema.nullable(),
+  createdBy: idSchema.nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 })
@@ -47,10 +49,11 @@ export const vehicleSchema = z.object({
 export type Vehicle = z.infer<typeof vehicleSchema>
 
 /**
- * Create vehicle input schema
+ * Create vehicle input schema (createdBy is set server-side from session)
  */
 export const createVehicleSchema = vehicleSchema.omit({
   id: true,
+  createdBy: true,
   createdAt: true,
   updatedAt: true,
 })

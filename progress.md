@@ -1,5 +1,40 @@
 # Project Progress Log
 
+## [Security] API Input Validation with Zod
+
+* **Status:** Completed
+* **Date:** 2026-03-28
+
+### What was done
+* Added Zod validation to all API POST/PUT endpoints across vehicles, customers, and deals routes
+* Updated `@mansour/shared` schemas to properly omit server-side fields (`createdBy`, `salesPersonId`)
+* Added `extras` field to vehicle schema (was missing from Zod but exists in DB)
+* All validation errors now return structured 400 responses with error details
+* Added null checks for session user IDs to prevent undefined values
+
+### Changes
+* `apps/api/src/routes/vehicles.ts` — POST/PUT now validate with `createVehicleSchema`/`updateVehicleSchema`
+* `apps/api/src/routes/customers.ts` — POST/PUT now validate with `createCustomerSchema`/`updateCustomerSchema`
+* `apps/api/src/routes/deals.ts` — POST/PUT now validate with `createDealSchema`/`updateDealSchema`
+* `packages/shared/src/schemas/vehicle.ts` — Added `extras`, `createdBy` fields, omit `createdBy` from create
+* `packages/shared/src/schemas/deal.ts` — Omit `salesPersonId` from create (set server-side)
+
+### Validation examples
+* Invalid vehicle year: `{"error":"Validation failed","details":[{"path":["year"],"message":"Number must be greater than or equal to 1900"}]}`
+* Missing required field: `{"error":"Validation failed","details":[{"path":["make"],"message":"Required"}]}`
+* Invalid email: `{"error":"Validation failed","details":[{"path":["email"],"message":"Invalid email"}]}`
+
+### Verification
+* ✅ `bunx tsc --noEmit` passes in `apps/api`
+* ✅ `bunx tsc --noEmit` passes in `apps/web`
+
+### Next priorities
+* Rate limiting on API endpoints
+* React error boundary
+* Remove mock data fallback and dead code
+
+---
+
 ## [Checkpoint] Post-PRD Polish — Real Data Everywhere + Performance
 
 * **Status:** Completed

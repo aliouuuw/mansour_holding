@@ -3,6 +3,8 @@ import { eq, sql } from 'drizzle-orm'
 import { db } from '../db/index'
 import { deals, vehicles, customers } from '../db/schema'
 import { auth } from '../auth'
+import { createDealSchema, updateDealSchema } from '@mansour/shared'
+import { ZodError } from 'zod'
 
 const dealsRoute = new Hono()
 
@@ -107,34 +109,52 @@ dealsRoute.get('/:id', async (c) => {
 
 // POST /api/deals
 dealsRoute.post('/', async (c) => {
-  const session = c.get('session' as never) as Awaited<ReturnType<typeof auth.api.getSession>>
-  const body = await c.req.json()
-  const [deal] = await db
-    .insert(deals)
-    .values({ ...body, salesPersonId: session?.user.id })
-    .returning()
-  return c.json(deal, 201)
+  try {
+    const session = c.get('session' as never) as Awaited<ReturnType<typeof auth.api.getSession>>
+    if (!session?.user?.id) {
+      return c.json({ error: 'Unauthorized' }, 401)
+    }
+    const body = await c.req.json()
+    const validated = createDealSchema.parse(body)
+    const [deal] = await db
+      .insert(deals)
+      .values({ ...validated, salesPersonId: session.user.id })
+      .returning()
+    return c.json(deal, 201)
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return c.json({ error: 'Validation failed', details: err.errors }, 400)
+    }
+    throw err
+  }
 })
 
 // PUT /api/deals/:id
 dealsRoute.put('/:id', async (c) => {
-  const id = c.req.param('id') as string
-  const body = await c.req.json()
-  const { id: _id, createdAt: _ca, salesPersonId: _sp, ...updates } = body
+  try {
+    const id = c.req.param('id') as string
+    const body = await c.req.json()
+    const validated = updateDealSchema.parse(body)
 
-  // Auto-set closedAt when status changes to closed
-  if (updates.status === 'closed-won' || updates.status === 'closed-lost') {
-    updates.closedAt = new Date()
+    // Auto-set closedAt when status changes to closed
+    if (validated.status === 'closed-won' || validated.status === 'closed-lost') {
+      validated.closedAt = new Date()
+    }
+
+    const [deal] = await db
+      .update(deals)
+      .set({ ...validated, updatedAt: new Date() })
+      .where(eq(deals.id, id))
+      .returning()
+
+    if (!deal) return c.json({ error: 'Deal not found' }, 404)
+    return c.json(deal)
+  } catch (err) {
+    if (err instanceof ZodError) {
+      return c.json({ error: 'Validation failed', details: err.errors }, 400)
+    }
+    throw err
   }
-
-  const [deal] = await db
-    .update(deals)
-    .set({ ...updates, updatedAt: new Date() })
-    .where(eq(deals.id, id))
-    .returning()
-
-  if (!deal) return c.json({ error: 'Deal not found' }, 404)
-  return c.json(deal)
 })
 
 // DELETE /api/deals/:id
