@@ -167,12 +167,7 @@ export function PublicVehicleDetail() {
     ...(vehicle.vin ? [{ label: 'VIN', value: vehicle.vin, icon: HashtagIcon }] : []),
   ]
 
-  // Extras become additional spec tiles
-  const extraSpecs = Object.entries(vehicle.extras ?? {}).map(([key, value]) => ({
-    label: key, value, icon: StarIcon,
-  }))
-
-  const specs = [...coreSpecs, ...extraSpecs]
+  const extras = Object.entries(vehicle.extras ?? {})
 
   const statusConfig = {
     available: {
@@ -350,8 +345,8 @@ export function PublicVehicleDetail() {
       <section className="relative bg-carbon-900">
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold-400/30 to-transparent" />
         <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 divide-x divide-white/[0.04]">
-            {specs.map((spec, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 divide-x divide-white/[0.04]">
+            {coreSpecs.map((spec, index) => (
               <motion.div
                 key={spec.label}
                 initial={{ opacity: 0, y: 15 }}
@@ -428,6 +423,41 @@ export function PublicVehicleDetail() {
                   </p>
                 </div>
               </motion.div>
+
+              {/* Extras / Équipements — only if present */}
+              {extras.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="space-y-6"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="h-px flex-1 bg-noir-200" />
+                    <h2 className="font-motors-display text-lg uppercase tracking-[0.08em] text-gold-600">
+                      Équipements
+                    </h2>
+                    <div className="h-px flex-1 bg-noir-200" />
+                  </div>
+                  <div className="grid grid-cols-1 gap-px bg-noir-100 sm:grid-cols-2">
+                    {extras.map(([key, value], i) => (
+                      <motion.div
+                        key={key}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.35 + i * 0.05 }}
+                        className="flex items-center justify-between bg-white px-5 py-4"
+                      >
+                        <div className="flex items-center gap-3">
+                          <StarIcon className="h-3.5 w-3.5 text-gold-400" />
+                          <span className="font-motors text-sm text-noir-600">{key}</span>
+                        </div>
+                        <span className="font-motors text-sm font-semibold text-noir-950">{value}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             {/* Right: Sticky Sidebar */}
