@@ -1,5 +1,55 @@
 # Project Progress Log
 
+## [Infrastructure] Koyeb Deployment + Auth Cross-Domain Fix
+
+* **Status:** Completed
+* **Date:** 2026-03-28
+* **Commits:** `64a2338` → `f3ee1a0`
+
+### Journey summary
+Started with Cloudflare Workers, hit CPU limit on free tier (better-auth too heavy for 10ms limit). Moved to Railway, hit trial expiry. Landed on **Koyeb** (free tier, always-on, no credit card).
+
+### Final production stack
+* **Frontend:** `https://mansour-holding.vercel.app` (Vercel)
+* **API:** `https://integral-adel-wadeweb-04b62073.koyeb.app` (Koyeb, Bun HTTP server)
+* **Database:** Neon PostgreSQL (serverless)
+* **Storage:** Cloudflare R2 `mansour-assets` (pending image upload implementation)
+
+### Changes made
+* Reverted API from Cloudflare Workers back to standard Bun HTTP server (`export default { port, fetch }`)
+* Reverted DB driver from `@neondatabase/serverless` back to `postgres.js`
+* Removed Workers-specific lazy proxy pattern from `db/index.ts` and `auth.ts`
+* Added `Dockerfile` using `oven/bun:1` base image for Koyeb Docker builder
+* Fixed `--frozen-lockfile` issue (local Bun 1.2.4 vs Koyeb Bun 1.3.11 lockfile format mismatch)
+* Added `bearer()` plugin to better-auth for cross-domain token auth (Vercel ↔ Koyeb)
+* Updated frontend `auth.ts` client to attach `Authorization: Bearer` token from localStorage
+* Set `sameSite: none, secure: true` on cookies for cross-domain support
+* Hardcoded Koyeb URL in CORS `allowed` list and `trustedOrigins`
+* Updated GitHub Actions CI to type-check only (Koyeb auto-deploys from GitHub push)
+
+### Env vars on Koyeb
+```
+DATABASE_URL=<Neon connection string>
+BETTER_AUTH_SECRET=<secret>
+BETTER_AUTH_URL=https://integral-adel-wadeweb-04b62073.koyeb.app
+FRONTEND_URL=https://mansour-holding.vercel.app
+NODE_ENV=production
+PORT=3000
+```
+
+### Env vars on Vercel
+```
+VITE_API_URL=https://integral-adel-wadeweb-04b62073.koyeb.app
+```
+
+### Verification
+* ✅ `GET /api/health` returns `{"status":"ok"}`
+* ✅ Koyeb health checks passing
+* ✅ Login flow working cross-domain via bearer token
+* ✅ `bunx tsc --noEmit` passes in both `apps/api` and `apps/web`
+
+---
+
 ## [Infrastructure] CI/CD + Deployment Stabilization
 
 * **Status:** Completed
