@@ -50,6 +50,9 @@ export function MotorsVehicleDetail() {
     onSuccess: (updated) => {
       qc.setQueryData(['vehicle', vehicleId], updated)
       qc.invalidateQueries({ queryKey: ['vehicles'] })
+      qc.invalidateQueries({ queryKey: ['public-vehicles'] })
+      qc.invalidateQueries({ queryKey: ['public-featured-vehicles'] })
+      qc.invalidateQueries({ queryKey: ['public-vehicle', vehicleId] })
       setEditing(false)
       toast('Véhicule mis à jour')
     },
@@ -60,6 +63,10 @@ export function MotorsVehicleDetail() {
     mutationFn: () => vehiclesApi.delete(vehicle!.id),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['vehicles'] })
+      qc.invalidateQueries({ queryKey: ['public-vehicles'] })
+      qc.invalidateQueries({ queryKey: ['public-featured-vehicles'] })
+      qc.removeQueries({ queryKey: ['vehicle', vehicleId] })
+      qc.removeQueries({ queryKey: ['public-vehicle', vehicleId] })
       void navigate({ to: '/dashboard/motors/inventory' })
     },
     onError: (e) => toast((e as Error).message, 'error'),
@@ -69,6 +76,8 @@ export function MotorsVehicleDetail() {
     mutationFn: (file: File) => vehiclesApi.uploadImage(vehicle!.id, file),
     onSuccess: (result) => {
       qc.setQueryData(['vehicle', vehicleId], (old: typeof vehicle) => old ? { ...old, images: result.images } : old)
+      qc.invalidateQueries({ queryKey: ['vehicles'] })
+      qc.invalidateQueries({ queryKey: ['public-vehicles'] })
       setActiveIdx(result.images.length - 1)
       toast('Photo ajoutée')
       if (fileInputRef.current) fileInputRef.current.value = ''
@@ -80,6 +89,8 @@ export function MotorsVehicleDetail() {
     mutationFn: (idx: number) => vehiclesApi.update(vehicle!.id, { images: vehicle!.images.filter((_, i) => i !== idx) }),
     onSuccess: (updated) => {
       qc.setQueryData(['vehicle', vehicleId], updated)
+      qc.invalidateQueries({ queryKey: ['vehicles'] })
+      qc.invalidateQueries({ queryKey: ['public-vehicles'] })
       setActiveIdx(i => Math.min(i, updated.images.length - 1))
       toast('Photo supprimée')
     },

@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 import { ArrowLeft01Icon, Mail01Icon, SmartPhone01Icon, Location01Icon, Loading03Icon } from 'hugeicons-react'
 import { formatDate } from '@/lib/utils'
-import { customersApi, type ApiCustomer, type CustomerSource } from '@/lib/api'
+import { customersApi, type CustomerSource } from '@/lib/api'
 
 const sourceLabels: Record<CustomerSource, string> = {
   'walk-in': 'Passage en boutique',
@@ -13,20 +13,14 @@ const sourceLabels: Record<CustomerSource, string> = {
 
 export function MotorsCustomerDetail() {
   const { customerId } = useParams({ strict: false })
-  const [customer, setCustomer] = useState<ApiCustomer | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (!customerId) return
-    setLoading(true)
-    customersApi.get(customerId)
-      .then(setCustomer)
-      .catch((e) => setError(e instanceof Error ? e.message : 'Erreur de chargement'))
-      .finally(() => setLoading(false))
-  }, [customerId])
+  const { data: customer, isLoading, error } = useQuery({
+    queryKey: ['customer', customerId],
+    queryFn: () => customersApi.get(customerId!),
+    enabled: !!customerId,
+  })
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
         <Loading03Icon className="h-8 w-8 animate-spin text-gold-400" />
@@ -37,7 +31,7 @@ export function MotorsCustomerDetail() {
   if (error || !customer) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <p className="text-lg font-medium text-noir-950">{error ?? 'Client non trouvé'}</p>
+        <p className="text-lg font-medium text-noir-950">{(error as Error)?.message ?? 'Client non trouvé'}</p>
         <Link to="/dashboard/motors/customers" className="mt-4 text-sm font-medium text-gold-600 hover:text-gold-700">
           Retour aux clients
         </Link>

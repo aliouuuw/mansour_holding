@@ -1,6 +1,6 @@
-import { useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft01Icon } from 'hugeicons-react'
 import { vehiclesApi } from '@/lib/api'
 import { VehicleForm, type VehicleFormValues } from '@/components/motors/VehicleForm'
@@ -8,28 +8,26 @@ import { useToast } from '@/components/ui/Toast'
 
 export function MotorsVehicleNew() {
   const navigate = useNavigate()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const qc = useQueryClient()
   const toast = useToast()
 
-  const handleSubmit = async (values: VehicleFormValues) => {
-    setLoading(true)
-    setError(null)
-    try {
-      const vehicle = await vehiclesApi.create({
-        ...values,
-        vin: values.vin || null,
-        description: values.description || null,
-        images: [],
-        extras: Object.fromEntries(values.extras.map(({ key, value }) => [key, value])),
-      })
+  const createMutation = useMutation({
+    mutationFn: (values: VehicleFormValues) => vehiclesApi.create({
+      ...values,
+      vin: values.vin || null,
+      description: values.description || null,
+      images: [],
+      extras: Object.fromEntries(values.extras.map(({ key, value }) => [key, value])),
+    }),
+    onSuccess: async (vehicle) => {
+      await qc.invalidateQueries({ queryKey: ['vehicles'] })
+      qc.invalidateQueries({ queryKey: ['public-vehicles'] })
+      qc.invalidateQueries({ queryKey: ['public-featured-vehicles'] })
       toast('Véhicule créé avec succès')
       void navigate({ to: '/dashboard/motors/inventory/$vehicleId', params: { vehicleId: vehicle.id } })
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Erreur lors de la création')
-      setLoading(false)
-    }
-  }
+    },
+    onError: (e) => toast((e as Error).message, 'error'),
+  })
 
   return (
     <motion.div
@@ -49,12 +47,12 @@ export function MotorsVehicleNew() {
       </div>
 
       <div className="border border-noir-200 bg-white p-6 shadow-sm">
-        {error && (
+        {createMutation.error && (
           <div className="mb-4 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
+            {(createMutation.error as Error).message}
           </div>
         )}
-        <VehicleForm onSubmit={handleSubmit} submitLabel="Créer le véhicule" loading={loading} />
+        <VehicleForm onSubmit={async (v) => { await createMutation.mutateAsync(v) }} submitLabel="Créer le véhicule" loading={createMutation.isPending} />
       </div>
     </motion.div>
   )
