@@ -562,7 +562,7 @@ export function PublicVehicleDetail() {
 
           <div className="relative">
             <div className="flex gap-6 overflow-x-auto pb-4 motors-scroll-track snap-x snap-mandatory">
-              {vehicles
+              {mockVehicles
                 .filter((v) => v.id !== vehicleId && v.status === 'available')
                 .slice(0, 5)
                 .map((otherVehicle, index) => (

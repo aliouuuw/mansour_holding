@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
-import { Search01Icon, Add01Icon, UserIcon, Loading03Icon, ViewIcon } from 'hugeicons-react'
+import { Search01Icon, Add01Icon, Loading03Icon, ViewIcon } from 'hugeicons-react'
 import { cn, formatDate } from '@/lib/utils'
 import { customersApi, type ApiCustomer, type CustomerSource } from '@/lib/api'
 import {

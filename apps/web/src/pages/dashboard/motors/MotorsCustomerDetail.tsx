@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from '@tanstack/react-router'
 import { ArrowLeft01Icon, Mail01Icon, SmartPhone01Icon, Location01Icon, Loading03Icon } from 'hugeicons-react'
-import { cn, formatDate } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 import { customersApi, type ApiCustomer, type CustomerSource } from '@/lib/api'
 
 const sourceLabels: Record<CustomerSource, string> = {

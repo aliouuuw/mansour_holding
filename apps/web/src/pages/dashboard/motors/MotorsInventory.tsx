@@ -23,13 +23,6 @@ const vehicleStatusColors: Record<VehicleStatus, string> = {
   sold: 'bg-slate-100 text-slate-600',
 }
 
-const fuelTypeLabels: Record<string, string> = {
-  gasoline: 'Essence',
-  diesel: 'Diesel',
-  hybrid: 'Hybride',
-  electric: 'Électrique',
-}
-
 const columnHelper = createColumnHelper<ApiVehicle>()
 
 const columns = [
