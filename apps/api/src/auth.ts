@@ -22,8 +22,8 @@ export const auth = betterAuth({
     'http://localhost:3000',
   ],
   cookie: {
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: true,
+    sameSite: 'none',
     httpOnly: true,
   },
 })
