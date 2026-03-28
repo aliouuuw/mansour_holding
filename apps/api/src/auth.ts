@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { bearer } from 'better-auth/plugins'
 import { db } from './db/index'
 import * as schema from './db/schema-for-migrations'
 
@@ -8,6 +9,7 @@ export const auth = betterAuth({
     provider: 'pg',
     schema: schema,
   }),
+  plugins: [bearer()],
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
