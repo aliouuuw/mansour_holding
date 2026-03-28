@@ -1,5 +1,28 @@
 # Project Progress Log
 
+## [UX] Customer Edit/Delete + Dashboard Navigation
+
+* **Status:** Completed
+* **Date:** 2026-03-28
+
+### What was done
+* Customer detail page now has full edit mode (inline form, same pattern as vehicle detail)
+* Customer delete with confirmation dialog
+* "Créer une affaire" button now links to deal creation page (was dead)
+* Motors dashboard KPI cards are now clickable — link to inventory, sales, customers
+* Added "Voir tout" link to top vehicles sidebar section
+* Top vehicles now link to their detail pages
+
+### Changes
+* `apps/web/src/pages/dashboard/motors/MotorsCustomerDetail.tsx` — Full rewrite: edit mode, delete with confirm, working action buttons
+* `apps/web/src/pages/dashboard/motors/MotorsDashboard.tsx` — KPI cards link to pages, "Voir tout" on vehicles section
+
+### Verification
+* ✅ `bunx tsc -b` passes in `apps/web`
+* ✅ `bunx tsc --noEmit` passes in `apps/api`
+
+---
+
 ## [UX] Confirmation Dialogs for Destructive Actions
 
 * **Status:** Completed

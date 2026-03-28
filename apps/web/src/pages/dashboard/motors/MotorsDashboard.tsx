@@ -48,6 +48,7 @@ export function MotorsDashboard() {
       total: `${totalVehicles} total`,
       icon: Car01Icon,
       color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+      href: '/dashboard/motors/inventory' as const,
     },
     {
       label: 'Affaires en cours',
@@ -55,6 +56,7 @@ export function MotorsDashboard() {
       total: `${deals.length} total`,
       icon: ShoppingCart01Icon,
       color: 'text-amber-700 bg-amber-50 border-amber-200',
+      href: '/dashboard/motors/sales' as const,
     },
     {
       label: 'Revenus conclus',
@@ -62,6 +64,7 @@ export function MotorsDashboard() {
       total: 'Affaires gagnées',
       icon: DollarCircleIcon,
       color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+      href: '/dashboard/motors/sales' as const,
     },
     {
       label: 'Clients',
@@ -69,6 +72,7 @@ export function MotorsDashboard() {
       total: 'Enregistrés',
       icon: UserMultiple02Icon,
       color: 'text-gold-700 bg-gold-50 border-gold-200',
+      href: '/dashboard/motors/customers' as const,
     },
   ]
 
@@ -111,24 +115,28 @@ export function MotorsDashboard() {
       {/* KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {kpis.map((kpi, index) => (
-          <motion.div
+          <Link
             key={kpi.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: index * 0.1 }}
-            className="group border border-noir-200 bg-white p-5 shadow-sm hover:shadow-md hover:border-noir-300 transition-all"
+            to={kpi.href}
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-noir-600">{kpi.label}</p>
-                <p className="mt-2 text-2xl font-bold text-noir-950">{kpi.value}</p>
-                <p className="mt-1 text-xs text-noir-500">{kpi.total}</p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
+              className="group border border-noir-200 bg-white p-5 shadow-sm hover:shadow-md hover:border-noir-300 transition-all cursor-pointer"
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-medium text-noir-600">{kpi.label}</p>
+                  <p className="mt-2 text-2xl font-bold text-noir-950">{kpi.value}</p>
+                  <p className="mt-1 text-xs text-noir-500">{kpi.total}</p>
+                </div>
+                <div className={cn('border p-2.5 transition-colors', kpi.color)}>
+                  <kpi.icon className="h-5 w-5" />
+                </div>
               </div>
-              <div className={cn('border p-2.5 transition-colors', kpi.color)}>
-                <kpi.icon className="h-5 w-5" />
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </Link>
         ))}
       </div>
 
@@ -216,7 +224,12 @@ export function MotorsDashboard() {
 
           {/* Top Vehicles */}
           <div className="border border-noir-200 bg-white p-6 shadow-sm">
-            <h2 className="font-motors-display text-lg font-medium text-noir-950">Véhicules disponibles</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="font-motors-display text-lg font-medium text-noir-950">Véhicules disponibles</h2>
+              <Link to="/dashboard/motors/inventory" className="text-xs font-medium uppercase tracking-wider text-gold-600 hover:text-gold-700 transition-colors">
+                Voir tout
+              </Link>
+            </div>
             <div className="mt-4 space-y-2">
               {topVehicles.length === 0 ? (
                 <p className="text-sm text-noir-400 py-4 text-center">Aucun véhicule disponible</p>
