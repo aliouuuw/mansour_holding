@@ -67,7 +67,10 @@ export function MotorsSales() {
       )
       return { prev }
     },
-    onSuccess: (_, { status }) => toast(`Affaire déplacée vers ${COLUMNS.find(c => c.status === status)?.label}`),
+    onSuccess: (_, { status }) => {
+      qc.invalidateQueries({ queryKey: ['deals-summary'] })
+      toast(`Affaire déplacée vers ${COLUMNS.find(c => c.status === status)?.label}`)
+    },
     onError: (e, _, ctx) => {
       qc.setQueryData(['deals'], ctx?.prev)
       toast((e as Error).message, 'error')
