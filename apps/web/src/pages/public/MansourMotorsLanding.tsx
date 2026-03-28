@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Link } from '@tanstack/react-router'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import {
@@ -14,7 +14,7 @@ import {
 } from 'hugeicons-react'
 import { MotorsNavbar } from '@/components/motors/MotorsNavbar'
 import { MotorsFooter } from '@/components/motors/MotorsFooter'
-import { vehicles } from '@/data/mock'
+import { publicVehiclesApi, type ApiVehicle } from '@/lib/api'
 import { formatPrice, cn } from '@/lib/utils'
 
 const services = [
@@ -63,7 +63,13 @@ export function MansourMotorsLanding() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
   const heroTextY = useTransform(scrollYProgress, [0, 0.5], [0, 80])
 
-  const featuredVehicles = vehicles.filter((v) => v.status === 'available').slice(0, 5)
+  const [featuredVehicles, setFeaturedVehicles] = useState<ApiVehicle[]>([])
+
+  useEffect(() => {
+    publicVehiclesApi.list({ limit: 5, status: 'available' })
+      .then((res) => setFeaturedVehicles(res.data))
+      .catch(console.error)
+  }, [])
 
   return (
     <div ref={containerRef} className="motors-theme font-motors">
@@ -242,11 +248,17 @@ export function MansourMotorsLanding() {
                 >
                   <div className="relative overflow-hidden bg-carbon-900 border border-white/[0.06] transition-all duration-500 hover:border-gold-400/30">
                     <div className="relative aspect-[16/10] overflow-hidden">
-                      <img
-                        src={vehicle.image}
-                        alt={`${vehicle.make} ${vehicle.model}`}
-                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      />
+                      {vehicle.images?.[0] ? (
+                        <img
+                          src={vehicle.images[0]}
+                          alt={`${vehicle.make} ${vehicle.model}`}
+                          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-carbon-800 flex items-center justify-center">
+                          <Car01Icon className="h-12 w-12 text-silver-700" />
+                        </div>
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-carbon-950 via-carbon-950/30 to-transparent" />
                       <div className="absolute bottom-4 left-5 right-5 z-10">
                         <h3 className="font-motors text-lg font-bold text-white">
@@ -254,7 +266,7 @@ export function MansourMotorsLanding() {
                           <span className="text-silver-400">{vehicle.model}</span>
                         </h3>
                         <p className="mt-1 font-motors text-[10px] font-medium uppercase tracking-[0.15em] text-silver-500">
-                          {vehicle.year} · {vehicle.transmission} · {vehicle.fuelType}
+                          {vehicle.year} · {vehicle.transmission === 'automatic' ? 'Automatique' : vehicle.transmission === 'manual' ? 'Manuelle' : 'CVT'} · {vehicle.fuelType === 'diesel' ? 'Diesel' : vehicle.fuelType === 'gasoline' ? 'Essence' : vehicle.fuelType === 'hybrid' ? 'Hybride' : 'Électrique'}
                         </p>
                       </div>
                     </div>
