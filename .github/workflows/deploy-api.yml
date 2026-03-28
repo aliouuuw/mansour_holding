@@ -1,4 +1,4 @@
-name: Deploy API to Cloudflare Workers
+name: Deploy API
 
 on:
   push:
@@ -8,22 +8,17 @@ on:
       - 'packages/**'
       - 'bun.lock'
 
+# Koyeb auto-deploys from GitHub on push — no CI action needed.
+# This workflow is kept as a placeholder for future steps (e.g. run tests before deploy).
 jobs:
-  deploy:
+  type-check:
     runs-on: ubuntu-latest
-    name: Deploy
     steps:
       - uses: actions/checkout@v4
-
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
       - name: Install dependencies
         run: bun install
-
-      - name: Deploy to Cloudflare Workers
-        run: bunx wrangler deploy
-        working-directory: apps/api
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - name: Type check API
+        run: cd apps/api && bunx tsc --noEmit
