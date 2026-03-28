@@ -93,6 +93,7 @@ vehiclesRoute.get('/', async (c) => {
     db.select({ count: sql<number>`count(*)::int` }).from(vehicles).where(where),
   ])
 
+  c.header('Cache-Control', 'public, max-age=60, stale-while-revalidate=300')
   return c.json({
     data: rows,
     pagination: { page: pageNum, limit: limitNum, total: count, pages: Math.ceil(count / limitNum) },
@@ -104,6 +105,7 @@ vehiclesRoute.get('/:id', async (c) => {
   const id = c.req.param('id') as string
   const [vehicle] = await db.select().from(vehicles).where(eq(vehicles.id, id))
   if (!vehicle) return c.json({ error: 'Vehicle not found' }, 404)
+  c.header('Cache-Control', 'public, max-age=60, stale-while-revalidate=300')
   return c.json(vehicle)
 })
 

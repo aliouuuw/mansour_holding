@@ -1,4 +1,5 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import {
@@ -14,7 +15,7 @@ import {
 } from 'hugeicons-react'
 import { MotorsNavbar } from '@/components/motors/MotorsNavbar'
 import { MotorsFooter } from '@/components/motors/MotorsFooter'
-import { publicVehiclesApi, type ApiVehicle } from '@/lib/api'
+import { publicVehiclesApi } from '@/lib/api'
 import { formatPrice, cn } from '@/lib/utils'
 
 const services = [
@@ -63,13 +64,12 @@ export function MansourMotorsLanding() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
   const heroTextY = useTransform(scrollYProgress, [0, 0.5], [0, 80])
 
-  const [featuredVehicles, setFeaturedVehicles] = useState<ApiVehicle[]>([])
-
-  useEffect(() => {
-    publicVehiclesApi.list({ limit: 5, status: 'available' })
-      .then((res) => setFeaturedVehicles(res.data))
-      .catch(console.error)
-  }, [])
+  const { data: featuredData } = useQuery({
+    queryKey: ['public-featured-vehicles'],
+    queryFn: () => publicVehiclesApi.list({ limit: 5, status: 'available' }),
+    staleTime: 60_000,
+  })
+  const featuredVehicles = featuredData?.data ?? []
 
   return (
     <div ref={containerRef} className="motors-theme font-motors">

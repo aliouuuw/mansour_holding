@@ -6,7 +6,7 @@
  * Business tables (vehicles, customers, deals) use UUID for consistency
  */
 
-import { pgTable, uuid, varchar, boolean, timestamp, text, integer, jsonb, pgEnum } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, varchar, boolean, timestamp, text, integer, jsonb, pgEnum, index } from 'drizzle-orm/pg-core'
 
 // =================== AUTH SCHEMA (better-auth) ===================
 // Using varchar to support better-auth's nanoId format
@@ -87,7 +87,10 @@ export const vehicles = pgTable('vehicles', {
   createdBy: varchar('created_by', { length: 36 }).references(() => user.id),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
-})
+}, (t) => [
+  index('vehicles_status_idx').on(t.status),
+  index('vehicles_make_model_idx').on(t.make, t.model),
+])
 
 // =================== CUSTOMERS SCHEMA ===================
 
@@ -105,7 +108,11 @@ export const customers = pgTable('customers', {
   organizationId: uuid('organization_id'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
-})
+}, (t) => [
+  index('customers_email_idx').on(t.email),
+  index('customers_phone_idx').on(t.phone),
+  index('customers_name_idx').on(t.firstName, t.lastName),
+])
 
 // =================== DEALS SCHEMA ===================
 

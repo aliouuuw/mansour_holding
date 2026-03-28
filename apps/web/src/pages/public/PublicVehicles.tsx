@@ -1,4 +1,5 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -194,8 +195,13 @@ function ActiveFilterPill({ label, onRemove }: { label: string; onRemove: () => 
 }
 
 export function PublicVehicles() {
-  const [allVehicles, setAllVehicles] = useState<ApiVehicle[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ['public-vehicles'],
+    queryFn: () => publicVehiclesApi.list({ limit: 200 }),
+    staleTime: 60_000,
+  })
+  const allVehicles = data?.data ?? []
+
   const [search, setSearch] = useState('')
   const [isFiltersOpen, setIsFiltersOpen] = useState(false)
 
@@ -204,13 +210,6 @@ export function PublicVehicles() {
   const [fuelType, setFuelType] = useState('')
   const [transmission, setTransmission] = useState('')
   const [priceMax, setPriceMax] = useState('')
-
-  useEffect(() => {
-    publicVehiclesApi.list({ limit: 200 })
-      .then((res) => setAllVehicles(res.data))
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
 
   const makes = useMemo(() => Array.from(new Set(allVehicles.map(v => v.make))).sort(), [allVehicles])
   const years = useMemo(() => Array.from(new Set(allVehicles.map(v => v.year))).sort((a, b) => b - a), [allVehicles])

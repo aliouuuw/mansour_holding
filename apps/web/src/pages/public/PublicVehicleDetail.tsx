@@ -1,5 +1,6 @@
 import { Link, useParams } from '@tanstack/react-router'
-import { useRef, useState, useCallback, useMemo, useEffect } from 'react'
+import { useRef, useState, useCallback, useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import {
   ArrowLeft01Icon,
   ArrowRight01Icon,
@@ -79,23 +80,24 @@ export function PublicVehicleDetail() {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [direction, setDirection] = useState(0)
-  const [vehicle, setVehicle] = useState<NormVehicle | null>(null)
-  const [notFound, setNotFound] = useState(false)
 
   // Try API first (UUID), fall back to mock (v1, v2…)
-  useEffect(() => {
-    if (!vehicleId) return
-    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(vehicleId)
-    if (isUUID) {
-      vehiclesApi.get(vehicleId)
-        .then((v) => setVehicle(normFromApi(v)))
-        .catch(() => setNotFound(true))
-    } else {
+  const isUUID = vehicleId ? /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(vehicleId) : false
+
+  const { data: vehicle, isLoading, isError } = useQuery({
+    queryKey: ['public-vehicle', vehicleId],
+    queryFn: async (): Promise<NormVehicle> => {
+      if (isUUID) {
+        const v = await vehiclesApi.get(vehicleId!)
+        return normFromApi(v)
+      }
       const mock = mockVehicles.find((v) => v.id === vehicleId)
-      if (mock) setVehicle(normFromMock(mock))
-      else setNotFound(true)
-    }
-  }, [vehicleId])
+      if (mock) return normFromMock(mock)
+      throw new Error('Not found')
+    },
+    enabled: !!vehicleId,
+    staleTime: 60_000,
+  })
 
   const allImages = useMemo(() =>
     vehicle?.images?.length ? vehicle.images : []
@@ -117,7 +119,7 @@ export function PublicVehicleDetail() {
     exit: (direction: number) => ({ x: direction < 0 ? '100%' : '-100%', opacity: 0 }),
   }
 
-  if (notFound || (!vehicle && vehicleId)) {
+  if (isError || (!vehicle && !isLoading)) {
     return (
       <div className="motors-theme min-h-screen bg-carbon-950 font-motors text-silver-100 flex flex-col">
         <MotorsNavbar />
@@ -136,7 +138,7 @@ export function PublicVehicleDetail() {
   }
 
   // Loading state
-  if (!vehicle) {
+  if (isLoading || !vehicle) {
     return (
       <div className="motors-theme min-h-screen bg-carbon-950 font-motors flex flex-col">
         <MotorsNavbar />
