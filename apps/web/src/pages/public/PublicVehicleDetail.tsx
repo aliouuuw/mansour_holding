@@ -21,7 +21,7 @@ import {
   StarIcon,
 } from 'hugeicons-react'
 import { vehicles as mockVehicles } from '@/data/mock'
-import { vehiclesApi, type ApiVehicle } from '@/lib/api'
+import { vehiclesApi, publicVehiclesApi, type ApiVehicle } from '@/lib/api'
 import { formatPrice, formatNumber, cn } from '@/lib/utils'
 import { MotorsNavbar } from '@/components/motors/MotorsNavbar'
 import { MotorsFooter } from '@/components/motors/MotorsFooter'
@@ -98,6 +98,14 @@ export function PublicVehicleDetail() {
     enabled: !!vehicleId,
     staleTime: 60_000,
   })
+
+  // Fetch related available vehicles from API
+  const { data: relatedData } = useQuery({
+    queryKey: ['public-related-vehicles', vehicleId],
+    queryFn: () => publicVehiclesApi.list({ limit: 6, status: 'available' }),
+    staleTime: 60_000,
+  })
+  const relatedVehicles = (relatedData?.data ?? []).filter(v => v.id !== vehicleId).slice(0, 5)
 
   const allImages = useMemo(() =>
     vehicle?.images?.length ? vehicle.images : []
@@ -564,10 +572,7 @@ export function PublicVehicleDetail() {
 
           <div className="relative">
             <div className="flex gap-6 overflow-x-auto pb-4 motors-scroll-track snap-x snap-mandatory">
-              {mockVehicles
-                .filter((v) => v.id !== vehicleId && v.status === 'available')
-                .slice(0, 5)
-                .map((otherVehicle, index) => (
+              {relatedVehicles.map((otherVehicle, index) => (
                   <motion.div
                     key={otherVehicle.id}
                     initial={{ opacity: 0, y: 30 }}
@@ -583,16 +588,23 @@ export function PublicVehicleDetail() {
                     >
                       <div className="relative overflow-hidden bg-carbon-950 transition-all duration-500 hover:shadow-2xl hover:shadow-gold-400/10">
                         <div className="relative aspect-[16/10] overflow-hidden">
-                          <motion.img
-                            src={otherVehicle.image}
-                            alt={`${otherVehicle.make} ${otherVehicle.model}`}
-                            className="h-full w-full object-cover"
-                            whileHover={{ scale: 1.05 }}
-                            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                          />
+                          {otherVehicle.images?.[0] ? (
+                            <motion.img
+                              src={otherVehicle.images[0]}
+                              alt={`${otherVehicle.make} ${otherVehicle.model}`}
+                              className="h-full w-full object-cover"
+                              whileHover={{ scale: 1.05 }}
+                              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          ) : (
+                            <div className="h-full w-full bg-carbon-800 flex items-center justify-center">
+                              <Car01Icon className="h-10 w-10 text-silver-700" />
+                            </div>
+                          )}
                           <div className="absolute inset-0 bg-gradient-to-t from-carbon-950/90 via-carbon-950/30 to-transparent" />
 
-                          {/* Hover reveal */}
                           <motion.div className="absolute inset-0 flex items-center justify-center bg-carbon-950/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <span className="flex items-center gap-2 font-motors text-[11px] font-bold uppercase tracking-[0.2em] text-white">
                               Voir détails
@@ -600,14 +612,13 @@ export function PublicVehicleDetail() {
                             </span>
                           </motion.div>
 
-                          {/* Info overlay */}
                           <div className="absolute bottom-0 left-0 right-0 p-5">
                             <h3 className="font-motors text-lg font-medium text-white tracking-wide">
                               {otherVehicle.make}{' '}
                               <span className="text-white/70">{otherVehicle.model}</span>
                             </h3>
                             <p className="mt-1 font-motors text-[10px] font-medium uppercase tracking-[0.12em] text-white/60">
-                              {otherVehicle.year} · {otherVehicle.transmission}
+                              {otherVehicle.year} · {transLabels[otherVehicle.transmission] ?? otherVehicle.transmission}
                             </p>
                           </div>
                         </div>
