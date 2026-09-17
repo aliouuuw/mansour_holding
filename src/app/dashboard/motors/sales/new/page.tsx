@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { ArrowLeft01Icon, Loading03Icon } from 'hugeicons-react'
-import { vehiclesApi, customersApi, dealsApi, type DealStatus } from '@/lib/api'
+import { vehiclesApi, customersApi, dealsApi, invalidateMotorsQueries, type DealStatus } from '@/lib/api'
 import { useToast } from '@/components/ui/Toast'
 import { formatPrice } from '@/lib/utils'
 
@@ -53,8 +53,7 @@ export function MotorsDealNew() {
       closedAt: null,
     }),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ['deals'] })
-      qc.invalidateQueries({ queryKey: ['deals-summary'] })
+      invalidateMotorsQueries(qc)
       toast('Affaire créée avec succès')
       void navigate({ to: '/dashboard/motors/sales' })
     },

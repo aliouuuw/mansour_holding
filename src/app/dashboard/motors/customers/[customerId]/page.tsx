@@ -9,7 +9,7 @@ import {
   Loading03Icon, Edit01Icon, Delete01Icon, Cancel01Icon,
 } from 'hugeicons-react'
 import { formatDate, cn } from '@/lib/utils'
-import { customersApi, type CustomerSource } from '@/lib/api'
+import { customersApi, invalidateMotorsQueries, type CustomerSource } from '@/lib/api'
 import { useToast } from '@/components/ui/Toast'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 
@@ -57,7 +57,7 @@ export function MotorsCustomerDetail() {
     }),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ['customer', customerId] })
-      qc.invalidateQueries({ queryKey: ['customers'] })
+      invalidateMotorsQueries(qc)
       setEditing(false)
       toast('Client mis à jour')
     },
@@ -67,7 +67,7 @@ export function MotorsCustomerDetail() {
   const deleteMutation = useMutation({
     mutationFn: () => customersApi.delete(customerId!),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ['customers'] })
+      invalidateMotorsQueries(qc)
       qc.removeQueries({ queryKey: ['customer', customerId] })
       setShowDeleteDialog(false)
       toast('Client supprimé')

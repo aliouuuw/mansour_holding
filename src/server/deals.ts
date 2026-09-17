@@ -66,28 +66,20 @@ export async function listDeals(params: { page?: number; limit?: number; status?
 
 export async function getDealSummary() {
   await requireUser()
-  const rows = await db
-    .select({ status: deals.status, count: sql<number>`count(*)::int` })
-    .from(deals)
-    .groupBy(deals.status)
+  const [rows, [{ total }]] = await Promise.all([
+    db
+      .select({ status: deals.status, count: sql<number>`count(*)::int` })
+      .from(deals)
+      .groupBy(deals.status),
+    db
+      .select({ total: sql<number>`coalesce(sum(price), 0)::int` })
+      .from(deals)
+      .where(eq(deals.status, 'closed-won')),
+  ])
 
-  const summary: Record<string, number> = {
-    lead: 0, negotiation: 0, 'closed-won': 0, 'closed-lost': 0,
-  }
+  const summary = { lead: 0, negotiation: 0, 'closed-won': 0, 'closed-lost': 0, totalRevenue: total }
   for (const row of rows) summary[row.status] = row.count
-
-  const totalRevenue = await db
-    .select({ total: sql<number>`coalesce(sum(price), 0)::int` })
-    .from(deals)
-    .where(eq(deals.status, 'closed-won'))
-
-  return { ...summary, totalRevenue: totalRevenue[0].total } as {
-    lead: number
-    negotiation: number
-    'closed-won': number
-    'closed-lost': number
-    totalRevenue: number
-  }
+  return summary
 }
 
 export async function getDeal(id: string) {

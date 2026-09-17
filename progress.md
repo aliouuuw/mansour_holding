@@ -1,5 +1,66 @@
 # Project Progress Log
 
+## [Perf] Server-render public vehicle detail
+
+* **Status:** Completed
+* **Date:** 2026-09-17
+
+### What was done
+* `/mansour-motors/vehicules/[vehicleId]` loads the vehicle and 5 related cars on the server.
+* Missing id calls `notFound()`. ISR `revalidate = 60`.
+
+### Verification
+* `bun run type-check`
+* Browser: known vehicle first paint; unknown id shows not found
+
+---
+
+## [Perf] Server-render motors landing featured cars
+
+* **Status:** Completed
+* **Date:** 2026-09-17
+
+### What was done
+* `/mansour-motors` loads 5 available vehicles in the server page.
+* Client landing only handles motion. ISR `revalidate = 60`.
+
+### Verification
+* `bun run type-check`
+* Browser: featured cars on first paint
+
+---
+
+## [Perf] Server-render public catalog
+
+* **Status:** Completed
+* **Date:** 2026-09-17
+
+### What was done
+* `/mansour-motors/vehicules` loads vehicles in the server page.
+* Client catalog only filters and animates. ISR `revalidate = 60`.
+
+### Verification
+* `bun run type-check`
+* Browser: catalog shows vehicles on first paint
+
+---
+
+## [Perf] Batch dashboard reads
+
+* **Status:** Completed
+* **Date:** 2026-09-17
+
+### What was done
+* Holding and Motors dashboards each call one overview action.
+* Counts come from SQL. Motors loads 5 deals and 3 vehicles, not 100 + 20.
+* Writes call `invalidateMotorsQueries` so overview stays fresh.
+
+### Verification
+* `bun run type-check`
+* Browser: `/dashboard` and `/dashboard/motors`
+
+---
+
 ## [Hygiene] Drop Hono for Next.js server actions
 
 * **Status:** Completed

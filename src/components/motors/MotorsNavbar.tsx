@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Link, useRouterState } from '@/lib/router'
 import { useScroll, useAnimationFrame, motion, AnimatePresence } from 'framer-motion'

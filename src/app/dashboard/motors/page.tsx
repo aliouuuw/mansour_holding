@@ -12,36 +12,21 @@ import {
   ShoppingCart01Icon,
 } from 'hugeicons-react'
 import { cn, formatPrice, formatNumber } from '@/lib/utils'
-import { vehiclesApi, customersApi, dealsApi } from '@/lib/api'
+import { overviewApi } from '@/lib/api'
 
 export function MotorsDashboard() {
-  const { data: vehiclesData } = useQuery({
-    queryKey: ['vehicles', 1, 'all', ''],
-    queryFn: () => vehiclesApi.list({ page: 1, limit: 20 }),
+  const { data } = useQuery({
+    queryKey: ['overview', 'motors'],
+    queryFn: overviewApi.motors,
   })
 
-  const { data: customersData } = useQuery({
-    queryKey: ['customers', 1, ''],
-    queryFn: () => customersApi.list({ page: 1, limit: 1 }),
-  })
-
-  const { data: dealsData } = useQuery({
-    queryKey: ['deals'],
-    queryFn: () => dealsApi.list({ limit: 100 }),
-  })
-
-  const { data: dealsSummary } = useQuery({
-    queryKey: ['deals-summary'],
-    queryFn: () => dealsApi.summary(),
-  })
-
-  const vehicles = vehiclesData?.data ?? []
-  const totalVehicles = vehiclesData?.pagination?.total ?? 0
-  const availableCount = vehicles.filter(v => v.status === 'available').length
-  const totalCustomers = customersData?.pagination?.total ?? 0
-  const deals = dealsData?.data ?? []
-  const activeDeals = deals.filter(d => d.status === 'lead' || d.status === 'negotiation').length
-  const totalRevenue = dealsSummary?.totalRevenue ?? 0
+  const vehicles = data?.availableVehicles ?? []
+  const totalVehicles = data?.vehicleTotal ?? 0
+  const availableCount = data?.availableCount ?? 0
+  const totalCustomers = data?.customerTotal ?? 0
+  const deals = data?.recentDeals ?? []
+  const activeDeals = data?.activeDeals ?? 0
+  const totalRevenue = data?.totalRevenue ?? 0
 
   const kpis = [
     {
@@ -55,7 +40,7 @@ export function MotorsDashboard() {
     {
       label: 'Affaires en cours',
       value: formatNumber(activeDeals),
-      total: `${deals.length} total`,
+      total: `${data?.dealTotal ?? 0} total`,
       icon: ShoppingCart01Icon,
       color: 'text-amber-700 bg-amber-50 border-amber-200',
       href: '/dashboard/motors/sales' as const,
@@ -79,15 +64,15 @@ export function MotorsDashboard() {
   ]
 
   const pipelineStages = [
-    { label: 'Prospects', count: dealsSummary?.lead ?? 0, color: 'bg-blue-500' },
-    { label: 'Négociation', count: dealsSummary?.negotiation ?? 0, color: 'bg-amber-500' },
-    { label: 'Conclu', count: dealsSummary?.['closed-won'] ?? 0, color: 'bg-emerald-500' },
-    { label: 'Perdu', count: dealsSummary?.['closed-lost'] ?? 0, color: 'bg-slate-400' },
+    { label: 'Prospects', count: data?.lead ?? 0, color: 'bg-blue-500' },
+    { label: 'Négociation', count: data?.negotiation ?? 0, color: 'bg-amber-500' },
+    { label: 'Conclu', count: data?.['closed-won'] ?? 0, color: 'bg-emerald-500' },
+    { label: 'Perdu', count: data?.['closed-lost'] ?? 0, color: 'bg-slate-400' },
   ]
   const maxPipeline = Math.max(...pipelineStages.map(s => s.count), 1)
 
   // Top vehicles for the sidebar (first 3 available)
-  const topVehicles = vehicles.filter(v => v.status === 'available').slice(0, 3)
+  const topVehicles = vehicles
 
   return (
     <div className="space-y-8">
@@ -160,7 +145,7 @@ export function MotorsDashboard() {
             {deals.length === 0 ? (
               <div className="px-6 py-12 text-center text-sm text-noir-400">Aucune affaire pour le moment</div>
             ) : (
-              deals.slice(0, 5).map((deal, index) => (
+              deals.map((deal, index) => (
                 <motion.div
                   key={deal.id}
                   initial={{ opacity: 0, x: -10 }}

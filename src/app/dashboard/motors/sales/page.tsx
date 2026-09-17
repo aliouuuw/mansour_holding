@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Add01Icon, Loading03Icon, UserIcon, Car01Icon, DollarCircleIcon } from 'hugeicons-react'
 import { cn, formatPrice } from '@/lib/utils'
-import { dealsApi, type ApiDeal, type DealStatus } from '@/lib/api'
+import { dealsApi, invalidateMotorsQueries, type ApiDeal, type DealStatus } from '@/lib/api'
 import { useToast } from '@/components/ui/Toast'
 
 const COLUMNS: { status: DealStatus; label: string; color: string; dot: string }[] = [
@@ -71,7 +71,7 @@ export function MotorsSales() {
       return { prev }
     },
     onSuccess: (_, { status }) => {
-      qc.invalidateQueries({ queryKey: ['deals-summary'] })
+      invalidateMotorsQueries(qc)
       toast(`Affaire déplacée vers ${COLUMNS.find(c => c.status === status)?.label}`)
     },
     onError: (e, _, ctx) => {

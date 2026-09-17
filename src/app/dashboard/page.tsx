@@ -14,36 +14,24 @@ import {
   ArrowRight01Icon,
 } from 'hugeicons-react'
 import { cn, formatPrice, formatNumber } from '@/lib/utils'
-import { vehiclesApi, customersApi, dealsApi } from '@/lib/api'
+import { overviewApi } from '@/lib/api'
 
 export function DashboardHome() {
-  const { data: vehiclesData } = useQuery({
-    queryKey: ['vehicles', 1, 'all', ''],
-    queryFn: () => vehiclesApi.list({ page: 1, limit: 1 }),
-  })
-  const { data: customersData } = useQuery({
-    queryKey: ['customers', 1, ''],
-    queryFn: () => customersApi.list({ page: 1, limit: 1 }),
-  })
-  const { data: summaryData } = useQuery({
-    queryKey: ['deals-summary'],
-    queryFn: () => dealsApi.summary(),
-  })
-  const { data: dealsData } = useQuery({
-    queryKey: ['deals'],
-    queryFn: () => dealsApi.list({ limit: 1 }),
+  const { data } = useQuery({
+    queryKey: ['overview', 'holding'],
+    queryFn: overviewApi.holding,
   })
 
-  const totalVehicles = vehiclesData?.pagination?.total ?? 0
-  const totalCustomers = customersData?.pagination?.total ?? 0
-  const totalDeals = dealsData?.pagination?.total ?? 0
-  const totalRevenue = summaryData?.totalRevenue ?? 0
+  const totalVehicles = data?.vehicleTotal ?? 0
+  const totalCustomers = data?.customerTotal ?? 0
+  const totalDeals = data?.dealTotal ?? 0
+  const totalRevenue = data?.totalRevenue ?? 0
 
   const kpis = [
     { label: 'Chiffre d\'affaires', value: formatPrice(totalRevenue), sub: 'Affaires conclues', icon: DollarCircleIcon, color: 'text-emerald-700 bg-emerald-50' },
     { label: 'Entreprises actives', value: '1 / 4', sub: 'Phase 1 — Motors', icon: ChartUpIcon, color: 'text-blue-700 bg-blue-50' },
     { label: 'Clients totaux', value: formatNumber(totalCustomers), sub: 'Enregistrés', icon: UserMultiple02Icon, color: 'text-gold-700 bg-gold-50' },
-    { label: 'Transactions', value: formatNumber(totalDeals), sub: `${summaryData?.['closed-won'] ?? 0} conclues`, icon: ArrowUpRight01Icon, color: 'text-amber-700 bg-amber-50' },
+    { label: 'Transactions', value: formatNumber(totalDeals), sub: `${data?.closedWon ?? 0} conclues`, icon: ArrowUpRight01Icon, color: 'text-amber-700 bg-amber-50' },
   ]
 
   const businessCards = [

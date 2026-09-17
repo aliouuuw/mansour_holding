@@ -12,7 +12,7 @@ import {
 } from 'hugeicons-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn, formatPrice, formatNumber } from '@/lib/utils'
-import { vehiclesApi, type VehicleStatus } from '@/lib/api'
+import { vehiclesApi, invalidateMotorsQueries, type VehicleStatus } from '@/lib/api'
 import { VehicleForm, type VehicleFormValues } from '@/components/motors/VehicleForm'
 import { useToast } from '@/components/ui/Toast'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
@@ -53,9 +53,7 @@ export function MotorsVehicleDetail() {
     }),
     onSuccess: (updated) => {
       qc.setQueryData(['vehicle', vehicleId], updated)
-      qc.invalidateQueries({ queryKey: ['vehicles'] })
-      qc.invalidateQueries({ queryKey: ['public-vehicles'] })
-      qc.invalidateQueries({ queryKey: ['public-featured-vehicles'] })
+      invalidateMotorsQueries(qc)
       qc.invalidateQueries({ queryKey: ['public-vehicle', vehicleId] })
       setEditing(false)
       toast('Véhicule mis à jour')
@@ -66,9 +64,7 @@ export function MotorsVehicleDetail() {
   const deleteMutation = useMutation({
     mutationFn: () => vehiclesApi.delete(vehicle!.id),
     onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ['vehicles'] })
-      qc.invalidateQueries({ queryKey: ['public-vehicles'] })
-      qc.invalidateQueries({ queryKey: ['public-featured-vehicles'] })
+      invalidateMotorsQueries(qc)
       qc.removeQueries({ queryKey: ['vehicle', vehicleId] })
       qc.removeQueries({ queryKey: ['public-vehicle', vehicleId] })
       setShowDeleteDialog(false)
@@ -85,8 +81,7 @@ export function MotorsVehicleDetail() {
     mutationFn: (file: File) => vehiclesApi.uploadImage(vehicle!.id, file),
     onSuccess: (result) => {
       qc.setQueryData(['vehicle', vehicleId], (old: typeof vehicle) => old ? { ...old, images: result.images } : old)
-      qc.invalidateQueries({ queryKey: ['vehicles'] })
-      qc.invalidateQueries({ queryKey: ['public-vehicles'] })
+      invalidateMotorsQueries(qc)
       setActiveIdx(result.images.length - 1)
       toast('Photo ajoutée')
       if (fileInputRef.current) fileInputRef.current.value = ''
@@ -98,8 +93,7 @@ export function MotorsVehicleDetail() {
     mutationFn: (idx: number) => vehiclesApi.update(vehicle!.id, { images: vehicle!.images.filter((_, i) => i !== idx) }),
     onSuccess: (updated) => {
       qc.setQueryData(['vehicle', vehicleId], updated)
-      qc.invalidateQueries({ queryKey: ['vehicles'] })
-      qc.invalidateQueries({ queryKey: ['public-vehicles'] })
+      invalidateMotorsQueries(qc)
       setActiveIdx(i => Math.min(i, updated.images.length - 1))
       toast('Photo supprimée')
     },

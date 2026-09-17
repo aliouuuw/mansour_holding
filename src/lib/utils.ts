@@ -11,11 +11,11 @@ export function formatPrice(price: number): string {
     currency: 'XOF',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(price)
+  }).format(price).replace(/[\u202f\u00a0]/g, ' ')
 }
 
 export function formatNumber(n: number): string {
-  return new Intl.NumberFormat('fr-FR').format(n)
+  return new Intl.NumberFormat('fr-FR').format(n).replace(/[\u202f\u00a0]/g, ' ')
 }
 
 export function formatDate(date: string): string {

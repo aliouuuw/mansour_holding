@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { ArrowLeft01Icon } from 'hugeicons-react'
-import { customersApi, type CustomerSource } from '@/lib/api'
+import { customersApi, invalidateMotorsQueries, type CustomerSource } from '@/lib/api'
 import { useToast } from '@/components/ui/Toast'
 import { cn } from '@/lib/utils'
 
@@ -37,7 +37,7 @@ export function MotorsCustomerNew() {
       notes: values.notes || null,
     }),
     onSuccess: async (customer) => {
-      await qc.invalidateQueries({ queryKey: ['customers'] })
+      invalidateMotorsQueries(qc)
       toast('Client créé avec succès')
       void navigate({ to: '/dashboard/motors/customers/$customerId', params: { customerId: customer.id } })
     },

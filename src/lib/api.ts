@@ -27,6 +27,8 @@ import {
   deleteDeal,
   type DealStatus,
 } from '@/server/deals'
+import { getHoldingOverview, getMotorsOverview } from '@/server/overview'
+import type { QueryClient } from '@tanstack/react-query'
 
 export type { VehicleStatus, FuelType, Transmission, VehicleFilters, CustomerSource, DealStatus }
 
@@ -134,4 +136,19 @@ export const dealsApi = {
   create: createDeal,
   update: updateDeal,
   delete: deleteDeal,
+}
+
+export const overviewApi = {
+  holding: getHoldingOverview,
+  motors: getMotorsOverview,
+}
+
+export function invalidateMotorsQueries(qc: QueryClient) {
+  void qc.invalidateQueries({ queryKey: ['overview'] })
+  void qc.invalidateQueries({ queryKey: ['vehicles'] })
+  void qc.invalidateQueries({ queryKey: ['customers'] })
+  void qc.invalidateQueries({ queryKey: ['deals'] })
+  void qc.invalidateQueries({ queryKey: ['deals-summary'] })
+  void qc.invalidateQueries({ queryKey: ['public-vehicles'] })
+  void qc.invalidateQueries({ queryKey: ['public-featured-vehicles'] })
 }

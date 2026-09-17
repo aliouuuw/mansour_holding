@@ -4,7 +4,7 @@ import { Link, useNavigate } from '@/lib/router'
 import { motion } from 'framer-motion'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft01Icon } from 'hugeicons-react'
-import { vehiclesApi } from '@/lib/api'
+import { vehiclesApi, invalidateMotorsQueries } from '@/lib/api'
 import { VehicleForm, type VehicleFormValues } from '@/components/motors/VehicleForm'
 import { useToast } from '@/components/ui/Toast'
 
@@ -22,9 +22,7 @@ export function MotorsVehicleNew() {
       extras: Object.fromEntries(values.extras.map(({ key, value }) => [key, value])),
     }),
     onSuccess: async (vehicle) => {
-      await qc.invalidateQueries({ queryKey: ['vehicles'] })
-      qc.invalidateQueries({ queryKey: ['public-vehicles'] })
-      qc.invalidateQueries({ queryKey: ['public-featured-vehicles'] })
+      invalidateMotorsQueries(qc)
       toast('Véhicule créé avec succès')
       void navigate({ to: '/dashboard/motors/inventory/$vehicleId', params: { vehicleId: vehicle.id } })
     },
