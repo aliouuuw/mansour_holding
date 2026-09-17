@@ -22,6 +22,7 @@ import {
   listDeals,
   getDeal,
   getDealSummary,
+  listDealsBoard,
   createDeal,
   updateDeal,
   deleteDeal,
@@ -131,6 +132,7 @@ export const customersApi = {
 
 export const dealsApi = {
   list: listDeals,
+  board: listDealsBoard,
   summary: getDealSummary,
   get: getDeal,
   create: createDeal,
@@ -148,6 +150,7 @@ export function invalidateMotorsQueries(qc: QueryClient) {
   void qc.invalidateQueries({ queryKey: ['vehicles'] })
   void qc.invalidateQueries({ queryKey: ['customers'] })
   void qc.invalidateQueries({ queryKey: ['deals'] })
+  void qc.invalidateQueries({ queryKey: ['deals-board'] })
   void qc.invalidateQueries({ queryKey: ['deals-summary'] })
   void qc.invalidateQueries({ queryKey: ['public-vehicles'] })
   void qc.invalidateQueries({ queryKey: ['public-featured-vehicles'] })

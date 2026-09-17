@@ -1,5 +1,20 @@
 # Project Progress Log
 
+## [Perf] Grouped sales board load
+
+* **Status:** Completed
+* **Date:** 2026-09-17
+
+### What was done
+* `/dashboard/motors/sales` loads all deals once, grouped by status.
+* Header counts come from the same load. Optimistic column moves stay on the client.
+
+### Verification
+* `bun run type-check`
+* Browser: `/dashboard/motors/sales` shows Prospect, Négociation, Conclu, Perdu (0 deals)
+
+---
+
 ## [Perf] Server-render public vehicle detail
 
 * **Status:** Completed

@@ -1,6 +1,6 @@
 'use server'
 
-import { eq, sql } from 'drizzle-orm'
+import { desc, eq, sql } from 'drizzle-orm'
 import { db } from './db/index'
 import { deals, vehicles, customers } from './db/schema'
 import { requireUser } from './session'
@@ -80,6 +80,40 @@ export async function getDealSummary() {
   const summary = { lead: 0, negotiation: 0, 'closed-won': 0, 'closed-lost': 0, totalRevenue: total }
   for (const row of rows) summary[row.status] = row.count
   return summary
+}
+
+export type DealsBoard = {
+  columns: Record<DealStatus, ReturnType<typeof serializeDeal>[]>
+  activeCount: number
+  wonRevenue: number
+}
+
+export async function listDealsBoard(): Promise<DealsBoard> {
+  await requireUser()
+  // ponytail: one scan of deals. Paginate per column if the board grows past a few hundred rows.
+  const rows = await db
+    .select(dealSelect)
+    .from(deals)
+    .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
+    .leftJoin(customers, eq(deals.customerId, customers.id))
+    .orderBy(desc(deals.createdAt))
+
+  const columns: DealsBoard['columns'] = {
+    lead: [],
+    negotiation: [],
+    'closed-won': [],
+    'closed-lost': [],
+  }
+  for (const row of rows) {
+    const deal = serializeDeal(row)
+    columns[deal.status].push(deal)
+  }
+
+  return {
+    columns,
+    activeCount: columns.lead.length + columns.negotiation.length,
+    wonRevenue: columns['closed-won'].reduce((sum, deal) => sum + deal.price, 0),
+  }
 }
 
 export async function getDeal(id: string) {
