@@ -1,5 +1,90 @@
 # Project Progress Log
 
+## [Hygiene] Drop Hono for Next.js server actions
+
+* **Status:** Completed
+* **Date:** 2026-09-17
+
+### What was done
+* Vehicles, customers, and deals run as server actions in `src/server`.
+* better-auth uses `toNextJsHandler` at `/api/auth/[...all]`.
+* Removed Hono, CORS, the catch-all route, and in-memory rate limit.
+* `GET /api/health` stays a Next.js route handler.
+
+### Verification
+* `bun run type-check`
+* Browser: public vehicles, login, dashboard list
+
+---
+
+## [Hygiene] Colocate pages in App Router
+
+* **Status:** Completed
+* **Date:** 2026-09-17
+
+### What was done
+* Each route is one file under `src/app/**/page.tsx`. Deleted `src/views`.
+* `/vehicules` now redirects to `/mansour-motors/vehicules`.
+
+---
+
+## [Hygiene] Flatten repo to a single Next.js app
+
+* **Status:** Completed
+* **Date:** 2026-09-17
+
+### Decision
+GitHub Actions CI was redundant. Vercel runs `next build` on git push. `apps/web` nesting was leftover from the old monorepo.
+
+### What was done
+* Deleted `.github/workflows/ci.yml`
+* Moved the Next.js app from `apps/web` to the repo root
+* Vercel Root Directory is the repo root. Import the GitHub project and set env vars.
+
+---
+
+## [Hygiene] Drop unused packages and dead files
+
+* **Status:** Completed
+* **Date:** 2026-09-17
+
+### What was done
+* Deleted `packages/shared`, `packages/database`, and `packages/domain`
+* Moved Zod create/update schemas into `apps/web/src/server/schemas.ts`
+* One Drizzle schema file: `apps/web/src/server/db/schema.ts`
+* Removed unused UI (`AuthGuard`, `CustomCursor`, `scroll.ts`) and one-shot DB scripts
+* CI workflow is `.github/workflows/ci.yml` (type-check only)
+
+---
+
+## [Infrastructure] Next.js on Vercel — single app
+
+* **Status:** Completed
+* **Date:** 2026-09-17
+
+### Decision
+Mansour Motors is a small product. Two hosts (Vercel SPA + Koyeb API) added CORS, bearer tokens, and two env dashboards. Next.js now owns pages and `/api`.
+
+### What was done
+* Converted `apps/web` from Vite + TanStack Router to Next.js App Router
+* Moved Hono, Drizzle, better-auth, and R2 upload into `apps/web/src/server`
+* Same-origin cookies. Dropped bearer plugin and `VITE_API_URL`
+* Removed `apps/api` and the Koyeb deploy path
+
+### Verification
+* `bun run --cwd apps/web type-check` passes
+* `bun run --cwd apps/web build` passes
+* Browser: `/`, `/mansour-motors`, `/mansour-motors/vehicules`, `/api/health`, login to `/dashboard`
+
+### Local
+* `bun run --cwd apps/web dev` on port 3000
+* Env file: `apps/web/.env.local`
+
+### Vercel
+Copy Koyeb env vars onto the Vercel project. Set `BETTER_AUTH_URL` and `FRONTEND_URL` to `https://mansour-holding.vercel.app`.
+
+---
+
 ## [UX] Customer Edit/Delete + Dashboard Navigation
 
 * **Status:** Completed

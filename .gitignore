@@ -1,11 +1,11 @@
 node_modules
-AGENTS.md
-README_RW.md
 .env
+.env.local
+.env*.local
 
-# Build outputs
+# Build
 dist
-build
+.next
 *.tsbuildinfo
 
 # IDE
@@ -18,6 +18,3 @@ Thumbs.db
 
 # Logs
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*

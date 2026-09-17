@@ -6,7 +6,7 @@
     "opencode_session_id": "cascade-2026-02-12",
     "deployment": {
       "frontend": "https://mansour-holding.vercel.app",
-      "api": "https://integral-adel-wadeweb-04b62073.koyeb.app",
+      "api": "https://mansour-holding.vercel.app/api",
       "database": "Neon PostgreSQL (serverless)",
       "storage": "Cloudflare R2 (mansour-assets)"
     }
@@ -39,13 +39,13 @@
     },
     {
       "group": "scaffolding",
-      "feature": "Web app foundation (React + Vite + TailwindCSS)",
+      "feature": "Web app foundation (Next.js + TailwindCSS)",
       "passes": true
     },
     {
       "group": "scaffolding",
-      "feature": "API foundation (Hono + Cloudflare Workers + Neon)",
-      "description": "Hono on Cloudflare Workers, Drizzle ORM with Neon HTTP driver, health-check at GET /api/health, wrangler.toml, GitHub Actions CI/CD.",
+      "feature": "API foundation (Next.js server actions + Neon)",
+      "description": "Server actions for vehicles/customers/deals, better-auth at /api/auth, Drizzle ORM with postgres.js, health-check at GET /api/health, Vercel deploy.",
       "passes": true
     },
     {
@@ -93,7 +93,7 @@
     {
       "group": "motors-inventory",
       "feature": "Vehicle database schema",
-      "description": "Schema exists in schema-for-migrations.ts, migration applied to Neon via drizzle-kit push.",
+      "description": "Schema exists in apps/web/src/server/db/schema.ts, migration applied to Neon via drizzle-kit push.",
       "passes": true
     },
     {

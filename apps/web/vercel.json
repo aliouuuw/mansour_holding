@@ -1,9 +1,0 @@
-{
-  "installCommand": "bun install --no-cache",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
-}
