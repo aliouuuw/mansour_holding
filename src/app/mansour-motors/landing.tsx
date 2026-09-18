@@ -1,444 +1,328 @@
 'use client'
 
-import { useRef } from 'react'
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
+import { useRouter } from 'next/navigation'
 import { Link } from '@/lib/router'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import {
-  ArrowRight01Icon,
-  ArrowUpRight01Icon,
-  Car01Icon,
-  Wrench01Icon,
-  CreditCardIcon,
-  TelephoneIcon,
-  Location01Icon,
-  Clock01Icon,
-  Mail01Icon,
-} from 'hugeicons-react'
-import { MotorsNavbar } from '@/components/motors/MotorsNavbar'
-import { MotorsFooter } from '@/components/motors/MotorsFooter'
-import { type ApiVehicle } from '@/lib/api'
-import { formatPrice, cn } from '@/lib/utils'
+import type { ApiVehicle } from '@/lib/api'
+import { Shell, OpenNote } from './_ui/shell'
+import { ShowroomMap } from './_ui/showroom-map'
+import { lineup, toCar } from './_ui/car'
+import { CONTACT, DAY, FUEL, HOURS, STATE, cover, fcfa, focal, km, pad2, vehicleUrl, waLink } from './_ui/shared'
 
-const services = [
-  {
-    icon: Car01Icon,
-    title: 'Vente',
-    description: 'Véhicules neufs et d\'occasion certifiés. Garantie d\'excellence sur chaque modèle.',
-    stat: '200+',
-  },
-  {
-    icon: Wrench01Icon,
-    title: 'Après-Vente',
-    description: 'Entretien et réparations par techniciens qualifiés. 100+ points de contrôle.',
-    stat: '100+',
-  },
-  {
-    icon: CreditCardIcon,
-    title: 'Financement',
-    description: 'Plans flexibles et partenariats bancaires. Réponse sous 48h garantie.',
-    stat: '48h',
-  },
-  {
-    icon: Car01Icon,
-    title: 'Location',
-    description: 'Courte et longue durée. Véhicules de prestige disponibles 24/7.',
-    stat: '24/7',
-  },
-]
+const BUDGETS = [30, 50, 70, 100]
 
-const stats = [
-  { value: '200+', label: 'Véhicules Vendus' },
-  { value: '10+', label: 'Années d\'Expérience' },
-  { value: '98%', label: 'Clients Satisfaits' },
-  { value: '24h', label: 'Réponse Garantie' },
-]
+/* ── chapter 1: one car on a plate, and the search on the same black ── */
+function Hero({ star, vehicles }: { star?: ApiVehicle; vehicles: ApiVehicle[] }) {
+  const router = useRouter()
+  const [make, setMake] = useState('')
+  const makes = useMemo(() => [...new Set(vehicles.map((v) => v.make))].sort((a, b) => a.localeCompare(b, 'fr')), [vehicles])
+  const models = useMemo(() => vehicles.filter((v) => v.make === make).map((v) => v.model), [vehicles, make])
 
-export function MansourMotorsLanding({ featuredVehicles }: { featuredVehicles: ApiVehicle[] }) {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const heroRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ['start start', 'end start'],
-  })
-
-  const heroImageScale = useTransform(scrollYProgress, [0, 1], [1, 1.15])
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
-  const heroTextY = useTransform(scrollYProgress, [0, 0.5], [0, 80])
+  const search = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const q = new URLSearchParams()
+    for (const [k, v] of new FormData(e.currentTarget)) if (v) q.set(k, String(v))
+    router.push(`/mansour-motors/vehicules${q.size ? `?${q}` : ''}`)
+  }
 
   return (
-    <div ref={containerRef} className="motors-theme font-motors">
-      <MotorsNavbar />
-
-      {/* ══════════════════════════════════════════════════════════
-          HERO — Full-viewport cinematic with parallax image (DARK)
-      ══════════════════════════════════════════════════════════ */}
-      <section ref={heroRef} className="relative h-screen w-full overflow-hidden bg-carbon-950">
-        {/* Background Video */}
-        <motion.div style={{ scale: heroImageScale }} className="absolute inset-0">
-          <div className="absolute inset-0 overflow-hidden">
-            <iframe
-              className="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-              src="https://www.youtube.com/embed/DfBrE9E1DCk?autoplay=1&mute=1&loop=1&playlist=DfBrE9E1DCk&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
-              title="Mansour Motors Background"
-              allow="autoplay; encrypted-media"
-              style={{ border: 'none' }}
-            />
+    <section className="hero ch-dark" aria-label="Véhicule à la une">
+      {star && (
+        <>
+          <div className="hero-rail">
+            <p className="brand">{star.make}</p>
+            <h2 className="hero-title">{star.model}</h2>
+            <div><span className="status" data-status={star.status}>{STATE[star.status]}</span></div>
+            <dl className="figures">
+              <dt>Année</dt><dd>{star.year}</dd>
+              <dt>Kilométrage</dt><dd>{km(star.mileage)}</dd>
+              <dt>Énergie</dt><dd>{FUEL[star.fuelType]}</dd>
+            </dl>
+            <dl className="figures figures-price"><dt>Prix</dt><dd>{fcfa(star.price)}</dd></dl>
+            <Link className="btn btn-light" to={vehicleUrl(star)}>Voir le véhicule <span className="arr" aria-hidden="true">→</span></Link>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-carbon-950 via-carbon-950/80 to-carbon-950/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-carbon-950 via-transparent to-carbon-950/30" />
-        </motion.div>
+          <div className="hero-stage">
+            <Link className="hero-plate" to={vehicleUrl(star)} aria-label={`${star.make} ${star.model}`}>
+              <span className="crop" aria-hidden="true" />
+              {/* eslint-disable-next-line @next/next/no-img-element -- object-position comes from the vehicle's focal point */}
+              <img src={cover(star)} alt={`${star.make} ${star.model}, ${star.color}`} style={{ '--pos': focal(star) } as React.CSSProperties} decoding="async" fetchPriority="high" />
+            </Link>
+          </div>
+        </>
+      )}
+      <form className="hero-dock" action="/mansour-motors/vehicules" onSubmit={search}>
+        <p className="dock-title">Trouver un véhicule</p>
+        <label><span>Marque</span>
+          <select name="marque" value={make} onChange={(e) => setMake(e.target.value)}>
+            <option value="">Toutes</option>
+            {makes.map((m) => <option key={m}>{m}</option>)}
+          </select>
+        </label>
+        <label><span>Modèle</span>
+          <select name="modele" disabled={!make} key={make}>
+            <option value="">{make ? 'Tous' : "Marque d'abord"}</option>
+            {models.map((m) => <option key={m}>{m}</option>)}
+          </select>
+        </label>
+        <label><span>Budget</span>
+          <select name="budget">
+            <option value="">Tous les budgets</option>
+            {BUDGETS.map((b) => <option key={b} value={b * 1_000_000}>{b} M FCFA max.</option>)}
+          </select>
+        </label>
+        <button className="btn btn-light" type="submit">Rechercher <span className="arr" aria-hidden="true">→</span></button>
+      </form>
+    </section>
+  )
+}
 
-        {/* Hero Content */}
-        <motion.div
-          style={{ opacity: heroOpacity, y: heroTextY }}
-          className="relative z-10 flex h-full flex-col justify-end px-6 pb-20 lg:px-16 lg:pb-28"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="mb-6 flex items-center gap-4">
-              <span className="h-px w-12 bg-gold-400" />
-              <span className="font-motors text-[11px] font-medium uppercase tracking-[0.3em] text-gold-400">
-                Dakar, Sénégal
-              </span>
+/* ── chapter 2: the line-up. Scroll turns the WebGL plateau (see _ui/turntable.js) ── */
+function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
+  const ref = useRef<HTMLElement>(null)
+  const router = useRouter()
+  const cars = useMemo(() => vehicles.map(toCar), [vehicles])
+  const available = vehicles.filter((v) => v.status === 'available').length
+
+  useEffect(() => {
+    let table: { destroy(): void } | undefined
+    let dead = false
+    import('./_ui/turntable.js').then(({ mountTurntable }) => {
+      if (dead || !ref.current) return
+      const t = mountTurntable(ref.current, { drive: 'scroll', modes: ['ring', 'list'], navigate: (href: string) => router.push(href) })
+      t.setCars(cars)
+      table = t
+    })
+    return () => { dead = true; table?.destroy() }
+  }, [cars, router])
+
+  return (
+    <section className="lineup ch-dark is-ring" aria-label="La gamme en stock" ref={ref}>
+      <div className="lineup-pin">
+        <div className="wrap lineup-head">
+          <div>
+            <h2 className="h2">En stock au showroom</h2>
+            <p className="lead">{available} disponibles sur {vehicles.length}. Faites défiler, ou choisissez un repère sous le plateau.</p>
+          </div>
+          <div className="lineup-tools">
+            <div className="seg" role="group" aria-label="Affichage" data-view>
+              <button type="button" data-mode="ring" aria-pressed="true">Plateau</button>
+              <button type="button" data-mode="list" aria-pressed="false">Liste</button>
             </div>
-
-            <h1 className="max-w-4xl font-motors-display text-[2.2rem] uppercase leading-[0.95] tracking-[0.04em] text-white sm:text-[3rem] md:text-[4.5rem] lg:text-[6rem]">
-              <span className="block">Performance</span>
-              <span className="block text-silver-400">Redéfinie</span>
-            </h1>
-
-            <p className="mt-6 max-w-lg font-motors text-base font-light leading-relaxed text-silver-400 md:text-lg">
-              Concessionnaire premium. Véhicules d'exception.
-              Standards sans compromis.
-            </p>
-
-            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
-              <Link
-                to="/mansour-motors/vehicules"
-                className="group inline-flex items-center justify-center gap-3 bg-gold-400 px-8 py-4 font-motors text-[12px] font-bold uppercase tracking-[0.2em] text-noir-950 transition-all duration-300 hover:bg-gold-300 hover:shadow-gold"
-              >
-                Explorer le Catalogue
-                <ArrowRight01Icon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-              <a
-                href="#contact"
-                className="group inline-flex items-center justify-center gap-3 border border-white/15 bg-white/5 px-8 py-4 font-motors text-[12px] font-bold uppercase tracking-[0.2em] text-silver-200 backdrop-blur-sm transition-all duration-300 hover:border-white/30 hover:bg-white/10"
-              >
-                Showroom
-              </a>
-            </div>
-          </motion.div>
-
-          {/* Scroll indicator */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-            className="absolute bottom-8 right-6 flex flex-col items-center gap-3 lg:right-16"
-          >
-            <span className="font-motors text-[9px] uppercase tracking-[0.3em] text-silver-500 [writing-mode:vertical-lr]">
-              Scroll
-            </span>
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              className="h-8 w-px bg-gradient-to-b from-gold-400 to-transparent"
-            />
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════
-          STATS — Light section with large numbers
-      ══════════════════════════════════════════════════════════ */}
-      <section className="relative border-y border-noir-100 bg-white">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 lg:grid-cols-4">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ delay: index * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className={cn(
-                'group flex flex-col items-center justify-center px-6 py-14 text-center transition-colors duration-500 hover:bg-gold-50/50',
-                index < stats.length - 1 && 'border-r border-noir-100'
-              )}
-            >
-              <span className="font-motors-display text-3xl text-noir-950 md:text-4xl lg:text-5xl transition-transform duration-500 group-hover:scale-110">
-                {stat.value}
-              </span>
-              <span className="mt-3 font-motors text-[10px] font-medium uppercase tracking-[0.25em] text-noir-400 transition-colors duration-300 group-hover:text-gold-600">
-                {stat.label}
-              </span>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════
-          FEATURED VEHICLES — Dark section, horizontal scroll gallery
-      ══════════════════════════════════════════════════════════ */}
-      <section className="relative bg-carbon-950 py-24 lg:py-32 overflow-hidden">
-        <div className="px-6 lg:px-16">
-          <div className="mx-auto max-w-7xl mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-            <div>
-              <motion.span
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                className="mb-4 block font-motors text-[10px] font-medium uppercase tracking-[0.3em] text-gold-400"
-              >
-                Sélection
-              </motion.span>
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.1 }}
-                className="font-motors-display text-3xl uppercase tracking-[0.04em] text-white md:text-4xl lg:text-5xl"
-              >
-                Véhicules <span className="text-silver-500">en vedette</span>
-              </motion.h2>
-            </div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <Link
-                to="/mansour-motors/vehicules"
-                className="group inline-flex items-center gap-3 font-motors text-[11px] font-bold uppercase tracking-[0.2em] text-silver-400 transition-all duration-300 hover:text-white"
-              >
-                Tout voir
-                <span className="flex h-9 w-9 items-center justify-center border border-white/10 transition-all duration-300 group-hover:border-gold-400 group-hover:bg-gold-400 group-hover:text-noir-950">
-                  <ArrowUpRight01Icon className="h-3.5 w-3.5" />
-                </span>
-              </Link>
-            </motion.div>
+            <Link className="btn btn-ghost-light" to="/mansour-motors/vehicules">Tout le stock <span className="arr" aria-hidden="true">→</span></Link>
           </div>
         </div>
+        <div className="ring-stage" data-stage>
+          <canvas className="ring-canvas" data-canvas tabIndex={0} role="img" aria-label="Plateau des véhicules en stock. Flèches gauche et droite pour changer de véhicule, Entrée pour l'ouvrir." />
+          <div className="ring-hud" data-hud>
+            <div className="ticks" role="group" aria-label="Aller au véhicule" data-ticks />
+            <p className="count" data-lineup-count />
+            <div className="ring-copy">
+              <p className="ring-name" data-lineup-name />
+              <p className="ring-specs" data-lineup-specs />
+            </div>
+            <p className="ring-price" data-lineup-price />
+            <a className="btn btn-light" href="#" data-open-front>Voir le véhicule <span className="arr" aria-hidden="true">→</span></a>
+          </div>
+          <p className="vh" aria-live="polite" data-live />
+          <ol className="index" data-index hidden />
+        </div>
+      </div>
+    </section>
+  )
+}
 
-        {/* Horizontal Scroll Track */}
-        <div className="relative">
-          <div className="flex gap-5 overflow-x-auto pl-6 pr-12 pb-4 motors-scroll-track snap-x snap-mandatory lg:pl-16 lg:pr-24">
-            {featuredVehicles.map((vehicle, index) => (
-              <motion.div
-                key={vehicle.id}
-                initial={{ opacity: 0, x: 40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="group w-[320px] flex-shrink-0 snap-start md:w-[400px] lg:w-[440px]"
-              >
-                <Link
-                  to="/mansour-motors/vehicules/$vehicleId"
-                  params={{ vehicleId: vehicle.id }}
-                  className="block"
-                >
-                  <div className="relative overflow-hidden bg-carbon-900 border border-white/[0.06] transition-all duration-500 hover:border-gold-400/30">
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      {vehicle.images?.[0] ? (
-                        <img
-                          src={vehicle.images[0]}
-                          alt={`${vehicle.make} ${vehicle.model}`}
-                          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="h-full w-full bg-carbon-800 flex items-center justify-center">
-                          <Car01Icon className="h-12 w-12 text-silver-700" />
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-carbon-950 via-carbon-950/30 to-transparent" />
-                      <div className="absolute bottom-4 left-5 right-5 z-10">
-                        <h3 className="font-motors text-lg font-bold text-white">
-                          {vehicle.make}{' '}
-                          <span className="text-silver-400">{vehicle.model}</span>
-                        </h3>
-                        <p className="mt-1 font-motors text-[10px] font-medium uppercase tracking-[0.15em] text-silver-500">
-                          {vehicle.year} · {vehicle.transmission === 'automatic' ? 'Automatique' : vehicle.transmission === 'manual' ? 'Manuelle' : 'CVT'} · {vehicle.fuelType === 'diesel' ? 'Diesel' : vehicle.fuelType === 'gasoline' ? 'Essence' : vehicle.fuelType === 'hybrid' ? 'Hybride' : 'Électrique'}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between px-5 py-4">
-                      <p className="font-motors text-lg font-bold text-white">
-                        {formatPrice(vehicle.price)}
-                      </p>
-                      <span className="flex h-8 w-8 items-center justify-center border border-white/10 text-silver-500 transition-all duration-300 group-hover:border-gold-400 group-hover:bg-gold-400 group-hover:text-noir-950">
-                        <ArrowRight01Icon className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-rotate-45" />
-                      </span>
-                    </div>
-                  </div>
+/* ── chapter 3: the promise inks in as you read; the floor plan proves it ── */
+const PROMISE = 'Une maison, un stock réel. Chaque véhicule présenté ici est au showroom, route de la Corniche Ouest. Vous pouvez venir le voir le jour même.'
+
+/* 8 bays: the cars on the floor first (oldest arrival in bay 01), then the latest sold as traces */
+function bays(vs: ApiVehicle[]) {
+  const byArrival = [...vs].sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+  const floor = byArrival.filter((v) => v.status !== 'sold')
+  const sold = byArrival.filter((v) => v.status === 'sold').reverse()
+  return [...floor, ...sold].slice(0, 8)
+}
+
+function Statement({ vehicles }: { vehicles: ApiVehicle[] }) {
+  const inkRef = useRef<HTMLParagraphElement>(null)
+  const planRef = useRef<HTMLOListElement>(null)
+  const plan = useMemo(() => bays(vehicles), [vehicles])
+
+  useEffect(() => {
+    const ink = inkRef.current
+    const planEl = planRef.current
+    if (!ink || !planEl) return
+    const words = [...ink.querySelectorAll('span')]
+    const links = [...planEl.querySelectorAll('a')]
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)')
+    let raf = 0
+    const inkIn = () => {
+      if (reduce.matches) { [...words, ...links].forEach((el) => el.classList.add('on')); return }
+      const r = ink.getBoundingClientRect()
+      const p = Math.min(1, Math.max(0, (innerHeight * 0.82 - r.top) / (r.height + innerHeight * 0.3)))
+      const on = Math.round(p * words.length)
+      words.forEach((s, i) => s.classList.toggle('on', i < on))
+      /* the bays light one by one as the sentence is read */
+      links.forEach((b, i) => b.classList.toggle('on', p >= (i + 1) / (links.length + 1)))
+    }
+    const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(inkIn) }
+    addEventListener('scroll', onScroll, { passive: true })
+    inkIn()
+    return () => { removeEventListener('scroll', onScroll); cancelAnimationFrame(raf) }
+  }, [])
+
+  const car = <svg viewBox="0 0 40 84"><use href="#car-top" /></svg>
+  return (
+    <section className="statement ch-light">
+      <div className="wrap statement-grid">
+        <p className="ink" ref={inkRef}>{PROMISE.split(' ').map((w, i) => <span key={i}>{w} </span>)}</p>
+        <figure className="plan">
+          <ol className="plan-bays" aria-label="Plan du showroom, un emplacement par véhicule" ref={planRef}>
+            {plan.map((v, i) => (
+              <li key={v.id}>
+                <Link to={vehicleUrl(v)} data-status={v.status} aria-label={`Emplacement ${pad2(i + 1)} : ${v.make} ${v.model}, ${STATE[v.status]}`}>
+                  <span className="bay-n">{pad2(i + 1)}</span>
+                  <svg className="bay-car" viewBox="0 0 40 84" aria-hidden="true"><use href="#car-top" /></svg>
+                  <span className="bay-name">{v.make.split('-')[0]}</span>
                 </Link>
-              </motion.div>
+              </li>
             ))}
+          </ol>
+          <figcaption className="plan-street">Entrée, route de la Corniche Ouest, Almadies</figcaption>
+          <p className="plan-key" aria-hidden="true">
+            <span data-status="available">{car}Disponible</span>
+            <span data-status="reserved">{car}Réservé</span>
+            <span data-status="sold">{car}Vendu</span>
+          </p>
+        </figure>
+      </div>
+    </section>
+  )
+}
+
+/* ── chapter 4: the showroom on its street, and the week ── */
+function Week() {
+  const [now, setNow] = useState<Date | null>(null)
+  useEffect(() => {
+    setNow(new Date())
+    const t = setInterval(() => setNow(new Date()), 60_000)
+    return () => clearInterval(t)
+  }, [])
+  const today = now?.getUTCDay()
+  return (
+    <div className="week">
+      {[1, 2, 3, 4, 5, 6, 0].map((d) => {
+        const hh = HOURS[d]
+        const name = DAY[d][0].toUpperCase() + DAY[d].slice(1, 3) + '.'
+        /* today's bar: how far through the opening hours we are, Dakar time */
+        const h = now ? now.getUTCHours() + now.getUTCMinutes() / 60 : 0
+        const fill = hh ? Math.min(1, Math.max(0, (h - hh[0]) / (hh[1] - hh[0]))) : 0
+        return (
+          <div key={d} className="day" aria-current={d === today ? 'date' : undefined} data-closed={hh ? undefined : ''}
+            style={d === today ? ({ '--day': fill.toFixed(3) } as React.CSSProperties) : undefined}>
+            <b>{name}</b><span>{hh ? <>{hh[0]}h<br />{hh[1]}h</> : 'Fermé'}</span>
           </div>
-
-          {/* Fade edges */}
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-carbon-950 to-transparent" />
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════
-          SERVICES — Light section with gold accents
-      ══════════════════════════════════════════════════════════ */}
-      <section id="services" className="relative bg-surface-dim px-6 py-24 lg:px-16 lg:py-32 page-grain">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-16 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <div>
-              <motion.span
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                className="mb-4 block font-motors text-[10px] font-medium uppercase tracking-[0.3em] text-gold-600"
-              >
-                Expertise
-              </motion.span>
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.1 }}
-                className="font-motors-display text-3xl uppercase tracking-[0.04em] text-noir-950 md:text-4xl lg:text-5xl"
-              >
-                Nos <span className="text-noir-400">Services</span>
-              </motion.h2>
-            </div>
-          </div>
-
-          <div className="grid gap-px bg-noir-100 md:grid-cols-2">
-            {services.map((service, index) => (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="group relative bg-white p-8 transition-all duration-500 hover:bg-gold-50/50 lg:p-12"
-              >
-                <div className="mb-8 flex items-start justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center border border-noir-100 text-noir-400 transition-all duration-500 group-hover:border-gold-400/60 group-hover:text-gold-600">
-                    <service.icon className="h-5 w-5" />
-                  </div>
-                  <span className="font-motors-display text-2xl text-noir-100 transition-colors duration-500 group-hover:text-gold-400/30">
-                    {service.stat}
-                  </span>
-                </div>
-                <h3 className="mb-3 font-motors text-xl font-bold text-noir-950 transition-colors duration-500 group-hover:text-gold-700">
-                  {service.title}
-                </h3>
-                <p className="font-motors text-sm font-light leading-relaxed text-noir-500 transition-colors duration-500 group-hover:text-noir-600">
-                  {service.description}
-                </p>
-                <div className="mt-6 h-px w-8 bg-noir-100 transition-all duration-700 ease-out group-hover:w-16 group-hover:bg-gold-400" />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════
-          SHOWROOM / CONTACT — Dark split screen
-      ══════════════════════════════════════════════════════════ */}
-      <section id="contact" className="relative bg-carbon-950 overflow-hidden">
-        <div className="grid lg:grid-cols-2 min-h-[700px]">
-          {/* Left: Image */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            className="relative overflow-hidden group"
-          >
-            <img
-              src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=2070&auto=format&fit=crop"
-              alt="Mansour Motors Showroom"
-              className="h-full w-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105 min-h-[400px] lg:min-h-full"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-carbon-950/20 via-transparent to-carbon-950 lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-carbon-950" />
-            <div className="absolute inset-0 bg-gradient-to-t from-carbon-950 via-transparent to-transparent lg:hidden" />
-          </motion.div>
-
-          {/* Right: Contact Info */}
-          <div className="relative flex items-center px-6 py-16 lg:px-16 lg:py-24">
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="w-full max-w-lg"
-            >
-              <span className="mb-4 block font-motors text-[10px] font-medium uppercase tracking-[0.3em] text-gold-400">
-                Rendez-nous visite
-              </span>
-              <h2 className="mb-4 font-motors-display text-3xl uppercase tracking-[0.04em] text-white md:text-4xl">
-                Showroom
-              </h2>
-              <p className="mb-12 font-motors text-base font-light leading-relaxed text-silver-500">
-                Notre équipe est à votre disposition pour vous accompagner
-                dans le choix du véhicule parfait.
-              </p>
-
-              <div className="space-y-8">
-                {[
-                  { icon: Location01Icon, title: 'Adresse', content: 'Avenue Cheikh Anta Diop, Dakar, Sénégal' },
-                  { icon: Clock01Icon, title: 'Horaires', content: 'Lun–Ven: 8h–18h · Sam: 9h–17h' },
-                  { icon: TelephoneIcon, title: 'Téléphone', content: '+221 33 123 45 67', href: 'tel:+221331234567' },
-                  { icon: Mail01Icon, title: 'Email', content: 'motors@mansour.sn', href: 'mailto:motors@mansour.sn' },
-                ].map((item, i) => (
-                  <motion.div
-                    key={item.title}
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1 + 0.4, duration: 0.6 }}
-                    className="group flex items-start gap-4"
-                  >
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center border border-white/[0.08] text-silver-500 transition-all duration-500 group-hover:border-gold-400/40 group-hover:text-gold-400">
-                      <item.icon className="h-4 w-4" />
-                    </div>
-                    <div>
-                      <h4 className="mb-1 font-motors text-[10px] font-medium uppercase tracking-[0.2em] text-silver-600 transition-colors group-hover:text-gold-400">
-                        {item.title}
-                      </h4>
-                      {item.href ? (
-                        <a href={item.href} className="font-motors text-sm font-medium text-silver-200 transition-colors hover:text-white">
-                          {item.content}
-                        </a>
-                      ) : (
-                        <p className="font-motors text-sm font-medium text-silver-200">{item.content}</p>
-                      )}
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* CTA */}
-              <div className="mt-12 flex flex-col gap-3 sm:flex-row">
-                <a
-                  href="tel:+221331234567"
-                  className="group inline-flex items-center justify-center gap-3 bg-gold-400 px-6 py-3.5 font-motors text-[11px] font-bold uppercase tracking-[0.2em] text-noir-950 transition-all duration-300 hover:bg-gold-300 hover:shadow-gold-sm"
-                >
-                  <TelephoneIcon className="h-3.5 w-3.5" />
-                  Appeler
-                </a>
-                <a
-                  href="mailto:motors@mansour.sn"
-                  className="inline-flex items-center justify-center gap-3 border border-white/10 px-6 py-3.5 font-motors text-[11px] font-bold uppercase tracking-[0.2em] text-silver-300 transition-all duration-300 hover:border-white/25 hover:text-white"
-                >
-                  Envoyer un Email
-                </a>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      <MotorsFooter />
+        )
+      })}
     </div>
+  )
+}
+
+function Visit() {
+  return (
+    <section className="ch-dark visit-ch" id="showroom">
+      <div className="map-stage"><ShowroomMap /></div>
+      <div className="wrap visit-home">
+        <p className="brand">Showroom</p>
+        <p className="address">Route de la Corniche Ouest<br />Almadies, Dakar</p>
+        <p className="week-note"><OpenNote /></p>
+        <Week />
+        <div className="actions">
+          <a className="btn btn-light" href={CONTACT.maps} target="_blank" rel="noopener">Itinéraire <span className="arr" aria-hidden="true">→</span></a>
+          <a className="btn btn-ghost-light" href={CONTACT.tel}>Appeler <span className="arr" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <p className="map-credit">Plan : © contributeurs OpenStreetMap</p>
+    </section>
+  )
+}
+
+/* ── chapter 5: not in stock yet? The message is shown before it is sent ── */
+type Wish = { want: string; budget: string; year: string; name: string; tel: string }
+
+/* one builder for the preview and for what is sent, so they never differ */
+function alertText(w: Wish) {
+  return [
+    'Bonjour Mansour Motors, je recherche un véhicule.',
+    `Modèle : ${w.want.trim() || '…'}`,
+    w.budget && `Budget maximum : ${w.budget}`,
+    w.year && `Année minimum : ${w.year}`,
+    w.name.trim() && `Nom : ${w.name.trim()}`,
+    w.tel.trim() && `Téléphone : ${w.tel.trim()}`,
+    'Merci de me prévenir quand un véhicule correspond.',
+  ].filter(Boolean).join('\n')
+}
+
+function Alert() {
+  const [wish, setWish] = useState<Wish>({ want: '', budget: '', year: '', name: '', tel: '' })
+  const [msg, setMsg] = useState('')
+  const wantRef = useRef<HTMLInputElement>(null)
+  const set = (k: keyof Wish) => (e: { target: { value: string } }) => { setMsg(''); setWish((w) => ({ ...w, [k]: e.target.value })) }
+  const send = (e: FormEvent) => {
+    e.preventDefault()
+    if (!wish.want.trim()) { setMsg('Indiquez la marque et le modèle recherchés.'); wantRef.current?.focus(); return }
+    window.open(waLink(alertText(wish)), '_blank', 'noopener')
+  }
+  return (
+    <section className="ch-light" id="alerte">
+      <div className="wrap alert">
+        <div>
+          <h2 className="h2">Vous ne trouvez pas votre modèle ?</h2>
+          <p className="lead">Dites-nous ce que vous cherchez. La demande part sur WhatsApp, et le showroom vous recontacte quand un véhicule correspond.</p>
+          <div className="wa-preview">
+            <p className="wa-preview-label" id="wa-preview-label">Le message qui part</p>
+            <p className="wa-bubble" aria-labelledby="wa-preview-label">{alertText(wish)}</p>
+          </div>
+        </div>
+        <form className="alert-form" noValidate onSubmit={send}>
+          <span className="crop" aria-hidden="true" />
+          <label className="field full"><span>Marque et modèle recherchés</span>
+            <input ref={wantRef} value={wish.want} onChange={set('want')} placeholder="Par exemple : Toyota Land Cruiser 300" autoComplete="off" />
+          </label>
+          <label className="field"><span>Budget maximum</span>
+            <select value={wish.budget} onChange={set('budget')}>
+              <option value="">À discuter</option>
+              {BUDGETS.map((b) => <option key={b}>{b} 000 000 FCFA</option>)}
+            </select>
+          </label>
+          <label className="field"><span>Année minimum</span>
+            <select value={wish.year} onChange={set('year')}>
+              <option value="">Indifférent</option>
+              {[2022, 2023, 2024, 2025].map((y) => <option key={y}>{y}</option>)}
+            </select>
+          </label>
+          <label className="field"><span>Votre nom</span><input value={wish.name} onChange={set('name')} autoComplete="name" /></label>
+          <label className="field"><span>Téléphone</span><input value={wish.tel} onChange={set('tel')} type="tel" inputMode="tel" autoComplete="tel" /></label>
+          <p className="form-msg full" role="status">{msg}</p>
+          <button className="btn full" type="submit">Être prévenu sur WhatsApp <span className="arr" aria-hidden="true">→</span></button>
+        </form>
+      </div>
+    </section>
+  )
+}
+
+export function MansourMotorsLanding({ vehicles }: { vehicles: ApiVehicle[] }) {
+  const ordered = useMemo(() => lineup(vehicles), [vehicles])
+  const star = ordered.find((v) => v.status === 'available') ?? ordered[0]
+  return (
+    <Shell className="on-dark-top">
+      <main>
+        <h1 className="vh">Mansour Motors, véhicules premium à Dakar</h1>
+        <Hero star={star} vehicles={vehicles} />
+        {ordered.length > 0 && <Lineup vehicles={ordered} />}
+        <Statement vehicles={vehicles} />
+        <Visit />
+        <Alert />
+      </main>
+    </Shell>
   )
 }
