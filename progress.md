@@ -1,5 +1,53 @@
 # Project Progress Log
 
+## [Prototype] Showroom map, footer wordmark, chapter sheets
+
+* **Status:** Completed (not committed)
+* **Date:** 2026-09-18
+
+### What was done
+* Address: the showroom is at Route de la Corniche Ouest, Almadies (Plus Code PFPR+9J7, next to HEC Dakar), confirmed by the owner. All launch pages updated. `Itinéraire` opens the Plus Code.
+* Showroom chapter: a map drawn from OpenStreetMap (coast, all streets, the Corniche in white). It fills the right of the chapter and fades out under the copy and at both edges. The top-down car from the floor plan drives up the Corniche as the chapter scrolls in and parks at the door. Reduced motion: parked. Phone: the map is a plate above the copy.
+* `tools/showroom-map.py` rebuilds the SVG from Overpass data (query in the file). Output checked identical.
+* Week: plain border, no glass. "aujourd'hui" label removed (it overflowed); the white cell and the day bar mark today.
+* Footer: wordmark sized by formula to span the text column exactly, .02em tracking, baseline on the page edge (was 107 px too wide and 10 px cut). Blue glow and hairline removed.
+* Chapters after the plateau (statement, showroom, alerte, footer) are sheets: each overlaps the one before with rounded top corners.
+
+### Verification
+* 1440x900: map pin at ~71% width, clear of the copy; car transform moves 597 -> 474 -> parked at 431 along the road.
+* Wordmark 65 px to 1374 px (page margins 65 px), baseline offset 0.05 px.
+* 375x812: no horizontal scroll, labels readable, address on 2 lines.
+* No console errors.
+
+### Open
+* `PRODUCT.md` and the live app (`MotorsFooter.tsx`, `PublicFooter.tsx`, `landing.tsx`) still say Avenue Cheikh Anta Diop.
+* Other prototypes (showroom/, nuit/, mono/, accrochage/) still say Avenue Cheikh Anta Diop.
+
+---
+
+## [Prototype] Statement plan, showroom day bar, alerte preview
+
+* **Status:** Completed (not committed)
+* **Date:** 2026-09-18
+
+### What was done
+* Statement: the "Dakar / Avenue" aside is replaced by a floor plan of the showroom. Two rows of four bays across an aisle, door on the avenue. One top-down SVG car per bay, nose to the aisle: solid = available, outline = reserved, dashed = sold. Each bay links to its car. Bays light one by one as the sentence inks in (they stay visible, only dimmed, before that).
+* Removed the ornamental vertical rule on the statement.
+* Showroom: plain `#050505` (the radial washes are gone). Today's column has a bar that fills from opening to closing time, Dakar time, updated each minute.
+* Alerte: live preview of the WhatsApp message in WhatsApp's own outgoing bubble. One `alertText()` builds both the preview and the sent message.
+
+### Verification
+* 1440x900 and 375x812: plan fits, names readable, no horizontal scroll.
+* Typing "Lexus LX 600" updates the preview line "Modèle : Lexus LX 600".
+* Day bar at 0.103 around 9h (8h to 18h).
+* No console errors.
+
+### Open
+* Showroom section is still mostly flat black around the week plate.
+* Footer unchanged.
+
+---
+
 ## [Prototype] Plateau: side cars face the front car
 
 * **Status:** Completed
