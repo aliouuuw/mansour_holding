@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Véhicule, Mansour Motors</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap">
+<link rel="stylesheet" href="showroom.css">
+<script type="module" src="detail.js"></script>
+</head>
+<body class="detail-page">
+<header class="header">
+  <div class="wrap">
+    <a class="logo" href="index.html">Mansour <b>Motors</b></a>
+    <nav class="nav" aria-label="Principal">
+      <a href="index.html">Accueil</a>
+      <a href="vehicules.html" aria-current="page">Véhicules</a>
+      <a href="index.html#showroom">Showroom</a>
+    </nav>
+    <div class="header-end">
+      <span data-open></span>
+      <a href="tel:+221331234567">+221 33 123 45 67</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap detail">
+    <aside class="info" data-info>
+      <p class="crumbs"><a href="index.html">Accueil</a> / <a href="vehicules.html">Véhicules</a> / <span data-crumb></span></p>
+      <div>
+        <p class="make" data-make></p>
+        <h1 class="model" data-model></h1>
+      </div>
+      <nav class="tabs" aria-label="Sections de la fiche" data-tabs>
+        <a href="#photos">Photos</a>
+        <a href="#caracteristiques">Caractéristiques</a>
+        <a href="#description">Description</a>
+        <a href="#visite">Visite</a>
+        <span class="ind" aria-hidden="true"></span>
+      </nav>
+      <dl class="specs" data-keyspecs></dl>
+      <div data-price-anchor>
+        <p class="info-price" data-price></p>
+        <p class="info-state" data-stock></p>
+      </div>
+      <div class="info-actions" data-actions></div>
+    </aside>
+
+    <div>
+      <section id="photos" class="gallery" aria-label="Photos">
+        <div class="photos" data-photos></div>
+        <p class="photo-bar" aria-live="polite"><span data-photo-count></span><span class="track" aria-hidden="true"><i data-photo-progress></i></span></p>
+      </section>
+
+      <section id="caracteristiques" class="block rise">
+        <h2 class="h2">Caractéristiques</h2>
+        <dl class="facts" data-facts></dl>
+      </section>
+
+      <section id="description" class="block rise">
+        <h2 class="h2">Description</h2>
+        <p class="desc" data-desc></p>
+      </section>
+
+      <section id="visite" class="block rise">
+        <h2 class="h2">Réserver une visite</h2>
+        <form class="visit" data-visit novalidate>
+          <p class="lead">Choisissez un créneau dans nos horaires. La demande part sur WhatsApp, prête à envoyer.</p>
+          <fieldset class="field"><legend>Jour</legend><div class="tiles" data-days></div></fieldset>
+          <fieldset class="field"><legend>Heure</legend><div class="tiles tiles-slots" data-slots></div></fieldset>
+          <div class="visit-row">
+            <label class="field"><span>Votre nom</span><input name="name" autocomplete="name"></label>
+            <label class="field"><span>Téléphone</span><input name="tel" type="tel" inputmode="tel" autocomplete="tel"></label>
+          </div>
+          <p class="form-msg" role="status" data-msg></p>
+          <button class="btn" type="submit">Envoyer la demande</button>
+          <p class="visit-alt">Ou appelez le showroom au <a class="link" href="tel:+221331234567">+221 33 123 45 67</a></p>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <section class="wrap others rise">
+    <div class="row-head"><h2 class="h2">Autres véhicules</h2></div>
+    <div class="row" data-others></div>
+  </section>
+</main>
+
+<div class="bar" data-bar aria-hidden="true">
+  <p><span data-bar-name></span><b data-bar-price></b></p>
+  <a class="btn" href="#visite" tabindex="-1" data-bar-cta>Réserver une visite</a>
+</div>
+<footer class="wrap footer">Mansour Motors, une maison Mansour Holding. Avenue Cheikh Anta Diop, Dakar.</footer>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mansour Motors — Le Carnet de Route</title>
+
+<!--
+  DIRECTION CONTRACT
+
+  THESIS: The stock is a navigator's road-book, read waypoint by waypoint under its
+  lamp. It refuses the dark-cinematic dealer page: no video hero, no stat strip, no
+  card rail.
+  OWN-WORLD: Bitumen ground, manila paper panels, black keyline ink, laterite hazard
+  mark, and gold demoted from sprayed accent to the holder's raking lamp. Bespoke
+  Stencil letters the waypoints; Tabular sets every figure.
+  STORY: A finite route of eight machines, each with real distance, real chassis
+  number, real price, ending at a call to the showroom.
+  FIRST VIEWPORT: Holder bezel top and bottom. Waypoint 01 in register: photograph
+  filling the lit window right, paper panel left carrying the tulip, the distance
+  column and the price. The action sits under the column.
+  FORM: Le Carnet de Route, candidate 3 of the grounded list, staged as one
+  continuous space (staging 1). Seed key 332e28f3.
+-->
+
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://upload.wikimedia.org">
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=bespoke-stencil@700,800&f[]=bespoke-sans@400,500&f[]=tabular@400,500,700&display=swap">
+<link rel="stylesheet" href="carnet.css">
+</head>
+<body>
+
+<a class="skip" href="#roll">Aller au carnet</a>
+
+<!-- ── THE HOLDER ───────────────────────────────────────────── -->
+<header class="bezel bezel--top">
+  <div class="bezel__in">
+    <p class="mark">Mansour <em>Motors</em></p>
+    <p class="route">Carnet de route <span aria-hidden="true">·</span> Dakar</p>
+    <div class="coord">
+      <span class="coord__now" id="coord-now">01</span><span class="coord__of">/08</span>
+    </div>
+  </div>
+</header>
+
+<main id="roll" class="roll"></main>
+
+<footer class="bezel bezel--bot">
+  <div class="bezel__in">
+    <div class="knobs">
+      <button class="knob" id="prev" type="button" aria-label="Point precedent">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M12 5l-6 6M12 5l6 6"/></svg>
+      </button>
+      <button class="knob" id="next" type="button" aria-label="Point suivant">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M12 19l-6-6M12 19l6-6"/></svg>
+      </button>
+    </div>
+    <p class="odo">
+      <span class="odo__k">Parcours</span>
+      <span class="odo__v"><span id="odo">0</span> km</span>
+    </p>
+    <button class="lamp-switch" id="lamp" type="button" aria-pressed="true">
+      <span class="lamp-switch__led" aria-hidden="true"></span>
+      Lampe
+    </button>
+  </div>
+</footer>
+
+<script type="module" src="carnet.js"></script>
+</body>
+</html>

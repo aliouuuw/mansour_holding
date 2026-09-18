@@ -1,5 +1,96 @@
 # Project Progress Log
 
+## [Prototype] Launch plateau order and atelier
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* Home photo slider is a front fan, not a closed ring. Scroll walks **01 → 02 → 03 … 08**. All eight plates stay in front of the camera.
+* HUD ticks on each car. Drag and wheel snap to a plate.
+* Véhicules is an atelier: one large plate plus a filmstrip. Anneau is gone on that page. Liste and Grille remain.
+
+### Verification
+* Browser 1325: home HUD 01 Range Rover, 04 Jaguar, 08 Land Cruiser ZX. Eight plates visible at 04.
+* `/launch/vehicules/`: Atelier opens on first available (Jaguar). Strip click → BMW 06/08. Mercedes filter → `?marque=Mercedes-Benz`, 1/8 GLE.
+* Liste shows the eight rows. 390px stacks Filtres.
+
+---
+
+## [Prototype] Launch glass, glow, WhatsApp disc
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* WhatsApp is a 56px round green disc (`#25D366`) with `aria-label`.
+* Frost on header, search dock (over the plate), ring HUD, week plaque, photo bar, filter bar.
+* Studio key/fill radials on hero, ring, showroom, footer. Floor line carries bounce light.
+
+### Verification
+* Computed: WA 50% / rgb(37,211,102); dock `blur(22px)` absolute; header frost. Visit dual glow visible. 390px WA at bottom. Detector: pre-existing fly layout-transition and empty hero `src` (filled by JS).
+
+---
+
+## [Prototype] Launch brand language
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* Launch controls use plate geometry: nested square arrows, drawn underlines, 2px corners.
+* Chapters differ: crop-marked plate, ring floor line, typeset statement, week plaque, paper form sheet, wordmark clip.
+* Film grain overlay. Header tone samples at header height. No gold. No second WebGL.
+
+### Verification
+* Browser 1440: nested-arrow buttons, crop marks on hero/week/form, search Jaguar → `/launch/vehicules/?marque=Jaguar`. Header dark on showroom. Today plaque shows all 7 days. Detail `/launch/vehicule/?id=2` paper panel. 390px stacks type, CTA, plate, search.
+
+---
+
+## [Prototype] Launch plates and hero scale
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* Eight stock photos restaged onto black 4:3 studio plates in `prototype/media/cars/`.
+* Hero is a type rail over a full-bleed plate. Search stays in the first chapter.
+* Ring camera looks at the front plane, tighter radius, steeper neighbour dim.
+
+### Verification
+* Browser 1440: hero rail + large studio plate. Search submit → `/launch/vehicules/?marque=Mercedes-Benz` (GLE 01/01). Ring: one front car, raked neighbour. Detail `/launch/vehicule/?id=2` uses the same plate. 390px stacks type, CTA, plate, search.
+
+---
+
+## [Prototype] Launch hero plate
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* Home hero is one 4:3 plate on black. Search lives in that chapter. The four-slide carousel is gone.
+* The plate is the same car and crop as the ring front. Scroll fades the plate into the ring.
+
+### Verification
+* Browser: hero plate + search in 100svh. Search submit → `?marque=Mercedes-Benz`. Plate opens `/vehicule/?id=2`. Ring front is the same Range Rover. 390px stacks type, plate, figures, search.
+
+---
+
+## [Prototype] Launch WebGL turntable
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* `prototype/launch/` line-up is a photo ring. Scroll orbits it on home. Drag orbits it on stock.
+* Liste and Grille remain as usable fallbacks. Click flies the panel into the detail page.
+* Filter rebuild no longer drops Anneau (stale texture load ignored). HUD clears the WhatsApp chip.
+
+### Verification
+* Browser: home pin-orbit (desktop + 390px). Stock Anneau, Liste, Grille. Mercedes filter = 01/01 GLE. Detail after HUD click.
+
+---
+
 ## [Perf] Grouped sales board load
 
 * **Status:** Completed

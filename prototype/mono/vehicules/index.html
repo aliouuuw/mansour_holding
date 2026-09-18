@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Véhicules, Mansour Motors</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=excon@100,200,300,400,500&display=swap">
+<link rel="stylesheet" href="../mono.css">
+<script type="module" src="../stock.js"></script>
+</head>
+<body data-base="../">
+<header class="header">
+  <div class="wrap">
+    <a class="logo" href="../">Mansour Motors</a>
+    <nav class="nav" aria-label="Principal">
+      <a href="../">Accueil</a>
+      <a href="./" aria-current="page">Véhicules</a>
+      <a href="../#showroom">Showroom</a>
+    </nav>
+    <div class="header-end">
+      <span data-open></span>
+      <a href="tel:+221331234567">+221 33 123 45 67</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <div>
+      <p class="crumbs"><a href="../">Accueil</a> / Véhicules</p>
+      <h1 class="display">Véhicules <span data-total></span></h1>
+    </div>
+  </div>
+
+  <div class="filterbar">
+    <details class="filters" open data-filters>
+      <summary><span>Filtres</span><span data-active-count></span></summary>
+      <form class="filters-body" data-filter-form>
+        <select name="marque" aria-label="Marque" data-make></select>
+        <select name="modele" aria-label="Modèle" data-model disabled></select>
+        <div class="seg" role="group" aria-label="Énergie" data-fuel></div>
+        <select name="budget" aria-label="Budget maximum" data-max></select>
+        <select name="km" aria-label="Kilométrage maximum">
+          <option value="">Tous kilométrages</option>
+          <option value="1000">1 000 km max.</option>
+          <option value="5000">5 000 km max.</option>
+          <option value="10000">10 000 km max.</option>
+          <option value="20000">20 000 km max.</option>
+        </select>
+        <label class="switch"><input type="checkbox" name="dispo" value="1"> Disponibles</label>
+        <span class="grow"></span>
+        <select aria-label="Trier par" data-sort>
+          <option value="">Arrivée récente</option>
+          <option value="price-asc">Prix croissant</option>
+          <option value="price-desc">Prix décroissant</option>
+          <option value="km-asc">Kilométrage croissant</option>
+          <option value="year-desc">Année, plus récente</option>
+        </select>
+        <button type="button" class="reset" data-reset>Réinitialiser</button>
+      </form>
+    </details>
+  </div>
+
+  <section aria-label="Résultats">
+    <p class="vh" aria-live="polite" data-live></p>
+    <div class="grid" data-grid></div>
+    <div class="empty" data-empty hidden>
+      <p class="h2">Aucun véhicule ne correspond.</p>
+      <p class="lead">Élargissez un filtre, ou dites-nous ce que vous cherchez. Le showroom vous recontacte quand un véhicule correspond.</p>
+      <a class="btn" href="../#alerte">Être prévenu <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap sign">
+  <div class="sign-links">
+    <p><b>Showroom</b>Avenue Cheikh Anta Diop, Dakar</p>
+    <p><b>Contact</b><a href="tel:+221331234567">+221 33 123 45 67</a><br><a href="mailto:motors@mansour.sn">motors@mansour.sn</a></p>
+    <p><b>Mansour Holding</b>Mansour Motors est une maison Mansour Holding.</p>
+  </div>
+  <p class="wordmark" aria-hidden="true">MANSOUR</p>
+</footer>
+</body>
+</html>

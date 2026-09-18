@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mansour Motors, L'Accrochage</title>
+
+<!--
+  DIRECTION CONTRACT - L'Accrochage
+
+  THESIS: the stock is an exhibition. Eight machines hang in a soft, curved gallery, each
+  in a recessed niche behind slight glass, each with a wall label (cartel). Sold works stay
+  on the wall with a red dot, as in any gallery.
+  ONE MECHANISM: the spotlight. As a work reaches the eye-line, its light comes on and the
+  reflection on the glass travels as you walk past. Nothing is hidden: every photograph is
+  visible at all times, only the light changes.
+  IA: Entrée (the exhibition wall) / L'accrochage (the hang) / Liste des œuvres (the
+  gallery price list, with filters) / Visite privée (book a slot, the invitation writes
+  itself).
+  TYPE: Panchang for the wall lettering only. Cartels are small system-ui, like real labels.
+  COLOUR: warm noir walls, gold is the light. The red dot is the only other colour.
+-->
+
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link rel="preconnect" href="https://upload.wikimedia.org" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=panchang@500,700&display=swap">
+<link rel="stylesheet" href="gallery.css">
+<script type="module" src="gallery.js"></script>
+</head>
+<body>
+<a class="skip" href="#salle">Aller aux machines</a>
+
+<header class="nav">
+  <a class="nav-mark" href="#top">Mansour Motors</a>
+  <p class="nav-room" aria-live="polite" data-room>Entrée</p>
+  <div class="nav-end">
+    <nav class="nav-links" aria-label="Sections">
+      <a href="#liste">Liste des œuvres</a>
+      <a href="#visite">Visite privée</a>
+    </nav>
+    <p class="nav-open" data-open></p>
+  </div>
+</header>
+
+<main id="top">
+  <section class="entree" data-section="Entrée">
+    <div class="entree-light" aria-hidden="true"><span></span><span></span></div>
+    <h1 class="entree-title" data-title>Huit machines</h1>
+    <p class="entree-where">Accrochage permanent<br>Avenue Cheikh Anta Diop, Dakar</p>
+    <div class="entree-text">
+      <p>Une maison, un stock fini. Chaque machine accrochée ici est au showroom. Vous pouvez venir la voir aujourd'hui.</p>
+      <p class="entree-count" data-count></p>
+      <a class="entree-go" href="#salle">Entrer dans la salle <span aria-hidden="true">↓</span></a>
+    </div>
+  </section>
+
+  <section id="salle" class="salle" aria-label="L'accrochage" data-hang></section>
+
+  <section id="liste" class="liste" data-section="Liste des œuvres">
+    <div class="liste-head">
+      <h2>Liste des œuvres</h2>
+      <p class="liste-count" data-list-count></p>
+    </div>
+    <div class="filtres">
+      <div class="seg" role="group" aria-label="Énergie" data-filter="fuel"></div>
+      <div class="seg" role="group" aria-label="État" data-filter="avail">
+        <button type="button" data-value="all" aria-pressed="true">Toutes</button>
+        <button type="button" data-value="available" aria-pressed="false">Disponibles</button>
+      </div>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col" class="c-n">N°</th>
+          <th scope="col">Machine</th>
+          <th scope="col" class="c-opt">Année</th>
+          <th scope="col" class="c-opt num">Kilométrage</th>
+          <th scope="col" class="c-opt">Énergie</th>
+          <th scope="col" class="num" aria-sort="none" data-sort-th>
+            <button type="button" class="sort" data-sort>Prix <span aria-hidden="true" data-sort-arrow>↕</span></button>
+          </th>
+        </tr>
+      </thead>
+      <tbody data-rows></tbody>
+    </table>
+    <p class="liste-empty" data-empty hidden>Aucune machine ne correspond à ces filtres.</p>
+  </section>
+
+  <section id="visite" class="visite" data-section="Visite privée">
+    <div class="visite-form">
+      <h2>Visite privée</h2>
+      <p class="visite-lead">Choisissez une machine et un créneau dans nos horaires. La demande part sur WhatsApp, prête à envoyer.</p>
+      <form data-form novalidate>
+        <label class="field">
+          <span>Machine</span>
+          <select name="work" data-work></select>
+        </label>
+        <fieldset class="field">
+          <legend>Jour</legend>
+          <div class="tiles" data-days></div>
+        </fieldset>
+        <fieldset class="field">
+          <legend>Heure</legend>
+          <div class="tiles tiles-slots" data-slots></div>
+        </fieldset>
+        <div class="field-row">
+          <label class="field">
+            <span>Votre nom</span>
+            <input name="name" autocomplete="name" data-name>
+          </label>
+          <label class="field">
+            <span>Téléphone</span>
+            <input name="tel" type="tel" autocomplete="tel" inputmode="tel" data-tel>
+          </label>
+        </div>
+        <p class="form-msg" data-msg role="status"></p>
+        <button class="send" type="submit">Envoyer la demande par WhatsApp</button>
+        <p class="visite-alt">Ou appelez le showroom au <a href="tel:+221331234567">+221 33 123 45 67</a></p>
+      </form>
+    </div>
+
+    <aside class="carton" aria-label="Aperçu de votre invitation">
+      <p class="carton-house">Mansour Motors</p>
+      <p class="carton-title">Visite privée</p>
+      <dl>
+        <div><dt>Machine</dt><dd data-line="work">À choisir</dd></div>
+        <div><dt>Créneau</dt><dd data-line="when">À choisir</dd></div>
+        <div><dt>Pour</dt><dd data-line="name">Votre nom</dd></div>
+      </dl>
+      <p class="carton-where">Showroom, avenue Cheikh Anta Diop, Dakar</p>
+    </aside>
+  </section>
+</main>
+
+<footer class="pied">
+  <div>
+    <h2>Showroom</h2>
+    <p>Avenue Cheikh Anta Diop<br>Dakar, Sénégal</p>
+  </div>
+  <div>
+    <h2>Horaires</h2>
+    <p>Lundi au vendredi, 8h à 18h<br>Samedi, 9h à 17h<br>Dimanche, fermé</p>
+  </div>
+  <div>
+    <h2>Contact</h2>
+    <p><a href="tel:+221331234567">+221 33 123 45 67</a><br><a href="mailto:motors@mansour.sn">motors@mansour.sn</a></p>
+  </div>
+  <p class="pied-colophon">Mansour Motors, une maison Mansour Holding.</p>
+</footer>
+</body>
+</html>

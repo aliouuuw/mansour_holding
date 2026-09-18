@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mansour Motors</title>
+<!--
+  DIRECTION I - Launch + turntable
+  First viewport: type on a black rail, large studio plate, search in the same chapter.
+  Scroll hands that car to the photo ring. No carousel.
+-->
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=excon@100,200,300,400,500&display=swap">
+<link rel="stylesheet" href="launch.css?v=21">
+<script type="module" src="home.js?v=20"></script>
+</head>
+<body data-base="" class="on-dark-top">
+<header class="header">
+  <div class="wrap">
+    <a class="logo" href="./">Mansour Motors</a>
+    <nav class="nav" aria-label="Principal">
+      <a href="./" aria-current="page">Accueil</a>
+      <a href="vehicules/">Véhicules</a>
+      <a href="#showroom">Showroom</a>
+    </nav>
+    <div class="header-end">
+      <span data-open></span>
+      <a href="tel:+221331234567">+221 33 123 45 67</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <h1 class="vh">Mansour Motors, véhicules premium à Dakar</h1>
+
+  <!-- chapter 1: rail + large plate; search in the same chapter -->
+  <section class="hero ch-dark" aria-label="Véhicule à la une" data-hero>
+    <div class="hero-rail">
+      <p class="brand" data-hero-brand></p>
+      <h2 class="hero-title" data-hero-model></h2>
+      <div data-hero-status></div>
+      <dl class="figures" data-hero-specs></dl>
+      <dl class="figures figures-price"><dt>Prix</dt><dd data-hero-price></dd></dl>
+      <a class="btn btn-light" href="#" data-hero-open>Voir le véhicule <span class="arr" aria-hidden="true">→</span></a>
+    </div>
+    <div class="hero-stage">
+      <a class="hero-plate" href="#" data-hero-link>
+        <span class="crop" aria-hidden="true"></span>
+        <img data-hero-img alt="" decoding="async" fetchpriority="high">
+      </a>
+    </div>
+    <form class="hero-dock" action="vehicules/" data-search>
+      <p class="dock-title">Trouver un véhicule</p>
+      <label><span>Marque</span><select name="marque" data-make></select></label>
+      <label><span>Modèle</span><select name="modele" data-model disabled></select></label>
+      <label><span>Budget</span>
+        <select name="budget">
+          <option value="">Tous les budgets</option>
+          <option value="30000000">30 M FCFA max.</option>
+          <option value="50000000">50 M FCFA max.</option>
+          <option value="70000000">70 M FCFA max.</option>
+          <option value="100000000">100 M FCFA max.</option>
+        </select>
+      </label>
+      <button class="btn btn-light" type="submit">Rechercher <span class="arr" aria-hidden="true">→</span></button>
+    </form>
+  </section>
+
+  <!-- chapter 2: the line-up, scroll drives the plateau -->
+  <section class="lineup ch-dark is-ring" aria-label="La gamme en stock" data-lineup>
+    <div class="lineup-pin">
+      <div class="wrap lineup-head">
+        <div>
+          <h2 class="h2">En stock au showroom</h2>
+          <p class="lead" data-lineup-lead></p>
+        </div>
+        <div class="lineup-tools">
+          <div class="seg" role="group" aria-label="Affichage" data-view>
+            <button type="button" data-mode="ring" aria-pressed="true">Plateau</button>
+            <button type="button" data-mode="list" aria-pressed="false">Liste</button>
+          </div>
+          <a class="btn btn-ghost-light" href="vehicules/">Tout le stock <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <div class="ring-stage" data-stage>
+        <canvas class="ring-canvas" data-canvas tabindex="0" role="img" aria-label="Plateau des véhicules en stock"></canvas>
+        <div class="ring-hud" data-hud>
+          <p class="count" aria-live="polite" data-lineup-count></p>
+          <div class="ring-copy">
+            <p class="ring-name" data-lineup-name></p>
+            <p class="ring-specs" data-lineup-specs></p>
+          </div>
+          <p class="ring-price" data-lineup-price></p>
+          <a class="btn btn-light" href="#" data-open-front>Voir le véhicule <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+        <p class="ring-hint" data-ring-hint></p>
+        <ol class="index" data-index hidden></ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- chapter 4: the promise, read at the pace of the scroll -->
+  <section class="statement ch-light">
+    <div class="wrap statement-grid">
+      <p class="ink" data-ink>Une maison, un stock réel. Chaque véhicule présenté ici est au showroom, avenue Cheikh Anta Diop. Vous pouvez venir le voir le jour même.</p>
+      <p class="statement-aside">Dakar<br>Avenue Cheikh Anta Diop</p>
+    </div>
+  </section>
+
+  <!-- chapter 5: come and see it -->
+  <section class="ch-dark visit-ch" id="showroom">
+    <div class="wrap visit-home">
+      <div>
+        <p class="brand">Showroom</p>
+        <p class="address">Avenue Cheikh Anta Diop, Dakar</p>
+        <p class="week-note" data-open></p>
+        <div class="actions">
+          <a class="btn btn-light" href="https://www.google.com/maps/search/?api=1&query=Avenue+Cheikh+Anta+Diop+Dakar" target="_blank" rel="noopener">Itinéraire <span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost-light" href="tel:+221331234567">Appeler <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+      <div class="week-plate">
+        <span class="crop" aria-hidden="true"></span>
+        <div class="week" data-week></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- chapter 6: not in stock yet -->
+  <section class="ch-light" id="alerte">
+    <div class="wrap alert">
+      <div>
+        <h2 class="h2">Vous ne trouvez pas votre modèle ?</h2>
+        <p class="lead">Dites-nous ce que vous cherchez. La demande part sur WhatsApp, et le showroom vous recontacte quand un véhicule correspond.</p>
+      </div>
+      <form class="alert-form" data-alert novalidate>
+        <span class="crop" aria-hidden="true"></span>
+        <label class="field full"><span>Marque et modèle recherchés</span><input name="want" placeholder="Par exemple : Toyota Land Cruiser 300" autocomplete="off"></label>
+        <label class="field"><span>Budget maximum</span>
+          <select name="budget">
+            <option value="">À discuter</option>
+            <option>30 000 000 FCFA</option>
+            <option>50 000 000 FCFA</option>
+            <option>70 000 000 FCFA</option>
+            <option>100 000 000 FCFA</option>
+          </select>
+        </label>
+        <label class="field"><span>Année minimum</span>
+          <select name="year">
+            <option value="">Indifférent</option>
+            <option>2022</option><option>2023</option><option>2024</option><option>2025</option>
+          </select>
+        </label>
+        <label class="field"><span>Votre nom</span><input name="name" autocomplete="name"></label>
+        <label class="field"><span>Téléphone</span><input name="tel" type="tel" inputmode="tel" autocomplete="tel"></label>
+        <p class="form-msg full" role="status" data-msg></p>
+        <button class="btn full" type="submit">Être prévenu sur WhatsApp <span class="arr" aria-hidden="true">→</span></button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="sign ch-dark">
+  <div class="wrap sign-links">
+    <p><b>Showroom</b>Avenue Cheikh Anta Diop, Dakar</p>
+    <p><b>Contact</b><a href="tel:+221331234567">+221 33 123 45 67</a><br><a href="mailto:motors@mansour.sn">motors@mansour.sn</a></p>
+    <p><b>Mansour Holding</b>Mansour Motors est une maison Mansour Holding.</p>
+  </div>
+  <p class="wordmark" aria-hidden="true">MANSOUR</p>
+</footer>
+</body>
+</html>
