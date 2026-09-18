@@ -4,6 +4,7 @@ import { MansourMotorsLanding } from './landing'
 export const revalidate = 60
 
 export default async function Page() {
-  const { data } = await listVehicles({ limit: 5, status: 'available' })
-  return <MansourMotorsLanding featuredVehicles={data} />
+  /* all statuses: the floor plan shows reserved and sold cars too */
+  const { data } = await listVehicles({ limit: 100 })
+  return <MansourMotorsLanding vehicles={data} />
 }

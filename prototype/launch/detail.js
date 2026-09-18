@@ -1,4 +1,4 @@
-import { cars, FUEL, GEARBOX, STATE, fcfa, km, pad2, esc, $, $$, card, chrome, slotPicker, waLink, status, segThumb, focusOnTouch } from './common.js?v=4'
+import { cars, FUEL, GEARBOX, STATE, fcfa, km, pad2, esc, $, $$, card, chrome, slotPicker, waLink, status, segThumb, focusOnTouch } from './common.js?v=5'
 
 const id = Number(new URLSearchParams(location.search).get('id'))
 const car = cars.find((c) => c.n === id) || cars[0]

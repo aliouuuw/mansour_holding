@@ -1,5 +1,141 @@
 # Project Progress Log
 
+## [Motors] Port the launch design to the real app
+
+* **Status:** Completed (branch `feat/motors-launch-port`)
+* **Date:** 2026-09-18
+
+### What was done
+* `app/mansour-motors/motors.css`: prototype/launch/launch.css nested under `.mm`, so the dashboard keeps its styles. The `<use>` car rules stay unscoped (a shadow tree cannot be reached through `.mm`).
+* `_ui/shell.tsx`: header (tone follows the chapter), footer, WhatsApp, car sprite; routes plain internal `<a>` links through the app router.
+* Home, `/vehicules` and `/vehicules/[id]` ported with real data. `turntable.js` and `stock.js` stay imperative, load by dynamic import after mount, and clean every window listener on unmount.
+* Lenis is skipped on `/mansour-motors` (the plateau eases the native scroll itself).
+* Dashboard vehicle form: "sens du véhicule" and "cadrage" stored in `extras.face` / `extras.pos`, kept out of the features list (`VehicleForm.test.ts`).
+* Old `MotorsNavbar` / `MotorsFooter` removed.
+
+### Verification
+* `bun run type-check` clean, `bun test src/components/motors/VehicleForm.test.ts` 2 pass, `bun run build` passes.
+* Browser, 1440x900 and 375x812: plateau renders R2 photos (CORS fine), plan, map drive, alert preview, filters + URL sync (`?energie=diesel&vue=grille`, 4/8), in-app navigation to a detail page, visit slot message, not-found page.
+
+### Open
+* `bun run lint` crashes on the ESLint config (circular JSON), also on `main`.
+* Seed data: some photos do not match their record (Range Rover shows an Audi). Staff must set `face` per photo in the dashboard for the plateau mirroring to be right.
+* `PRODUCT.md` and `PublicFooter.tsx` still say Avenue Cheikh Anta Diop.
+* Excon loads from the Fontshare CDN, not self-hosted.
+
+---
+
+## [Prototype] Showroom map, footer wordmark, chapter sheets
+
+* **Status:** Completed (not committed)
+* **Date:** 2026-09-18
+
+### What was done
+* Address: the showroom is at Route de la Corniche Ouest, Almadies (Plus Code PFPR+9J7, next to HEC Dakar), confirmed by the owner. All launch pages updated. `Itinéraire` opens the Plus Code.
+* Showroom chapter: a map drawn from OpenStreetMap (coast, all streets, the Corniche in white). It fills the right of the chapter and fades out under the copy and at both edges. The top-down car from the floor plan drives up the Corniche as the chapter scrolls in and parks at the door. Reduced motion: parked. Phone: the map is a plate above the copy.
+* `tools/showroom-map.py` rebuilds the SVG from Overpass data (query in the file). Output checked identical.
+* Week: plain border, no glass. "aujourd'hui" label removed (it overflowed); the white cell and the day bar mark today.
+* Footer: wordmark sized by formula to span the text column exactly, .02em tracking, baseline on the page edge (was 107 px too wide and 10 px cut). Blue glow and hairline removed.
+* Chapters after the plateau (statement, showroom, alerte, footer) are sheets: each overlaps the one before with rounded top corners.
+
+### Verification
+* 1440x900: map pin at ~71% width, clear of the copy; car transform moves 597 -> 474 -> parked at 431 along the road.
+* Wordmark 65 px to 1374 px (page margins 65 px), baseline offset 0.05 px.
+* 375x812: no horizontal scroll, labels readable, address on 2 lines.
+* No console errors.
+
+### Open
+* `PRODUCT.md` and the live app (`MotorsFooter.tsx`, `PublicFooter.tsx`, `landing.tsx`) still say Avenue Cheikh Anta Diop.
+* Other prototypes (showroom/, nuit/, mono/, accrochage/) still say Avenue Cheikh Anta Diop.
+
+---
+
+## [Prototype] Statement plan, showroom day bar, alerte preview
+
+* **Status:** Completed (not committed)
+* **Date:** 2026-09-18
+
+### What was done
+* Statement: the "Dakar / Avenue" aside is replaced by a floor plan of the showroom. Two rows of four bays across an aisle, door on the avenue. One top-down SVG car per bay, nose to the aisle: solid = available, outline = reserved, dashed = sold. Each bay links to its car. Bays light one by one as the sentence inks in (they stay visible, only dimmed, before that).
+* Removed the ornamental vertical rule on the statement.
+* Showroom: plain `#050505` (the radial washes are gone). Today's column has a bar that fills from opening to closing time, Dakar time, updated each minute.
+* Alerte: live preview of the WhatsApp message in WhatsApp's own outgoing bubble. One `alertText()` builds both the preview and the sent message.
+
+### Verification
+* 1440x900 and 375x812: plan fits, names readable, no horizontal scroll.
+* Typing "Lexus LX 600" updates the preview line "Modèle : Lexus LX 600".
+* Day bar at 0.103 around 9h (8h to 18h).
+* No console errors.
+
+### Open
+* Showroom section is still mostly flat black around the week plate.
+* Footer unchanged.
+
+---
+
+## [Prototype] Plateau: side cars face the front car
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* `data.js`: new `face` field (side the nose points to in the photo). Photos 3 (BMW) and 6 (Hilux) face right, the rest face left.
+* Ring: side photos are mirrored so every car left of the front one faces right, and every car right of it faces left. The front car is never mirrored.
+* A car that crosses sides turns around between 0.35 and 0.85 of a step, not in one frame. The scroll settle means no car rests half-turned.
+
+### Verification
+* Car 1 in front: all 7 side cars face left.
+* Car 5 (Mercedes) in front: 4 cars on the left face right, 3 on the right face left.
+* No console errors.
+
+### Known limit
+* Mirrored side photos also mirror badges and grille lettering. They are small and dimmed, so this is hard to see.
+
+---
+
+## [Prototype] Plateau: ticks, settle, a11y
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* One tick per car under the plateau. Each tick is a button that scrolls to that car. Screen readers hear "01, Range Rover Autobiography LWB".
+* When the scroll rests between two cars, the page finishes the move to the nearest one. Not while a finger is on the screen.
+* Scroll per car: 0.85 to 0.6 screen (8 cars: about 4 screens instead of 7).
+* Arrow keys on the plateau work again (the scroll position overwrote them).
+* A hidden live region reads the car once the plateau rests: "Véhicule 2 sur 8 : Lexus LX 600…, 78 000 000 FCFA".
+* Removed the "Faites défiler…" hint (low contrast, repeated the lead, overlapped the HUD on phones). Removed the HUD drop shadow.
+* Phone HUD: one column, name on one line, a lane kept free for the WhatsApp button. Plateau/Liste and "Tout le stock" share one row.
+* Lenis: not added. The ring already eases to the scroll; a second smoothing layer makes it lag behind the finger.
+
+### Verification
+* 1440x900: stop at 1.4 cars, settles on car 2. Tick 5 goes to the Mercedes. Arrow right goes to car 6.
+* 375x812: HUD clear of the WhatsApp button, no overlap with the plateau head.
+* No console errors.
+
+---
+
+## [Prototype] Plateau studio light
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* Dropped the Cursor wash pass (drifting blobs, chapter crop marks, showroom glow line). It read as random decoration.
+* Plateau ring (WebGL) now stands in a studio: a gloss floor, a mirrored reflection under each car panel, and a softbox panel over the selected car. The softbox and its floor light follow the selection as you scroll.
+* Portrait screens skip the softbox: no free band exists between the page head and the cars. Floor and reflections stay.
+* Removed the CSS glow line under the ring and the radial washes on the line-up.
+
+### Verification
+* 1440x900: softbox over the front car, light pool and reflections on the floor, no overlap with the heading or the Plateau/Liste switch.
+* 375x812: no softbox, reflections visible, head controls readable.
+* No console errors on `/launch/` and `/launch/vehicules/`.
+
+### Open
+* Statement, showroom, alerte and footer are unchanged (flat or faint washes from the last commit).
+
+---
+
 ## [Prototype] Launch plateau order and atelier
 
 * **Status:** Completed

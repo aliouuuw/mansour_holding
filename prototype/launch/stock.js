@@ -1,5 +1,5 @@
-import { cars, brands, modelsOf, FUEL, esc, $, $$, card, chrome, reduceMotion, segThumb, focusOnTouch } from './common.js?v=4'
-import { mountTurntable } from './turntable.js?v=20'
+import { cars, brands, modelsOf, FUEL, esc, $, $$, card, chrome, reduceMotion, segThumb, focusOnTouch } from './common.js?v=5'
+import { mountTurntable } from './turntable.js?v=28'
 
 chrome()
 

@@ -1,6 +1,6 @@
 import {
   $, $$, esc, fcfa, km, pad2, detailUrl, status, reduceMotion, segThumb,
-} from './common.js?v=5'
+} from './dom.js'
 
 const TAU = Math.PI * 2
 
@@ -546,9 +546,9 @@ function createRing(canvas) {
   }
 }
 
-function flyTo(car, rect, href) {
+function flyTo(car, rect, href, go) {
   if (reduceMotion.matches || !rect || rect.width < 8) {
-    location.href = href
+    go(href)
     return
   }
   const layer = document.createElement('div')
@@ -565,14 +565,18 @@ function flyTo(car, rect, href) {
   img.style.left = '0'
   img.style.width = '100%'
   img.style.height = '100%'
-  setTimeout(() => { location.href = href }, 780)
+  setTimeout(() => go(href), 780)
 }
 
 export function mountTurntable(root, {
   drive = 'scroll',
   modes = ['ring', 'list'],
   hint = '',
+  navigate = (href) => { location.href = href },
 } = {}) {
+  /* every window listener is tied to this, so destroy() leaves no trace on other pages */
+  const life = new AbortController()
+  const signal = life.signal
   const pin = $('.lineup-pin', root) || root
   const stage = $('[data-stage]', root)
   const canvas = $('[data-canvas]', root)
@@ -726,7 +730,8 @@ export function mountTurntable(root, {
       else b.removeAttribute('aria-current')
     }
     /* read the car once the plateau rests, not every car it passes */
-    if (liveEl) {
+    /* only the plateau speaks; on the stock page the same region reports the filter count */
+    if (liveEl && mode === 'ring') {
       clearTimeout(liveT)
       liveT = setTimeout(() => {
         liveEl.textContent = `Véhicule ${i + 1} sur ${cars.length} : ${c.make} ${c.model}, ${fcfa(c.price)}`
@@ -838,7 +843,7 @@ export function mountTurntable(root, {
   function openIndex(i, rect) {
     const c = cars[i]
     if (!c) return
-    flyTo(c, rect, detailUrl(c))
+    flyTo(c, rect, detailUrl(c), navigate)
   }
 
   function bindRing() {
@@ -951,9 +956,9 @@ export function mountTurntable(root, {
         if (snapping) { snapping = false; return }
         settle()
       }, 160)
-    }, { passive: true })
-    addEventListener('touchstart', () => { touching = true }, { passive: true })
-    addEventListener('touchend', () => { touching = false; clearTimeout(settleT); settleT = setTimeout(settle, 160) }, { passive: true })
+    }, { passive: true, signal })
+    addEventListener('touchstart', () => { touching = true }, { passive: true, signal })
+    addEventListener('touchend', () => { touching = false; clearTimeout(settleT); settleT = setTimeout(settle, 160) }, { passive: true, signal })
   }
   indexEl?.addEventListener('click', (e) => {
     const a = e.target.closest('a')
@@ -995,11 +1000,12 @@ export function mountTurntable(root, {
       const img = $('[data-atelier-img]', atelier)
       openIndex(featured, img?.getBoundingClientRect())
     }
-  })
+  }, { signal })
 
-  addEventListener('resize', () => { layout(); setPressed() })
+  addEventListener('resize', () => { layout(); setPressed() }, { signal })
+  let io = null
   if (stage && 'IntersectionObserver' in window) {
-    const io = new IntersectionObserver(([e]) => {
+    io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting
       if (visible) start()
     }, { rootMargin: '20% 0px' })
@@ -1016,6 +1022,10 @@ export function mountTurntable(root, {
     get mode() { return mode },
     destroy() {
       stop()
+      life.abort()
+      io?.disconnect()
+      clearTimeout(settleT)
+      clearTimeout(liveT)
       ring?.destroy()
     },
   }

@@ -1,4 +1,4 @@
-import { waypoints } from '../data.js'
+import { waypoints } from '../data.js?v=2'
 
 export const cars = waypoints
 

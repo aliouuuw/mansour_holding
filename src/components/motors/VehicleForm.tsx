@@ -16,6 +16,30 @@ export interface VehicleFormValues {
   vin: string
   description: string
   extras: { key: string; value: string }[]
+  /* public site: which way the car's nose points in the first photo, and where to centre it */
+  photoFace: 'left' | 'right'
+  photoFocus: string
+}
+
+/* photo settings live in extras under these keys; they are not features */
+const PHOTO_KEYS = ['face', 'pos']
+
+export const featureEntries = (extras: Record<string, string>) =>
+  Object.entries(extras).filter(([k]) => !PHOTO_KEYS.includes(k))
+
+export function formExtras(extras: Record<string, string>) {
+  return {
+    extras: featureEntries(extras).map(([key, value]) => ({ key, value })),
+    photoFace: extras.face === 'right' ? 'right' as const : 'left' as const,
+    photoFocus: extras.pos ?? '',
+  }
+}
+
+export function toExtras(values: VehicleFormValues): Record<string, string> {
+  const out = Object.fromEntries(values.extras.filter(({ key }) => !PHOTO_KEYS.includes(key)).map(({ key, value }) => [key, value]))
+  if (values.photoFace === 'right') out.face = 'right'
+  if (values.photoFocus) out.pos = values.photoFocus
+  return out
 }
 
 interface Props {
@@ -36,6 +60,8 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
       fuelType: 'diesel',
       transmission: 'automatic',
       extras: [],
+      photoFace: 'left',
+      photoFocus: '',
       ...defaultValues,
     },
   })
@@ -143,6 +169,27 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
           className={cn(inputClass, 'resize-none')}
           placeholder="Full options, cuir, toit ouvrant..."
         />
+      </div>
+
+      {/* Photo settings for the public site */}
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
+          <label className={labelClass} htmlFor="photoFace">Photo : sens du véhicule</label>
+          <select id="photoFace" {...register('photoFace')} className={inputClass}>
+            <option value="left">L&apos;avant pointe vers la gauche</option>
+            <option value="right">L&apos;avant pointe vers la droite</option>
+          </select>
+          <p className="mt-1 text-xs text-noir-400">Sur le plateau, les voitures voisines se tournent vers la voiture au centre.</p>
+        </div>
+        <div>
+          <label className={labelClass} htmlFor="photoFocus">Photo : cadrage</label>
+          <select id="photoFocus" {...register('photoFocus')} className={inputClass}>
+            <option value="">Centré</option>
+            <option value="35% 52%">Décalé vers la gauche</option>
+            <option value="65% 52%">Décalé vers la droite</option>
+          </select>
+          <p className="mt-1 text-xs text-noir-400">Partie de la photo gardée quand elle est recadrée.</p>
+        </div>
       </div>
 
       {/* Extras — custom key/value features */}

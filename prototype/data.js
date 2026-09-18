@@ -8,6 +8,7 @@
    cyclorama, 4:3). They are not a Dakar shoot. The seed "Land Cruiser" is a Porsche 911. */
 
 const plate = (n) => `/media/cars/${n}.png`
+/* `face`: the side the car's nose points to in its photograph. The plateau mirrors photos so side cars face the front one. */
 
 export const waypoints = [
   {
@@ -18,7 +19,7 @@ export const waypoints = [
     note: "Finition GR Sport. Verrouillage de differentiel avant et arriere. Livre avec deux jeux de cles et le carnet d'entretien complet.",
     swatch: '#E8E6E0',
     pos: '50% 52%', zoom: 1,
-    img: plate(1),
+    img: plate(1), face: 'left',
   },
   {
     n: 2, make: 'Range Rover', model: 'Autobiography LWB',
@@ -28,7 +29,7 @@ export const waypoints = [
     note: "Empattement long. Sieges arriere executifs inclinables. Vehicule de direction, premiere main.",
     swatch: '#14161A',
     pos: '48% 52%', zoom: 1,
-    img: plate(2),
+    img: plate(2), face: 'left',
   },
   {
     n: 3, make: 'BMW', model: 'X7 xDrive40i M Sport',
@@ -38,7 +39,7 @@ export const waypoints = [
     note: "Sept places. Pack M Sport complet. Suspension pneumatique aux deux essieux.",
     swatch: '#101318',
     pos: '55% 52%', zoom: 1,
-    img: plate(3),
+    img: plate(3), face: 'right',
   },
   {
     n: 4, make: 'Lexus', model: 'LX 600 Ultra Luxury',
@@ -48,7 +49,7 @@ export const waypoints = [
     note: "Zero kilometre. Configuration quatre places Ultra Luxury. Non immatricule a ce jour.",
     swatch: '#6E6B62',
     pos: '50% 52%', zoom: 1,
-    img: plate(4),
+    img: plate(4), face: 'left',
   },
   {
     n: 5, make: 'Mercedes-Benz', model: 'GLE 450 AMG Line',
@@ -58,7 +59,7 @@ export const waypoints = [
     note: "Hybride leger 48 V. Ligne AMG exterieure et interieure. Entretien Mercedes a jour.",
     swatch: '#0E0F10',
     pos: '50% 52%', zoom: 1,
-    img: plate(5),
+    img: plate(5), face: 'left',
   },
   {
     n: 6, make: 'Toyota', model: 'Hilux GR Sport Double Cab',
@@ -68,7 +69,7 @@ export const waypoints = [
     note: "Double cabine. Voie elargie et amortisseurs GR. Le pick-up de la gamme Gazoo Racing.",
     swatch: '#EDEBE4',
     pos: '58% 52%', zoom: 1,
-    img: plate(6),
+    img: plate(6), face: 'right',
   },
   {
     n: 7, make: 'Jaguar', model: 'F-Pace SVR',
@@ -78,7 +79,7 @@ export const waypoints = [
     note: "V8 suralimente. Echappement variable SVR. Carnet complet, une seule main.",
     swatch: '#1B4FA3',
     pos: '50% 52%', zoom: 1,
-    img: plate(7),
+    img: plate(7), face: 'left',
   },
   {
     n: 8, make: 'Toyota', model: 'Land Cruiser 300 ZX',
@@ -88,7 +89,7 @@ export const waypoints = [
     note: "Finition ZX sept places. Vendu en septembre. Conserve au carnet comme reference de prix.",
     swatch: '#0D0E0F',
     pos: '50% 52%', zoom: 1,
-    img: plate(8),
+    img: plate(8), face: 'left',
   },
 ]
 

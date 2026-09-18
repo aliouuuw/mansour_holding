@@ -7,8 +7,12 @@ import Lenis from 'lenis'
 export function SmoothScroll() {
   const lenisRef = useRef<Lenis | null>(null)
   const pathname = usePathname()
+  /* the motors pages drive a WebGL plateau from the native scroll and ease it
+     themselves; a second smoothing layer makes the cars lag behind the finger */
+  const native = pathname.startsWith('/mansour-motors')
 
   useEffect(() => {
+    if (native) return
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -27,7 +31,7 @@ export function SmoothScroll() {
       lenis.destroy()
       lenisRef.current = null
     }
-  }, [])
+  }, [native])
 
   useEffect(() => {
     if (lenisRef.current) {
