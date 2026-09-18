@@ -7,7 +7,8 @@ export const CONTACT = {
   email: 'motors@mansour.sn',
   whatsapp: '221771234567',
   address: 'Route de la Corniche Ouest, Almadies, Dakar',
-  maps: 'https://www.google.com/maps/search/?api=1&query=PFPR%2B9J7%20Dakar',
+  /* the Google Maps place itself, not the nearby Plus Code PFPR+9J7 */
+  maps: 'https://www.google.com/maps/place/Mansour+Motors/@14.7347277,-17.5085261,19z',
 }
 
 export const FUEL = { diesel: 'Diesel', gasoline: 'Essence', hybrid: 'Hybride', electric: 'Électrique' } as const

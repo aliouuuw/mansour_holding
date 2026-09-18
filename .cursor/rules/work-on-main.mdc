@@ -1,0 +1,14 @@
+---
+description: Stay on main. No feature branches or PRs unless the user asks.
+alwaysApply: true
+---
+
+# Work on main
+
+This repo has one operator. Default to `main`.
+
+1. Check out `main` if the workspace is on a leftover feature branch.
+2. Commit and push on `main` when the user asks to commit or push.
+3. Do not create `feat/`, `fix/`, or other topic branches.
+4. Do not open a pull request.
+5. Branch only when the user names a reason (parallel experiment, review, release).

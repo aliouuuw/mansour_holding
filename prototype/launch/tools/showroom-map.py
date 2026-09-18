@@ -4,7 +4,8 @@
    curl -s --data-urlencode 'data=[out:json][timeout:50];(way["highway"~"^(motorway|trunk|primary|secondary|tertiary|residential|unclassified|trunk_link|primary_link)$"](14.726,-17.522,14.746,-17.495);way["natural"="coastline"](14.715,-17.535,14.757,-17.48););out geom;' https://overpass.kumi.systems/api/interpreter -o osm.json
 2. Run: python3 showroom-map.py (writes map.svg)
 3. Paste map.svg into the .map-stage block of index.html.
-The pin is Plus Code PFPR+9J7 Dakar (Route de la Corniche Ouest, Almadies).
+The pin is the Google Maps place "Mansour Motors" (14.7347277, -17.5085261), Route de la Corniche Ouest,
+Almadies. Not the nearby Plus Code PFPR+9J7, which sits about 130 m north.
 """
 import json, math
 d = json.load(open('osm.json'))
@@ -30,7 +31,7 @@ KX = W / (LON1 - LON0)
 KY = KX / math.cos(math.radians((LAT0 + LAT1) / 2))
 H = round((LAT1 - LAT0) * KY)
 P = lambda lon, lat: ((lon - LON0) * KX, (LAT1 - lat) * KY)
-PIN = P(-17.50853, 14.73588)
+PIN = P(-17.5085261, 14.7347277)
 
 def simplify(pts, eps=0.7):
     if len(pts) < 3: return pts
@@ -79,8 +80,13 @@ route = []
 for i in ids:
     g = [P(p['lon'], p['lat']) for p in byid[i]['geometry']]
     route += g if not route else g[1:]
-k = min(range(len(route)), key=lambda j: math.hypot(route[j][0] - PIN[0], route[j][1] - PIN[1]))
-drive = simplify(route[:k + 1], 0.3)
+def foot(a, b, p):
+    # nearest point to p on segment ab
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    t = max(0, min(1, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / (dx * dx + dy * dy or 1)))
+    return (a[0] + t * dx, a[1] + t * dy)
+k = min(range(len(route) - 1), key=lambda j: math.dist(foot(route[j], route[j + 1], PIN), PIN))
+drive = simplify(route[:k + 1] + [foot(route[k], route[k + 1], PIN)], 0.3)
 
 out = [f'<svg class="map" viewBox="0 0 {W} {H}" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="map-title">',
        '<title id="map-title">Plan d\'accès : Mansour Motors, route de la Corniche Ouest, Almadies, Dakar</title>',
