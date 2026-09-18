@@ -624,10 +624,7 @@ body:has(.ring-hud:not([hidden])) .wa { bottom: 1.4rem; }
 
 /* ── turntable: photo ring + index ─────────────────────────────────── */
 .lineup.ch-dark {
-  background:
-    radial-gradient(ellipse 58% 42% at 50% 80%, rgba(246, 245, 242, .09), transparent 58%),
-    radial-gradient(ellipse 38% 52% at 88% 26%, rgba(168, 198, 226, .08), transparent 52%),
-    var(--black);
+  background: #050505;
 }
 .lineup-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: .8rem 1rem; }
 .ch-dark .seg button:hover:not([aria-pressed='true']):not([aria-current='true']) { color: var(--white); }
@@ -644,16 +641,9 @@ body:has(.ring-hud:not([hidden])) .wa { bottom: 1.4rem; }
 .lineup.is-ring .lineup-head .lineup-tools,
 .lineup.is-ring .lineup-head a,
 .lineup.is-ring .lineup-head button { pointer-events: auto; }
-.lineup.is-ring .ring-hint { top: auto; bottom: 7.4rem; }
 .lineup:not(.is-ring) .lineup-pin { position: relative; height: auto; overflow: visible; padding-bottom: 3rem; }
 .ring-stage { position: relative; min-height: 0; }
 .lineup.is-ring .ring-stage { grid-row: 1; min-height: 0; }
-.lineup.is-ring .ring-stage::before {
-  content: ''; position: absolute; left: 18%; right: 18%; bottom: 23%;
-  height: 1px; background: rgba(246, 245, 242, .22);
-  box-shadow: 0 14px 56px rgba(186, 214, 236, .22);
-  pointer-events: none; z-index: 0;
-}
 .ring-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; cursor: pointer; touch-action: pan-y; }
 .stock-stage .ring-canvas { touch-action: none; }
 .ring-canvas[hidden], .ring-hud[hidden], .ring-hint[hidden], .index[hidden], .grid[hidden], .stock-stage[hidden], .atelier[hidden] { display: none !important; }
@@ -667,19 +657,27 @@ body:has(.ring-hud:not([hidden])) .wa { bottom: 1.4rem; }
   -webkit-backdrop-filter: blur(22px) saturate(1.3);
   border: 1px solid rgba(246, 245, 242, .12);
   border-radius: var(--r);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, .32);
   pointer-events: none;
 }
 .ring-hud .btn { pointer-events: auto; justify-self: end; }
+/* one mark per car: the lit one is in front; each is a button that takes you there */
+.ticks { grid-column: 1 / -1; display: flex; flex-wrap: wrap; margin: -.35rem 0 -.1rem -.3rem; pointer-events: auto; }
+.ticks button {
+  position: relative; width: 1.9rem; height: 1.6rem; padding: 0; border: 0; background: none; cursor: pointer;
+}
+.ticks button::before {
+  content: ''; position: absolute; left: .3rem; top: 50%; width: .55rem; height: 2px; margin-top: -1px;
+  border-radius: 2px; background: rgba(246, 245, 242, .38);
+  transition: width .45s var(--ease), background-color .3s;
+}
+.ticks button:hover::before { background: rgba(246, 245, 242, .7); }
+.ticks button[aria-current='true']::before { width: 1.3rem; background: var(--white); }
+.ticks button:focus-visible { outline-offset: -1px; border-radius: 4px; }
+.ring-canvas:focus-visible { outline: 2px solid var(--white); outline-offset: -6px; }
 .ring-copy { min-width: 0; }
 .ring-name { font-weight: 200; font-size: clamp(1.35rem, 2.5vw, 2.3rem); letter-spacing: -.03em; line-height: 1.05; }
 .ring-specs { color: var(--grey); font-size: .88rem; margin-top: .25rem; }
 .ring-price { font-weight: 200; font-size: clamp(1.2rem, 2vw, 1.8rem); letter-spacing: -.02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.ring-hint {
-  position: absolute; top: .4rem; left: 50%; transform: translateX(-50%);
-  z-index: 2; margin: 0; font-size: .72rem; letter-spacing: .2em; text-transform: uppercase;
-  color: rgba(255, 255, 255, .42); white-space: nowrap; pointer-events: none;
-}
 .viewbar { display: flex; justify-content: flex-end; padding: .2rem 0 1.2rem; }
 
 @keyframes hud-tick {
@@ -761,10 +759,7 @@ body:has(.ring-hud:not([hidden])) .wa { bottom: 1.4rem; }
 
 .stock-stage {
   position: relative; height: 86svh; color: var(--white);
-  background:
-    radial-gradient(ellipse 58% 42% at 50% 80%, rgba(246, 245, 242, .09), transparent 58%),
-    radial-gradient(ellipse 38% 52% at 88% 26%, rgba(168, 198, 226, .08), transparent 52%),
-    var(--black);
+  background: #050505;
 }
 .stock-stage:has(.index:not([hidden])) { height: auto; min-height: 0; }
 .stock-stage .index { position: relative; z-index: 2; padding-block: 1.2rem 5rem; }
@@ -810,16 +805,21 @@ body:has(.ring-hud:not([hidden])) .wa { bottom: 1.4rem; }
 @media (max-width: 860px) {
   .lineup.is-ring .lineup-pin { position: sticky; top: 0; height: 100svh; overflow: hidden; }
   .lineup:not(.is-ring) .lineup-pin { position: relative; height: auto; }
-  .ring-hud { grid-template-columns: minmax(0, 1fr) auto; left: var(--pad); right: var(--pad); padding: .9rem 1rem; }
+  /* one column, and a lane on the right kept free for the WhatsApp button */
+  .ring-hud {
+    grid-template-columns: minmax(0, 1fr); gap: .5rem;
+    left: 12px; right: calc(var(--pad) + 3.5rem + 10px); bottom: calc(12px + env(safe-area-inset-bottom));
+    padding: .8rem .95rem .95rem;
+  }
   .ring-hud .count { display: none; }
-  .ring-hud .btn { grid-column: 1 / -1; justify-self: start; }
-  .ring-hint { font-size: .62rem; letter-spacing: .12em; }
+  .ring-name { font-size: 1.3rem; }
+  .ring-price { font-size: 1.15rem; }
+  .ring-hud .btn { justify-self: start; }
   .index a { grid-template-columns: 2.4rem minmax(0, 1fr); }
   .idx-price { grid-column: 2; }
   .index .status { grid-column: 2; justify-self: start; }
   .idx-shot { display: none; }
-  .lineup-tools { justify-content: stretch; }
-  .lineup-tools .btn { width: 100%; }
+  .lineup-tools { justify-content: flex-start; flex-wrap: nowrap; }
   .atelier-hero { height: min(62svh, 520px); }
   .atelier-meta { left: 12px; right: 12px; bottom: 12px; max-width: none; }
   .atelier-strip button { width: 38vw; }

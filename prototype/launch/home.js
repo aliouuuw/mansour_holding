@@ -1,5 +1,5 @@
-import { cars, brands, modelsOf, FUEL, HOURS, DAY, fcfa, km, esc, $, $$, chrome, detailUrl, status, reduceMotion, waLink } from './common.js?v=4'
-import { mountTurntable } from './turntable.js?v=20'
+import { cars, brands, modelsOf, FUEL, HOURS, DAY, fcfa, km, esc, $, $$, chrome, detailUrl, status, reduceMotion, waLink } from './common.js?v=5'
+import { mountTurntable } from './turntable.js?v=28'
 
 chrome()
 
@@ -44,12 +44,11 @@ $('[data-hero-specs]').innerHTML = `
   <dt>Énergie</dt><dd>${FUEL[star.fuel]}</dd>`
 
 /* ── the line-up: a photo ring; scroll orbits it ───────────────────── */
-$('[data-lineup-lead]').textContent = `${available.length} disponibles sur ${cars.length}. Faites défiler : le plateau avance de 1 à ${cars.length}.`
+$('[data-lineup-lead]').textContent = `${available.length} disponibles sur ${cars.length}. Faites défiler, ou choisissez un repère sous le plateau.`
 try {
   const table = mountTurntable($('[data-lineup]'), {
     drive: 'scroll',
     modes: ['ring', 'list'],
-    hint: 'Faites défiler pour avancer le plateau',
   })
   table.setCars(lineupCars)
 } catch (err) {

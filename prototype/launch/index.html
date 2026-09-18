@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://api.fontshare.com">
 <link rel="preconnect" href="https://cdn.fontshare.com" crossorigin>
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=excon@100,200,300,400,500&display=swap">
-<link rel="stylesheet" href="launch.css?v=21">
-<script type="module" src="home.js?v=20"></script>
+<link rel="stylesheet" href="launch.css?v=25">
+<script type="module" src="home.js?v=28"></script>
 </head>
 <body data-base="" class="on-dark-top">
 <header class="header">
@@ -84,9 +84,10 @@
         </div>
       </div>
       <div class="ring-stage" data-stage>
-        <canvas class="ring-canvas" data-canvas tabindex="0" role="img" aria-label="Plateau des véhicules en stock"></canvas>
+        <canvas class="ring-canvas" data-canvas tabindex="0" role="img" aria-label="Plateau des véhicules en stock. Flèches gauche et droite pour changer de véhicule, Entrée pour l'ouvrir."></canvas>
         <div class="ring-hud" data-hud>
-          <p class="count" aria-live="polite" data-lineup-count></p>
+          <div class="ticks" role="group" aria-label="Aller au véhicule" data-ticks></div>
+          <p class="count" data-lineup-count></p>
           <div class="ring-copy">
             <p class="ring-name" data-lineup-name></p>
             <p class="ring-specs" data-lineup-specs></p>
@@ -94,7 +95,7 @@
           <p class="ring-price" data-lineup-price></p>
           <a class="btn btn-light" href="#" data-open-front>Voir le véhicule <span class="arr" aria-hidden="true">→</span></a>
         </div>
-        <p class="ring-hint" data-ring-hint></p>
+        <p class="vh" aria-live="polite" data-live></p>
         <ol class="index" data-index hidden></ol>
       </div>
     </div>

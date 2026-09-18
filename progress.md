@@ -1,5 +1,68 @@
 # Project Progress Log
 
+## [Prototype] Plateau: side cars face the front car
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* `data.js`: new `face` field (side the nose points to in the photo). Photos 3 (BMW) and 6 (Hilux) face right, the rest face left.
+* Ring: side photos are mirrored so every car left of the front one faces right, and every car right of it faces left. The front car is never mirrored.
+* A car that crosses sides turns around between 0.35 and 0.85 of a step, not in one frame. The scroll settle means no car rests half-turned.
+
+### Verification
+* Car 1 in front: all 7 side cars face left.
+* Car 5 (Mercedes) in front: 4 cars on the left face right, 3 on the right face left.
+* No console errors.
+
+### Known limit
+* Mirrored side photos also mirror badges and grille lettering. They are small and dimmed, so this is hard to see.
+
+---
+
+## [Prototype] Plateau: ticks, settle, a11y
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* One tick per car under the plateau. Each tick is a button that scrolls to that car. Screen readers hear "01, Range Rover Autobiography LWB".
+* When the scroll rests between two cars, the page finishes the move to the nearest one. Not while a finger is on the screen.
+* Scroll per car: 0.85 to 0.6 screen (8 cars: about 4 screens instead of 7).
+* Arrow keys on the plateau work again (the scroll position overwrote them).
+* A hidden live region reads the car once the plateau rests: "Véhicule 2 sur 8 : Lexus LX 600…, 78 000 000 FCFA".
+* Removed the "Faites défiler…" hint (low contrast, repeated the lead, overlapped the HUD on phones). Removed the HUD drop shadow.
+* Phone HUD: one column, name on one line, a lane kept free for the WhatsApp button. Plateau/Liste and "Tout le stock" share one row.
+* Lenis: not added. The ring already eases to the scroll; a second smoothing layer makes it lag behind the finger.
+
+### Verification
+* 1440x900: stop at 1.4 cars, settles on car 2. Tick 5 goes to the Mercedes. Arrow right goes to car 6.
+* 375x812: HUD clear of the WhatsApp button, no overlap with the plateau head.
+* No console errors.
+
+---
+
+## [Prototype] Plateau studio light
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* Dropped the Cursor wash pass (drifting blobs, chapter crop marks, showroom glow line). It read as random decoration.
+* Plateau ring (WebGL) now stands in a studio: a gloss floor, a mirrored reflection under each car panel, and a softbox panel over the selected car. The softbox and its floor light follow the selection as you scroll.
+* Portrait screens skip the softbox: no free band exists between the page head and the cars. Floor and reflections stay.
+* Removed the CSS glow line under the ring and the radial washes on the line-up.
+
+### Verification
+* 1440x900: softbox over the front car, light pool and reflections on the floor, no overlap with the heading or the Plateau/Liste switch.
+* 375x812: no softbox, reflections visible, head controls readable.
+* No console errors on `/launch/` and `/launch/vehicules/`.
+
+### Open
+* Statement, showroom, alerte and footer are unchanged (flat or faint washes from the last commit).
+
+---
+
 ## [Prototype] Launch plateau order and atelier
 
 * **Status:** Completed
