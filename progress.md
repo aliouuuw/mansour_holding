@@ -1,5 +1,20 @@
 # Project Progress Log
 
+## [Motors] Plateau hover magnet
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* Home plateau `drive: 'hover'`. Lenis-style damp (duration 1.2). Neighbours pull toward the hovered plate.
+* Wheel scrolls the page. Magnet only on a plate, off while scrolling.
+* Draw loop stops when settled. Controls use `--r` (2px). Chapter overlap stays `--sheet`. No pills.
+
+### Verification
+* Rest HUD `01 / 08`. Hover a plate pans the fan. Wheel over the floor scrolls the page.
+
+---
+
 ## [Motors] Port the launch design to the real app
 
 * **Status:** Completed (branch `feat/motors-launch-port`)

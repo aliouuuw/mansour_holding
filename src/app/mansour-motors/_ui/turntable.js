@@ -6,6 +6,12 @@ const TAU = Math.PI * 2
 
 function clamp(n, a, b) { return Math.min(b, Math.max(a, n)) }
 
+/* Lenis-style exponential damp. Site Lenis uses duration 1.2; lambda = 10 / duration. */
+function damp(cur, next, lambda, dt) {
+  const t = Math.min(0.064, dt * 16.67 / 1000)
+  return cur + (next - cur) * (1 - Math.exp(-lambda * t))
+}
+
 function parsePos(pos) {
   const p = String(pos || '50% 55%').split(/\s+/)
   return [parseFloat(p[0]) / 100 || 0.5, parseFloat(p[1]) / 100 || 0.55]
@@ -269,6 +275,8 @@ function createRing(canvas) {
   let angle = 0
   let bend = 0
   let aberr = 0
+  let magI = 0
+  let mag = 0
   let gen = 0
   let pixel = [1, 1]
 
@@ -314,12 +322,17 @@ function createRing(canvas) {
     const lo = span - half
     const hi = half
     const pan = lo > hi ? clamp(ideal, hi, lo) : span / 2
+    const x0 = i * g - pan
+    const hx = magI * g - pan
+    const slot = Math.abs(i - magI)
+    const k = mag * Math.exp(-slot * slot * 0.55)
+    const pull = (hx - x0) * 0.32 * k
     return {
       pan,
-      x: i * g - pan,
+      x: x0 + pull,
       y: 0,
-      z: 0.95 / (1 + d * d) - 0.03 * d * d,
-      yaw: -d * 0.16,
+      z: 0.95 / (1 + d * d) - 0.03 * d * d + 0.16 * k,
+      yaw: -d * 0.16 - Math.sign(hx - x0 || 1) * 0.05 * k,
       d,
     }
   }
@@ -422,17 +435,17 @@ function createRing(canvas) {
   }
 
   function pick(cx, cy) {
-    const cr = canvas.getBoundingClientRect()
-    const x = cx - cr.left, y = cy - cr.top
-    let best = frontIndex(), dist = 1e9
+    let best = -1, dist = 1e9
     for (let i = 0; i < cars.length; i++) {
-      const posei = pose(i)
-      const p = project(posei.x, posei.y, posei.z)
-      if (!p) continue
-      const d = Math.hypot(p[0] * cr.width / pixel[0] - x, p[1] * cr.height / pixel[1] - y)
+      const r = planeRect(i)
+      const pad = 12
+      if (cx < r.left - pad || cy < r.top - pad || cx > r.left + r.width + pad || cy > r.top + r.height + pad) continue
+      const dx = r.left + r.width / 2 - cx
+      const dy = r.top + r.height / 2 - cy
+      const d = Math.hypot(dx, dy)
       if (d < dist) { dist = d; best = i }
     }
-    return dist < Math.min(cr.width, cr.height) * 0.42 ? best : frontIndex()
+    return best
   }
 
   function attrib(l, b) {
@@ -524,10 +537,12 @@ function createRing(canvas) {
 
   return {
     setCars,
-    setPose(a, velocity) {
+    setPose(a, velocity, hover, amount) {
       angle = a
-      bend = clamp(velocity * 1.15, -1.15, 1.15)
-      aberr = clamp(Math.abs(velocity) * 0.034, 0, 0.028)
+      bend = clamp(velocity * (hover != null ? 0.55 : 1.15), -1.15, 1.15)
+      aberr = clamp(Math.abs(velocity) * (hover != null ? 0.014 : 0.034), 0, 0.028)
+      if (hover != null) magI = hover
+      if (amount != null) mag = amount
     },
     draw,
     frontIndex,
@@ -612,6 +627,17 @@ export function mountTurntable(root, {
   let liveT = 0
   let touching = false
   let snapping = false
+  let magWant = 0
+  let magIWant = 0
+  let magI = 0
+  let mag = 0
+  let pointer = null
+  let scrolling = false
+  let scrollT = 0
+  let lastPx = NaN
+  let lastPy = NaN
+  const LAMBDA = 10 / 1.2
+  const REST = 8e-4
   const atelier = $('[data-atelier]', root)
 
   if (hintEl && hint) hintEl.textContent = hint
@@ -673,9 +699,22 @@ export function mountTurntable(root, {
   function goTo(i) {
     if (!cars.length) return
     i = clamp(i, 0, cars.length - 1)
-    if (drive !== 'scroll') { target = i * TAU / cars.length; return }
+    magIWant = i
+    if (drive !== 'scroll') { target = i * TAU / cars.length; start(); return }
     snapping = true
     scrollTo({ top: carY(i), behavior: reduceMotion.matches ? 'auto' : 'smooth' })
+  }
+
+  function hoverAt(cx, cy) {
+    if (!ring || !cars.length) return
+    const i = ring.pick(cx, cy)
+    if (i < 0) {
+      magWant = 0
+      return
+    }
+    magIWant = i
+    magWant = reduceMotion.matches ? 0 : 1
+    target = i * TAU / cars.length
   }
 
   /* when the scroll rests inside the plateau, finish the move to the nearest car */
@@ -744,14 +783,31 @@ export function mountTurntable(root, {
     raf = requestAnimationFrame(tick)
     if (!visible || mode !== 'ring' || !ring) return
     if (drive === 'scroll') scrollTarget()
+    if (drive === 'hover' && pointer && !scrolling && (pointer.x !== lastPx || pointer.y !== lastPy)) {
+      lastPx = pointer.x
+      lastPy = pointer.y
+      hoverAt(pointer.x, pointer.y)
+    }
     const dt = prev ? Math.min(32, t - prev) / 16.67 : 1
     prev = t
-    const next = angle + (target - angle) * (1 - Math.pow(0.72, dt))
-    vel += ((next - angle) - vel) * 0.35
+    const fluid = drive === 'hover' && !reduceMotion.matches
+    mag = fluid ? damp(mag, magWant, LAMBDA, dt) : mag + (magWant - mag) * (1 - Math.pow(0.78, dt))
+    magI = fluid ? damp(magI, magIWant, LAMBDA, dt) : magIWant
+    const next = fluid
+      ? damp(angle, target, LAMBDA, dt)
+      : angle + (target - angle) * (1 - Math.pow(0.72, dt))
+    vel += ((next - angle) - vel) * (fluid ? 0.12 : 0.35)
     angle = next
-    ring.setPose(angle, vel)
+    ring.setPose(angle, vel, magI, mag)
     ring.draw()
     hud()
+    if (drive !== 'scroll' && rest()) stop()
+  }
+
+  function rest() {
+    return Math.abs(target - angle) < REST
+      && Math.abs(magWant - mag) < REST
+      && Math.abs(magIWant - magI) < REST
   }
 
   function start() {
@@ -892,15 +948,34 @@ export function mountTurntable(root, {
   }
 
   canvas?.addEventListener('pointerdown', (e) => {
-    if (mode !== 'ring' || drive === 'scroll') return
+    if (mode !== 'ring') return
+    if (drive === 'hover') {
+      if (e.pointerType !== 'mouse') return
+      pointer = { x: e.clientX, y: e.clientY }
+      start()
+      return
+    }
+    if (drive === 'scroll') return
     canvas.setPointerCapture(e.pointerId)
     didDrag = false
     drag = { x: e.clientX, a: target }
   })
   canvas?.addEventListener('pointermove', (e) => {
+    if (mode === 'ring' && drive === 'hover' && ring) {
+      if (e.pointerType !== 'mouse' || scrolling) return
+      pointer = { x: e.clientX, y: e.clientY }
+      start()
+      return
+    }
     if (!drag) return
     if (Math.abs(e.clientX - drag.x) > 6) didDrag = true
     target = clamp(drag.a - (e.clientX - drag.x) / innerWidth * TAU * 1.15, 0, maxAngle())
+  })
+  canvas?.addEventListener('pointerleave', () => {
+    if (drive !== 'hover') return
+    pointer = null
+    magWant = 0
+    start()
   })
   const endDrag = () => {
     if (drag) snapTarget()
@@ -909,7 +984,7 @@ export function mountTurntable(root, {
   canvas?.addEventListener('pointerup', endDrag)
   canvas?.addEventListener('pointercancel', endDrag)
   canvas?.addEventListener('wheel', (e) => {
-    if (mode !== 'ring' || drive === 'scroll') return
+    if (mode !== 'ring' || drive === 'scroll' || drive === 'hover') return
     e.preventDefault()
     target += e.deltaY * 0.0028
     target = clamp(target, 0, maxAngle())
@@ -920,6 +995,7 @@ export function mountTurntable(root, {
     if (mode !== 'ring' || !ring || !cars.length) return
     if (didDrag) { didDrag = false; return }
     const i = ring.pick(e.clientX, e.clientY)
+    if (i < 0) return
     openIndex(i, ring.planeRect(i))
   })
   canvas?.addEventListener('keydown', (e) => {
@@ -949,6 +1025,18 @@ export function mountTurntable(root, {
     const b = e.target.closest('[data-i]')
     if (b) goTo(Number(b.dataset.i))
   })
+  if (drive === 'hover') {
+    addEventListener('scroll', () => {
+      scrolling = true
+      pointer = null
+      magWant = 0
+      lastPx = NaN
+      lastPy = NaN
+      start()
+      clearTimeout(scrollT)
+      scrollT = setTimeout(() => { scrolling = false }, 140)
+    }, { passive: true, signal })
+  }
   if (drive === 'scroll') {
     addEventListener('scroll', () => {
       clearTimeout(settleT)
@@ -1026,6 +1114,7 @@ export function mountTurntable(root, {
       io?.disconnect()
       clearTimeout(settleT)
       clearTimeout(liveT)
+      clearTimeout(scrollT)
       ring?.destroy()
     },
   }

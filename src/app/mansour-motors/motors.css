@@ -50,10 +50,10 @@ html:has(.mm) { scroll-padding-top: 80px; -webkit-text-size-adjust: 100%; backgr
   --pad: clamp(18px, 4.5vw, 72px);
   --max: 1440px;
   --head: 68px;
-  --sheet: clamp(18px, 2.4vw, 34px);
+  --sheet: clamp(18px, 2.4vw, 34px); /* chapter overlap only */
   --font: 'Excon', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --ease: cubic-bezier(.16, 1, .3, 1);
-  --r: 2px;
+  --r: 2px; /* plates, buttons, media. Circles stay 50%. No pills. */
 
   /* was body */
  background: var(--paper); color: var(--ink); font: 400 1rem/1.55 var(--font); -webkit-font-smoothing: antialiased; overflow-x: clip;
@@ -103,7 +103,7 @@ button, input, select { font: inherit; color: inherit; }
 .btn .arr {
   display: grid; place-items: center; flex: none;
   width: 1.9rem; height: 1.9rem; margin-left: auto;
-  background: rgba(246, 245, 242, .12); border-radius: 1px;
+  background: rgba(246, 245, 242, .12); border-radius: var(--r);
   font-size: .85rem; line-height: 1;
   transition: transform .4s var(--ease), background-color .3s;
 }
@@ -161,10 +161,10 @@ input::placeholder { color: var(--grey-2); }
 .seg button:hover, .seg a:hover, .seg [aria-pressed='true'], .seg [aria-current='true'] { color: var(--white); }
 .seg button:hover:not([aria-pressed='true']), .seg a:hover:not([aria-current='true']) { color: var(--ink); }
 .thumb { position: absolute; inset: 0; pointer-events: none; }
-.thumb i { position: absolute; inset: 0; background: var(--ink); border-radius: 1px; clip-path: inset(var(--t, 0) var(--r, 100%) var(--b, 0) var(--l, 0) round 1px); transition: clip-path .5s var(--ease); }
+.thumb i { position: absolute; inset: 0; background: var(--ink); border-radius: var(--r); clip-path: inset(var(--t, 0) var(--r, 100%) var(--b, 0) var(--l, 0) round 2px); transition: clip-path .5s var(--ease); }
 .switch { display: inline-flex; align-items: center; gap: .7rem; cursor: pointer; font-size: .9rem; }
-.switch input { appearance: none; margin: 0; width: 2.4rem; height: 1.3rem; border-radius: 999px; border: 1px solid var(--line); background: transparent; position: relative; cursor: pointer; transition: background-color .3s, border-color .3s; }
-.switch input::after { content: ''; position: absolute; top: 2px; left: 2px; width: calc(1.3rem - 6px); height: calc(1.3rem - 6px); border-radius: 50%; background: var(--grey); transition: transform .4s var(--ease), background-color .3s; }
+.switch input { appearance: none; margin: 0; width: 2.4rem; height: 1.3rem; border-radius: var(--r); border: 1px solid var(--line); background: transparent; position: relative; cursor: pointer; transition: background-color .3s, border-color .3s; }
+.switch input::after { content: ''; position: absolute; top: 2px; left: 2px; width: calc(1.3rem - 6px); height: calc(1.3rem - 6px); border-radius: var(--r); background: var(--grey); transition: transform .4s var(--ease), background-color .3s; }
 .switch input:checked { background: var(--ink); border-color: var(--ink); }
 .switch input:checked::after { background: var(--white); transform: translateX(1.1rem); }
 .tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; }
@@ -382,7 +382,7 @@ input::placeholder { color: var(--grey-2); }
 .plan-bays {
   position: relative; list-style: none; margin: 0; padding: 1.1rem 1.1rem 1.4rem;
   display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); row-gap: clamp(2rem, 4vw, 2.8rem);
-  border: 1.5px solid var(--wall); border-radius: 3px;
+  border: 1.5px solid var(--wall); border-radius: var(--r);
 }
 .plan-bays::after {
   content: ''; position: absolute; left: 36%; right: 36%; bottom: -1.5px; height: 1.5px; background: var(--paper);
@@ -463,7 +463,7 @@ input::placeholder { color: var(--grey-2); }
 }
 /* how far through today's opening hours we are, Dakar time */
 .day[aria-current='date']::after {
-  content: ''; position: absolute; left: .45rem; right: .45rem; bottom: .6rem; height: 2px; border-radius: 2px;
+  content: ''; position: absolute; left: .45rem; right: .45rem; bottom: .6rem; height: 2px; border-radius: var(--r);
   background: linear-gradient(var(--ink), var(--ink)) 0 0 / calc(var(--day, 0) * 100%) 100% no-repeat, rgb(18 17 16 / .16);
 }
 .day[aria-current='date'] b { color: var(--ink); }
@@ -720,12 +720,12 @@ input::placeholder { color: var(--grey-2); }
 }
 .ticks button::before {
   content: ''; position: absolute; left: .3rem; top: 50%; width: .55rem; height: 2px; margin-top: -1px;
-  border-radius: 2px; background: rgba(246, 245, 242, .38);
+  border-radius: var(--r); background: rgba(246, 245, 242, .38);
   transition: width .45s var(--ease), background-color .3s;
 }
 .ticks button:hover::before { background: rgba(246, 245, 242, .7); }
 .ticks button[aria-current='true']::before { width: 1.3rem; background: var(--white); }
-.ticks button:focus-visible { outline-offset: -1px; border-radius: 4px; }
+.ticks button:focus-visible { outline-offset: -1px; border-radius: var(--r); }
 .ring-canvas:focus-visible { outline: 2px solid var(--white); outline-offset: -6px; }
 .ring-copy { min-width: 0; }
 .ring-name { font-weight: 200; font-size: clamp(1.35rem, 2.5vw, 2.3rem); letter-spacing: -.03em; line-height: 1.05; }

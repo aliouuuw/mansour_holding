@@ -76,7 +76,7 @@ function Hero({ star, vehicles }: { star?: ApiVehicle; vehicles: ApiVehicle[] })
   )
 }
 
-/* ── chapter 2: the line-up. Scroll turns the WebGL plateau (see _ui/turntable.js) ── */
+/* ── chapter 2: the line-up. Hover pulls neighbouring plates (see _ui/turntable.js) ── */
 function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
   const ref = useRef<HTMLElement>(null)
   const router = useRouter()
@@ -88,7 +88,7 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
     let dead = false
     import('./_ui/turntable.js').then(({ mountTurntable }) => {
       if (dead || !ref.current) return
-      const t = mountTurntable(ref.current, { drive: 'scroll', modes: ['ring', 'list'], navigate: (href: string) => router.push(href) })
+      const t = mountTurntable(ref.current, { drive: 'hover', modes: ['ring', 'list'], navigate: (href: string) => router.push(href) })
       t.setCars(cars)
       table = t
     })
@@ -101,7 +101,7 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
         <div className="wrap lineup-head">
           <div>
             <h2 className="h2">En stock au showroom</h2>
-            <p className="lead">{available} disponibles sur {vehicles.length}. Faites défiler, ou choisissez un repère sous le plateau.</p>
+            <p className="lead">{available} disponibles sur {vehicles.length}. Survolez un véhicule. Les voisins se rapprochent.</p>
           </div>
           <div className="lineup-tools">
             <div className="seg" role="group" aria-label="Affichage" data-view>
@@ -112,7 +112,7 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
           </div>
         </div>
         <div className="ring-stage" data-stage>
-          <canvas className="ring-canvas" data-canvas tabIndex={0} role="img" aria-label="Plateau des véhicules en stock. Flèches gauche et droite pour changer de véhicule, Entrée pour l'ouvrir." />
+          <canvas className="ring-canvas" data-canvas tabIndex={0} role="img" aria-label="Plateau des véhicules en stock. Survolez un véhicule. Flèches gauche et droite pour changer, Entrée pour l'ouvrir." />
           <div className="ring-hud" data-hud>
             <div className="ticks" role="group" aria-label="Aller au véhicule" data-ticks />
             <p className="count" data-lineup-count />
