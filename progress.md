@@ -1,5 +1,24 @@
 # Project Progress Log
 
+## [Motors] Landing plane join + dry HUD
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* `--sheet: 0`. Statement no longer pulls over the plateau HUD.
+* HUD and search dock are dry `--black` plates. Frost stays on the header only.
+* Search dock is the hero’s last grid row, not an overlay on the plateau title.
+* `.lineup` clips so the HUD does not smear into the header on exit.
+
+### Verification
+* Hero: dock at viewport bottom, plate above it, hairline join.
+* Plateau: title and HUD full, no search dock, no frost on HUD.
+* Statement start: HUD sits above the paper plane (21px gap). No white cover on « Voir le véhicule ».
+* Photos left as-is. Catalog will replace them.
+
+---
+
 ## [Motors] Plateau hover magnet
 
 * **Status:** Completed
