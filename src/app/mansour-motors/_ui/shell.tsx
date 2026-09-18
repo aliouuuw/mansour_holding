@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Link } from '@/lib/router'
 import { CONTACT, openState, waLink } from './shared'
 
@@ -94,9 +94,19 @@ export function Shell({ children, className = '', waText = 'Bonjour Mansour Moto
   waText?: string
 }) {
   const [ready, setReady] = useState(false)
+  const router = useRouter()
   useEffect(() => { requestAnimationFrame(() => setReady(true)) }, [])
+  /* the plateau, the stock grid and the cards write plain <a> links; route them in the app */
+  const route = (e: React.MouseEvent) => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    const a = (e.target as Element).closest('a')
+    const href = a?.getAttribute('href')
+    if (!a || a.target || !href?.startsWith('/mansour-motors')) return
+    e.preventDefault()
+    router.push(href)
+  }
   return (
-    <div className={`mm ${className}${ready ? ' is-ready' : ''}`}>
+    <div className={`mm ${className}${ready ? ' is-ready' : ''}`} onClick={route}>
       <CarSprite />
       <Header />
       {children}

@@ -12,16 +12,16 @@ export default async function Page({
   const { vehicleId } = await params
 
   try {
-    const [vehicle, related] = await Promise.all([
+    const [vehicle, all] = await Promise.all([
       getVehicle(vehicleId),
-      listVehicles({ limit: 6, status: 'available' }),
+      listVehicles({ limit: 100 }),
     ])
-    return (
-      <PublicVehicleDetail
-        vehicle={vehicle}
-        relatedVehicles={related.data.filter((v) => v.id !== vehicleId).slice(0, 5)}
-      />
-    )
+    /* other cars: the three nearest in price */
+    const others = all.data
+      .filter((v) => v.id !== vehicleId)
+      .sort((a, b) => Math.abs(a.price - vehicle.price) - Math.abs(b.price - vehicle.price))
+      .slice(0, 3)
+    return <PublicVehicleDetail vehicle={vehicle} others={others} />
   } catch {
     notFound()
   }

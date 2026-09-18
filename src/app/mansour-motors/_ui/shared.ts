@@ -45,3 +45,18 @@ export function openState(now = new Date()) {
   }
   return { open: false, text: 'Fermé' }
 }
+
+/* visit slots: the next opening days, whole hours inside the hours, today only from the next hour */
+export function bookingDays(now = new Date(), count = 6) {
+  const h = now.getUTCHours() + now.getUTCMinutes() / 60
+  const out: { date: Date; slots: number[]; today: boolean }[] = []
+  for (let i = 0; out.length < count && i < 14; i++) {
+    const date = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + i))
+    const hh = HOURS[date.getUTCDay()]
+    if (!hh) continue
+    const slots = []
+    for (let s = hh[0]; s < hh[1]; s++) if (i > 0 || s >= h + 1) slots.push(s)
+    if (slots.length) out.push({ date, slots, today: i === 0 })
+  }
+  return out
+}

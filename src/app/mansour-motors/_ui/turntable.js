@@ -730,7 +730,8 @@ export function mountTurntable(root, {
       else b.removeAttribute('aria-current')
     }
     /* read the car once the plateau rests, not every car it passes */
-    if (liveEl) {
+    /* only the plateau speaks; on the stock page the same region reports the filter count */
+    if (liveEl && mode === 'ring') {
       clearTimeout(liveT)
       liveT = setTimeout(() => {
         liveEl.textContent = `Véhicule ${i + 1} sur ${cars.length} : ${c.make} ${c.model}, ${fcfa(c.price)}`

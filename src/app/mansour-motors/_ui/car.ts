@@ -15,6 +15,7 @@ export type PlateauCar = {
   status: ApiVehicle['status']
   color: string
   fuel: ApiVehicle['fuelType']
+  arrived: number
 }
 
 export const toCar = (v: ApiVehicle): PlateauCar => ({
@@ -30,6 +31,7 @@ export const toCar = (v: ApiVehicle): PlateauCar => ({
   status: v.status,
   color: v.color,
   fuel: v.fuelType,
+  arrived: Date.parse(v.createdAt),
 })
 
 /* the line-up order: what you can buy first, the dearest first */
