@@ -13,7 +13,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn, formatPrice, formatNumber } from '@/lib/utils'
 import { vehiclesApi, invalidateMotorsQueries, type VehicleStatus } from '@/lib/api'
-import { VehicleForm, type VehicleFormValues } from '@/components/motors/VehicleForm'
+import { VehicleForm, featureEntries, formExtras, toExtras, type VehicleFormValues } from '@/components/motors/VehicleForm'
 import { useToast } from '@/components/ui/Toast'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 
@@ -49,7 +49,7 @@ export function MotorsVehicleDetail() {
       ...values,
       vin: values.vin || null,
       description: values.description || null,
-      extras: Object.fromEntries(values.extras.map(({ key, value }) => [key, value])),
+      extras: toExtras(values),
     }),
     onSuccess: (updated) => {
       qc.setQueryData(['vehicle', vehicleId], updated)
@@ -119,7 +119,7 @@ export function MotorsVehicleDetail() {
       mileage: vehicle.mileage, price: vehicle.price, status: vehicle.status,
       fuelType: vehicle.fuelType, transmission: vehicle.transmission,
       color: vehicle.color, vin: vehicle.vin ?? '', description: vehicle.description ?? '',
-      extras: Object.entries(extras).map(([key, value]) => ({ key, value })),
+      ...formExtras(extras),
     }
     return (
       <div className="mx-auto max-w-2xl space-y-6">
@@ -274,11 +274,11 @@ export function MotorsVehicleDetail() {
             </div>
           </div>
 
-          {Object.keys(extras).length > 0 && (
+          {featureEntries(extras).length > 0 && (
             <div className="border border-noir-200 bg-white p-5 shadow-sm">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-noir-500 mb-4">Équipements</h2>
               <div className="space-y-2">
-                {Object.entries(extras).map(([key, value]) => (
+                {featureEntries(extras).map(([key, value]) => (
                   <div key={key} className="flex items-center justify-between">
                     <span className="text-sm text-noir-500">{key}</span>
                     <span className="text-sm font-medium text-noir-900">{value}</span>
