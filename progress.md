@@ -1,5 +1,30 @@
 # Project Progress Log
 
+## [Motors] Port the launch design to the real app
+
+* **Status:** Completed (branch `feat/motors-launch-port`)
+* **Date:** 2026-09-18
+
+### What was done
+* `app/mansour-motors/motors.css`: prototype/launch/launch.css nested under `.mm`, so the dashboard keeps its styles. The `<use>` car rules stay unscoped (a shadow tree cannot be reached through `.mm`).
+* `_ui/shell.tsx`: header (tone follows the chapter), footer, WhatsApp, car sprite; routes plain internal `<a>` links through the app router.
+* Home, `/vehicules` and `/vehicules/[id]` ported with real data. `turntable.js` and `stock.js` stay imperative, load by dynamic import after mount, and clean every window listener on unmount.
+* Lenis is skipped on `/mansour-motors` (the plateau eases the native scroll itself).
+* Dashboard vehicle form: "sens du véhicule" and "cadrage" stored in `extras.face` / `extras.pos`, kept out of the features list (`VehicleForm.test.ts`).
+* Old `MotorsNavbar` / `MotorsFooter` removed.
+
+### Verification
+* `bun run type-check` clean, `bun test src/components/motors/VehicleForm.test.ts` 2 pass, `bun run build` passes.
+* Browser, 1440x900 and 375x812: plateau renders R2 photos (CORS fine), plan, map drive, alert preview, filters + URL sync (`?energie=diesel&vue=grille`, 4/8), in-app navigation to a detail page, visit slot message, not-found page.
+
+### Open
+* `bun run lint` crashes on the ESLint config (circular JSON), also on `main`.
+* Seed data: some photos do not match their record (Range Rover shows an Audi). Staff must set `face` per photo in the dashboard for the plateau mirroring to be right.
+* `PRODUCT.md` and `PublicFooter.tsx` still say Avenue Cheikh Anta Diop.
+* Excon loads from the Fontshare CDN, not self-hosted.
+
+---
+
 ## [Prototype] Showroom map, footer wordmark, chapter sheets
 
 * **Status:** Completed (not committed)
