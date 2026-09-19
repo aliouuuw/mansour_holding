@@ -15,7 +15,11 @@ const NAV = [
 export function OpenNote({ className }: { className?: string }) {
   const [open, setOpen] = useState<{ open: boolean; text: string } | null>(null)
   useEffect(() => setOpen(openState()), [])
-  return <span className={className} data-open="" data-state={open ? (open.open ? 'open' : 'closed') : undefined}>{open?.text}</span>
+  return (
+    <span className={className} data-open="" data-state={open ? (open.open ? 'open' : 'closed') : undefined} suppressHydrationWarning>
+      {open?.text ?? ''}
+    </span>
+  )
 }
 
 /* the top-down car used by the floor plan, its key, and the map pin */
@@ -36,8 +40,10 @@ function CarSprite() {
 function Header() {
   const ref = useRef<HTMLElement>(null)
   const pathname = usePathname()
-  /* the header takes the tone of the chapter passing under it */
+  /* pathname and the clock are client-only; paint the same markup on the server first */
+  const [live, setLive] = useState(false)
   useEffect(() => {
+    setLive(true)
     const header = ref.current
     if (!header) return
     const onScroll = () => {
@@ -60,7 +66,7 @@ function Header() {
         <Link className="logo" to="/mansour-motors">Mansour Motors</Link>
         <nav className="nav" aria-label="Principal">
           {NAV.map((n) => (
-            <Link key={n.to} to={n.to} aria-current={pathname === n.to ? 'page' : undefined}>{n.label}</Link>
+            <Link key={n.to} to={n.to} aria-current={live && pathname === n.to ? 'page' : undefined}>{n.label}</Link>
           ))}
         </nav>
         <div className="header-end">

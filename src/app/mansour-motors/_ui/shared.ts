@@ -15,10 +15,9 @@ export const FUEL = { diesel: 'Diesel', gasoline: 'Essence', hybrid: 'Hybride', 
 export const GEARBOX = { automatic: 'Automatique', manual: 'Manuelle', cvt: 'CVT' } as const
 export const STATE = { available: 'Disponible', reserved: 'Réservé', sold: 'Vendu' } as const
 
-const nf = new Intl.NumberFormat('fr-FR')
-const clean = (s: string) => s.replace(/[  ]/g, ' ')
-export const fcfa = (n: number) => `${clean(nf.format(n))} FCFA`
-export const km = (n: number) => `${clean(nf.format(n))} km`
+const digits = (n: number) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+export const fcfa = (n: number) => `${digits(n)} FCFA`
+export const km = (n: number) => `${digits(n)} km`
 export const pad2 = (n: number) => String(n).padStart(2, '0')
 export const waLink = (text: string) => `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(text)}`
 export const vehicleUrl = (v: Pick<ApiVehicle, 'id'>) => `/mansour-motors/vehicules/${v.id}`

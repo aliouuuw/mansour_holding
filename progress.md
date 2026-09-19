@@ -1,5 +1,20 @@
 # Project Progress Log
 
+## [Motors] Header hydration
+
+* **Status:** Completed
+* **Date:** 2026-09-18
+
+### What was done
+* Nav `aria-current` waits for mount, so the server HTML matches the first client paint.
+* Hours text still fills after mount (`OpenNote`).
+* Prices and km use ASCII grouping, not `Intl.NumberFormat('fr-FR')`.
+
+### Verification
+* `/mansour-motors?h=1`: Accueil is current after mount. No Next issues overlay. Open note shows Dakar hours. Price `98 000 000 FCFA`.
+
+---
+
 ## [Motors] Landing plane join + dry HUD
 
 * **Status:** Completed
