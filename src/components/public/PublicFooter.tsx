@@ -120,7 +120,7 @@ export function PublicFooter() {
                 </li>
                 <li className="flex items-center gap-3 text-sm text-white/50">
                   <Location01Icon className="h-4 w-4 flex-shrink-0 text-gold-400/60" />
-                  Avenue Cheikh Anta Diop, Dakar, Sénégal
+                  Route de la Corniche Ouest, Almadies, Dakar
                 </li>
               </ul>
             </div>

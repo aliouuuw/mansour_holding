@@ -1,5 +1,19 @@
 # Project Progress Log
 
+## [Copy] Showroom address is the Corniche
+
+* **Status:** Completed
+* **Date:** 2026-09-19
+
+### What was done
+* `PRODUCT.md` and `PublicFooter.tsx` now say Route de la Corniche Ouest, Almadies, Dakar.
+* No leftover Avenue Cheikh Anta Diop in `src/` or `PRODUCT.md`.
+
+### Open
+* Old prototypes (`showroom/`, `nuit/`, `mono/`, `accrochage/`) still say Avenue Cheikh Anta Diop.
+
+---
+
 ## [Motors] Header hydration
 
 * **Status:** Completed

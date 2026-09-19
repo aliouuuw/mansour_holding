@@ -24,7 +24,7 @@ A single named house holding a finite, curated stock of individual vehicles that
 
 - Discovery happens on a phone, frequently on mobile data, sometimes in bright sun.
 - Interface language is French. Prices are in FCFA.
-- Inquiry is by phone, email, or an on-page form. The dealership is on Avenue Cheikh Anta Diop, Dakar. Stated hours: Mon-Fri 8h-18h, Sat 9h-17h.
+- Inquiry is by phone, email, or an on-page form. The dealership is on Route de la Corniche Ouest, Almadies, Dakar. Stated hours: Mon-Fri 8h-18h, Sat 9h-17h.
 - Stock turns over: a vehicle can be available, reserved, or sold, and the public layer shows that state.
 
 ## Capabilities and Constraints
