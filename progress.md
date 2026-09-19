@@ -1,5 +1,19 @@
 # Project Progress Log
 
+## [Repo] Drop HTML prototypes
+
+* **Status:** Completed
+* **Date:** 2026-09-19
+
+### What was done
+* Removed `prototype/` (launch, showroom, nuit, mono, accrochage, piste, archives).
+* Live app is the source. `.claude/launch.json` only starts `bun run dev`.
+
+### Verification
+* `git ls-files prototype` is empty. App comments no longer point at a deleted map script.
+
+---
+
 ## [Copy] Showroom address is the Corniche
 
 * **Status:** Completed

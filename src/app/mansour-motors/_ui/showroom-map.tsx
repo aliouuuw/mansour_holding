@@ -1,7 +1,7 @@
 'use client'
 
-/* Generated from OpenStreetMap data (© OpenStreetMap contributors, ODbL) by
-   prototype/launch/tools/showroom-map.py. Do not edit the paths by hand: re-run the tool.
+/* Generated from OpenStreetMap data (© OpenStreetMap contributors, ODbL).
+   Do not edit the road paths by hand.
    The car drives the Corniche to the door as the chapter scrolls in. */
 import { useEffect, useRef } from 'react'
 
