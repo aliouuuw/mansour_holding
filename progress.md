@@ -1,5 +1,34 @@
 # Project Progress Log
 
+## [Motors] The three UI items
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* `.index` used the `padding` shorthand, which overrode the `padding-inline` from `.wrap`. Rows ran to the viewport edge and the status label was shaved. Switched to `padding-block`, which fixes the landing and the catalogue at once.
+* Added `wrap` to the landing's `<ol className="index">`; the catalogue already had it.
+* `silver-shimmer` no longer runs at rest. It plays on `:hover` and `:focus-visible` only.
+* `.fly` keeps its four layout properties. Kept deliberately, reason recorded in `motors.css`.
+
+### Verification
+* `bun run type-check` passed.
+* Desk 1440, Liste mode: status right edge 1375.2, gutter 64.8px, matching `--pad`. Was 1440 and zero.
+* Computed `padding-inline` is 64.8px on both pages; the catalogue keeps its own `padding-block` (19.2 / 80).
+* Resting `animation-name` on `.btn::after` is `none`.
+* Catalogue at 1440 and 390: zero console errors, no overflow.
+* Detector: 4 findings across the directory, all pre-existing.
+
+### Learnings
+* A `padding` shorthand on a class that also carries `.wrap` silently kills the gutter. The shared rule was the fix, not the one page that showed the symptom.
+* Measure before rewriting for performance. The `.fly` transition ran 48 frames at 16.7ms with none dropped, so the detector warning did not apply: the layer is fixed and holds one child, so the only layout it dirties is its own.
+
+### Open
+* IA calls remain: delete the search form, the page's last word, empty and small-stock states.
+* Blocked on the catalogue: bay names, the hard-coded star, the duplicated hero photo.
+
+---
+
 ## [Motors] The five UX blockers
 
 * **Status:** Completed
