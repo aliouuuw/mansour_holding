@@ -1,5 +1,34 @@
 # Project Progress Log
 
+## [Hygiene] Dropped Lenis
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Removed `lenis` and `SmoothScroll`. Root layout uses native scroll.
+* Other packages stay: each still has an importer (dashboard, auth, holding home).
+
+### Verification
+* `bun run type-check` passed.
+* `package.json` has no `lenis`.
+
+---
+
+## [Motors] Unused mark assets removed
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Deleted unused `mark.tsx`, `hero-car.png`, `mark.jpg`, `mark-m.jpg`, `mark.svg`.
+* Kept `hero-still.jpg`, `hero-still-m.jpg`, `hero-still-a.jpg` (landing + seed).
+
+### Verification
+* Grep: no remaining imports of `HouseMark` or those paths.
+
+---
+
 ## Next: dependency hygiene
 
 * **Status:** Planned

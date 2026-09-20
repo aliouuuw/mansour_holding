@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { Providers } from '@/components/providers'
-import { SmoothScroll } from '@/components/SmoothScroll'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -19,7 +18,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>
-          <SmoothScroll />
           {children}
         </Providers>
       </body>
