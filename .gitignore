@@ -21,3 +21,6 @@ Thumbs.db
 
 # Design critique snapshots
 .impeccable/
+
+# Client catalogue source PDFs (151 MB, not for git)
+public/mansour-motors/Catalogue Vehicules Issa Ndao/
