@@ -184,7 +184,7 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
             <Button href="#" data-open-front="">Voir le véhicule</Button>
           </div>
           <p className="vh" aria-live="polite" data-live />
-          <ol className="index" data-index hidden />
+          <ol className="index wrap" data-index hidden />
         </div>
         <div className="atelier" data-atelier hidden>
           <a className="atelier-hero ch-dark" href="#" data-atelier-hero>
