@@ -1,5 +1,34 @@
 # Project Progress Log
 
+## [Motors] Impeccable critique, and the phone fixes
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Dual-agent critique of the landing page. Scored 22/32 (heuristics 7 and 10 n/a, Persuade surface).
+* Fixed the P0: `motors.css` hid price, specs, status and CTA on `.lineup .atelier-meta` below 860px. The panel now sits under the photo.
+* Fixed `.ink span` resting colour (`#c9c4bb`, 1.55:1) to `--grey-2` (3.9:1). `.on` is emphasis now, not existence.
+* Dropped `whitespace-nowrap` on the hero title. A real model name measured 730px in a 390px viewport.
+* `prestige()` skips sold cars.
+
+### Verification
+* `bun run type-check` passed.
+* Real 390px render: price 185 000 000 FCFA at 21.6px, status `Disponible`, CTA 354x48. No horizontal overflow.
+* Three long model names all wrap inside 390px (right edge 372) and inside 1440px (right edge 1375).
+* Detector: no new findings. Three pre-existing remain.
+
+### Learnings
+* A clean detector run is not a clean page. The detector passed the landing page while its phone build hid the price.
+* Measure the resting state, not the settled one. The evidence pass scored `.ink` at 16.85:1 because it measured after the scroll handler ran.
+
+### Open
+* Not done, out of agreed scope: hero price (deliberately pure), header opacity (P2), `.fly` layout transition at `motors.css:908`, Showroom heading, stale Liste copy, bay-name truncation.
+* Catalogue is being replaced with client data soon, so hard-coded models were left alone.
+* Critique snapshot in `.impeccable/critique/` is untracked. Commit or gitignore it.
+
+---
+
 ## [Motors] Reusable UI kit, silver Button
 
 * **Status:** Completed
@@ -65,23 +94,24 @@
 
 ---
 
-## Next: dependency hygiene
+## Next: finish the Tailwind pass on Motors
 
 * **Status:** Planned
 * **Date:** 2026-09-20
 
+### State today
+* All 25 `prd.json` tasks pass. Remaining work is design polish, not backlog.
+* `_ui` kit exists: `Button`, `Field`, `Fieldset`, `Chapter`, `Plate`, `Card`, `Shell`.
+* `motors.css` is 971 lines. Hero uses Tailwind utilities. Seek grid, plates, and chapters stay in CSS.
+* Dependency hygiene is done. Lenis and the unused mark assets are deleted.
+
 ### Scope
-* Next pass: drop unused npm packages. Do not start until this motors commit is on `main`.
+1. Move catalog and detail layout to Tailwind utilities.
+2. Keep bespoke surfaces (nickel plate, seek grid, floor veil) in `motors.css`.
+3. Target: `motors.css` under 600 lines with no visual change.
 
-### First check (imports exist today)
-* `framer-motion`, `hugeicons-react`, `lenis` — holding home + dashboard. Not used under `/mansour-motors`.
-* `@tanstack/react-table` — dashboard tables only.
-* `clsx` + `tailwind-merge` — `cn()` in dashboard and holding home.
-* `better-auth`, `@tanstack/react-query`, `react-hook-form`, `drizzle-orm`, `postgres`, `zod` — still wired.
-
-### Also unused in tree (not packages)
-* `src/app/mansour-motors/_ui/mark.tsx` — no importer.
-* `public/mansour-motors/hero-car.png`, `mark.jpg`, `mark-m.jpg`, `mark.svg` — no references.
+### Blocked / open
+* `main` is 4 commits ahead of `origin/main`. Push before the next pass.
 
 ---
 
