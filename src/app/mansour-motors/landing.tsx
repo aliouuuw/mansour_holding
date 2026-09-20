@@ -7,70 +7,103 @@ import type { ApiVehicle } from '@/lib/api'
 import { Shell, OpenNote } from './_ui/shell'
 import { ShowroomMap } from './_ui/showroom-map'
 import { lineup, toCar } from './_ui/car'
-import { CONTACT, DAY, FUEL, HOURS, STATE, cover, fcfa, focal, km, pad2, vehicleUrl, waLink } from './_ui/shared'
+import { CONTACT, DAY, HOURS, STATE, pad2, vehicleUrl, waLink } from './_ui/shared'
 
 const BUDGETS = [30, 50, 70, 100]
 
-/* ── chapter 1: one car on a plate, and the search on the same black ── */
-function Hero({ star, vehicles }: { star?: ApiVehicle; vehicles: ApiVehicle[] }) {
+function prestige(vehicles: ApiVehicle[]) {
+  return vehicles.find((v) => v.make === 'Rolls-Royce' && v.model === 'Cullinan')
+    ?? lineup(vehicles).find((v) => v.status === 'available')
+    ?? vehicles[0]
+}
+
+/* ── chapter 1: the prestige car on the floor. Camera enters the room. ── */
+function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
+  const ref = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const fine = window.matchMedia('(pointer: fine)').matches
+    const motion = window.matchMedia('(prefers-reduced-motion: no-preference)').matches
+    if (!fine || !motion) return
+    const onMove = (e: PointerEvent) => {
+      const r = el.getBoundingClientRect()
+      const x = ((e.clientX - r.left) / r.width) * 2 - 1
+      const y = ((e.clientY - r.top) / r.height) * 2 - 1
+      el.style.setProperty('--mx', String(Math.max(-1, Math.min(1, x))))
+      el.style.setProperty('--my', String(Math.max(-1, Math.min(1, y))))
+    }
+    const onLeave = () => {
+      el.style.setProperty('--mx', '0')
+      el.style.setProperty('--my', '0')
+    }
+    el.addEventListener('pointermove', onMove)
+    el.addEventListener('pointerleave', onLeave)
+    return () => {
+      el.removeEventListener('pointermove', onMove)
+      el.removeEventListener('pointerleave', onLeave)
+    }
+  }, [])
+  if (!star) return null
+  return (
+    <section className="hero ch-light" aria-label={fresh ? `${star.make} ${star.model}, dernière arrivée à Dakar` : `${star.make} ${star.model}`} ref={ref}>
+      <div className="hero-stage" aria-hidden="true">
+        <div className="hero-cam">
+          <picture>
+            <source media="(max-width: 860px)" srcSet="/mansour-motors/hero-still-m.jpg" width={1080} height={1920} />
+            {/* eslint-disable-next-line @next/next/no-img-element -- local Higgsfield still, full-bleed cover */}
+            <img className="hero-still" src="/mansour-motors/hero-still.jpg" alt="" width={2688} height={1520} decoding="async" fetchPriority="high" />
+          </picture>
+        </div>
+        <div className="hero-glint" />
+      </div>
+      <div className="hero-copy">
+        {fresh && <p className="hero-arrival">Dernière arrivée à Dakar</p>}
+        <h2 className="hero-title">{star.model}</h2>
+        <p className="brand">{star.make}</p>
+        <Link className="btn btn-silver" to={vehicleUrl(star)}>Voir le véhicule</Link>
+      </div>
+    </section>
+  )
+}
+
+/* threshold of chapter 2: search sits here, not on the mark */
+function Seek({ vehicles }: { vehicles: ApiVehicle[] }) {
   const router = useRouter()
   const [make, setMake] = useState('')
   const makes = useMemo(() => [...new Set(vehicles.map((v) => v.make))].sort((a, b) => a.localeCompare(b, 'fr')), [vehicles])
   const models = useMemo(() => vehicles.filter((v) => v.make === make).map((v) => v.model), [vehicles, make])
-
   const search = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const q = new URLSearchParams()
     for (const [k, v] of new FormData(e.currentTarget)) if (v) q.set(k, String(v))
     router.push(`/mansour-motors/vehicules${q.size ? `?${q}` : ''}`)
   }
-
   return (
-    <section className="hero ch-dark" aria-label="Véhicule à la une">
-      {star && (
-        <>
-          <div className="hero-rail">
-            <p className="brand">{star.make}</p>
-            <h2 className="hero-title">{star.model}</h2>
-            <div><span className="status" data-status={star.status}>{STATE[star.status]}</span></div>
-            <dl className="figures">
-              <dt>Année</dt><dd>{star.year}</dd>
-              <dt>Kilométrage</dt><dd>{km(star.mileage)}</dd>
-              <dt>Énergie</dt><dd>{FUEL[star.fuelType]}</dd>
-            </dl>
-            <dl className="figures figures-price"><dt>Prix</dt><dd>{fcfa(star.price)}</dd></dl>
-            <Link className="btn btn-light" to={vehicleUrl(star)}>Voir le véhicule <span className="arr" aria-hidden="true">→</span></Link>
-          </div>
-          <div className="hero-stage">
-            <Link className="hero-plate" to={vehicleUrl(star)} aria-label={`${star.make} ${star.model}`}>
-              <span className="crop" aria-hidden="true" />
-              {/* eslint-disable-next-line @next/next/no-img-element -- object-position comes from the vehicle's focal point */}
-              <img src={cover(star)} alt={`${star.make} ${star.model}, ${star.color}`} style={{ '--pos': focal(star) } as React.CSSProperties} decoding="async" fetchPriority="high" />
-            </Link>
-          </div>
-        </>
-      )}
-      <form className="hero-dock" action="/mansour-motors/vehicules" onSubmit={search}>
-        <p className="dock-title">Trouver un véhicule</p>
-        <label><span>Marque</span>
-          <select name="marque" value={make} onChange={(e) => setMake(e.target.value)}>
-            <option value="">Toutes</option>
-            {makes.map((m) => <option key={m}>{m}</option>)}
-          </select>
-        </label>
-        <label><span>Modèle</span>
-          <select name="modele" disabled={!make} key={make}>
-            <option value="">{make ? 'Tous' : "Marque d'abord"}</option>
-            {models.map((m) => <option key={m}>{m}</option>)}
-          </select>
-        </label>
-        <label><span>Budget</span>
-          <select name="budget">
-            <option value="">Tous les budgets</option>
-            {BUDGETS.map((b) => <option key={b} value={b * 1_000_000}>{b} M FCFA max.</option>)}
-          </select>
-        </label>
-        <button className="btn btn-light" type="submit">Rechercher <span className="arr" aria-hidden="true">→</span></button>
+    <section className="seek ch-light" aria-label="Trouver un véhicule">
+      <form className="seek-form wrap" action="/mansour-motors/vehicules" onSubmit={search}>
+        <p className="seek-title">Trouver un véhicule</p>
+        <div className="seek-plate">
+          <label><span>Marque</span>
+            <select name="marque" value={make} onChange={(e) => setMake(e.target.value)}>
+              <option value="">Toutes</option>
+              {makes.map((m) => <option key={m}>{m}</option>)}
+            </select>
+          </label>
+          <label><span>Modèle</span>
+            <select name="modele" disabled={!make} key={make}>
+              <option value="">{make ? 'Tous' : "Marque d'abord"}</option>
+              {models.map((m) => <option key={m}>{m}</option>)}
+            </select>
+          </label>
+          <label><span>Budget</span>
+            <select name="budget">
+              <option value="">Tous</option>
+              {BUDGETS.map((b) => <option key={b} value={b * 1_000_000}>{b} M FCFA max.</option>)}
+            </select>
+          </label>
+        </div>
+        <button className="btn" type="submit">Voir le stock <span className="arr" aria-hidden="true">→</span></button>
       </form>
     </section>
   )
@@ -86,13 +119,27 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
   useEffect(() => {
     let table: { destroy(): void } | undefined
     let dead = false
-    import('./_ui/turntable.js').then(({ mountTurntable }) => {
-      if (dead || !ref.current) return
-      const t = mountTurntable(ref.current, { drive: 'hover', modes: ['ring', 'list'], navigate: (href: string) => router.push(href) })
-      t.setCars(cars)
-      table = t
-    })
-    return () => { dead = true; table?.destroy() }
+    let gen = 0
+    const mq = window.matchMedia('(max-width: 860px)')
+    const mount = () => {
+      const id = ++gen
+      table?.destroy()
+      table = undefined
+      const phone = mq.matches
+      import('./_ui/turntable.js').then(({ mountTurntable }) => {
+        if (dead || id !== gen || !ref.current) return
+        const t = mountTurntable(ref.current, {
+          drive: phone ? 'pointer' : 'hover',
+          modes: phone ? ['atelier'] : ['ring', 'list'],
+          navigate: (href: string) => router.push(href),
+        })
+        t.setCars(cars)
+        table = t
+      })
+    }
+    mount()
+    mq.addEventListener('change', mount)
+    return () => { dead = true; mq.removeEventListener('change', mount); table?.destroy() }
   }, [cars, router])
 
   return (
@@ -101,7 +148,8 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
         <div className="wrap lineup-head">
           <div>
             <h2 className="h2">En stock au showroom</h2>
-            <p className="lead">{available} disponibles sur {vehicles.length}. Survolez un véhicule. Les voisins se rapprochent.</p>
+            <p className="lead hide-phone">{available} disponibles sur {vehicles.length}. Survolez un véhicule. Les voisins se rapprochent.</p>
+            <p className="lead hide-desk">{available} disponibles sur {vehicles.length}. Glissez la rangée. Touchez la photo pour ouvrir.</p>
           </div>
           <div className="lineup-tools">
             <div className="seg" role="group" aria-label="Affichage" data-view>
@@ -125,6 +173,25 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
           </div>
           <p className="vh" aria-live="polite" data-live />
           <ol className="index" data-index hidden />
+        </div>
+        <div className="atelier" data-atelier hidden>
+          <a className="atelier-hero ch-dark" href="#" data-atelier-hero>
+            {/* eslint-disable-next-line @next/next/no-img-element -- filled by turntable.js */}
+            <img data-atelier-img alt="" decoding="async" />
+            <div className="atelier-meta">
+              <p className="count" data-atelier-count />
+              <p className="brand" data-atelier-brand />
+              <p className="atelier-name" data-atelier-name />
+              <p className="atelier-specs" data-atelier-specs />
+              <div data-atelier-status />
+              <p className="atelier-price" data-atelier-price />
+              <span className="btn btn-light">Voir le véhicule <span className="arr" aria-hidden="true">→</span></span>
+            </div>
+          </a>
+          <div className="atelier-rail wrap">
+            <p className="atelier-kicker">La rangée</p>
+            <div className="atelier-strip" data-atelier-strip />
+          </div>
         </div>
       </div>
     </section>
@@ -312,12 +379,14 @@ function Alert() {
 
 export function MansourMotorsLanding({ vehicles }: { vehicles: ApiVehicle[] }) {
   const ordered = useMemo(() => lineup(vehicles), [vehicles])
-  const star = ordered.find((v) => v.status === 'available') ?? ordered[0]
+  const star = prestige(ordered)
+  const fresh = !!star && ordered.every((v) => v.createdAt <= star.createdAt)
   return (
-    <Shell className="on-dark-top">
+    <Shell>
       <main>
         <h1 className="vh">Mansour Motors, véhicules premium à Dakar</h1>
-        <Hero star={star} vehicles={vehicles} />
+        <Hero star={star} fresh={fresh} />
+        <Seek vehicles={vehicles} />
         {ordered.length > 0 && <Lineup vehicles={ordered} />}
         <Statement vehicles={vehicles} />
         <Visit />

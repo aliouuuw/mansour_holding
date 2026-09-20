@@ -1,5 +1,249 @@
 # Project Progress Log
 
+## Next: dependency hygiene
+
+* **Status:** Planned
+* **Date:** 2026-09-20
+
+### Scope
+* Next pass: drop unused npm packages. Do not start until this motors commit is on `main`.
+
+### First check (imports exist today)
+* `framer-motion`, `hugeicons-react`, `lenis` — holding home + dashboard. Not used under `/mansour-motors`.
+* `@tanstack/react-table` — dashboard tables only.
+* `clsx` + `tailwind-merge` — `cn()` in dashboard and holding home.
+* `better-auth`, `@tanstack/react-query`, `react-hook-form`, `drizzle-orm`, `postgres`, `zod` — still wired.
+
+### Also unused in tree (not packages)
+* `src/app/mansour-motors/_ui/mark.tsx` — no importer.
+* `public/mansour-motors/hero-car.png`, `mark.jpg`, `mark-m.jpg`, `mark.svg` — no references.
+
+---
+
+## [Motors] Hero title contrast is a floor veil
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Removed title stroke and bloom. No glyph halo.
+* Contrast is a stronger paper gradient on `.hero-copy` (full width, not a box on the word).
+
+### Verification
+* `text-shadow: none`, stroke 0. 1440: Cullinan is ink on the floor wash.
+
+---
+
+## [Motors] Hero title contrast is a paper bloom
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Removed `-webkit-text-stroke` on `.hero-title`.
+* Contrast is a soft paper `text-shadow` bloom. Ink fill stays.
+
+### Verification
+* Computed stroke 0px. Shadow present. 1440 screenshot: no outline on Cullinan.
+
+---
+
+## [Motors] Lineup photo has no crop marks
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Removed `.crop` from the Lineup atelier hero.
+
+### Verification
+* `.lineup .atelier-hero .crop` is absent. One `.crop` remains on the WhatsApp form.
+
+---
+
+## [Motors] Phone Lineup overlay is brand and model only
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Phone Lineup `.atelier-meta` is type on the photo: Rolls-Royce + Cullinan.
+* Specs, status, price, and CTA stay hidden. They remain on the vehicle page.
+* Plate background and border are off. Height 42px (was 192).
+
+### Verification
+* 390: brand and name visible. Other children `display: none`. Hero href stays a vehicle URL.
+
+---
+
+## [Motors] Seek title is bold
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* `.seek-title` weight is 700. Phone inherits the same weight.
+
+### Verification
+* Computed `font-weight` on `.seek-title` is 700.
+
+---
+
+## [Motors] Seek title has more space below
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Under 1100px `.seek-title` has `margin-bottom: .55rem`.
+
+### Verification
+* 1075px: title 18px tall. Gap to first select 19px (was ~10px).
+
+---
+
+## [Motors] Desktop Seek is one row of selects plus button
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Below 1100px the title takes the full first row.
+* Marque, Modèle, Budget, and « Voir le stock » stay on one grid row (`repeat(3, 1fr) auto`).
+* Phone plate under 860px is unchanged.
+
+### Verification
+* 1100px: form height 123px (was 183). Columns `256 256 256 161`. Field bottoms all 1008.
+
+---
+
+## [Motors] Desktop hero uses the phone stack
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Hero copy is one column on the floor: arrival, model, make, CTA.
+* Desktop no longer puts the make and button on the left wall.
+
+### Verification
+* 1440×900: arrival 596–614, Cullinan 628–762, Rolls-Royce 769–787, button 795–843. All left 65px. Stacked.
+
+---
+
+## [Motors] Phone Seek is a register plate
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Below 860px the search block is a title, one three-row plate, and a full-width « Voir le stock ».
+* Desktop stays a single bar. `seek-plate` is `display: contents` at 1440.
+
+### Verification
+* 390: plate 354×165. Rows ~54px. Marque Rolls-Royce submits to `/mansour-motors/vehicules?marque=Rolls-Royce`.
+* 1440: form height 94px, five columns.
+
+---
+
+## [Motors] Hero CTA is dark silver, no arrow
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Hero « Voir le véhicule » is dark nickel. No arrow.
+* Shimmer stays on the plate. Other buttons stay ink.
+
+### Verification
+* Button text is `Voir le véhicule`. No `.arr`.
+* Color `rgb(236, 234, 229)`. Fill now starts near `#4a4946` and bottoms at `#1c1b19`.
+* Shine is soft 135° bands: faded stops, `blur(7px)`, `soft-light`. No hard lines.
+
+---
+
+## [Motors] Hero holds back price and stats
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Hero copy is arrival, model, make, and « Voir le véhicule ».
+* Year, km, status, and price stay off the hero.
+
+### Verification
+* `/mansour-motors?h=1` hero text: Dernière arrivée à Dakar, Cullinan, Rolls-Royce, Voir le véhicule. No `.hero-kicker`.
+
+---
+
+## [Motors] Phone lineup is a photo + strip
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Below 860px the stock chapter is atelier: one photo, a swipe row, tap to open.
+* No WebGL canvas on the phone. Plateau / Liste is hidden.
+* Phone lead: « Glissez la rangée. Touchez la photo pour ouvrir. »
+* Desktop keeps the hover ring.
+
+### Verification
+* 390×844: canvas `display:none`. Hero 390×422. Strip `clientWidth` 354, `scrollWidth` 1545. Title 20px below the header. Strip in the first viewport (703–833 in 844).
+* Strip `data-i=1` then photo tap opens `/mansour-motors/vehicules/1d079cfc-35eb-45f7-b78d-b55520fc2210` (Autobiography LWB).
+* 1440×900: `is-ring`, canvas 1434×900, atelier hidden, hover lead, Plateau/Liste visible.
+
+---
+
+## [Motors] Hero copy sits on the floor
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Arrival line captions the model name on the marble, not under the header.
+* Header is clear at rest. Frost only after scroll.
+* Phone: one stack at the bottom. Desktop: facts in the left wall, name on the floor.
+* Copy unchanged.
+
+### Verification
+* Phone 390×844: arrival 652–670, title 673–714, CTA 776–826 (inside 844).
+* Desktop 1440×900: facts 234–348, plaque 705–864. No overlap with the 68px header.
+
+---
+
+## [Motors] Hero signals latest arrival in Dakar
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Hero first line is « Dernière arrivée à Dakar » when that vehicle is the newest `createdAt`.
+* The Cullinan still is unchanged. No pill, no gold.
+
+### Verification
+* `/mansour-motors?a=1`: region label includes « dernière arrivée à Dakar ». Visible line above Rolls-Royce.
+
+---
+
+## [Motors] Hero is the prestige car in stock
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Hero copy binds to the Cullinan row (make, year, km, status, price, vehicle CTA).
+* `prestige()` prefers the Rolls-Royce Cullinan, else the dearest available.
+* Restored `public/mansour-motors/hero-still.jpg` to the approved black Cullinan (16:9).
+* Added `hero-still-m.jpg` (9:16 outpaint of the same still) via `<picture>` at max-width 860px.
+* Inserted VIN `SCA665C04SU100009` into live Postgres. No full reseed.
+
+### Verification
+* `/mansour-motors`: region Rolls-Royce Cullinan, `2025 · 80 km`, Disponible, `185 000 000 FCFA`.
+* Desktop still is the Cullinan. Phone `currentSrc` is `hero-still-m.jpg` (1080×1920).
+* Plateau 01 is the Cullinan. CTA opens `/mansour-motors/vehicules/fdd9fc65-7845-47eb-abe8-2719ded83fdf`.
+
+---
+
 ## [Repo] Drop HTML prototypes
 
 * **Status:** Completed

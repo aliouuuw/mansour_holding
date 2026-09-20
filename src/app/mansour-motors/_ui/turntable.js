@@ -1059,16 +1059,38 @@ export function mountTurntable(root, {
     const b = e.target.closest('button')
     if (b?.dataset.mode) setMode(b.dataset.mode)
   })
+  let swipeX = 0
+  let swiping = false
+  let didSwipe = false
+  atelier?.addEventListener('pointerdown', (e) => {
+    if (mode !== 'atelier') return
+    if (!e.target.closest('[data-atelier-hero]')) return
+    swipeX = e.clientX
+    swiping = true
+    didSwipe = false
+    atelier.setPointerCapture?.(e.pointerId)
+  }, { signal })
+  atelier?.addEventListener('pointerup', (e) => {
+    if (!swiping) return
+    swiping = false
+    if (mode !== 'atelier' || !cars.length) return
+    const dx = e.clientX - swipeX
+    if (Math.abs(dx) < 48) return
+    didSwipe = true
+    setFeatured(clamp(featured + (dx < 0 ? 1 : -1), 0, cars.length - 1))
+  }, { signal })
   atelier?.addEventListener('click', (e) => {
     const b = e.target.closest('[data-i]')
     if (b) {
       e.preventDefault()
+      didSwipe = false
       setFeatured(Number(b.dataset.i))
       return
     }
     const hero = e.target.closest('[data-atelier-hero]')
     if (!hero || !cars[featured]) return
     e.preventDefault()
+    if (didSwipe) { didSwipe = false; return }
     const img = $('[data-atelier-img]', atelier)
     openIndex(featured, img?.getBoundingClientRect())
   })

@@ -153,6 +153,24 @@ const vehicleSeed = [
     ],
     extras: { 'Finition': 'ZX', 'Caméra': '360°', 'Suspension': 'KDSS' },
   },
+  {
+    make: 'Rolls-Royce',
+    model: 'Cullinan',
+    year: 2025,
+    mileage: 80,
+    price: 185000000,
+    status: 'available' as const,
+    fuelType: 'gasoline' as const,
+    transmission: 'automatic' as const,
+    color: 'Noir',
+    vin: 'SCA665C04SU100009',
+    description: 'Rolls-Royce Cullinan, noir. Spirit of Ecstasy, calandre Pantheon, intérieur cuir, galerie Starlight. Au showroom, route de la Corniche Ouest.',
+    images: [
+      '/mansour-motors/hero-still.jpg',
+      '/mansour-motors/hero-still-a.jpg',
+    ],
+    extras: { face: 'left', pos: '62% 52%', 'Starlight': 'Galerie', 'Calandre': 'Pantheon' },
+  },
 ]
 
 async function seed() {
