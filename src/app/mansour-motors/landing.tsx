@@ -9,8 +9,10 @@ import { lineup, toCar } from './_ui/car'
 import { BUDGETS, CONTACT, DAY, HOURS, STATE, YEARS, pad2, vehicleUrl, waLink } from './_ui/shared'
 
 function prestige(vehicles: ApiVehicle[]) {
-  return vehicles.find((v) => v.make === 'Rolls-Royce' && v.model === 'Cullinan')
-    ?? lineup(vehicles).find((v) => v.status === 'available')
+  const open = vehicles.filter((v) => v.status !== 'sold')
+  return open.find((v) => v.make === 'Rolls-Royce' && v.model === 'Cullinan')
+    ?? lineup(open).find((v) => v.status === 'available')
+    ?? open[0]
     ?? vehicles[0]
 }
 
@@ -68,7 +70,7 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
       </div>
       <div className="hero-copy pointer-events-none absolute inset-0 z-[2] flex flex-col items-start justify-end gap-[.45rem] bg-[linear-gradient(to_top,rgb(243_242_239_/_0.82)_0%,rgb(243_242_239_/_0.38)_26%,rgb(243_242_239_/_0.08)_46%,transparent_62%)] px-[var(--pad)] pb-[4%] max-mm:gap-1.5 max-mm:bg-[linear-gradient(to_top,rgb(243_242_239_/_0.86)_0%,rgb(243_242_239_/_0.4)_28%,rgb(243_242_239_/_0.08)_48%,transparent_64%)] max-mm:pb-[calc(1.1rem+env(safe-area-inset-bottom,0px))]">
         {fresh && <p className="hero-arrival mb-[.55em] text-[.72rem] font-medium uppercase tracking-[.22em] text-mm-grey max-mm:mb-[.28em] max-mm:tracking-[.2em]">Dernière arrivée à Dakar</p>}
-        <h2 className="hero-title text-[clamp(4rem,_13vw,_10.5rem)] font-extralight leading-[.8] tracking-[-.04em] whitespace-nowrap text-mm-ink max-mm:text-[clamp(2.9rem,_13vw,_3.8rem)] max-mm:tracking-[-.03em]">{star.model}</h2>
+        <h2 className="hero-title text-balance text-[clamp(4rem,_13vw,_10.5rem)] font-extralight leading-[.86] tracking-[-.04em] [overflow-wrap:anywhere] text-mm-ink max-mm:text-[clamp(2.6rem,_11vw,_3.6rem)] max-mm:tracking-[-.03em]">{star.model}</h2>
         <p className="brand">{star.make}</p>
         <Button className="pointer-events-auto" to={vehicleUrl(star)}>Voir le véhicule</Button>
       </div>

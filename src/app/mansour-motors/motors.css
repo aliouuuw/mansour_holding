@@ -409,7 +409,7 @@ input::placeholder { color: var(--grey-2); }
   gap: clamp(2.5rem, 6vw, 6rem); align-items: center;
 }
 .ink { font-weight: 200; font-size: clamp(2.2rem, 5.2vw, 5rem); line-height: 1.05; letter-spacing: -.03em; max-width: 18ch; }
-.ink span { color: #c9c4bb; transition: color .55s var(--ease); }
+.ink span { color: var(--grey-2); transition: color .55s var(--ease); }
 .ink span.on { color: var(--ink); }
 /* the showroom floor: two rows of bays across an aisle, the door on the avenue.
    A real plan, so plain drawn lines are the right tool here. */
@@ -928,7 +928,10 @@ input::placeholder { color: var(--grey-2); }
   .lineup.is-atelier .lineup-head {
     position: static; pointer-events: auto; padding-bottom: 1rem;
   }
-  .lineup .atelier-hero { height: min(50svh, 430px); }
+  /* phone: the panel sits under the photo, so price and state have room */
+  .lineup .atelier-hero { height: auto; }
+  .lineup .atelier-hero img { height: min(46svh, 380px); }
+  .lineup .atelier-hero::after { inset: 0 0 auto; height: min(46svh, 380px); }
   .lineup .atelier-strip button { width: 42vw; }
   /* one column, and a lane on the right kept free for the WhatsApp button */
   .ring-hud {
@@ -949,19 +952,19 @@ input::placeholder { color: var(--grey-2); }
   .atelier-meta { left: 12px; right: 12px; bottom: 12px; max-width: none; }
   .atelier-strip button { width: 38vw; }
   .lineup .atelier-meta {
-    right: auto; max-width: min(18rem, calc(100% - 24px));
-    padding: 0; gap: .12rem;
-    background: none; border: 0;
+    position: static; left: auto; right: auto; bottom: auto;
+    max-width: none; gap: .3rem;
+    padding: .95rem 1.05rem 1.15rem;
+    border-top: 0; border-radius: 0 0 var(--r) var(--r);
   }
-  .lineup .atelier-meta .count,
-  .lineup .atelier-meta .atelier-specs,
-  .lineup .atelier-meta [data-atelier-status],
-  .lineup .atelier-meta .atelier-price,
-  .lineup .atelier-meta .btn { display: none; }
+  .lineup .atelier-meta .count { display: none; }
+  .lineup .atelier-meta .atelier-specs { font-size: .82rem; }
+  .lineup .atelier-meta .atelier-price { font-size: 1.35rem; margin-top: .1rem; }
+  .lineup .atelier-meta .btn { justify-self: stretch; width: 100%; margin-top: .6rem; }
   .lineup .atelier-meta .brand {
     display: block;
-    color: rgba(255, 255, 255, .62);
-    font-size: .68rem;
+    color: var(--grey);
+    font-size: .8rem;
     letter-spacing: .22em;
   }
   .lineup .atelier-name { font-size: 1.55rem; font-weight: 300; }
