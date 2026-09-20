@@ -1,5 +1,34 @@
 # Project Progress Log
 
+## [Motors] The five UX blockers
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* Header: opaque `--paper` / `--black` plus a hairline seam. The `backdrop-filter` never landed, so the 58% wash let content print through.
+* Tap targets: `.header-end a` and `.sign-links a` are `inline-flex` with `min-height: 44px`.
+* `.lineup .lead` follows the mode class (`lead-ring` / `lead-list` / `lead-atelier`), not the breakpoint.
+* The Showroom address is an `h2`. Contact is reachable by heading navigation.
+* 12.48px type floor across `motors.css` and the hero kicker. `.map-credit` also moved off `--grey-2`, which failed AA on the dark map.
+
+### Verification
+* `bun run type-check` passed.
+* Real render, 390 and 1440: **zero** strings under 12px (was 47 phone, 36 desk).
+* Phone number 44px tall in header and footer. Logo right edge 179px of 390, no overflow.
+* Header paints above all content across its whole band at both widths, light and dark tone.
+* Mode copy: ring, list and atelier each show exactly one lead. Verified by clicking the real toggle.
+* Detector: 3 findings, unchanged and pre-existing.
+
+### Learnings
+* `@supports (backdrop-filter: ...)` matches even where the blur renders as a no-op, so it is not a safe gate for legibility. Ship the opaque value outright.
+
+### Open
+* The week grid highlights today. On a Sunday the only inverted card reads "Fermé", so the Visit block shouts closed. Part of the peak-end problem, not a bug.
+* Still open: the IA calls (delete the search form, the page's last word, empty states), `.fly` at `motors.css:908`, `silver-shimmer`, and everything blocked on the catalogue.
+
+---
+
 ## [Motors] Impeccable critique, and the phone fixes
 
 * **Status:** Completed
