@@ -54,7 +54,7 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
         <div className="hero-cam origin-[72%_58%] max-mm:origin-[50%_58%]">
           <picture className="block size-full">
             <source media="(max-width: 860px)" srcSet="/mansour-motors/hero-still-m.jpg" width={1080} height={1920} />
-            {/* eslint-disable-next-line @next/next/no-img-element -- local Higgsfield still, full-bleed cover */}
+            {/* local Higgsfield still, full-bleed cover */}
             <img
               className="hero-still object-[58%_50%] max-mm:object-[50%_62%] [transform:translate3d(calc(var(--mx)*-1.5%),calc(var(--my)*-.9%),0)]"
               src="/mansour-motors/hero-still.jpg"

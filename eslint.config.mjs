@@ -1,9 +1,11 @@
-import { dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { FlatCompat } from '@eslint/eslintrc'
+import next from 'eslint-config-next/core-web-vitals'
 
-const compat = new FlatCompat({
-  baseDirectory: dirname(fileURLToPath(import.meta.url)),
-})
+/* eslint-config-next 16 ships a flat config, so it is spread directly.
+   Routing it through FlatCompat validated a flat config as eslintrc and
+   threw on the plugin graph's circular references. */
+const config = [
+  { ignores: ['.next/**', 'next-env.d.ts', 'drizzle/**'] },
+  ...next,
+]
 
-export default [...compat.extends('next/core-web-vitals')]
+export default config
