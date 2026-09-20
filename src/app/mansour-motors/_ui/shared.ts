@@ -11,6 +11,8 @@ export const CONTACT = {
   maps: 'https://www.google.com/maps/place/Mansour+Motors/@14.7347277,-17.5085261,19z',
 }
 
+export const BUDGETS = [30, 50, 70, 100]
+export const YEARS = [2022, 2023, 2024, 2025]
 export const FUEL = { diesel: 'Diesel', gasoline: 'Essence', hybrid: 'Hybride', electric: 'Électrique' } as const
 export const GEARBOX = { automatic: 'Automatique', manual: 'Manuelle', cvt: 'CVT' } as const
 export const STATE = { available: 'Disponible', reserved: 'Réservé', sold: 'Vendu' } as const

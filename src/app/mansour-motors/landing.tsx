@@ -4,12 +4,9 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
-import { Shell, OpenNote } from './_ui/shell'
-import { ShowroomMap } from './_ui/showroom-map'
+import { Button, Chapter, Field, OpenNote, Plate, Shell, ShowroomMap } from './_ui'
 import { lineup, toCar } from './_ui/car'
-import { CONTACT, DAY, HOURS, STATE, pad2, vehicleUrl, waLink } from './_ui/shared'
-
-const BUDGETS = [30, 50, 70, 100]
+import { BUDGETS, CONTACT, DAY, HOURS, STATE, YEARS, pad2, vehicleUrl, waLink } from './_ui/shared'
 
 function prestige(vehicles: ApiVehicle[]) {
   return vehicles.find((v) => v.make === 'Rolls-Royce' && v.model === 'Cullinan')
@@ -46,22 +43,34 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
   }, [])
   if (!star) return null
   return (
-    <section className="hero ch-light" aria-label={fresh ? `${star.make} ${star.model}, dernière arrivée à Dakar` : `${star.make} ${star.model}`} ref={ref}>
-      <div className="hero-stage" aria-hidden="true">
-        <div className="hero-cam">
-          <picture>
+    <section
+      className="hero ch-light relative isolate h-svh min-h-dvh overflow-hidden bg-mm-paper text-mm-ink"
+      aria-label={fresh ? `${star.make} ${star.model}, dernière arrivée à Dakar` : `${star.make} ${star.model}`}
+      ref={ref}
+    >
+      <div className="hero-stage pointer-events-none z-0 origin-[72%_58%] max-mm:origin-[50%_58%]" aria-hidden="true">
+        <div className="hero-cam origin-[72%_58%] max-mm:origin-[50%_58%]">
+          <picture className="block size-full">
             <source media="(max-width: 860px)" srcSet="/mansour-motors/hero-still-m.jpg" width={1080} height={1920} />
             {/* eslint-disable-next-line @next/next/no-img-element -- local Higgsfield still, full-bleed cover */}
-            <img className="hero-still" src="/mansour-motors/hero-still.jpg" alt="" width={2688} height={1520} decoding="async" fetchPriority="high" />
+            <img
+              className="hero-still object-[58%_50%] max-mm:object-[50%_62%] [transform:translate3d(calc(var(--mx)*-1.5%),calc(var(--my)*-.9%),0)]"
+              src="/mansour-motors/hero-still.jpg"
+              alt=""
+              width={2688}
+              height={1520}
+              decoding="async"
+              fetchPriority="high"
+            />
           </picture>
         </div>
         <div className="hero-glint" />
       </div>
-      <div className="hero-copy">
-        {fresh && <p className="hero-arrival">Dernière arrivée à Dakar</p>}
-        <h2 className="hero-title">{star.model}</h2>
+      <div className="hero-copy pointer-events-none absolute inset-0 z-[2] flex flex-col items-start justify-end gap-[.45rem] bg-[linear-gradient(to_top,rgb(243_242_239_/_0.82)_0%,rgb(243_242_239_/_0.38)_26%,rgb(243_242_239_/_0.08)_46%,transparent_62%)] px-[var(--pad)] pb-[4%] max-mm:gap-1.5 max-mm:bg-[linear-gradient(to_top,rgb(243_242_239_/_0.86)_0%,rgb(243_242_239_/_0.4)_28%,rgb(243_242_239_/_0.08)_48%,transparent_64%)] max-mm:pb-[calc(1.1rem+env(safe-area-inset-bottom,0px))]">
+        {fresh && <p className="hero-arrival mb-[.55em] text-[.72rem] font-medium uppercase tracking-[.22em] text-mm-grey max-mm:mb-[.28em] max-mm:tracking-[.2em]">Dernière arrivée à Dakar</p>}
+        <h2 className="hero-title text-[clamp(4rem,_13vw,_10.5rem)] font-extralight leading-[.8] tracking-[-.04em] whitespace-nowrap text-mm-ink max-mm:text-[clamp(2.9rem,_13vw,_3.8rem)] max-mm:tracking-[-.03em]">{star.model}</h2>
         <p className="brand">{star.make}</p>
-        <Link className="btn btn-silver" to={vehicleUrl(star)}>Voir le véhicule</Link>
+        <Button className="pointer-events-auto" to={vehicleUrl(star)}>Voir le véhicule</Button>
       </div>
     </section>
   )
@@ -80,7 +89,7 @@ function Seek({ vehicles }: { vehicles: ApiVehicle[] }) {
     router.push(`/mansour-motors/vehicules${q.size ? `?${q}` : ''}`)
   }
   return (
-    <section className="seek ch-light" aria-label="Trouver un véhicule">
+    <section className="relative z-[1] border-y border-mm-line bg-mm-paper" aria-label="Trouver un véhicule">
       <form className="seek-form wrap" action="/mansour-motors/vehicules" onSubmit={search}>
         <p className="seek-title">Trouver un véhicule</p>
         <div className="seek-plate">
@@ -103,7 +112,7 @@ function Seek({ vehicles }: { vehicles: ApiVehicle[] }) {
             </select>
           </label>
         </div>
-        <button className="btn" type="submit">Voir le stock <span className="arr" aria-hidden="true">→</span></button>
+        <Button type="submit">Voir le stock</Button>
       </form>
     </section>
   )
@@ -143,7 +152,7 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
   }, [cars, router])
 
   return (
-    <section className="lineup ch-dark is-ring" aria-label="La gamme en stock" ref={ref}>
+    <Chapter tone="dark" className="lineup is-ring" aria-label="La gamme en stock" ref={ref}>
       <div className="lineup-pin">
         <div className="wrap lineup-head">
           <div>
@@ -156,7 +165,7 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
               <button type="button" data-mode="ring" aria-pressed="true">Plateau</button>
               <button type="button" data-mode="list" aria-pressed="false">Liste</button>
             </div>
-            <Link className="btn btn-ghost-light" to="/mansour-motors/vehicules">Tout le stock <span className="arr" aria-hidden="true">→</span></Link>
+            <Button to="/mansour-motors/vehicules">Tout le stock</Button>
           </div>
         </div>
         <div className="ring-stage" data-stage>
@@ -169,7 +178,7 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
               <p className="ring-specs" data-lineup-specs />
             </div>
             <p className="ring-price" data-lineup-price />
-            <a className="btn btn-light" href="#" data-open-front>Voir le véhicule <span className="arr" aria-hidden="true">→</span></a>
+            <Button href="#" data-open-front="">Voir le véhicule</Button>
           </div>
           <p className="vh" aria-live="polite" data-live />
           <ol className="index" data-index hidden />
@@ -185,7 +194,7 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
               <p className="atelier-specs" data-atelier-specs />
               <div data-atelier-status />
               <p className="atelier-price" data-atelier-price />
-              <span className="btn btn-light">Voir le véhicule <span className="arr" aria-hidden="true">→</span></span>
+              <Plate>Voir le véhicule</Plate>
             </div>
           </a>
           <div className="atelier-rail wrap">
@@ -194,7 +203,7 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
           </div>
         </div>
       </div>
-    </section>
+    </Chapter>
   )
 }
 
@@ -239,7 +248,7 @@ function Statement({ vehicles }: { vehicles: ApiVehicle[] }) {
 
   const car = <svg viewBox="0 0 40 84"><use href="#car-top" /></svg>
   return (
-    <section className="statement ch-light">
+    <Chapter className="statement">
       <div className="wrap statement-grid">
         <p className="ink" ref={inkRef}>{PROMISE.split(' ').map((w, i) => <span key={i}>{w} </span>)}</p>
         <figure className="plan">
@@ -262,7 +271,7 @@ function Statement({ vehicles }: { vehicles: ApiVehicle[] }) {
           </p>
         </figure>
       </div>
-    </section>
+    </Chapter>
   )
 }
 
@@ -296,7 +305,7 @@ function Week() {
 
 function Visit() {
   return (
-    <section className="ch-dark visit-ch" id="showroom">
+    <Chapter tone="dark" className="visit-ch" id="showroom">
       <div className="map-stage"><ShowroomMap /></div>
       <div className="wrap visit-home">
         <p className="brand">Showroom</p>
@@ -304,12 +313,12 @@ function Visit() {
         <p className="week-note"><OpenNote /></p>
         <Week />
         <div className="actions">
-          <a className="btn btn-light" href={CONTACT.maps} target="_blank" rel="noopener">Itinéraire <span className="arr" aria-hidden="true">→</span></a>
-          <a className="btn btn-ghost-light" href={CONTACT.tel}>Appeler <span className="arr" aria-hidden="true">→</span></a>
+          <Button href={CONTACT.maps} target="_blank" rel="noopener">Itinéraire</Button>
+          <Button href={CONTACT.tel}>Appeler</Button>
         </div>
       </div>
       <p className="map-credit">Plan : © contributeurs OpenStreetMap</p>
-    </section>
+    </Chapter>
   )
 }
 
@@ -340,7 +349,7 @@ function Alert() {
     window.open(waLink(alertText(wish)), '_blank', 'noopener')
   }
   return (
-    <section className="ch-light" id="alerte">
+    <Chapter id="alerte">
       <div className="wrap alert">
         <div>
           <h2 className="h2">Vous ne trouvez pas votre modèle ?</h2>
@@ -352,28 +361,28 @@ function Alert() {
         </div>
         <form className="alert-form" noValidate onSubmit={send}>
           <span className="crop" aria-hidden="true" />
-          <label className="field full"><span>Marque et modèle recherchés</span>
+          <Field className="full" label="Marque et modèle recherchés">
             <input ref={wantRef} value={wish.want} onChange={set('want')} placeholder="Par exemple : Toyota Land Cruiser 300" autoComplete="off" />
-          </label>
-          <label className="field"><span>Budget maximum</span>
+          </Field>
+          <Field label="Budget maximum">
             <select value={wish.budget} onChange={set('budget')}>
               <option value="">À discuter</option>
               {BUDGETS.map((b) => <option key={b}>{b} 000 000 FCFA</option>)}
             </select>
-          </label>
-          <label className="field"><span>Année minimum</span>
+          </Field>
+          <Field label="Année minimum">
             <select value={wish.year} onChange={set('year')}>
               <option value="">Indifférent</option>
-              {[2022, 2023, 2024, 2025].map((y) => <option key={y}>{y}</option>)}
+              {YEARS.map((y) => <option key={y}>{y}</option>)}
             </select>
-          </label>
-          <label className="field"><span>Votre nom</span><input value={wish.name} onChange={set('name')} autoComplete="name" /></label>
-          <label className="field"><span>Téléphone</span><input value={wish.tel} onChange={set('tel')} type="tel" inputMode="tel" autoComplete="tel" /></label>
+          </Field>
+          <Field label="Votre nom"><input value={wish.name} onChange={set('name')} autoComplete="name" /></Field>
+          <Field label="Téléphone"><input value={wish.tel} onChange={set('tel')} type="tel" inputMode="tel" autoComplete="tel" /></Field>
           <p className="form-msg full" role="status">{msg}</p>
-          <button className="btn full" type="submit">Être prévenu sur WhatsApp <span className="arr" aria-hidden="true">→</span></button>
+          <Button className="full" type="submit">Être prévenu sur WhatsApp</Button>
         </form>
       </div>
-    </section>
+    </Chapter>
   )
 }
 

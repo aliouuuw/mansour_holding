@@ -1,5 +1,4 @@
-import { Link } from '@/lib/router'
-import { Shell } from '../../_ui/shell'
+import { Button, Shell } from '../../_ui'
 
 export default function NotFound() {
   return (
@@ -8,7 +7,7 @@ export default function NotFound() {
         <div className="empty">
           <p className="h2">Ce véhicule n&apos;est plus en ligne.</p>
           <p className="lead">Il a peut-être été vendu. Le stock du showroom est à jour.</p>
-          <Link className="btn" to="/mansour-motors/vehicules">Tout le stock <span className="arr" aria-hidden="true">→</span></Link>
+          <Button to="/mansour-motors/vehicules">Tout le stock</Button>
         </div>
       </main>
     </Shell>

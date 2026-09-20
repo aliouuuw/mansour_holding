@@ -117,39 +117,24 @@ button, input, select { font: inherit; color: inherit; }
 .status[data-status='sold']::before { background: var(--stop); }
 [data-state='open']::before, [data-state='closed']::before { content: ''; display: inline-block; width: .42rem; height: .42rem; border-radius: 50%; margin-right: .5rem; vertical-align: .1rem; background: var(--ok); }
 [data-state='closed']::before { background: var(--grey-2); }
-/* ── plate controls: a nested square arrow, a line that draws ──────── */
+/* ── plate controls. `.btn` is the house CTA (hero nickel). Use <Button>. `.soft` is tertiary. */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: .85rem;
-  border: 1px solid transparent; cursor: pointer; text-decoration: none; white-space: nowrap;
-  min-height: 3rem; padding: .55rem .55rem .55rem 1.25rem; border-radius: var(--r);
-  background: var(--ink); color: var(--white); font-weight: 500; font-size: .9rem; letter-spacing: .02em;
-  transition: background-color .3s var(--ease), color .3s, border-color .3s, transform .2s var(--ease);
-}
-.btn:hover { background: #2a2826; }
-.btn:active { transform: scale(.98); }
-.btn:not(:has(.arr)) { padding-inline: 1.2rem; }
-.btn .arr {
-  display: grid; place-items: center; flex: none;
-  width: 1.9rem; height: 1.9rem; margin-left: auto;
-  background: rgba(246, 245, 242, .12); border-radius: var(--r);
-  font-size: .85rem; line-height: 1;
-  transition: transform .4s var(--ease), background-color .3s;
-}
-.btn:hover .arr { transform: translateX(3px); }
-.btn-silver {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  color: #e4e2dc;
-  border-color: rgb(255 255 255 / .1);
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid rgb(255 255 255 / .1); cursor: pointer; text-decoration: none; white-space: nowrap;
+  min-height: 3rem; padding: .55rem 1.2rem; border-radius: var(--r);
+  color: #e4e2dc; font-weight: 500; font-size: .9rem; letter-spacing: .02em;
   background: linear-gradient(168deg, #4a4946 0%, #2a2927 34%, #3a3936 52%, #1c1b19 78%, #32312e 100%);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / .14),
     inset 0 -1px 0 rgb(0 0 0 / .45),
     0 0 18px rgb(90 88 82 / .28),
     0 10px 20px rgb(20 18 16 / .22);
+  transition: background-color .3s var(--ease), box-shadow .3s, transform .2s var(--ease);
 }
-.btn-silver::after {
+.btn::after {
   content: '';
   position: absolute; inset: -12px;
   border-radius: inherit;
@@ -167,7 +152,7 @@ button, input, select { font: inherit; color: inherit; }
   mix-blend-mode: soft-light;
   pointer-events: none;
 }
-.btn-silver:hover {
+.btn:hover {
   background: linear-gradient(168deg, #54534f 0%, #32312e 34%, #44423f 52%, #22211f 78%, #3c3b38 100%);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / .18),
@@ -175,16 +160,11 @@ button, input, select { font: inherit; color: inherit; }
     0 0 24px rgb(110 108 102 / .36),
     0 12px 22px rgb(20 18 16 / .24);
 }
+.btn:active { transform: scale(.98); }
 @media (prefers-reduced-motion: no-preference) {
-  .btn-silver::after { animation: silver-shimmer 3.2s linear 1.4s infinite; }
-  .btn-silver:hover::after { animation-duration: 1.8s; }
+  .btn::after { animation: silver-shimmer 3.2s linear 1.4s infinite; }
+  .btn:hover::after { animation-duration: 1.8s; }
 }
-.btn-light { background: var(--white); color: var(--ink); }
-.btn-light:hover { background: #e4e2dc; }
-.btn-light .arr { background: rgba(18, 17, 16, .08); }
-.btn-ghost-light { background: transparent; color: var(--white); border-color: rgba(246, 245, 242, .28); padding-inline: 1.1rem .5rem; }
-.btn-ghost-light:hover { background: rgba(246, 245, 242, .08); border-color: var(--white); }
-.btn-ghost-light .arr { background: rgba(246, 245, 242, .1); }
 .soft {
   display: inline-flex; align-items: center; justify-content: center; gap: .6rem;
   min-height: 3rem; padding: .7rem 1.2rem; border-radius: var(--r);
@@ -300,24 +280,17 @@ input::placeholder { color: var(--grey-2); }
 /* ── chapter 1: camera enters the room. The name sits in the marble. ─── */
 .hero {
   --mx: 0; --my: 0;
-  position: relative;
-  height: 100svh; min-height: 100dvh; overflow: hidden;
-  color: var(--ink);
-  background: var(--paper);
-  isolation: isolate;
   transition: --mx .8s var(--ease), --my .8s var(--ease);
 }
-.hero-stage { position: absolute; inset: 0; z-index: 0; pointer-events: none; transform-origin: 72% 58%; }
-.hero-cam {
-  position: absolute; inset: -8%;
-  transform-origin: 72% 58%;
-}
-.hero-cam picture { display: block; width: 100%; height: 100%; }
-.hero-still {
+.hero-stage { position: absolute; inset: 0; }
+.hero-cam { position: absolute; inset: -8%; }
+.hero-cam picture {
   display: block; width: 100%; height: 100%;
+}
+.hero-still {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; max-width: none;
   object-fit: cover;
-  object-position: 58% 50%;
-  transform: translate3d(calc(var(--mx) * -1.5%), calc(var(--my) * -.9%), 0);
 }
 .hero-glint {
   position: absolute; inset: 0;
@@ -327,28 +300,6 @@ input::placeholder { color: var(--grey-2); }
     transparent 64%
   );
   mix-blend-mode: soft-light;
-}
-.hero-copy {
-  position: absolute; inset: 0; z-index: 2; pointer-events: none;
-  display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start;
-  gap: .45rem;
-  padding: 0 var(--pad) 4%;
-  background: linear-gradient(to top, rgb(243 242 239 / .82) 0%, rgb(243 242 239 / .38) 26%, rgb(243 242 239 / .08) 46%, transparent 62%);
-}
-.hero-copy .btn { pointer-events: auto; }
-.hero-arrival {
-  margin: 0 0 .55em;
-  font-size: .72rem;
-  font-weight: 500;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: var(--grey);
-}
-.hero-title {
-  font-weight: 200; font-size: clamp(4rem, 13vw, 10.5rem);
-  letter-spacing: -.04em; line-height: .8;
-  white-space: nowrap;
-  color: var(--ink);
 }
 .crop {
   position: absolute; inset: 10px; z-index: 2; pointer-events: none; opacity: .4;
@@ -368,17 +319,12 @@ input::placeholder { color: var(--grey-2); }
 .figures dt { grid-row: 1; font-size: .74rem; color: var(--grey); letter-spacing: .04em; }
 .figures dd { grid-row: 2; font-weight: 100; font-size: clamp(1.35rem, 2.4vw, 2.1rem); letter-spacing: -.03em; line-height: 1.05; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .figures-price dd { font-weight: 200; }
-.seek {
-  position: relative; z-index: 1;
-  border-block: 1px solid var(--line);
-  background: var(--paper);
-}
 .seek-form {
   display: grid; grid-template-columns: minmax(9rem, auto) repeat(3, minmax(0, 1fr)) auto;
   align-items: end; gap: .65rem clamp(1rem, 2vw, 2rem);
   padding-block: .85rem 1rem;
 }
-.seek-title { font-weight: 500; font-size: clamp(1.05rem, 1.6vw, 1.35rem); letter-spacing: -.02em; line-height: 1.05; align-self: end; white-space: nowrap; }
+.seek-title { font-weight: 700; font-size: clamp(1.05rem, 1.6vw, 1.35rem); letter-spacing: -.02em; line-height: 1.05; align-self: end; white-space: nowrap; }
 .seek-form label { display: grid; gap: .15rem; min-width: 0; position: relative; padding-left: 1.05rem; }
 .seek-form label::before {
   content: ''; position: absolute; left: 0; top: .15rem; bottom: .1rem; width: 1px; background: var(--line);
@@ -651,7 +597,7 @@ input::placeholder { color: var(--grey-2); }
 .specs dd { font-weight: 300; font-size: 1.1rem; font-variant-numeric: tabular-nums; }
 .panel-actions { display: grid; gap: .6rem; }
 .panel-actions .btn, .panel-actions .soft { width: 100%; }
-.panel-actions .btn { justify-content: space-between; }
+.panel-actions .btn { justify-content: center; }
 .panel-actions .pair { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
 .panel .seg { display: flex; }
 .panel .seg a { flex: 1; text-align: center; padding-inline: .3rem; }
@@ -676,7 +622,7 @@ input::placeholder { color: var(--grey-2); }
 .bar.is-on { transform: none; }
 .bar p { font-size: .76rem; color: rgba(255, 255, 255, .6); line-height: 1.25; min-width: 0; }
 .bar b { display: block; color: var(--white); font-size: 1.05rem; font-weight: 300; font-variant-numeric: tabular-nums; }
-.bar .btn { background: var(--white); color: var(--ink); min-height: 2.7rem; padding: .4rem .4rem .4rem 1.05rem; }
+.bar .btn { min-height: 2.7rem; }
 /* ── narrow ────────────────────────────────────────────────────────── */
 @media (max-width: 1100px) {
   .header-end [data-open] { display: none; }
@@ -690,16 +636,6 @@ input::placeholder { color: var(--grey-2); }
   --head: 60px;
   .nav { display: none; }
   .header .wrap { grid-template-columns: 1fr auto; }
-  .hero { height: 100svh; min-height: 100dvh; }
-  .hero-still { object-position: 50% 62%; }
-  .hero-cam, .hero-stage { transform-origin: 50% 58%; }
-  .hero-copy {
-    gap: .4rem;
-    padding: 0 var(--pad) calc(1.1rem + env(safe-area-inset-bottom));
-    background: linear-gradient(to top, rgb(243 242 239 / .86) 0%, rgb(243 242 239 / .4) 28%, rgb(243 242 239 / .08) 48%, transparent 64%);
-  }
-  .hero-arrival { margin-bottom: .28em; letter-spacing: .2em; }
-  .hero-title { font-size: clamp(2.9rem, 13vw, 3.8rem); letter-spacing: -.03em; }
   .statement-grid { grid-template-columns: minmax(0, 1fr); }
   .plan { max-width: 26rem; }
   .alert-form { padding: 1.4rem 1.2rem; }
@@ -792,7 +728,7 @@ input::placeholder { color: var(--grey-2); }
   &.is-ready .hero-still { animation: none; }
   .hero-glint { display: none; }
   .hero-still { transform: none; }
-  .btn-silver::after { animation: none; }
+  .btn::after { animation: none; }
 }
 /* ── turntable: photo ring + index ─────────────────────────────────── */
 .lineup.ch-dark {

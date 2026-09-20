@@ -1,5 +1,41 @@
 # Project Progress Log
 
+## [Motors] Reusable UI kit, silver Button
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+
+### What was done
+* `_ui` kit: `Button` (default = hero nickel), `tone="soft"` for tertiary, `Plate` for overlay CTAs, `Field` / `Fieldset`, `Chapter`.
+* Landing, catalog, detail, not-found use the kit. Seek plate stays custom CSS.
+* `BUDGETS` and `YEARS` live in `_ui/shared`.
+
+### Verification
+* `bun run type-check` passed.
+* Landing: 8 silver plates share `linear-gradient(168deg, rgb(74, 73…)`.
+* Detail: `Envoyer` / `Réserver` are silver. `Tout le stock` / WhatsApp / Appeler stay `.soft`.
+* `#visite` CTA scrolls to the form.
+
+### Learnings
+* Do not put Seek labels on `Field`. The register plate uses `.seek-form label`, not `.field`.
+
+---
+
+## [Motors] Hero and Seek start on Tailwind
+
+* **Status:** In progress
+* **Date:** 2026-09-20
+
+### What was done
+* Hygiene commit `d8ec9de` is on `main`.
+* Added `mm` colors, `font-mm`, `mm` and `desk` breakpoints to `@theme`.
+* Hero layout uses Tailwind utilities. Seek grid stays in `motors.css` (arbitrary `grid-cols` did not compile).
+
+### Verification
+* 1440: Seek columns `193 278 278 278 161`, height 94px. Hero still reads as ink on the floor.
+
+---
+
 ## [Hygiene] Dropped Lenis
 
 * **Status:** Completed

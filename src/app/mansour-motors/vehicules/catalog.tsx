@@ -4,12 +4,10 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
-import { Shell } from '../_ui/shell'
-import { Card } from '../_ui/card'
+import { Button, Card, Plate, Shell } from '../_ui'
 import { toCar } from '../_ui/car'
-import { FUEL } from '../_ui/shared'
+import { BUDGETS, FUEL } from '../_ui/shared'
 
-const BUDGETS = [30, 50, 70, 100]
 const KMS = [1000, 5000, 10000, 20000]
 
 /* the markup and every card are rendered once; _ui/stock.js filters, sorts and animates them */
@@ -100,7 +98,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
               <p className="atelier-specs" data-atelier-specs />
               <div data-atelier-status />
               <p className="atelier-price" data-atelier-price />
-              <span className="btn btn-light">Voir le véhicule <span className="arr" aria-hidden="true">→</span></span>
+              <Plate>Voir le véhicule</Plate>
             </div>
           </a>
           <div className="atelier-rail wrap">
@@ -120,7 +118,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
           <div className="empty" data-empty hidden>
             <p className="h2">Aucun véhicule ne correspond.</p>
             <p className="lead">Élargissez un filtre, ou dites-nous ce que vous cherchez. Le showroom vous recontacte quand un véhicule correspond.</p>
-            <Link className="btn" to="/mansour-motors#alerte">Être prévenu <span className="arr" aria-hidden="true">→</span></Link>
+            <Button to="/mansour-motors#alerte">Être prévenu</Button>
           </div>
         </div>
       </main>

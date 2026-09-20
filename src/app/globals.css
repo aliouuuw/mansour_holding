@@ -8,6 +8,17 @@
   --font-serif: 'Playfair Display', serif;
   --font-motors: 'Outfit', system-ui, sans-serif;
   --font-motors-display: 'Syncopate', sans-serif;
+  --font-mm: 'Excon', system-ui, sans-serif;
+
+  --breakpoint-mm: 53.75rem;
+  --breakpoint-desk: 68.75rem;
+
+  --color-mm-paper: #f3f2ef;
+  --color-mm-ink: #121110;
+  --color-mm-grey: #5e5c58;
+  --color-mm-line: rgb(18 17 16 / 0.14);
+  --color-mm-off: #eceae6;
+  --radius-mm: 2px;
 
   /* ── Noir (Core Neutrals) ── */
   --color-noir-950: #0A0A0A;

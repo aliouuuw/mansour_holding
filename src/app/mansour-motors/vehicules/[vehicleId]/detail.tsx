@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
-import { Shell } from '../../_ui/shell'
-import { Card } from '../../_ui/card'
+import { Button, Card, Field, Fieldset, Shell } from '../../_ui'
 import { CONTACT, FUEL, GEARBOX, STATE, bookingDays, fcfa, focal, km, pad2, waLink } from '../../_ui/shared'
 
 const TABS = [
@@ -93,7 +92,7 @@ function Visit({ v, title }: { v: ApiVehicle; title: string }) {
       <h2 className="h2">Réserver une visite</h2>
       <form className="visit" noValidate onSubmit={send} onChange={() => setMsg('')}>
         <p className="lead">Choisissez un créneau dans nos horaires. La demande part sur WhatsApp, prête à envoyer.</p>
-        <fieldset className="field"><legend>Jour</legend>
+        <Fieldset legend="Jour">
           <div className="tiles">
             {days.map((d, i) => (
               <span className="tile" key={i}>
@@ -102,8 +101,8 @@ function Visit({ v, title }: { v: ApiVehicle; title: string }) {
               </span>
             ))}
           </div>
-        </fieldset>
-        <fieldset className="field"><legend>Heure</legend>
+        </Fieldset>
+        <Fieldset legend="Heure">
           <div className="tiles tiles-slots">
             {day == null
               ? <p className="hint">Choisissez d&apos;abord un jour.</p>
@@ -114,13 +113,13 @@ function Visit({ v, title }: { v: ApiVehicle; title: string }) {
                 </span>
               ))}
           </div>
-        </fieldset>
+        </Fieldset>
         <div className="visit-row">
-          <label className="field"><span>Votre nom</span><input name="name" autoComplete="name" /></label>
-          <label className="field"><span>Téléphone</span><input name="tel" type="tel" inputMode="tel" autoComplete="tel" /></label>
+          <Field label="Votre nom"><input name="name" autoComplete="name" /></Field>
+          <Field label="Téléphone"><input name="tel" type="tel" inputMode="tel" autoComplete="tel" /></Field>
         </div>
         <p className="form-msg" role="status">{msg}</p>
-        <button className="btn" type="submit">Envoyer la demande <span className="arr" aria-hidden="true">→</span></button>
+        <Button type="submit">Envoyer la demande</Button>
         <p className="visit-alt">Ou appelez le showroom au <a href={CONTACT.tel}>{CONTACT.phone}</a></p>
       </form>
     </section>
@@ -181,7 +180,7 @@ export function PublicVehicleDetail({ vehicle: v, others }: { vehicle: ApiVehicl
             <p className="brand">{v.make}</p>
             <h1 className="display">{v.model}</h1>
           </div>
-          <Link className="soft" to="/mansour-motors/vehicules"><span aria-hidden="true">←</span> Tout le stock</Link>
+          <Button tone="soft" to="/mansour-motors/vehicules"><span aria-hidden="true">←</span> Tout le stock</Button>
         </div>
 
         <div className="wrap detail">
@@ -215,12 +214,12 @@ export function PublicVehicleDetail({ vehicle: v, others }: { vehicle: ApiVehicl
             </nav>
             <div className="panel-actions">
               {sold
-                ? <Link className="btn" to="/mansour-motors#alerte">Être prévenu d&apos;un modèle similaire <span className="arr" aria-hidden="true">→</span></Link>
-                : <>
-                  <a className="btn" href="#visite">Réserver une visite <span className="arr" aria-hidden="true">→</span></a>
+                ? <Button to="/mansour-motors#alerte">Être prévenu d&apos;un modèle similaire</Button>
+                  : <>
+                  <Button href="#visite">Réserver une visite</Button>
                   <div className="pair">
-                    <a className="soft" href={waLink(question)} target="_blank" rel="noopener">WhatsApp</a>
-                    <a className="soft" href={CONTACT.tel}>Appeler</a>
+                    <Button tone="soft" href={waLink(question)} target="_blank" rel="noopener">WhatsApp</Button>
+                    <Button tone="soft" href={CONTACT.tel}>Appeler</Button>
                   </div>
                 </>}
             </div>
@@ -238,8 +237,8 @@ export function PublicVehicleDetail({ vehicle: v, others }: { vehicle: ApiVehicl
       <div className={`bar${bar ? ' is-on' : ''}`} aria-hidden={!bar}>
         <p><span>{title}</span><b>{fcfa(v.price)}</b></p>
         {sold
-          ? <Link className="btn" to="/mansour-motors#alerte" tabIndex={bar ? 0 : -1}>Être prévenu</Link>
-          : <a className="btn" href="#visite" tabIndex={bar ? 0 : -1}>Réserver une visite <span className="arr" aria-hidden="true">→</span></a>}
+          ? <Button to="/mansour-motors#alerte" tabIndex={bar ? 0 : -1}>Être prévenu</Button>
+          : <Button href="#visite" tabIndex={bar ? 0 : -1}>Réserver une visite</Button>}
       </div>
     </Shell>
   )
