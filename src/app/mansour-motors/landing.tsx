@@ -78,48 +78,6 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
   )
 }
 
-/* threshold of chapter 2: search sits here, not on the mark */
-function Seek({ vehicles }: { vehicles: ApiVehicle[] }) {
-  const router = useRouter()
-  const [make, setMake] = useState('')
-  const makes = useMemo(() => [...new Set(vehicles.map((v) => v.make))].sort((a, b) => a.localeCompare(b, 'fr')), [vehicles])
-  const models = useMemo(() => vehicles.filter((v) => v.make === make).map((v) => v.model), [vehicles, make])
-  const search = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const q = new URLSearchParams()
-    for (const [k, v] of new FormData(e.currentTarget)) if (v) q.set(k, String(v))
-    router.push(`/mansour-motors/vehicules${q.size ? `?${q}` : ''}`)
-  }
-  return (
-    <section className="relative z-[1] border-y border-mm-line bg-mm-paper" aria-label="Trouver un véhicule">
-      <form className="seek-form wrap" action="/mansour-motors/vehicules" onSubmit={search}>
-        <p className="seek-title">Trouver un véhicule</p>
-        <div className="seek-plate">
-          <label><span>Marque</span>
-            <select name="marque" value={make} onChange={(e) => setMake(e.target.value)}>
-              <option value="">Toutes</option>
-              {makes.map((m) => <option key={m}>{m}</option>)}
-            </select>
-          </label>
-          <label><span>Modèle</span>
-            <select name="modele" disabled={!make} key={make}>
-              <option value="">{make ? 'Tous' : "Marque d'abord"}</option>
-              {models.map((m) => <option key={m}>{m}</option>)}
-            </select>
-          </label>
-          <label><span>Budget</span>
-            <select name="budget">
-              <option value="">Tous</option>
-              {BUDGETS.map((b) => <option key={b} value={b * 1_000_000}>{b} M FCFA max.</option>)}
-            </select>
-          </label>
-        </div>
-        <Button type="submit">Voir le stock</Button>
-      </form>
-    </section>
-  )
-}
-
 /* ── chapter 2: the line-up. Hover pulls neighbouring plates (see _ui/turntable.js) ── */
 function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
   const ref = useRef<HTMLElement>(null)
@@ -316,8 +274,8 @@ function Visit() {
         <p className="week-note"><OpenNote /></p>
         <Week />
         <div className="actions">
-          <Button href={CONTACT.maps} target="_blank" rel="noopener">Itinéraire</Button>
           <Button href={CONTACT.tel}>Appeler</Button>
+          <Button tone="soft" href={CONTACT.maps} target="_blank" rel="noopener">Itinéraire</Button>
         </div>
       </div>
       <p className="map-credit">Plan : © contributeurs OpenStreetMap</p>
@@ -398,11 +356,10 @@ export function MansourMotorsLanding({ vehicles }: { vehicles: ApiVehicle[] }) {
       <main>
         <h1 className="vh">Mansour Motors, véhicules premium à Dakar</h1>
         <Hero star={star} fresh={fresh} />
-        <Seek vehicles={vehicles} />
         {ordered.length > 0 && <Lineup vehicles={ordered} />}
         <Statement vehicles={vehicles} />
-        <Visit />
         <Alert />
+        <Visit />
       </main>
     </Shell>
   )

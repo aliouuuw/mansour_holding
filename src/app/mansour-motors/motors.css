@@ -321,18 +321,6 @@ input::placeholder { color: var(--grey-2); }
 .figures dt { grid-row: 1; font-size: .78rem; color: var(--grey); letter-spacing: .04em; }
 .figures dd { grid-row: 2; font-weight: 100; font-size: clamp(1.35rem, 2.4vw, 2.1rem); letter-spacing: -.03em; line-height: 1.05; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .figures-price dd { font-weight: 200; }
-.seek-form {
-  display: grid; grid-template-columns: minmax(9rem, auto) repeat(3, minmax(0, 1fr)) auto;
-  align-items: end; gap: .65rem clamp(1rem, 2vw, 2rem);
-  padding-block: .85rem 1rem;
-}
-.seek-title { font-weight: 700; font-size: clamp(1.05rem, 1.6vw, 1.35rem); letter-spacing: -.02em; line-height: 1.05; align-self: end; white-space: nowrap; }
-.seek-form label { display: grid; gap: .15rem; min-width: 0; position: relative; padding-left: 1.05rem; }
-.seek-form label::before {
-  content: ''; position: absolute; left: 0; top: .15rem; bottom: .1rem; width: 1px; background: var(--line);
-}
-.seek-form label > span { font-size: .78rem; color: var(--grey); letter-spacing: .14em; text-transform: uppercase; }
-.seek-plate { display: contents; }
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .hero-stage {
@@ -505,6 +493,14 @@ input::placeholder { color: var(--grey-2); }
 }
 .day[aria-current='date'] b { color: var(--ink); }
 .day[aria-current='date'] span { color: var(--ink); }
+/* a closed today is still today, but the page must not close on a loud shut sign */
+.day[aria-current='date'][data-closed] {
+  background: none; color: inherit;
+  outline: 1px solid rgb(246 245 242 / .3); outline-offset: -1px;
+}
+.day[aria-current='date'][data-closed] b { color: var(--grey); }
+.day[aria-current='date'][data-closed] span { color: var(--grey); }
+.day[aria-current='date'][data-closed]::after { display: none; }
 /* ── chapter 6: not in stock yet ───────────────────────────────────── */
 #alerte { padding-block: clamp(5.5rem, 11vw, 9rem); }
 .alert { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
@@ -628,8 +624,6 @@ input::placeholder { color: var(--grey-2); }
 /* ── narrow ────────────────────────────────────────────────────────── */
 @media (max-width: 1100px) {
   .header-end [data-open] { display: none; }
-  .seek-form { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; }
-  .seek-form .seek-title { grid-column: 1 / -1; margin-bottom: .55rem; }
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .detail { grid-template-columns: minmax(0, 1fr); }
   .panel { position: static; }
@@ -642,40 +636,6 @@ input::placeholder { color: var(--grey-2); }
   .plan { max-width: 26rem; }
   .alert-form { padding: 1.4rem 1.2rem; }
   .figures dd { font-size: clamp(1.35rem, 6.5vw, 2rem); }
-  .seek-form {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1.15rem;
-    padding-block: 1.45rem 1.55rem;
-  }
-  .seek-form .seek-title, .seek-form .btn { grid-column: 1 / -1; }
-  .seek-title {
-    white-space: normal;
-    font-size: clamp(1.7rem, 7vw, 2.15rem);
-    letter-spacing: -.03em;
-  }
-  .seek-plate {
-    display: grid;
-    border: 1px solid var(--line);
-    border-radius: var(--r);
-    background: #eceae6;
-  }
-  .seek-form label {
-    display: grid;
-    grid-template-columns: 5.4rem minmax(0, 1fr);
-    align-items: center;
-    gap: .4rem 0.8rem;
-    min-height: 3.35rem;
-    padding: 0 1rem;
-    padding-left: 1rem;
-  }
-  .seek-form label::before { display: none; }
-  .seek-form label + label { border-top: 1px solid var(--line); }
-  .seek-form select {
-    min-height: 3.35rem;
-    border-bottom: 0;
-    font-size: 1rem;
-  }
-  .seek-form .btn { width: 100%; }
   .lineup-pin { position: static; height: auto; }
   .lineup-track { overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: .5rem; scrollbar-width: none; transform: none !important; }
   .lineup-track::-webkit-scrollbar { display: none; }
