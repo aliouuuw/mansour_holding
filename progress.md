@@ -1,5 +1,35 @@
 # Project Progress Log
 
+## [Motors] IA: the showroom closes the page
+
+* **Status:** Completed
+* **Date:** 2026-09-20
+* **Context:** client catalogue will hold about 25 vehicles.
+
+### What was done
+* Deleted the `Seek` component, its markup and all `.seek-*` CSS. The catalogue at `/mansour-motors/vehicules` already ships filters; the landing bar duplicated them and interrupted the hero.
+* Reordered: Hero, Lineup, Statement, Alert, Visit. The showroom closes the page.
+* A closed today keeps a quiet outline instead of the inverted white plate.
+* `Appeler` is the silver plate; `Itineraire` is `tone="soft"`.
+
+### Verification
+* `bun run type-check` passed. All remaining imports still used.
+* Desk 1440: hero 900, lineup 900, statement 998, alert 692, visit 900. Visit last. Zero console errors.
+* Phone 390: same order, visit last at 4068. No overflow at either width.
+* Detector: 4 findings, unchanged and pre-existing.
+
+### Learnings
+* Removing a section can move a defect into the spotlight. Putting Visit last made the week grid's inverted "Fermé" card the page's final impression, which defeated the reorder. Check what a reorder promotes, not only what it fixes.
+
+### Open
+* `Appeler` + `Itineraire` is now a filled-plus-outlined pair, which the house design rules call a preset. Kept because `.btn` / `.soft` is the existing two-tier system across the site. Revisit if the rule should win.
+* The pale wedge at the hero-to-plateau seam is drawn by the turntable canvas, not CSS. More visible now that the sections touch. Not diagnosed.
+* Empty and small-stock states deferred until the 25-car catalogue lands.
+* Blocked on the catalogue: bay names, the hard-coded star, the duplicated hero photo.
+* `bun run lint` and `bunx eslint` fail on an eslintrc circular reference. Pre-existing, reproduces on untouched files.
+
+---
+
 ## [Motors] The three UI items
 
 * **Status:** Completed
