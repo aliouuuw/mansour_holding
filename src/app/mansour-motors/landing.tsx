@@ -69,7 +69,7 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
         <div className="hero-glint" />
       </div>
       <div className="hero-copy pointer-events-none absolute inset-0 z-[2] flex flex-col items-start justify-end gap-[.45rem] bg-[linear-gradient(to_top,rgb(243_242_239_/_0.82)_0%,rgb(243_242_239_/_0.38)_26%,rgb(243_242_239_/_0.08)_46%,transparent_62%)] px-[var(--pad)] pb-[4%] max-mm:gap-1.5 max-mm:bg-[linear-gradient(to_top,rgb(243_242_239_/_0.86)_0%,rgb(243_242_239_/_0.4)_28%,rgb(243_242_239_/_0.08)_48%,transparent_64%)] max-mm:pb-[calc(1.1rem+env(safe-area-inset-bottom,0px))]">
-        {fresh && <p className="hero-arrival mb-[.55em] text-[.72rem] font-medium uppercase tracking-[.22em] text-mm-grey max-mm:mb-[.28em] max-mm:tracking-[.2em]">Dernière arrivée à Dakar</p>}
+        {fresh && <p className="hero-arrival mb-[.55em] text-[.78rem] font-medium uppercase tracking-[.22em] text-mm-grey max-mm:mb-[.28em] max-mm:tracking-[.2em]">Dernière arrivée à Dakar</p>}
         <h2 className="hero-title text-balance text-[clamp(4rem,_13vw,_10.5rem)] font-extralight leading-[.86] tracking-[-.04em] [overflow-wrap:anywhere] text-mm-ink max-mm:text-[clamp(2.6rem,_11vw,_3.6rem)] max-mm:tracking-[-.03em]">{star.model}</h2>
         <p className="brand">{star.make}</p>
         <Button className="pointer-events-auto" to={vehicleUrl(star)}>Voir le véhicule</Button>
@@ -159,8 +159,9 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
         <div className="wrap lineup-head">
           <div>
             <h2 className="h2">En stock au showroom</h2>
-            <p className="lead hide-phone">{available} disponibles sur {vehicles.length}. Survolez un véhicule. Les voisins se rapprochent.</p>
-            <p className="lead hide-desk">{available} disponibles sur {vehicles.length}. Glissez la rangée. Touchez la photo pour ouvrir.</p>
+            <p className="lead lead-ring">{available} disponibles sur {vehicles.length}. Survolez un véhicule. Les voisins se rapprochent.</p>
+            <p className="lead lead-list">{available} disponibles sur {vehicles.length}. Prix et état sur chaque ligne.</p>
+            <p className="lead lead-atelier">{available} disponibles sur {vehicles.length}. Glissez la rangée. Touchez la photo pour ouvrir.</p>
           </div>
           <div className="lineup-tools">
             <div className="seg" role="group" aria-label="Affichage" data-view>
@@ -311,7 +312,7 @@ function Visit() {
       <div className="map-stage"><ShowroomMap /></div>
       <div className="wrap visit-home">
         <p className="brand">Showroom</p>
-        <p className="address">Route de la Corniche Ouest<br />Almadies, Dakar</p>
+        <h2 className="address">Route de la Corniche Ouest<br />Almadies, Dakar</h2>
         <p className="week-note"><OpenNote /></p>
         <Week />
         <div className="actions">
