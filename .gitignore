@@ -24,3 +24,6 @@ Thumbs.db
 
 # Client catalogue source PDFs (151 MB, not for git)
 public/mansour-motors/Catalogue Vehicules Issa Ndao/
+
+# Extracted vehicle photos (83 MB, headed for R2)
+public/mansour-motors/vehicles/
