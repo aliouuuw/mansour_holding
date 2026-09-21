@@ -854,6 +854,11 @@ export function mountTurntable(root, {
     if (mode === 'atelier') renderAtelier()
   }
 
+  function stepFeatured(step) {
+    if (!cars.length) return
+    setFeatured((featured + step + cars.length) % cars.length)
+  }
+
   function renderAtelier() {
     if (!atelier) return
     const img = $('[data-atelier-img]', atelier)
@@ -889,6 +894,7 @@ export function mountTurntable(root, {
     if (count) count.innerHTML = `<b>${pad2(featured + 1)}</b> / ${pad2(cars.length)}`
     if (st) st.innerHTML = status(c)
     if (hero) hero.href = detailUrl(c)
+    for (const button of $$('[data-atelier-step]', atelier)) button.hidden = cars.length < 2
     if (strip) {
       strip.innerHTML = cars.map((car, i) => `
         <button type="button" data-i="${i}" aria-pressed="${i === featured}" aria-label="${esc(car.make)} ${esc(car.model)}">
@@ -1086,9 +1092,15 @@ export function mountTurntable(root, {
     const dx = e.clientX - swipeX
     if (Math.abs(dx) < 48) return
     didSwipe = true
-    setFeatured(clamp(featured + (dx < 0 ? 1 : -1), 0, cars.length - 1))
+    stepFeatured(dx < 0 ? 1 : -1)
   }, { signal })
   atelier?.addEventListener('click', (e) => {
+    const step = e.target.closest('[data-atelier-step]')
+    if (step) {
+      e.preventDefault()
+      stepFeatured(Number(step.dataset.atelierStep))
+      return
+    }
     const b = e.target.closest('[data-i]')
     if (b) {
       e.preventDefault()
@@ -1108,11 +1120,11 @@ export function mountTurntable(root, {
     if (e.target.closest('input, select, textarea, button[data-mode]')) return
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault()
-      setFeatured(Math.min(cars.length - 1, featured + 1))
+      stepFeatured(1)
     }
     if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       e.preventDefault()
-      setFeatured(Math.max(0, featured - 1))
+      stepFeatured(-1)
     }
     if (e.key === 'Enter' && document.activeElement === document.body) {
       e.preventDefault()

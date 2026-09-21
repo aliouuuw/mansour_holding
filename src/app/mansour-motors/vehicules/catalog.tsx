@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
 import { Button, Card, Plate, Shell } from '../_ui'
 import { toCar } from '../_ui/car'
@@ -16,6 +15,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
   const router = useRouter()
   const cars = useMemo(() => vehicles.map(toCar), [vehicles])
   const makes = useMemo(() => [...new Set(vehicles.map((v) => v.make))].sort((a, b) => a.localeCompare(b, 'fr')), [vehicles])
+  const makeCounts = useMemo(() => Object.fromEntries(makes.map((make) => [make, vehicles.filter((vehicle) => vehicle.make === make).length])), [makes, vehicles])
   const models = useMemo(() => Object.fromEntries(makes.map((m) => [m, [...new Set(vehicles.filter((v) => v.make === m).map((v) => v.model))]])), [makes, vehicles])
   const fuels = useMemo(() => [...new Set(vehicles.map((v) => v.fuelType))], [vehicles])
 
@@ -32,28 +32,25 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
   return (
     <Shell>
       <main ref={ref}>
-        <div className="wrap">
-          <div className="page-head">
-            <div>
-              <p className="crumbs"><Link to="/mansour-motors">Accueil</Link> / Véhicules</p>
-              <h1 className="display">Véhicules <span data-total>{vehicles.length}</span></h1>
-            </div>
+        <header className="page-head">
+          <div className="wrap">
+            <h1 className="display">Véhicules</h1>
           </div>
+        </header>
 
-          <div className="filterbar">
+        <div className="filterbar">
+          <div className="wrap catalog-tools">
             <details className="filters" open data-filters>
-              <summary><span>Filtres</span><span data-active-count /></summary>
+              <summary>
+                <span>Filtrer</span>
+                <span className="filter-summary-count" data-active-count />
+              </summary>
               <form className="filters-body" data-filter-form>
                 <select name="marque" aria-label="Marque" data-make defaultValue="">
-                  <option value="">Toutes marques</option>
-                  {makes.map((m) => <option key={m}>{m}</option>)}
+                  <option value="" data-count={vehicles.length}>Toutes marques</option>
+                  {makes.map((m) => <option key={m} data-count={makeCounts[m]}>{m}</option>)}
                 </select>
                 <select name="modele" aria-label="Modèle" data-model disabled><option value="">Modèle</option></select>
-                <div className="seg" role="group" aria-label="Énergie" data-fuel>
-                  {[['', 'Toutes'] as const, ...fuels.map((f) => [f, FUEL[f]] as const)].map(([v, label]) => (
-                    <button key={v} type="button" data-value={v} aria-pressed="false">{label}</button>
-                  ))}
-                </div>
                 <select name="budget" aria-label="Budget maximum" data-max defaultValue="">
                   <option value="">Tous budgets</option>
                   {BUDGETS.map((b) => <option key={b} value={b * 1_000_000}>{b} M FCFA max.</option>)}
@@ -62,45 +59,65 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
                   <option value="">Tous kilométrages</option>
                   {KMS.map((k) => <option key={k} value={k}>{k.toLocaleString('fr-FR').replace(/ /g, ' ')} km max.</option>)}
                 </select>
+                <div className="seg" role="group" aria-label="Énergie" data-fuel>
+                  {[['', 'Toutes'] as const, ...fuels.map((f) => [f, FUEL[f]] as const)].map(([v, label]) => (
+                    <button key={v} type="button" data-value={v} aria-pressed="false">{label}</button>
+                  ))}
+                </div>
                 <label className="switch"><input type="checkbox" name="dispo" value="1" /> Disponibles</label>
-                <span className="grow" />
-                <select aria-label="Trier par" data-sort defaultValue="">
-                  <option value="">Arrivée récente</option>
-                  <option value="price-asc">Prix croissant</option>
-                  <option value="price-desc">Prix décroissant</option>
-                  <option value="km-asc">Kilométrage croissant</option>
-                  <option value="year-desc">Année, plus récente</option>
-                </select>
-                <button type="button" className="reset" data-reset>Réinitialiser</button>
               </form>
             </details>
-          </div>
 
-          <div className="viewbar">
-            <p className="vh" aria-live="polite" data-live />
-            <div className="seg" role="group" aria-label="Affichage" data-view>
-              <button type="button" data-mode="atelier" aria-pressed="true">Atelier</button>
-              <button type="button" data-mode="list" aria-pressed="false">Liste</button>
-              <button type="button" data-mode="grid" aria-pressed="false">Grille</button>
+            <div className="viewbar">
+              <p className="catalog-count" aria-live="polite">
+                <span className="catalog-status-dot" aria-hidden="true" />
+                <span data-live /> <span data-active-label />
+              </p>
+              <select aria-label="Trier par" data-sort defaultValue="">
+                <option value="">Arrivée récente</option>
+                <option value="price-asc">Prix croissant</option>
+                <option value="price-desc">Prix décroissant</option>
+                <option value="km-asc">Kilométrage croissant</option>
+                <option value="year-desc">Année, plus récente</option>
+              </select>
+              <button type="button" className="reset" data-reset hidden>
+                <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+                <span>Effacer</span>
+              </button>
+              <div className="seg" role="group" aria-label="Affichage" data-view>
+                <button type="button" data-mode="grid" aria-pressed="true">Grille</button>
+                <button type="button" data-mode="list" aria-pressed="false">Liste</button>
+                <button type="button" data-mode="atelier" aria-pressed="false">Atelier</button>
+              </div>
             </div>
           </div>
         </div>
 
         <section className="atelier" data-atelier hidden>
-          <a className="atelier-hero ch-dark" href="#" data-atelier-hero>
-            <span className="crop" aria-hidden="true" />
-            {/* eslint-disable-next-line @next/next/no-img-element -- filled by stock.js */}
-            <img data-atelier-img alt="" decoding="async" />
-            <div className="atelier-meta">
-              <p className="count" data-atelier-count />
-              <p className="brand" data-atelier-brand />
-              <p className="atelier-name" data-atelier-name />
-              <p className="atelier-specs" data-atelier-specs />
-              <div data-atelier-status />
-              <p className="atelier-price" data-atelier-price />
-              <Plate>Voir le véhicule</Plate>
+          <div className="atelier-slide">
+            <a className="atelier-hero ch-dark" href="#" data-atelier-hero>
+              <span className="crop" aria-hidden="true" />
+              {/* eslint-disable-next-line @next/next/no-img-element -- filled by stock.js */}
+              <img data-atelier-img alt="" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" />
+              <div className="atelier-meta">
+                <p className="count" data-atelier-count />
+                <p className="brand" data-atelier-brand />
+                <p className="atelier-name" data-atelier-name />
+                <p className="atelier-specs" data-atelier-specs />
+                <div data-atelier-status />
+                <p className="atelier-price" data-atelier-price />
+                <Plate>Voir le véhicule</Plate>
+              </div>
+            </a>
+            <div className="atelier-controls" aria-label="Navigation du diaporama">
+              <button type="button" data-atelier-step="-1" aria-label="Véhicule précédent">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+              <button type="button" data-atelier-step="1" aria-label="Véhicule suivant">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
             </div>
-          </a>
+          </div>
           <div className="atelier-rail wrap">
             <p className="atelier-kicker">Le stock</p>
             <div className="atelier-strip" data-atelier-strip />
@@ -112,7 +129,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
         </section>
 
         <div className="wrap">
-          <div className="grid" data-grid hidden>
+          <div className="grid" data-grid>
             {vehicles.map((v) => <Card key={v.id} v={v} eager />)}
           </div>
           <div className="empty" data-empty hidden>

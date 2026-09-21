@@ -2,6 +2,7 @@
    card once; this module filters, sorts and moves the cards (FLIP), drives the atelier and
    keeps the URL describing what is on screen. Client only: loaded with a dynamic import. */
 import { $, $$, reduceMotion, segThumb, focusOnTouch } from './dom.js'
+import { mountSelectbox } from './selectbox.js'
 import { mountTurntable } from './turntable.js'
 
 const VUES = { atelier: 'atelier', anneau: 'atelier', liste: 'list', grille: 'grid', ring: 'atelier', list: 'list', grid: 'grid' }
@@ -26,7 +27,7 @@ export function mountStock(root, cars, { models, navigate }) {
   const fuelSeg = $('[data-fuel]', root)
   const params = new URLSearchParams(location.search)
   const table = mountTurntable(root, { drive: 'pointer', modes: ['atelier', 'list', 'grid'], navigate })
-  table.setMode(VUES[params.get('vue')] || (reduceMotion.matches ? 'list' : 'atelier'))
+  table.setMode(VUES[params.get('vue')] || 'grid')
 
   function fillModels(keep) {
     const make = makeSel.value
@@ -49,6 +50,7 @@ export function mountStock(root, cars, { models, navigate }) {
   form.elements.dispo.checked = params.get('dispo') === '1'
   fuel = params.get('energie') || ''
   sortSel.value = params.get('tri') || ''
+  for (const select of $$('select', root)) mountSelectbox(select, { signal })
 
   const filters = $('[data-filters]', root)
   filters.open = !matchMedia('(max-width: 860px)').matches
@@ -102,21 +104,23 @@ export function mountStock(root, cars, { models, navigate }) {
       }
     }
 
-    $('[data-total]', root).textContent = list.length === cars.length ? String(cars.length) : `${list.length}/${cars.length}`
     $('[data-live]', root).textContent = `${list.length} véhicule${list.length > 1 ? 's' : ''}`
     $('[data-empty]', root).hidden = list.length > 0
     const active = ['marque', 'modele', 'energie', 'budget', 'km', 'dispo'].filter((k) => s[k]).length
     $('[data-active-count]', root).textContent = active ? `${active} actif${active > 1 ? 's' : ''}` : ''
+    $('[data-active-label]', root).textContent = active ? `· ${active} filtre${active > 1 ? 's' : ''}` : ''
+    $('[data-reset]', root).hidden = !active && !s.tri
     table.setCars(list)
 
     // the URL always describes what is on screen, so it can be shared as is
     const q = new URLSearchParams(Object.entries(s).filter(([, v]) => v))
-    if (table.mode !== 'atelier') q.set('vue', VUE_Q[table.mode])
+    if (table.mode !== 'grid') q.set('vue', VUE_Q[table.mode])
     history.replaceState(history.state, '', q.toString() ? `?${q}` : location.pathname)
   }
 
   makeSel.addEventListener('change', () => { fillModels(); update() })
   form.addEventListener('change', (e) => { if (e.target !== makeSel) update() })
+  sortSel.addEventListener('change', update)
   fuelSeg.addEventListener('click', (e) => {
     const b = e.target.closest('button')
     if (!b) return
@@ -131,7 +135,7 @@ export function mountStock(root, cars, { models, navigate }) {
     fuel = ''
     sortSel.value = ''
     pressFuel()
-    update()
+    sortSel.dispatchEvent(new Event('change', { bubbles: true }))
   })
   $('[data-view]', root).addEventListener('click', () => {
     requestAnimationFrame(() => update({ animate: false }))

@@ -1,5 +1,32 @@
 # Project Progress Log
 
+## [Motors] Véhicules route: compact sticky tools
+
+* **Status:** Completed
+* **Date:** 2026-09-21
+
+### What was done
+* Restored the rejected first pass before rebuilding.
+* Grid is the default view and the default URL has no `vue` parameter.
+* The compact filter and view toolbar stays below the header while scrolling.
+* Mobile keeps a 60 px toolbar. Filters open as a two-column overlay instead of taking over the page.
+* Selects, energy choices, availability, sorting, active count, and reset now share one visual system.
+* Native catalogue selects progressively enhance into custom listboxes with selected marks, disabled states, keyboard navigation, and outside-click dismissal. Marque options include aligned live inventory counts.
+* Replaced the catalogue's stacked ruled rows with one inset charcoal control deck. Filters form the primary control bank; results, sorting, and view mode share a quieter telemetry row.
+* Mobile reduces the deck to Filter, Sort, and Drive/View controls. The full filter bank opens below without changing the sticky height.
+* Atelier has a restrained previous/next arrow pair. Arrows, swipe, and keyboard navigation wrap.
+
+### Verification
+* `bun run type-check` passed.
+* Focused ESLint passed for the four changed route files.
+* Browser: grid is pressed by default; atelier is hidden; no horizontal overflow at 390 or 1440.
+* Sticky toolbar remains at 60 px on mobile and `top: 68px` after a 900 px desktop scroll.
+* Atelier next changes 01/19 Range Rover to 02/19 GLC.
+* Custom Marque selection filters to 7 Toyota vehicles, unlocks dynamic Modèle choices, exposes Effacer, and updates the shareable URL.
+* Verified the console at 1024 px and 390 px. The mobile filter bank opens cleanly, and the toolbar remains sticky at 60 px.
+
+---
+
 ## [Motors] Studio cutouts on the plateau, dealership photos on the fiche
 
 * **Status:** Completed
