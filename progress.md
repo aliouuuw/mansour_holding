@@ -1,5 +1,33 @@
 # Project Progress Log
 
+## [Motors] The plateau holds seven
+
+* **Status:** Completed
+* **Date:** 2026-09-21
+
+### What was done
+* `PLATEAU = 7` in `landing.tsx`. `Lineup` takes `vehicles` (the frame) and `total` (the stock).
+* Lead reads "19 véhicules au showroom, 7 sur le plateau". `Tout le stock` already goes to all 19.
+
+### Why seven
+Rendered and compared 7, 9, 12 and 19 at 1440x820:
+* **19** — plates collapse to slivers from about the sixth car, with a dead gap on the right.
+* **12** — crushed from the third car on.
+* **9** — six read, three are slivers.
+* **7** — every plate legible, row fills the frame.
+
+The ring geometry technically fits ~22 before `gap()` hits its 0.42 floor, but that floor is the squeezed minimum, not a usable limit. Legibility gives out long before geometry does.
+
+### Verification
+* `bun run type-check` passed. ESLint: 1 problem, pre-existing (`set-state-in-effect`).
+* Plateau 7 ticks, Liste 7 rows, phone strip 7. Stock page still reports 19 véhicules.
+* Zero console errors, no overflow at 390 or 1440.
+
+### Open
+* Unchanged: Ferrari year, G63 exterior photos, Suzuki identity, images still local, showroom address.
+
+---
+
 ## [Motors] Prix sur demande, and the real catalogue is live
 
 * **Status:** Completed
