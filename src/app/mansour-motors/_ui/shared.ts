@@ -18,7 +18,9 @@ export const GEARBOX = { automatic: 'Automatique', manual: 'Manuelle', cvt: 'CVT
 export const STATE = { available: 'Disponible', reserved: 'Réservé', sold: 'Vendu' } as const
 
 const digits = (n: number) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
-export const fcfa = (n: number) => `${digits(n)} FCFA`
+/* the salesman sets the price in the back office; until then the car still shows */
+export const PRICE_ON_ASK = 'Prix sur demande'
+export const fcfa = (n: number | null | undefined) => (n == null ? PRICE_ON_ASK : `${digits(n)} FCFA`)
 export const km = (n: number) => `${digits(n)} km`
 export const pad2 = (n: number) => String(n).padStart(2, '0')
 export const waLink = (text: string) => `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(text)}`

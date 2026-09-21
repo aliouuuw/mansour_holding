@@ -8,12 +8,12 @@ export type PlateauCar = {
   model: string
   year: number
   km: number
-  price: number
+  price: number | null
   img: string
   pos: string
   face: 'left' | 'right'
   status: ApiVehicle['status']
-  color: string
+  color: string | null
   fuel: ApiVehicle['fuelType']
   arrived: number
 }
@@ -36,5 +36,6 @@ export const toCar = (v: ApiVehicle): PlateauCar => ({
 
 /* the line-up order: what you can buy first, the dearest first */
 const ORDER = { available: 0, reserved: 1, sold: 2 } as const
+const dear = (p: number | null) => (p == null ? -1 : p)
 export const lineup = (vs: ApiVehicle[]) =>
-  [...vs].sort((a, b) => ORDER[a.status] - ORDER[b.status] || b.price - a.price)
+  [...vs].sort((a, b) => ORDER[a.status] - ORDER[b.status] || dear(b.price) - dear(a.price))

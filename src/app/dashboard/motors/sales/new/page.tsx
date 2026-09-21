@@ -96,7 +96,7 @@ export function MotorsDealNew() {
               className={inputClass}
               onChange={(e) => {
                 const v = vehicles.find(v => v.id === e.target.value)
-                if (v) setValue('price', v.price)
+                if (v?.price != null) setValue('price', v.price)
                 register('vehicleId').onChange(e)
               }}
             >

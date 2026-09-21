@@ -6,9 +6,11 @@ import { mountTurntable } from './turntable.js'
 
 const VUES = { atelier: 'atelier', anneau: 'atelier', liste: 'list', grille: 'grid', ring: 'atelier', list: 'list', grid: 'grid' }
 const VUE_Q = { atelier: 'atelier', list: 'liste', grid: 'grille' }
+/* an unknown price is not a cheap one: those cars sort to the end either way */
+const LAST = Number.POSITIVE_INFINITY
 const SORTS = {
-  'price-asc': (a, b) => a.price - b.price,
-  'price-desc': (a, b) => b.price - a.price,
+  'price-asc': (a, b) => (a.price ?? LAST) - (b.price ?? LAST),
+  'price-desc': (a, b) => (b.price ?? -LAST) - (a.price ?? -LAST),
   'km-asc': (a, b) => a.km - b.km,
   'year-desc': (a, b) => b.year - a.year || a.km - b.km,
 }
@@ -73,7 +75,7 @@ export function mountStock(root, cars, { models, navigate }) {
       (!s.marque || c.make === s.marque) &&
       (!s.modele || c.model === s.modele) &&
       (!s.energie || c.fuel === s.energie) &&
-      (!s.budget || c.price <= Number(s.budget)) &&
+      (!s.budget || c.price == null || c.price <= Number(s.budget)) &&
       (!s.km || c.km <= Number(s.km)) &&
       (!s.dispo || c.status === 'available'))
     // newest arrivals first by default

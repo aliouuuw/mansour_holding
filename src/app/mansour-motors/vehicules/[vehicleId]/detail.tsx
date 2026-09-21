@@ -21,7 +21,7 @@ function framings(v: ApiVehicle, title: string) {
   if (v.images.length > 1) return v.images.map((src, i) => ({ src, pos: i ? '50% 50%' : focal(v), zoom: 1, alt: `${title}, photo ${i + 1}` }))
   const src = v.images[0] ?? ''
   return [
-    { src, pos: focal(v), zoom: 1, alt: `${title}, ${v.color}` },
+    { src, pos: focal(v), zoom: 1, alt: v.color ? `${title}, ${v.color}` : title },
     { src, pos: '24% 58%', zoom: 1.7, alt: `${title}, détail avant` },
     { src, pos: '76% 60%', zoom: 1.8, alt: `${title}, détail arrière` },
   ]
@@ -166,9 +166,9 @@ export function PublicVehicleDetail({ vehicle: v, others }: { vehicle: ApiVehicl
     ['Kilométrage', km(v.mileage)],
     ['Énergie', FUEL[v.fuelType]],
     ['Boîte', GEARBOX[v.transmission]],
-    ['Couleur', v.color, true],
     ['Statut', STATE[v.status], true],
   ]
+  if (v.color) facts.splice(4, 0, ['Couleur', v.color, true])
   if (v.vin) facts.push(['VIN', v.vin, true])
 
   return (

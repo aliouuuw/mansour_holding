@@ -26,7 +26,7 @@ export type MotorsOverviewVehicle = {
   make: string
   model: string
   year: number
-  price: number
+  price: number | null
   images: string[]
 }
 

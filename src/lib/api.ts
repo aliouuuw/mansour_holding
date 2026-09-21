@@ -39,11 +39,11 @@ export type ApiVehicle = {
   model: string
   year: number
   mileage: number
-  price: number
+  price: number | null
   status: VehicleStatus
   fuelType: FuelType
   transmission: Transmission
-  color: string
+  color: string | null
   vin: string | null
   description: string | null
   images: string[]

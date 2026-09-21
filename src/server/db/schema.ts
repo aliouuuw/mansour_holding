@@ -66,11 +66,13 @@ export const vehicles = pgTable('vehicles', {
   model: varchar('model', { length: 100 }).notNull(),
   year: integer('year').notNull(),
   mileage: integer('mileage').notNull(),
-  price: integer('price').notNull(),
+  /* null until the salesman enters it; the car still lists as Prix sur demande */
+  price: integer('price'),
   status: vehicleStatusEnum('status').notNull().default('available'),
   fuelType: fuelTypeEnum('fuel_type').notNull(),
   transmission: transmissionEnum('transmission').notNull(),
-  color: varchar('color', { length: 50 }).notNull(),
+  /* null until confirmed: only one client sheet states a colour */
+  color: varchar('color', { length: 50 }),
   vin: varchar('vin', { length: 17 }),
   description: text('description'),
   images: jsonb('images').$type<string[]>().notNull().default([]),

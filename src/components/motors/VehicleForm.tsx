@@ -8,11 +8,11 @@ export interface VehicleFormValues {
   model: string
   year: number
   mileage: number
-  price: number
+  price?: number | null
   status: VehicleStatus
   fuelType: FuelType
   transmission: Transmission
-  color: string
+  color?: string | null
   vin: string
   description: string
   extras: { key: string; value: string }[]
@@ -110,9 +110,12 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
           <label className={labelClass}>Prix (F CFA)</label>
           <input
             type="number"
-            {...register('price', { required: 'Requis', valueAsNumber: true, min: { value: 0, message: 'Invalide' } })}
+            {...register('price', {
+              setValueAs: (v) => (v === '' || v == null ? null : Number(v)),
+              min: { value: 0, message: 'Invalide' },
+            })}
             className={inputClass}
-            placeholder="45000000"
+            placeholder="Laisser vide : « Prix sur demande »"
           />
           {errors.price && <p className={errorClass}>{errors.price.message}</p>}
         </div>
@@ -151,7 +154,7 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className={labelClass}>Couleur</label>
-          <input {...register('color', { required: 'Requis' })} className={inputClass} placeholder="Blanc Perle" />
+          <input {...register('color')} className={inputClass} placeholder="Blanc Perle (facultatif)" />
           {errors.color && <p className={errorClass}>{errors.color.message}</p>}
         </div>
         <div>

@@ -116,7 +116,7 @@ export function MotorsVehicleDetail() {
   if (editing) {
     const defaultValues: Partial<VehicleFormValues> = {
       make: vehicle.make, model: vehicle.model, year: vehicle.year,
-      mileage: vehicle.mileage, price: vehicle.price, status: vehicle.status,
+      mileage: vehicle.mileage, price: vehicle.price ?? undefined, status: vehicle.status,
       fuelType: vehicle.fuelType, transmission: vehicle.transmission,
       color: vehicle.color, vin: vehicle.vin ?? '', description: vehicle.description ?? '',
       ...formExtras(extras),

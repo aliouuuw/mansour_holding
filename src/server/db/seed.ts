@@ -1,8 +1,9 @@
 import { config } from 'dotenv'
-import { eq } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { auth } from '../auth'
 import { db } from './index'
 import * as schema from './schema'
+import { catalogue } from './catalogue'
 
 config({ path: '.env.local' })
 
@@ -214,14 +215,15 @@ async function seed() {
       .where(eq(schema.user.email, adminEmail))
       .limit(1)
 
-    // Clear existing seeded vehicles (those with our seed VINs)
-    const seedVins = vehicleSeed.map(v => v.vin)
-    for (const vin of seedVins) {
-      await db.delete(schema.vehicles).where(eq(schema.vehicles.vin, vin))
+    // Clear rows this seed owns. The real cars carry no VIN, so the tag in
+    // extras is the key; re-running the seed must not duplicate the catalogue.
+    await db.delete(schema.vehicles).where(sql`${schema.vehicles.extras}->>'source' = 'catalogue-2026-09'`)
+    for (const v of vehicleSeed) {
+      if (v.vin) await db.delete(schema.vehicles).where(eq(schema.vehicles.vin, v.vin))
     }
 
     console.log('Seeding vehicles...')
-    for (const { extras, ...v } of vehicleSeed) {
+    for (const { extras, ...v } of catalogue) {
       await db.insert(schema.vehicles).values({
         ...v,
         extras: extras as unknown as Record<string, string>,
@@ -230,7 +232,7 @@ async function seed() {
       console.log(`  ✅ ${v.make} ${v.model}`)
     }
 
-    console.log(`\n✅ Seed complete — ${vehicleSeed.length} vehicles inserted`)
+    console.log(`\n✅ Seed complete — ${catalogue.length} vehicles inserted`)
     console.log(`   Login: ${adminEmail} / ${adminPassword}`)
   } catch (error) {
     console.error('❌ Seed failed:', error)
