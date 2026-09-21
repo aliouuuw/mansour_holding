@@ -10,7 +10,7 @@ import { BUDGETS, CONTACT, DAY, HOURS, STATE, YEARS, pad2, vehicleUrl, waLink } 
 
 function prestige(vehicles: ApiVehicle[]) {
   const open = vehicles.filter((v) => v.status !== 'sold')
-  return open.find((v) => v.make === 'Rolls-Royce' && v.model === 'Cullinan')
+  return open.find((v) => v.make === 'Rolls-Royce')
     ?? lineup(open).find((v) => v.status === 'available')
     ?? open[0]
     ?? vehicles[0]
