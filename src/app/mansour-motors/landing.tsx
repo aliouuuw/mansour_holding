@@ -79,11 +79,19 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
 }
 
 /* ── chapter 2: the line-up. Hover pulls neighbouring plates (see _ui/turntable.js) ── */
-function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
+/* The plateau fans the cars across one frame. Past this many the plates
+   compress into slivers you cannot read, so the rest live on the stock page. */
+const PLATEAU = 7
+
+function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) {
   const ref = useRef<HTMLElement>(null)
   const router = useRouter()
   const cars = useMemo(() => vehicles.map(toCar), [vehicles])
   const available = vehicles.filter((v) => v.status === 'available').length
+  /* name the whole stock, then what this frame holds: the rest are one click away */
+  const shown = total > vehicles.length
+    ? `${total} véhicules au showroom, ${vehicles.length} sur le plateau`
+    : `${available} disponible${available > 1 ? 's' : ''} sur ${total}`
 
   useEffect(() => {
     let table: { destroy(): void } | undefined
@@ -117,9 +125,9 @@ function Lineup({ vehicles }: { vehicles: ApiVehicle[] }) {
         <div className="wrap lineup-head">
           <div>
             <h2 className="h2">En stock au showroom</h2>
-            <p className="lead lead-ring">{available} disponibles sur {vehicles.length}. Survolez un véhicule. Les voisins se rapprochent.</p>
-            <p className="lead lead-list">{available} disponibles sur {vehicles.length}. Prix et état sur chaque ligne.</p>
-            <p className="lead lead-atelier">{available} disponibles sur {vehicles.length}. Glissez la rangée. Touchez la photo pour ouvrir.</p>
+            <p className="lead lead-ring">{shown}. Survolez un véhicule. Les voisins se rapprochent.</p>
+            <p className="lead lead-list">{shown}. Prix et état sur chaque ligne.</p>
+            <p className="lead lead-atelier">{shown}. Glissez la rangée. Touchez la photo pour ouvrir.</p>
           </div>
           <div className="lineup-tools">
             <div className="seg" role="group" aria-label="Affichage" data-view>
@@ -356,7 +364,7 @@ export function MansourMotorsLanding({ vehicles }: { vehicles: ApiVehicle[] }) {
       <main>
         <h1 className="vh">Mansour Motors, véhicules premium à Dakar</h1>
         <Hero star={star} fresh={fresh} />
-        {ordered.length > 0 && <Lineup vehicles={ordered} />}
+        {ordered.length > 0 && <Lineup vehicles={ordered.slice(0, PLATEAU)} total={ordered.length} />}
         <Statement vehicles={vehicles} />
         <Alert />
         <Visit />
