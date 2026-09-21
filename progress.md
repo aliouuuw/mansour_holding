@@ -1,5 +1,37 @@
 # Project Progress Log
 
+## [Motors] Prix sur demande, and the real catalogue is live
+
+* **Status:** Completed
+* **Date:** 2026-09-21
+
+### What was done
+* `price` and `color` are nullable. Migrations `0001` and `0002` applied to Neon.
+* `fcfa()` and `formatPrice()` render null as **Prix sur demande**. One change each covered the plateau HUD, list rows, cards, detail panel and the live region.
+* An unknown price sorts last both ways, survives the budget filter, and is skipped by "nearest in price".
+* Back-office form accepts an empty price and colour.
+* `src/server/db/catalogue.ts` holds the 19 client vehicles. Seeded to Neon; the 9 demo cars are gone.
+* 244 real photos extracted from the PDFs into `public/mansour-motors/vehicles/` (gitignored).
+* Hero picks the Rolls-Royce by marque, not by an exact model string.
+
+### Verification
+* `bun run type-check` passed. ESLint on Motors: 5 problems, all pre-existing.
+* Live render 1440 and 390: hero "Cullinan Black Badge", 19 disponibles sur 19, every price "Prix sur demande", mode copy correct per breakpoint.
+* Detail page: 18 photos, "Prix sur demande", Couleur row correctly absent. Zero console errors, zero 4xx.
+
+### Learnings
+* `db:push` had been used at some point, so the live schema already had `extras` and the indexes while the migration folder did not. The generated migration failed on ADD COLUMN until made idempotent. Prefer `db:generate` + `db:migrate` over `db:push` on this project.
+* Renaming a model broke a hard-coded hero lookup silently: the page fell back to a Lexus rather than erroring. Match on the field least likely to change.
+
+### Open
+* **Ferrari Purosangue not seeded.** No sheet states its year and `year` is required. 20th vehicle, pending the client.
+* **Mercedes G63: 2 photos, both interior.** No exterior shot exists. **Suzuki Grand Vitara: 1 photo**, and it does not look like a Grand Vitara.
+* Images are local and gitignored, so they 404 on Vercel. They must reach R2 before any deploy.
+* With every price null, `lineup()`'s "dearest first" no longer orders anything; the plateau is in insertion order.
+* Showroom address still unresolved: the PDFs list Almadies, Saly and Conakry; the site shows Corniche Ouest.
+
+---
+
 ## [Motors] IA: the showroom closes the page
 
 * **Status:** Completed
