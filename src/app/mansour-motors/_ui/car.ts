@@ -1,5 +1,5 @@
 import type { ApiVehicle } from '@/lib/api'
-import { cover, face, focal } from './shared'
+import { cover, face, focal, isCutout } from './shared'
 
 /* the shape the plateau (turntable.js) reads; `n` carries the vehicle id for links */
 export type PlateauCar = {
@@ -12,6 +12,7 @@ export type PlateauCar = {
   img: string
   pos: string
   face: 'left' | 'right'
+  cutout: boolean
   status: ApiVehicle['status']
   color: string | null
   fuel: ApiVehicle['fuelType']
@@ -28,6 +29,7 @@ export const toCar = (v: ApiVehicle): PlateauCar => ({
   img: cover(v),
   pos: focal(v),
   face: face(v),
+  cutout: isCutout(v),
   status: v.status,
   color: v.color,
   fuel: v.fuelType,

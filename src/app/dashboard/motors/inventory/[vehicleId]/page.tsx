@@ -49,7 +49,7 @@ export function MotorsVehicleDetail() {
       ...values,
       vin: values.vin || null,
       description: values.description || null,
-      extras: toExtras(values),
+      extras: toExtras(values, vehicle?.extras ?? {}),
     }),
     onSuccess: (updated) => {
       qc.setQueryData(['vehicle', vehicleId], updated)

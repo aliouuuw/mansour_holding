@@ -169,18 +169,26 @@ void main() {
   }
 }`
 
-function bake(img, pos) {
+function bake(img, pos, cutout) {
   const W = 1024, H = 768
   const c = document.createElement('canvas')
   c.width = W
   c.height = H
   const ctx = c.getContext('2d')
+  ctx.fillStyle = '#050505'
+  ctx.fillRect(0, 0, W, H)
   const [fx, fy] = parsePos(pos)
   const ir = img.width / img.height
   const cr = W / H
   let dw, dh
-  if (ir > cr) { dh = H; dw = H * ir } else { dw = W; dh = W / ir }
-  ctx.drawImage(img, (W - dw) * fx, (H - dh) * fy, dw, dh)
+  if (cutout) {
+    /* contain: keep the whole car on the plate */
+    if (ir > cr) { dw = W * 0.92; dh = dw / ir } else { dh = H * 0.86; dw = dh * ir }
+    ctx.drawImage(img, (W - dw) / 2, H - dh - H * 0.06, dw, dh)
+  } else {
+    if (ir > cr) { dh = H; dw = H * ir } else { dw = W; dh = W / ir }
+    ctx.drawImage(img, (W - dw) * fx, (H - dh) * fy, dw, dh)
+  }
   return c
 }
 
@@ -378,7 +386,7 @@ function createRing(canvas) {
       try {
         const img = await loadImage(c.img)
         if (my !== gen) return
-        const baked = bake(img, c.pos)
+        const baked = bake(img, c.pos, c.cutout)
         const tex = gl.createTexture()
         gl.bindTexture(gl.TEXTURE_2D, tex)
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1)
@@ -835,7 +843,7 @@ export function mountTurntable(root, {
           </span>
           <span class="idx-price">${fcfa(c.price)}</span>
           ${status(c)}
-          <img src="${esc(c.img)}" alt="" class="idx-shot" style="--pos:${c.pos}">
+          <img src="${esc(c.img)}" alt="" class="idx-shot${c.cutout ? ' is-cutout' : ''}" style="--pos:${c.pos}">
         </a>
       </li>`).join('')
   }
@@ -856,10 +864,11 @@ export function mountTurntable(root, {
     featured = cars.indexOf(c)
     if (img) {
       const next = c.img
-      if (img.getAttribute('src') !== next) {
+        if (img.getAttribute('src') !== next) {
         img.src = next
         img.alt = `${c.make} ${c.model}`
         img.style.setProperty('--pos', c.pos)
+        img.classList.toggle('is-cutout', !!c.cutout)
         if (!reduceMotion.matches) {
           img.classList.remove('is-in')
           void img.offsetWidth
@@ -883,7 +892,7 @@ export function mountTurntable(root, {
     if (strip) {
       strip.innerHTML = cars.map((car, i) => `
         <button type="button" data-i="${i}" aria-pressed="${i === featured}" aria-label="${esc(car.make)} ${esc(car.model)}">
-          <img src="${esc(car.img)}" alt="" style="--pos:${car.pos}" decoding="async">
+          <img src="${esc(car.img)}" alt="" class="${car.cutout ? 'is-cutout' : ''}" style="--pos:${car.pos}" decoding="async">
           <span>${pad2(i + 1)}</span>
         </button>`).join('')
       if (mode === 'atelier' && !atelier.hidden) {

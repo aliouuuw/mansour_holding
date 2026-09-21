@@ -234,6 +234,7 @@ async function seed() {
 
     console.log(`\n✅ Seed complete — ${catalogue.length} vehicles inserted`)
     console.log(`   Login: ${adminEmail} / ${adminPassword}`)
+    process.exit(0)
   } catch (error) {
     console.error('❌ Seed failed:', error)
     throw error

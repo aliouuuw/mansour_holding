@@ -1,5 +1,5 @@
 import type { ApiVehicle } from '@/lib/api'
-import { FUEL, STATE, cover, fcfa, focal, km, vehicleUrl } from './shared'
+import { FUEL, STATE, cover, fcfa, focal, isCutout, km, vehicleUrl } from './shared'
 
 /* the stock card: the photograph rests in black and white and comes into colour
    when the car has your attention (hover, or nearest the middle on touch) */
@@ -9,7 +9,7 @@ export function Card({ v, eager = false }: { v: ApiVehicle; eager?: boolean }) {
       <a className="card-link" href={vehicleUrl(v)}>
         <div className="media card-media">
           {/* eslint-disable-next-line @next/next/no-img-element -- object-position comes from the vehicle's focal point */}
-          <img src={cover(v)} alt={`${v.make} ${v.model}`} style={{ '--pos': focal(v) } as React.CSSProperties} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+          <img src={cover(v)} alt={`${v.make} ${v.model}`} className={isCutout(v) ? 'is-cutout' : undefined} style={{ '--pos': focal(v) } as React.CSSProperties} loading={eager ? 'eager' : 'lazy'} decoding="async" />
         </div>
         <div className="card-body">
           <p className="brand">{v.make}</p>

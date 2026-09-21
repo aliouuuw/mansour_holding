@@ -29,7 +29,9 @@ export const vehicleUrl = (v: Pick<ApiVehicle, 'id'>) => `/mansour-motors/vehicu
 /* photo metadata lives in extras: which way the car's nose points, and the focal point */
 export const face = (v: ApiVehicle): 'left' | 'right' => (v.extras.face === 'right' ? 'right' : 'left')
 export const focal = (v: ApiVehicle) => v.extras.pos || '50% 52%'
-export const cover = (v: ApiVehicle) => v.images[0] ?? ''
+/* plateau + cards use the studio cutout; the gallery stays the dealership photos */
+export const cover = (v: ApiVehicle) => v.extras.cover || v.images[0] || ''
+export const isCutout = (v: ApiVehicle) => Boolean(v.extras.cover)
 
 /* ── hours: Dakar is UTC+0 all year, so UTC getters give showroom time ── */
 export const HOURS: Record<number, [number, number]> = { 1: [8, 18], 2: [8, 18], 3: [8, 18], 4: [8, 18], 5: [8, 18], 6: [9, 17] }

@@ -22,7 +22,7 @@ export interface VehicleFormValues {
 }
 
 /* photo settings live in extras under these keys; they are not features */
-const PHOTO_KEYS = ['face', 'pos']
+const PHOTO_KEYS = ['face', 'pos', 'cover', 'source']
 
 export const featureEntries = (extras: Record<string, string>) =>
   Object.entries(extras).filter(([k]) => !PHOTO_KEYS.includes(k))
@@ -35,10 +35,12 @@ export function formExtras(extras: Record<string, string>) {
   }
 }
 
-export function toExtras(values: VehicleFormValues): Record<string, string> {
+export function toExtras(values: VehicleFormValues, previous: Record<string, string> = {}): Record<string, string> {
   const out = Object.fromEntries(values.extras.filter(({ key }) => !PHOTO_KEYS.includes(key)).map(({ key, value }) => [key, value]))
   if (values.photoFace === 'right') out.face = 'right'
   if (values.photoFocus) out.pos = values.photoFocus
+  if (previous.cover) out.cover = previous.cover
+  if (previous.source) out.source = previous.source
   return out
 }
 

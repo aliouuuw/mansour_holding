@@ -1,5 +1,27 @@
 # Project Progress Log
 
+## [Motors] Studio cutouts on the plateau, dealership photos on the fiche
+
+* **Status:** Completed
+* **Date:** 2026-09-21
+
+### What was done
+* `extras.cover` holds a Higgsfield studio cutout. `images[]` stays the dealership gallery.
+* `cover()` and the plateau `bake()` use the cutout. The detail page still reads `images`.
+* Nineteen cutouts generated with `gpt_image_2_5` at 3 credits each (high, 2k, transparent). First seven ~160–200 KB; remaining twelve ~270–340 KB.
+* Every catalogue vehicle now has a cover. Seed `process.exit(0)` so the script no longer hangs after insert.
+
+### Verification
+* Stock `/mansour-motors/vehicules`: every card `img` is `/covers/*.webp` with `is-cutout`.
+* Detail Range Rover: gallery **01 / 18**, first frame is the showroom JPEG (bâche, BICIS), not the cutout.
+* Landing still reads "19 véhicules au showroom, 7 sur le plateau".
+* `bun run db:seed` inserted 19 and exited.
+
+### Open
+* Ferrari year, G63 still has no exterior in the gallery, images still local, showroom address.
+
+---
+
 ## [Motors] The plateau holds seven
 
 * **Status:** Completed

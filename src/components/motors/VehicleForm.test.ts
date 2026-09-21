@@ -12,3 +12,11 @@ test('photo settings round-trip through extras without becoming features', () =>
 test('defaults are not written', () => {
   expect(toExtras({ extras: [], photoFace: 'left', photoFocus: '' } as unknown as VehicleFormValues)).toEqual({})
 })
+
+test('cover and source stay hidden and survive a save', () => {
+  const stored = { Toit: 'Panoramique', cover: '/mansour-motors/covers/x.webp', source: 'catalogue-2026-09' }
+  const form = formExtras(stored)
+  expect(form.extras).toEqual([{ key: 'Toit', value: 'Panoramique' }])
+  expect(toExtras({ ...form } as VehicleFormValues, stored)).toEqual(stored)
+  expect(featureEntries(stored)).toEqual([['Toit', 'Panoramique']])
+})

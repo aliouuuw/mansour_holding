@@ -233,7 +233,16 @@ input::placeholder { color: var(--grey-2); }
 /* ── media: full colour, square-ish corners ────────────────────────── */
 .media { position: relative; overflow: hidden; border-radius: var(--r); background: var(--black-2); }
 .media img { width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 55%); transform: scale(var(--zoom, 1)); transform-origin: var(--pos, 50% 55%); transition: scale 1s var(--ease); }
+.media img.is-cutout,
+.atelier-hero img.is-cutout,
+.atelier-strip img.is-cutout,
+.idx-shot.is-cutout {
+  object-fit: contain;
+  object-position: 50% 78%;
+  background: #050505;
+}
 @media (hover: hover) { .card-link:hover .media img { scale: 1.04; } }
+@media (hover: hover) { .card-link:hover .media img.is-cutout { scale: 1.03; } }
 /* ── header: glass over the chapter, not a solid bar ───────────────── */
 .header {
   position: fixed; inset: 0 0 auto; z-index: 20; height: var(--head);

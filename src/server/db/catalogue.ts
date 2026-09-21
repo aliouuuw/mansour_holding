@@ -9,7 +9,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Lexus LX 600 VIP Luxury, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/01.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/02.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/03.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/04.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/05.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/06.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/07.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/08.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/09.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/10.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/11.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/12.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/13.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/14.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/15.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/16.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/17.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/18.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/19.jpg", "/mansour-motors/vehicles/lexus-2025-lexus-lx-600-vip-luxury-3-5l-twin-t/20.jpg"],
-    extras: {"Cylindrée": "3 445 cm³", "Places": ": 4", "source": "catalogue-2026-09"},
+    extras: {"Cylindrée": "3 445 cm³", "Places": ": 4", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/lexus-lx-600.webp"},
   },
   {
     make: "Jeep", model: "Wrangler Unlimited Sport", year: 2023,
@@ -18,7 +18,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Jeep Wrangler Unlimited Sport, : 3.6 V6, : 285 ch / 209 kW, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/jeep-jeep-wrangler-unlimited-sport-3-6l-285-c/01.jpg", "/mansour-motors/vehicles/jeep-jeep-wrangler-unlimited-sport-3-6l-285-c/02.jpg", "/mansour-motors/vehicles/jeep-jeep-wrangler-unlimited-sport-3-6l-285-c/03.jpg", "/mansour-motors/vehicles/jeep-jeep-wrangler-unlimited-sport-3-6l-285-c/04.jpg", "/mansour-motors/vehicles/jeep-jeep-wrangler-unlimited-sport-3-6l-285-c/05.jpg", "/mansour-motors/vehicles/jeep-jeep-wrangler-unlimited-sport-3-6l-285-c/06.jpg", "/mansour-motors/vehicles/jeep-jeep-wrangler-unlimited-sport-3-6l-285-c/07.jpg"],
-    extras: {"Moteur": ": 3.6 V6", "Puissance": ": 285 ch / 209 kW", "Cylindrée": ": 3 604 cm³", "source": "catalogue-2026-09"},
+    extras: {"Moteur": ": 3.6 V6", "Puissance": ": 285 ch / 209 kW", "Cylindrée": ": 3 604 cm³", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/jeep-wrangler.webp"},
   },
   {
     make: "Mitsubishi", model: "Outlander S-AWC", year: 2023,
@@ -27,7 +27,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Mitsubishi Outlander S-AWC, 181 chevaux, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/mitsubishi-new-2023-mitsubishi-outlander-2-5l-s-/01.jpg", "/mansour-motors/vehicles/mitsubishi-new-2023-mitsubishi-outlander-2-5l-s-/02.jpg", "/mansour-motors/vehicles/mitsubishi-new-2023-mitsubishi-outlander-2-5l-s-/03.jpg", "/mansour-motors/vehicles/mitsubishi-new-2023-mitsubishi-outlander-2-5l-s-/04.jpg", "/mansour-motors/vehicles/mitsubishi-new-2023-mitsubishi-outlander-2-5l-s-/05.jpg", "/mansour-motors/vehicles/mitsubishi-new-2023-mitsubishi-outlander-2-5l-s-/06.jpg", "/mansour-motors/vehicles/mitsubishi-new-2023-mitsubishi-outlander-2-5l-s-/07.jpg", "/mansour-motors/vehicles/mitsubishi-new-2023-mitsubishi-outlander-2-5l-s-/08.jpg", "/mansour-motors/vehicles/mitsubishi-new-2023-mitsubishi-outlander-2-5l-s-/09.jpg", "/mansour-motors/vehicles/mitsubishi-new-2023-mitsubishi-outlander-2-5l-s-/10.jpg"],
-    extras: {"Puissance": "181 chevaux", "Cylindrée": "2.5 L", "source": "catalogue-2026-09"},
+    extras: {"Puissance": "181 chevaux", "Cylindrée": "2.5 L", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/mitsubishi-outlander.webp"},
   },
   {
     make: "Hyundai", model: "Santa Fe Luxury", year: 2024,
@@ -36,7 +36,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Hyundai Santa Fe Luxury, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/01.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/02.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/03.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/04.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/05.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/06.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/07.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/08.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/09.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/10.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/11.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/12.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/13.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/14.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/15.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/16.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/17.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/18.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/19.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/20.jpg", "/mansour-motors/vehicles/hyundai-new-2024-hyundai-santa-fe-luxury-2-5l-tu/21.jpg"],
-    extras: {"source": "catalogue-2026-09"},
+    extras: {"source": "catalogue-2026-09", "cover": "/mansour-motors/covers/hyundai-santa-fe.webp"},
   },
   {
     make: "Toyota", model: "Prado VX Limited", year: 2024,
@@ -45,7 +45,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Toyota Prado VX Limited, Diesel. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/toyota-new-2024-toyota-prado-vx-limited-2-8l-tu/01.jpg", "/mansour-motors/vehicles/toyota-new-2024-toyota-prado-vx-limited-2-8l-tu/02.jpg", "/mansour-motors/vehicles/toyota-new-2024-toyota-prado-vx-limited-2-8l-tu/03.jpg", "/mansour-motors/vehicles/toyota-new-2024-toyota-prado-vx-limited-2-8l-tu/04.jpg"],
-    extras: {"source": "catalogue-2026-09"},
+    extras: {"source": "catalogue-2026-09", "cover": "/mansour-motors/covers/toyota-prado.webp"},
   },
   {
     make: "Toyota", model: "Land Cruiser 76 LX", year: 2024,
@@ -54,7 +54,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Toyota Land Cruiser 76 LX, Diesel. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/toyota-new-2024-toyota-land-cruiser-76-lx-4-2l/01.jpg", "/mansour-motors/vehicles/toyota-new-2024-toyota-land-cruiser-76-lx-4-2l/02.jpg", "/mansour-motors/vehicles/toyota-new-2024-toyota-land-cruiser-76-lx-4-2l/03.jpg", "/mansour-motors/vehicles/toyota-new-2024-toyota-land-cruiser-76-lx-4-2l/04.jpg", "/mansour-motors/vehicles/toyota-new-2024-toyota-land-cruiser-76-lx-4-2l/05.jpg", "/mansour-motors/vehicles/toyota-new-2024-toyota-land-cruiser-76-lx-4-2l/06.jpg", "/mansour-motors/vehicles/toyota-new-2024-toyota-land-cruiser-76-lx-4-2l/07.jpg", "/mansour-motors/vehicles/toyota-new-2024-toyota-land-cruiser-76-lx-4-2l/08.jpg", "/mansour-motors/vehicles/toyota-new-2024-toyota-land-cruiser-76-lx-4-2l/09.jpg", "/mansour-motors/vehicles/toyota-new-2024-toyota-land-cruiser-76-lx-4-2l/10.jpg"],
-    extras: {"Cylindrée": "4164 CM³", "Places": "10", "source": "catalogue-2026-09"},
+    extras: {"Cylindrée": "4164 CM³", "Places": "10", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/toyota-lc76.webp"},
   },
   {
     make: "Mercedes-Benz", model: "G 63 AMG 4MATIC+", year: 2025,
@@ -63,7 +63,7 @@ export const catalogue = [
     color: "ARGENT IRIDIUM MÉTALLISÉ", vin: null,
     description: "Mercedes-Benz G 63 AMG 4MATIC+, 63 AMG, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/mercedes-benz-new-2025-mercedes-g-wagen-classe-g/01.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2025-mercedes-g-wagen-classe-g/02.jpg"],
-    extras: {"Moteur": "63 AMG", "source": "catalogue-2026-09"},
+    extras: {"Moteur": "63 AMG", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/mercedes-g63.webp"},
   },
   {
     make: "Nissan", model: "Patrol SE Platinum City", year: 2025,
@@ -72,7 +72,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Nissan Patrol SE Platinum City, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/01.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/02.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/03.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/04.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/05.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/06.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/07.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/08.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/09.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/10.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/11.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/12.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/13.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/14.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/15.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/16.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/17.jpg", "/mansour-motors/vehicles/nissan-new-2025-nissan-patrol-se-platinum-city/18.jpg"],
-    extras: {"Cylindrée": ": 3 799 cm³", "source": "catalogue-2026-09"},
+    extras: {"Cylindrée": ": 3 799 cm³", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/nissan-patrol.webp"},
   },
   {
     make: "Suzuki", model: "Grand Vitara Hybrid AllGrip", year: 2025,
@@ -81,7 +81,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Suzuki Grand Vitara Hybrid AllGrip, Hybride. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/suzuki-new-2025-suzuki-grand-vitara-1-5l-hybrid/01.jpg"],
-    extras: {"source": "catalogue-2026-09"},
+    extras: {"source": "catalogue-2026-09", "cover": "/mansour-motors/covers/suzuki-grand-vitara.webp"},
   },
   {
     make: "Toyota", model: "Land Cruiser 300 GR Sport", year: 2025,
@@ -90,7 +90,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Toyota Land Cruiser 300 GR Sport, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/01.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/02.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/03.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/04.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/05.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/06.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/07.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/08.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/09.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/10.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/11.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/12.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/13.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/14.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/15.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/16.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/17.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/18.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/19.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-lc300-gr-sport-3-5l-esse/20.jpg"],
-    extras: {"source": "catalogue-2026-09"},
+    extras: {"source": "catalogue-2026-09", "cover": "/mansour-motors/covers/toyota-lc300-gr.webp"},
   },
   {
     make: "Toyota", model: "Land Cruiser 300 VX.R", year: 2025,
@@ -99,7 +99,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Toyota Land Cruiser 300 VX.R, Diesel. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/01.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/02.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/03.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/04.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/05.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/06.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/07.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/08.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/09.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/10.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/11.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/12.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/13.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/14.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/15.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/16.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/17.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-lc300-vx-r/18.jpg"],
-    extras: {"Cylindrée": "3346 cm3", "source": "catalogue-2026-09"},
+    extras: {"Cylindrée": "3346 cm3", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/toyota-lc300-vxr.webp"},
   },
   {
     make: "Toyota", model: "Land Cruiser 300 VX.R+", year: 2025,
@@ -108,7 +108,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Toyota Land Cruiser 300 VX.R+, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-300-vx-r-e/01.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-300-vx-r-e/02.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-300-vx-r-e/03.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-300-vx-r-e/04.jpg"],
-    extras: {"Cylindrée": "3956 cm3", "source": "catalogue-2026-09"},
+    extras: {"Cylindrée": "3956 cm3", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/toyota-lc300-vxr-plus.webp"},
   },
   {
     make: "Toyota", model: "Land Cruiser 79 Double Cabine", year: 2025,
@@ -117,7 +117,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Toyota Land Cruiser 79 Double Cabine, Diesel. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-79-double-c/01.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-79-double-c/02.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-79-double-c/03.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-79-double-c/04.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-79-double-c/05.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-79-double-c/06.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-79-double-c/07.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-79-double-c/08.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-79-double-c/09.jpg", "/mansour-motors/vehicles/toyota-new-2025-toyota-land-cruiser-79-double-c/10.jpg"],
-    extras: {"Cylindrée": "4164 CM³", "Places": "6", "source": "catalogue-2026-09"},
+    extras: {"Cylindrée": "4164 CM³", "Places": "6", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/toyota-lc79.webp"},
   },
   {
     make: "Toyota", model: "RAV4 HEV E-Four", year: 2026,
@@ -126,7 +126,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Toyota RAV4 HEV E-Four, Hybride. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/01.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/02.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/03.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/04.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/05.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/06.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/07.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/08.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/09.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/10.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/11.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/12.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/13.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/14.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/15.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/16.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/17.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/18.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/19.jpg", "/mansour-motors/vehicles/toyota-new-2026-toyota-rav4-hev-e-four-4x4-2-5/20.jpg"],
-    extras: {"source": "catalogue-2026-09"},
+    extras: {"source": "catalogue-2026-09", "cover": "/mansour-motors/covers/toyota-rav4.webp"},
   },
   {
     make: "Rolls-Royce", model: "Cullinan Black Badge", year: 2027,
@@ -135,7 +135,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Rolls-Royce Cullinan Black Badge, V12 6.75 Bi-Turbo, 600 ch / 441 kW, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/01.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/02.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/03.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/04.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/05.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/06.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/07.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/08.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/09.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/10.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/11.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/12.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/13.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/14.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/15.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/16.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/17.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/18.jpg", "/mansour-motors/vehicles/rolls-royce-new-2027-rolls-royce-cullinan-v12-6-/19.jpg"],
-    extras: {"Moteur": "V12 6.75 Bi-Turbo", "Puissance": "600 ch / 441 kW", "Cylindrée": "6 749 cm³", "source": "catalogue-2026-09"},
+    extras: {"Moteur": "V12 6.75 Bi-Turbo", "Puissance": "600 ch / 441 kW", "Cylindrée": "6 749 cm³", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/rolls-cullinan.webp"},
   },
   {
     make: "Mercedes-Benz", model: "Classe E 350 Coupé 4MATIC", year: 2024,
@@ -144,7 +144,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Mercedes-Benz Classe E 350 Coupé 4MATIC, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-classe-e350-coup/01.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-classe-e350-coup/02.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-classe-e350-coup/03.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-classe-e350-coup/04.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-classe-e350-coup/05.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-classe-e350-coup/06.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-classe-e350-coup/07.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-classe-e350-coup/08.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-classe-e350-coup/09.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-classe-e350-coup/10.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-classe-e350-coup/11.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-classe-e350-coup/12.jpg"],
-    extras: {"source": "catalogue-2026-09"},
+    extras: {"source": "catalogue-2026-09", "cover": "/mansour-motors/covers/mercedes-e350.webp"},
   },
   {
     make: "Mercedes-Benz", model: "CLE 300 Coupé 4MATIC", year: 2024,
@@ -153,7 +153,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Mercedes-Benz CLE 300 Coupé 4MATIC, 300, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-cle-300-coupe-4m/01.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-cle-300-coupe-4m/02.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-cle-300-coupe-4m/03.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-cle-300-coupe-4m/04.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-cle-300-coupe-4m/05.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-cle-300-coupe-4m/06.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-cle-300-coupe-4m/07.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-cle-300-coupe-4m/08.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-cle-300-coupe-4m/09.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-cle-300-coupe-4m/10.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-cle-300-coupe-4m/11.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-cle-300-coupe-4m/12.jpg"],
-    extras: {"Moteur": "300", "source": "catalogue-2026-09"},
+    extras: {"Moteur": "300", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/mercedes-cle300.webp"},
   },
   {
     make: "Mercedes-Benz", model: "GLC 300 Coupé 4MATIC", year: 2024,
@@ -162,7 +162,7 @@ export const catalogue = [
     color: null, vin: null,
     description: "Mercedes-Benz GLC 300 Coupé 4MATIC, 300, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/01.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/02.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/03.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/04.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/05.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/06.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/07.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/08.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/09.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/10.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/11.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/12.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/13.jpg", "/mansour-motors/vehicles/mercedes-benz-new-2024-mercedes-glc-300-coupe-4m/14.jpg"],
-    extras: {"Moteur": "300", "Cylindrée": "1 999 cm³", "source": "catalogue-2026-09"},
+    extras: {"Moteur": "300", "Cylindrée": "1 999 cm³", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/mercedes-glc300.webp"},
   },
   {
     make: "Land Rover", model: "Range Rover Vogue Autobiography P400", year: 2024,
@@ -171,6 +171,6 @@ export const catalogue = [
     color: null, vin: null,
     description: "Land Rover Range Rover Vogue Autobiography P400, Si6, 400 ch / 294 kW, Essence. Véhicule neuf, disponible au showroom Mansour Motors.",
     images: ["/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/01.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/02.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/03.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/04.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/05.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/06.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/07.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/08.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/09.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/10.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/11.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/12.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/13.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/14.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/15.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/16.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/17.jpg", "/mansour-motors/vehicles/land-rover-range-rover-vogue-2024-autobiography-/18.jpg"],
-    extras: {"Moteur": "Si6", "Puissance": "400 ch / 294 kW", "Cylindrée": "2 996 cm³", "source": "catalogue-2026-09"},
+    extras: {"Moteur": "Si6", "Puissance": "400 ch / 294 kW", "Cylindrée": "2 996 cm³", "source": "catalogue-2026-09", "cover": "/mansour-motors/covers/range-rover-vogue.webp"},
   },
 ]
