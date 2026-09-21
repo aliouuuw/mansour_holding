@@ -118,9 +118,9 @@ export function mountStock(root, cars, { models, navigate }) {
     history.replaceState(history.state, '', q.toString() ? `?${q}` : location.pathname)
   }
 
-  makeSel.addEventListener('change', () => { fillModels(); update() })
-  form.addEventListener('change', (e) => { if (e.target !== makeSel) update() })
-  sortSel.addEventListener('change', update)
+  makeSel.addEventListener('change', () => { fillModels(); update() }, { signal })
+  form.addEventListener('change', (e) => { if (e.target !== makeSel) update() }, { signal })
+  sortSel.addEventListener('change', update, { signal })
   fuelSeg.addEventListener('click', (e) => {
     const b = e.target.closest('button')
     if (!b) return

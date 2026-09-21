@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
-import { Button, Chapter, Field, OpenNote, Plate, Shell, ShowroomMap } from './_ui'
+import { Button, Chapter, Field, OpenNote, Shell, ShowroomMap } from './_ui'
 import { lineup, toCar } from './_ui/car'
 import { BUDGETS, CONTACT, DAY, HOURS, STATE, YEARS, pad2, vehicleUrl, waLink } from './_ui/shared'
 
@@ -157,13 +157,16 @@ function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) 
             {/* eslint-disable-next-line @next/next/no-img-element -- filled by turntable.js */}
             <img data-atelier-img alt="" decoding="async" />
             <div className="atelier-meta">
-              <p className="count" data-atelier-count />
-              <p className="brand" data-atelier-brand />
-              <p className="atelier-name" data-atelier-name />
-              <p className="atelier-specs" data-atelier-specs />
-              <div data-atelier-status />
+              <div className="atelier-id">
+                <p className="count" data-atelier-count />
+                <p className="brand" data-atelier-brand />
+                <p className="atelier-name" data-atelier-name />
+                <p className="atelier-facts">
+                  <span className="atelier-specs" data-atelier-specs />
+                  <span data-atelier-status />
+                </p>
+              </div>
               <p className="atelier-price" data-atelier-price />
-              <Plate>Voir le véhicule</Plate>
             </div>
           </a>
           <div className="atelier-rail wrap">

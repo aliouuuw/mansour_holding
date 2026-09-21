@@ -60,7 +60,10 @@ export function mountSelectbox(select, { signal } = {}) {
   }
 
   const choose = (button) => {
-    select.value = button.dataset.value
+    const next = button.dataset.value ?? ''
+    const option = [...select.options].find((item) => item.value === next)
+    if (option) option.selected = true
+    else select.value = next
     select.dispatchEvent(new Event('change', { bubbles: true }))
     render()
     close({ focus: true })
@@ -115,9 +118,12 @@ export function mountSelectbox(select, { signal } = {}) {
     }
   }, { signal })
 
-  menu.addEventListener('click', (event) => {
+  menu.addEventListener('pointerdown', (event) => {
     const button = event.target.closest('button[data-value]')
-    if (button) choose(button)
+    if (!button || button.disabled) return
+    // press applies the choice; a later click is lost if the menu closes on blur
+    event.preventDefault()
+    choose(button)
   }, { signal })
 
   menu.addEventListener('keydown', (event) => {
@@ -144,7 +150,8 @@ export function mountSelectbox(select, { signal } = {}) {
   document.addEventListener('pointerdown', (event) => {
     if (!host.contains(event.target)) close()
   }, { signal })
-  host.addEventListener('focusout', () => {
+  host.addEventListener('focusout', (event) => {
+    if (host.contains(event.relatedTarget)) return
     queueMicrotask(() => {
       if (!host.contains(document.activeElement)) close()
     })

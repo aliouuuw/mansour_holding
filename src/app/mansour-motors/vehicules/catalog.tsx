@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import type { ApiVehicle } from '@/lib/api'
-import { Button, Card, Plate, Shell } from '../_ui'
+import { Button, Card, Shell } from '../_ui'
 import { toCar } from '../_ui/car'
 import { BUDGETS, FUEL } from '../_ui/shared'
 
@@ -70,24 +70,25 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
 
             <div className="viewbar">
               <p className="catalog-count" aria-live="polite">
-                <span className="catalog-status-dot" aria-hidden="true" />
                 <span data-live /> <span data-active-label />
               </p>
-              <select aria-label="Trier par" data-sort defaultValue="">
-                <option value="">Arrivée récente</option>
-                <option value="price-asc">Prix croissant</option>
-                <option value="price-desc">Prix décroissant</option>
-                <option value="km-asc">Kilométrage croissant</option>
-                <option value="year-desc">Année, plus récente</option>
-              </select>
-              <button type="button" className="reset" data-reset hidden>
-                <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
-                <span>Effacer</span>
-              </button>
-              <div className="seg" role="group" aria-label="Affichage" data-view>
-                <button type="button" data-mode="grid" aria-pressed="true">Grille</button>
-                <button type="button" data-mode="list" aria-pressed="false">Liste</button>
-                <button type="button" data-mode="atelier" aria-pressed="false">Atelier</button>
+              <div className="viewbar-tools">
+                <select aria-label="Trier par" data-sort defaultValue="">
+                  <option value="">Arrivée récente</option>
+                  <option value="price-asc">Prix croissant</option>
+                  <option value="price-desc">Prix décroissant</option>
+                  <option value="km-asc">Kilométrage croissant</option>
+                  <option value="year-desc">Année, plus récente</option>
+                </select>
+                <button type="button" className="reset" data-reset hidden>
+                  <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+                  <span>Effacer</span>
+                </button>
+                <div className="seg" role="group" aria-label="Affichage" data-view>
+                  <button type="button" data-mode="grid" aria-pressed="true">Grille</button>
+                  <button type="button" data-mode="list" aria-pressed="false">Liste</button>
+                  <button type="button" data-mode="atelier" aria-pressed="false">Atelier</button>
+                </div>
               </div>
             </div>
           </div>
@@ -100,13 +101,16 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
               {/* eslint-disable-next-line @next/next/no-img-element -- filled by stock.js */}
               <img data-atelier-img alt="" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" />
               <div className="atelier-meta">
-                <p className="count" data-atelier-count />
-                <p className="brand" data-atelier-brand />
-                <p className="atelier-name" data-atelier-name />
-                <p className="atelier-specs" data-atelier-specs />
-                <div data-atelier-status />
+                <div className="atelier-id">
+                  <p className="count" data-atelier-count />
+                  <p className="brand" data-atelier-brand />
+                  <p className="atelier-name" data-atelier-name />
+                  <p className="atelier-facts">
+                    <span className="atelier-specs" data-atelier-specs />
+                    <span data-atelier-status />
+                  </p>
+                </div>
                 <p className="atelier-price" data-atelier-price />
-                <Plate>Voir le véhicule</Plate>
               </div>
             </a>
             <div className="atelier-controls" aria-label="Navigation du diaporama">
