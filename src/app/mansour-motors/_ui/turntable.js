@@ -647,8 +647,29 @@ export function mountTurntable(root, {
   const LAMBDA = 10 / 1.2
   const REST = 8e-4
   const atelier = $('[data-atelier]', root)
+  const phone = () => matchMedia('(max-width: 860px)').matches
+  const swipeHintKey = 'mm-atelier-swipe-hint'
+  let swipeHintOff = false
+  try { swipeHintOff = sessionStorage.getItem(swipeHintKey) === '1' } catch { /* ponytail: private mode */ }
+  if (atelier && swipeHintOff) atelier.dataset.swipeHint = 'off'
 
   if (hintEl && hint) hintEl.textContent = hint
+
+  function dismissSwipeHint() {
+    if (!atelier || swipeHintOff) return
+    swipeHintOff = true
+    atelier.dataset.swipeHint = 'off'
+    try { sessionStorage.setItem(swipeHintKey, '1') } catch { /* noop */ }
+  }
+
+  function syncSwipeHint() {
+    if (!atelier) return
+    const hero = $('[data-atelier-hero]', atelier)
+    const hint = $('[data-atelier-swipe-hint]', atelier)
+    const can = cars.length > 1 && phone() && mode === 'atelier' && !atelier.hidden
+    if (hero) hero.classList.toggle('is-swipeable', can)
+    if (hint) hint.hidden = !can || swipeHintOff
+  }
 
   function setPressed() {
     if (!viewEl) return
@@ -675,6 +696,7 @@ export function mountTurntable(root, {
     setPressed()
     layout()
     if (mode === 'atelier') renderAtelier()
+    else syncSwipeHint()
     if (mode === 'ring') start()
     else stop()
   }
@@ -909,6 +931,7 @@ export function mountTurntable(root, {
         }
       }
     }
+    syncSwipeHint()
   }
 
   function openIndex(i, rect) {
@@ -1075,25 +1098,50 @@ export function mountTurntable(root, {
     if (b?.dataset.mode) setMode(b.dataset.mode)
   })
   let swipeX = 0
+  let swipeY = 0
   let swiping = false
   let didSwipe = false
+  const resetSwipeDrag = (img) => {
+    if (!img) return
+    img.classList.remove('is-dragging')
+    img.style.transform = ''
+  }
   atelier?.addEventListener('pointerdown', (e) => {
     if (mode !== 'atelier') return
     if (!e.target.closest('[data-atelier-hero]')) return
+    if (cars.length < 2) return
     swipeX = e.clientX
+    swipeY = e.clientY
     swiping = true
     didSwipe = false
-    atelier.setPointerCapture?.(e.pointerId)
+    e.currentTarget.setPointerCapture?.(e.pointerId)
   }, { signal })
-  atelier?.addEventListener('pointerup', (e) => {
+  atelier?.addEventListener('pointermove', (e) => {
+    if (!swiping || mode !== 'atelier') return
+    const dx = e.clientX - swipeX
+    const dy = e.clientY - swipeY
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6) e.preventDefault()
+    const img = $('[data-atelier-img]', atelier)
+    if (!img || reduceMotion.matches) return
+    const shift = Math.max(-28, Math.min(28, dx * 0.22))
+    img.classList.add('is-dragging')
+    img.style.transform = `translate3d(${shift}px, 0, 0)`
+  }, { signal })
+  const endSwipe = (e) => {
     if (!swiping) return
     swiping = false
+    const img = $('[data-atelier-img]', atelier)
+    resetSwipeDrag(img)
     if (mode !== 'atelier' || !cars.length) return
     const dx = e.clientX - swipeX
-    if (Math.abs(dx) < 48) return
+    if (Math.abs(dx) < 40) return
     didSwipe = true
+    dismissSwipeHint()
     stepFeatured(dx < 0 ? 1 : -1)
-  }, { signal })
+  }
+  atelier?.addEventListener('pointerup', endSwipe, { signal })
+  atelier?.addEventListener('pointercancel', endSwipe, { signal })
+  matchMedia('(max-width: 860px)').addEventListener('change', () => syncSwipeHint(), { signal })
   atelier?.addEventListener('click', (e) => {
     const step = e.target.closest('[data-atelier-step]')
     if (step) {

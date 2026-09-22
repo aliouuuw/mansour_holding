@@ -875,7 +875,7 @@ input::placeholder { color: var(--grey-2); }
 .viewbar-tools .seg {
   display: inline-flex; align-items: center; min-height: 2.15rem; padding: 0;
   border: 0; border-radius: 0; background: transparent;
-  box-shadow: inset 1px 0 0 rgba(18, 17, 16, .1);
+  box-shadow: inset -1px 0 0 rgba(18, 17, 16, .1);
   gap: 0;
 }
 .viewbar-tools .seg button {
@@ -1195,7 +1195,7 @@ input::placeholder { color: var(--grey-2); }
   .viewbar-tools .custom-select-trigger { min-height: 2.6rem; padding-inline: .8rem; }
   .viewbar-tools .seg {
     flex-wrap: nowrap; box-shadow: none;
-    border-top: 1px solid rgba(18, 17, 16, .1);
+    border-bottom: 1px solid rgba(18, 17, 16, .1);
   }
   .viewbar-tools .seg button { flex: 1 1 0; min-height: 2.5rem; padding: .3rem .4rem; font-size: .72rem; }
   .filterbar .reset { min-height: 2.6rem; padding: .3rem .7rem; font-size: .7rem; }
@@ -1321,6 +1321,43 @@ input::placeholder { color: var(--grey-2); }
   overflow: hidden; background: var(--black); color: var(--white); text-decoration: none;
   touch-action: pan-y;
 }
+.atelier-hero.is-swipeable { touch-action: none; }
+.atelier-swipe-hint {
+  position: absolute; left: 50%; bottom: 5.4rem; z-index: 3;
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .38rem .72rem .4rem;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 999px;
+  background: rgba(5, 5, 5, .36);
+  color: rgba(246, 245, 242, .82);
+  transform: translateX(-50%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: none;
+  transition: opacity .45s var(--ease);
+}
+.atelier-swipe-hint-label {
+  font-size: .58rem; font-weight: 550; letter-spacing: .2em;
+  text-transform: uppercase; line-height: 1;
+}
+.atelier-swipe-hint-glyph { display: block; flex: 0 0 auto; opacity: .9; }
+.atelier-swipe-hint-dot { animation: atelier-swipe-dot 2.4s var(--ease) infinite; }
+.atelier-swipe-hint-wing { animation: atelier-swipe-wing 2.4s var(--ease) infinite; }
+.atelier-swipe-hint-wing:last-of-type { animation-delay: -.15s; }
+.atelier[data-swipe-hint='off'] .atelier-swipe-hint { opacity: 0; }
+@media (min-width: 861px) { .atelier-swipe-hint { display: none !important; } }
+@media (prefers-reduced-motion: reduce) {
+  .atelier-swipe-hint-dot, .atelier-swipe-hint-wing { animation: none; }
+}
+@keyframes atelier-swipe-dot {
+  0%, 100% { transform: translateX(-7px); opacity: .35; }
+  50% { transform: translateX(7px); opacity: 1; }
+}
+@keyframes atelier-swipe-wing {
+  0%, 100% { opacity: .35; }
+  50% { opacity: .95; }
+}
+.atelier-hero img.is-dragging { transition: none; }
 .atelier-hero img {
   width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 50% 55%);
 }
@@ -1480,6 +1517,8 @@ input::placeholder { color: var(--grey-2); }
   .lineup .atelier-hero { height: auto; }
   .lineup .atelier-hero img { height: min(46svh, 380px); }
   .lineup .atelier-hero::after { inset: 0 0 auto; height: min(46svh, 380px); }
+  .lineup .atelier-swipe-hint { bottom: .85rem; }
+  main > .atelier .atelier-swipe-hint { bottom: .75rem; }
   .lineup .atelier-strip button { width: 42vw; }
   /* one column, and a lane on the right kept free for the WhatsApp button */
   .ring-hud {

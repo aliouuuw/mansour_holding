@@ -1,5 +1,14 @@
 # Project Progress Log
 
+## [Motors] Atelier hero: mobile swipe + hint
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Hero uses `touch-action: none` when swipable. Horizontal drag nudges the photo. A small chevron disc hints once per session. Hint hides after the first swipe.
+* **Verification:** `bun run type-check` passes. Home lineup and `/vehicules?vue=atelier` at 390 px.
+
+---
+
 ## [Motors] Phone menu: drop gold current-page dot
 
 * **Status:** Completed

@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import type { ApiVehicle } from '@/lib/api'
-import { Button, Card, Shell } from '../_ui'
+import { AtelierSwipeHint, Button, Card, Shell } from '../_ui'
 import { toCar } from '../_ui/car'
 import { BUDGETS, FUEL } from '../_ui/shared'
 
@@ -35,7 +35,6 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
         <header className="page-head">
           <div className="wrap">
             <h1 className="display">Véhicules</h1>
-            <p className="lead">Le stock présent au showroom de Dakar. Chaque voiture est photographiée sur place, contrôlée et disponible à l&rsquo;essai.</p>
           </div>
         </header>
 
@@ -48,6 +47,11 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
               </summary>
               <div className="filter-sheet">
                 <div className="viewbar-tools">
+                  <div className="seg" role="group" aria-label="Affichage" data-view>
+                    <button type="button" data-mode="grid" aria-pressed="true">Grille</button>
+                    <button type="button" data-mode="list" aria-pressed="false">Liste</button>
+                    <button type="button" data-mode="atelier" aria-pressed="false">Atelier</button>
+                  </div>
                   <select aria-label="Trier par" data-sort defaultValue="">
                     <option value="">Arrivée récente</option>
                     <option value="price-asc">Prix croissant</option>
@@ -59,11 +63,6 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
                     <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
                     <span>Effacer</span>
                   </button>
-                  <div className="seg" role="group" aria-label="Affichage" data-view>
-                    <button type="button" data-mode="grid" aria-pressed="true">Grille</button>
-                    <button type="button" data-mode="list" aria-pressed="false">Liste</button>
-                    <button type="button" data-mode="atelier" aria-pressed="false">Atelier</button>
-                  </div>
                 </div>
                 <form className="filters-body" data-filter-form>
                   <select name="marque" aria-label="Marque" data-make defaultValue="">
@@ -104,6 +103,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
           <div className="atelier-slide">
             <a className="atelier-hero ch-dark" href="#" data-atelier-hero>
               <span className="crop" aria-hidden="true" />
+              <AtelierSwipeHint />
               {/* eslint-disable-next-line @next/next/no-img-element -- filled by stock.js */}
               <img data-atelier-img alt="" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" />
               <div className="atelier-meta">

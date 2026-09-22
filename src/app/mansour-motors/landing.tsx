@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
-import { Button, Chapter, Field, OpenNote, Shell, ShowroomMap } from './_ui'
+import { AtelierSwipeHint, Button, Chapter, Field, OpenNote, Shell, ShowroomMap } from './_ui'
 import { lineup, toCar } from './_ui/car'
 import { BUDGETS, CONTACT, DAY, HOURS, STATE, YEARS, pad2, vehicleUrl, waLink } from './_ui/shared'
 
@@ -127,7 +127,7 @@ function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) 
             <h2 className="h2">En stock au showroom</h2>
             <p className="lead lead-ring">{shown}. Survolez un véhicule. Les voisins se rapprochent.</p>
             <p className="lead lead-list">{shown}. Prix et état sur chaque ligne.</p>
-            <p className="lead lead-atelier">{shown}. Glissez la rangée. Touchez la photo pour ouvrir.</p>
+            <p className="lead lead-atelier">{shown}. Glissez la photo pour changer. Touchez pour ouvrir.</p>
           </div>
           <div className="lineup-tools">
             <div className="seg" role="group" aria-label="Affichage" data-view>
@@ -154,6 +154,7 @@ function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) 
         </div>
         <div className="atelier" data-atelier hidden>
           <a className="atelier-hero ch-dark" href="#" data-atelier-hero>
+            <AtelierSwipeHint />
             {/* eslint-disable-next-line @next/next/no-img-element -- filled by turntable.js */}
             <img data-atelier-img alt="" decoding="async" />
             <div className="atelier-meta">
