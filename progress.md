@@ -1,5 +1,14 @@
 # Project Progress Log
 
+## [Motors] Catalog copy (clarify)
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Page intro line on desktop; mode hints in sticky dock (grid / liste / atelier). Atelier hero `aria-describedby` for screen readers. `is-grid` / `is-list` on `main` from turntable.
+* **Verification:** `bun run type-check`; toggle views on `/vehicules` at 390px and 1200px.
+
+---
+
 ## [Motors] Touch targets (--touch 44px)
 
 * **Status:** Completed

@@ -684,6 +684,8 @@ export function mountTurntable(root, {
 
   function syncChrome() {
     root.classList.toggle('is-ring', mode === 'ring')
+    root.classList.toggle('is-grid', mode === 'grid')
+    root.classList.toggle('is-list', mode === 'list')
     root.classList.toggle('is-atelier', mode === 'atelier')
     if (stage) stage.hidden = mode !== 'ring' && mode !== 'list'
     if (canvas) canvas.hidden = mode !== 'ring'

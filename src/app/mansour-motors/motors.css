@@ -635,6 +635,9 @@ input::placeholder { color: var(--grey-2); }
   }
   .page-head .wrap { display: block; }
   .page-head .lead { margin: 0; max-width: 34ch; text-align: left; font-size: .86rem; }
+  .page-head .catalog-intro { display: none; }
+  .dock-lead { flex-wrap: wrap; align-items: baseline; row-gap: .15rem; }
+  .catalog-hint { flex: 1 1 100%; max-width: none; font-size: .74rem; }
 }
 
 .filterbar {
@@ -856,6 +859,14 @@ input::placeholder { color: var(--grey-2); }
 }
 .catalog-count [data-live] { color: var(--ink); font-weight: 600; }
 .catalog-count [data-active-label] { color: #8a6a1e; font-weight: 600; letter-spacing: .06em; }
+.catalog-hint {
+  display: none; margin: 0; max-width: 28ch;
+  color: var(--grey); font-size: .78rem; line-height: 1.45;
+}
+.mm main.is-grid .catalog-hint-grid,
+.mm main.is-list .catalog-hint-list,
+.mm main.is-atelier .catalog-hint-atelier { display: block; }
+.page-head .catalog-intro { margin: 0; }
 .viewbar .custom-select.is-sort,
 .viewbar-tools .custom-select.is-sort { flex: 0 0 auto; min-width: 12.8rem; }
 .viewbar .custom-select-trigger,

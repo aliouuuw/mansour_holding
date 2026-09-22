@@ -35,6 +35,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
         <header className="page-head">
           <div className="wrap">
             <h1 className="display">Véhicules</h1>
+            <p className="lead catalog-intro">Stock au showroom de Dakar.</p>
           </div>
         </header>
 
@@ -94,6 +95,11 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
                 <p className="catalog-count" aria-live="polite">
                   <span data-live /> <span data-active-label />
                 </p>
+                <p className="catalog-hint catalog-hint-grid">Touchez une carte pour ouvrir la fiche.</p>
+                <p className="catalog-hint catalog-hint-list">Prix et état sur chaque ligne. Touchez pour ouvrir.</p>
+                <p id="catalog-atelier-instructions" className="catalog-hint catalog-hint-atelier">
+                  Glissez la photo pour changer. Touchez pour ouvrir la fiche.
+                </p>
               </div>
             </div>
           </div>
@@ -101,7 +107,12 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
 
         <section className="atelier" data-atelier hidden aria-label="Atelier">
           <div className="atelier-slide">
-            <a className="atelier-hero ch-dark" href="#" data-atelier-hero>
+            <a
+              className="atelier-hero ch-dark"
+              href="#"
+              data-atelier-hero
+              aria-describedby="catalog-atelier-instructions"
+            >
               <span className="crop" aria-hidden="true" />
               <AtelierSwipeHint />
               {/* eslint-disable-next-line @next/next/no-img-element -- filled by stock.js */}
