@@ -664,10 +664,10 @@ export function mountTurntable(root, {
 
   function syncSwipeHint() {
     if (!atelier) return
-    const hero = $('[data-atelier-hero]', atelier)
+    const media = $('[data-atelier-media]', atelier)
     const hint = $('[data-atelier-swipe-hint]', atelier)
     const can = cars.length > 1 && phone() && mode === 'atelier' && !atelier.hidden
-    if (hero) hero.classList.toggle('is-swipeable', can)
+    if (media) media.classList.toggle('is-swipeable', can)
     if (hint) hint.hidden = !can || swipeHintOff
   }
 
@@ -1110,13 +1110,14 @@ export function mountTurntable(root, {
   }
   atelier?.addEventListener('pointerdown', (e) => {
     if (mode !== 'atelier') return
-    if (!e.target.closest('[data-atelier-hero]')) return
+    const media = e.target.closest('[data-atelier-media]')
+    if (!media) return
     if (cars.length < 2) return
     swipeX = e.clientX
     swipeY = e.clientY
     swiping = true
     didSwipe = false
-    e.currentTarget.setPointerCapture?.(e.pointerId)
+    media.setPointerCapture?.(e.pointerId)
   }, { signal })
   atelier?.addEventListener('pointermove', (e) => {
     if (!swiping || mode !== 'atelier') return

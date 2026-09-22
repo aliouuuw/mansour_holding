@@ -112,9 +112,11 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
               aria-describedby="catalog-atelier-instructions"
             >
               <span className="crop" aria-hidden="true" />
-              <AtelierSwipeHint />
-              {/* eslint-disable-next-line @next/next/no-img-element -- filled by stock.js */}
-              <img data-atelier-img alt="" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" />
+              <div className="atelier-hero-media" data-atelier-media>
+                <AtelierSwipeHint />
+                {/* eslint-disable-next-line @next/next/no-img-element -- filled by stock.js */}
+                <img data-atelier-img alt="" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" />
+              </div>
               <div className="atelier-meta">
                 <div className="atelier-id">
                   <p className="count" data-atelier-count />

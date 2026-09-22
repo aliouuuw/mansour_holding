@@ -154,9 +154,11 @@ function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) 
         </div>
         <div className="atelier" data-atelier hidden>
           <a className="atelier-hero ch-dark" href="#" data-atelier-hero>
-            <AtelierSwipeHint />
-            {/* eslint-disable-next-line @next/next/no-img-element -- filled by turntable.js */}
-            <img data-atelier-img alt="" decoding="async" />
+            <div className="atelier-hero-media" data-atelier-media>
+              <AtelierSwipeHint />
+              {/* eslint-disable-next-line @next/next/no-img-element -- filled by turntable.js */}
+              <img data-atelier-img alt="" decoding="async" />
+            </div>
             <div className="atelier-meta">
               <div className="atelier-id">
                 <p className="count" data-atelier-count />

@@ -12,7 +12,7 @@ function SwipeHintGlyph() {
 /** Mobile-only affordance on the atelier hero; visibility is driven by turntable.js */
 export function AtelierSwipeHint() {
   return (
-    <span className="atelier-swipe-hint" data-atelier-swipe-hint hidden aria-hidden="true">
+    <span className="atelier-swipe-hint gallery-swipe-hint" data-atelier-swipe-hint hidden aria-hidden="true">
       <SwipeHintGlyph />
       <span className="atelier-swipe-hint-label">Glisser</span>
     </span>

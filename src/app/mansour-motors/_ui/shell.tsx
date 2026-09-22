@@ -49,8 +49,10 @@ function Header() {
     setLive(true)
     const header = ref.current
     if (!header) return
+    const phone = () => matchMedia('(max-width: 860px)').matches
     const onScroll = () => {
-      header.classList.toggle('is-scrolled', scrollY > 24)
+      const scrolled = phone() ? scrollY > 0 : scrollY > 24
+      header.classList.toggle('is-scrolled', scrolled)
       const y = header.offsetHeight
       const under = [...document.querySelectorAll('.mm .ch-dark, .mm .ch-light')].find((c) => {
         const r = c.getBoundingClientRect()
