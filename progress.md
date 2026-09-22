@@ -1,5 +1,29 @@
 # Project Progress Log
 
+## [Dashboard] Align admin UI with Mansour Motors design system (planned)
+
+* **Status:** Planned — next major UI pass after public `motors.css` lock-in.
+* **Date:** 2026-09-22
+* **Source of truth:** `src/app/mansour-motors/motors.css` tokens under `.mm` (`--paper`, `--ink`, `--black`, `--line`, `--r`, `--ease`, light weights, tabular nums).
+* **Scope (phased):**
+  1. **Tokens + shell** — Extract shared CSS variables (or a thin `brand.css` imported by dashboard layout only). Update `DashboardLayout` sidebar/top bar: paper background, ink type, MM logo marks (`logo-header.png` / white on dark), touch targets ≥ `--touch`.
+  2. **Primitives** — Buttons, inputs, tables, and badges to match `.btn`, `.field`, `.seg`, status chips (available / reserved / sold) from public site.
+  3. **Motors pages** — Inventory list, vehicle form, sales board, customers: spacing, typography, empty states; reuse focal/cutout preview patterns where photos appear.
+  4. **Polish** — Favicon in dashboard metadata, reduced-motion parity, mobile nav if dashboard is used on phone.
+* **Out of scope for v1:** Rebuilding data flows, new features, or merging `.mm` and dashboard into one global stylesheet (keep dashboard scoped to avoid leaking into motors).
+* **Verification:** Visual pass on `/dashboard/motors/*`, `bun run type-check`, lint; optional Playwright smoke on inventory CRUD.
+
+---
+
+## [Motors] Branding, header logo, atelier polish
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** PNG logo marks (light/dark header), favicons, live WhatsApp + Instagram, hero year emphasis, atelier cutout on SSR + `renderAtelier`, smoother swipe release animation.
+* **Verification:** `bun run type-check`. Commit `de0afb0` pushed to `origin/main`.
+
+---
+
 ## [Motors] Showroom arrival date (`arrivedAt`)
 
 * **Status:** Completed
