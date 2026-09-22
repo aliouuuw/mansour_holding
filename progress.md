@@ -1,5 +1,14 @@
 # Project Progress Log
 
+## [Motors] Statement and alert sit closer
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** On desktop the empty band between the floor plan and the search form drops from 365px to about 100px. A hairline marks the joint. The alert opens with « Recherche » and the form sits nearer the question.
+* **Verification:** Browser at 1280px. Gap from the plan to « Recherche » is 121px (was 365px). Phone at 390px stays stacked, no hairline.
+
+---
+
 ## [Motors] Hero plays once, then scroll drives the forth half
 
 * **Status:** Completed

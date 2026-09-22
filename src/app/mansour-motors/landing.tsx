@@ -443,6 +443,7 @@ function Alert() {
     <Chapter id="alerte">
       <div className="wrap alert">
         <div>
+          <p className="brand">Recherche</p>
           <h2 className="h2">Vous ne trouvez pas votre modèle ?</h2>
           <p className="lead">Dites-nous ce que vous cherchez. La demande part sur WhatsApp, et le showroom vous recontacte quand un véhicule correspond.</p>
           <div className="wa-preview">

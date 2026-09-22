@@ -576,7 +576,15 @@ input::placeholder { color: var(--grey-2); }
 .day[aria-current='date'][data-closed]::after { display: none; }
 /* ── chapter 6: not in stock yet ───────────────────────────────────── */
 #alerte { padding-block: clamp(5.5rem, 11vw, 9rem); }
-.alert { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+@media (min-width: 861px) {
+  .statement { padding-bottom: 3.25rem; }
+  #alerte {
+    padding-top: 3.25rem;
+    border-top: 1px solid var(--line);
+  }
+}
+.alert .brand { margin: 0 0 .85rem; }
+.alert { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 4vw, 4rem); align-items: center; }
 .alert .h2 { font-size: clamp(2.2rem, 4vw, 3.6rem); }
 .alert-form {
   position: relative;
@@ -586,7 +594,7 @@ input::placeholder { color: var(--grey-2); }
 }
 .alert-form .full { grid-column: 1 / -1; }
 .alert-form .btn { justify-self: start; }
-.wa-preview { margin-top: clamp(2rem, 4vw, 3rem); max-width: 27rem; }
+.wa-preview { margin-top: 1.5rem; max-width: 27rem; }
 .wa-preview-label { font-size: .82rem; color: var(--grey); margin-bottom: .6rem; }
 /* WhatsApp's own outgoing bubble: its green, its square corner and tail at the top right */
 .wa-bubble {
