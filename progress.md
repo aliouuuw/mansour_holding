@@ -2,14 +2,17 @@
 
 ## [Dashboard] Align admin UI with Mansour Motors design system
 
-* **Status:** Phase 2 done (2026-09-22). Phases 3–4 pending.
+* **Status:** Phase 4 done (2026-09-22).
 * **Source of truth:** `src/app/mansour-motors/motors.css` tokens under `.mm`.
 * **Phase 1 (done):** Shell + tokens (see prior entry).
 * **Phase 2 (done):** `dashboard.css` primitives (`mm-btn`, `mm-soft`, `mm-field`, `mm-seg`, `mm-status`, `mm-panel`, `mm-table`); `components/dashboard/primitives.tsx`; wired into `VehicleForm`, inventory/customers lists, customer/deal forms, motors home, sales board header.
-* **Next:**
-  3. **Motors pages** — Customer detail, inventory new/edit shells, sales kanban cards, holding overview.
-  4. **Polish** — ConfirmDialog, reduced motion pass, mobile density.
-* **Verification:** `bun run type-check`.
+* **Phase 3 (done):** Holding overview (`dashboard/page.tsx`); motors home pipeline + lists; customer + vehicle detail (view/edit, gallery `mm-media-*`); inventory new shell; sales kanban cards/columns (`mm-deal-card`, `mm-kanban-head`, `mm-chip`). No remaining `noir-` / `gold-` classes under `src/app/dashboard`.
+* **Phase 4 (done):** `ConfirmDialog` + `Toast` on Motors tokens; `mm-dialog-*`; mobile table density (`mm-table-col-narrow`, `mm-seg-scroll`); inventory row → fiche (clic / Entrée); `prefers-reduced-motion` pass on spinner, sidebar, toasts, list stagger.
+* **Enhancement backlog (IA / UX / UI):**
+  - **IA:** Fil d’Ariane par écran (Inventaire → fiche); regrouper Ventes (liste + kanban) dans une entrée avec sous-onglets; retirer ou brancher la cloche notifications.
+  - **UX:** Compteur « disponibles » depuis l’API (pas la page courante); tri colonnes inventaire; filtres mémorisés dans l’URL; carte mobile inventaire (au lieu du scroll horizontal seul).
+  - **UI:** Cartes KPI holding alignées sur `mm-panel-title`; états vides avec CTA « Ajouter »; focus trap complet dans la modale si audit a11y.
+* **Verification:** `bun run type-check` (pass 2026-09-22).
 
 ---
 

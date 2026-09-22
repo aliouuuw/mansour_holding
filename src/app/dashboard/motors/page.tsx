@@ -110,9 +110,9 @@ export function MotorsDashboard() {
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-noir-600">{kpi.label}</p>
-                  <p className="mt-2 text-2xl font-bold text-noir-950">{kpi.value}</p>
-                  <p className="mt-1 text-xs text-noir-500">{kpi.total}</p>
+                  <p className="mm-section-label mb-0">{kpi.label}</p>
+                  <p className="mt-2 text-2xl font-semibold tracking-tight">{kpi.value}</p>
+                  <p className="mt-1 text-xs mm-muted">{kpi.total}</p>
                 </div>
                 <div className={cn('border p-2.5 transition-colors', kpi.color)}>
                   <kpi.icon className="h-5 w-5" />
@@ -137,9 +137,9 @@ export function MotorsDashboard() {
               Voir tout
             </Link>
           </div>
-          <div className="divide-y divide-noir-100">
+          <div className="divide-y divide-[var(--mm-line)]">
             {deals.length === 0 ? (
-              <div className="px-6 py-12 text-center text-sm text-noir-400">Aucune affaire pour le moment</div>
+              <div className="mm-empty">Aucune affaire pour le moment</div>
             ) : (
               deals.map((deal, index) => (
                 <motion.div
@@ -147,13 +147,13 @@ export function MotorsDashboard() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
-                  className="flex items-center gap-4 px-6 py-4 hover:bg-surface-dim/50 transition-colors"
+                  className="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-[var(--mm-off)]/50"
                 >
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-noir-900 truncate">{deal.vehicleName ?? '—'}</p>
-                    <p className="text-xs text-noir-500">{deal.customerName ?? '—'}</p>
+                    <p className="truncate text-sm font-medium">{deal.vehicleName ?? '—'}</p>
+                    <p className="text-xs mm-muted">{deal.customerName ?? '—'}</p>
                   </div>
-                  <p className="text-sm font-semibold text-noir-950">{formatPrice(deal.price)}</p>
+                  <p className="text-sm font-semibold">{formatPrice(deal.price)}</p>
                   <span className={cn('px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
                     deal.status === 'closed-won' ? 'bg-emerald-100 text-emerald-700' :
                     deal.status === 'closed-lost' ? 'bg-slate-100 text-slate-600' :
@@ -171,8 +171,8 @@ export function MotorsDashboard() {
         {/* Sidebar */}
         <div className="lg:col-span-2 space-y-6">
           {/* Pipeline */}
-          <div className="border border-noir-200 bg-white p-6 shadow-sm">
-            <h2 className="font-motors-display text-lg font-medium text-noir-950">Pipeline</h2>
+          <div className="mm-panel mm-panel-pad">
+            <h2 className="mm-panel-title">Pipeline</h2>
             <div className="mt-5 space-y-4">
               {pipelineStages.map((stage, index) => (
                 <motion.div
@@ -184,38 +184,37 @@ export function MotorsDashboard() {
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-3">
                       <div className={cn('h-2.5 w-2.5', stage.color)} />
-                      <span className="text-sm text-noir-700">{stage.label}</span>
+                      <span className="text-sm">{stage.label}</span>
                     </div>
-                    <span className="text-sm font-semibold text-noir-950">{stage.count}</span>
+                    <span className="text-sm font-semibold">{stage.count}</span>
                   </div>
-                  <div className="h-1.5 w-full bg-noir-100 overflow-hidden">
+                  <div className="mm-progress">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${(stage.count / maxPipeline) * 100}%` }}
                       transition={{ duration: 0.8, delay: 0.6 + index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                      className={cn('h-full', stage.color)}
+                      className={cn(stage.color)}
                     />
                   </div>
                 </motion.div>
               ))}
             </div>
-            <Link to="/dashboard/motors/sales"
-              className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-gold-600 hover:text-gold-700 transition-colors">
-              Voir le pipeline <ArrowRight01Icon className="h-4 w-4" />
+            <Link to="/dashboard/motors/sales" className="mm-link mt-5 inline-flex items-center gap-1.5 text-sm">
+              Voir le pipeline <ArrowRight01Icon className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
 
           {/* Top Vehicles */}
-          <div className="border border-noir-200 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between">
-              <h2 className="font-motors-display text-lg font-medium text-noir-950">Véhicules disponibles</h2>
-              <Link to="/dashboard/motors/inventory" className="text-xs font-medium uppercase tracking-wider text-gold-600 hover:text-gold-700 transition-colors">
+          <div className="mm-panel mm-panel-pad">
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="mm-panel-title mb-0">Véhicules disponibles</h2>
+              <Link to="/dashboard/motors/inventory" className="mm-link text-xs uppercase tracking-wider">
                 Voir tout
               </Link>
             </div>
             <div className="mt-4 space-y-2">
               {topVehicles.length === 0 ? (
-                <p className="text-sm text-noir-400 py-4 text-center">Aucun véhicule disponible</p>
+                <p className="mm-empty py-4">Aucun véhicule disponible</p>
               ) : (
                 topVehicles.map((v, index) => (
                   <motion.div
@@ -225,17 +224,17 @@ export function MotorsDashboard() {
                     transition={{ duration: 0.3, delay: 0.6 + index * 0.05 }}
                   >
                     <Link to="/dashboard/motors/inventory/$vehicleId" params={{ vehicleId: v.id }}
-                      className="flex items-center gap-3 p-2 -mx-2 hover:bg-surface-dim transition-colors">
+                      className="-mx-2 flex items-center gap-3 rounded-[var(--mm-r)] p-2 transition-colors hover:bg-[var(--mm-off)]/50">
                       {v.images?.[0] ? (
-                        <img src={v.images[0]} alt={`${v.make} ${v.model}`} className="h-12 w-16 object-cover" loading="lazy" decoding="async" />
+                        <img src={v.images[0]} alt={`${v.make} ${v.model}`} className="h-12 w-16 rounded-[var(--mm-r)] object-cover" loading="lazy" decoding="async" />
                       ) : (
-                        <div className="h-12 w-16 bg-noir-100 flex items-center justify-center"><Car01Icon className="h-4 w-4 text-noir-300" /></div>
+                        <div className="flex h-12 w-16 items-center justify-center rounded-[var(--mm-r)] bg-[var(--mm-off)]"><Car01Icon className="h-4 w-4 text-[var(--mm-grey-muted)]" aria-hidden="true" /></div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="truncate text-sm font-medium text-noir-900">{v.make} {v.model}</p>
-                        <p className="text-xs text-noir-500">{v.year} · {formatPrice(v.price)}</p>
+                        <p className="truncate text-sm font-medium">{v.make} {v.model}</p>
+                        <p className="text-xs mm-muted">{v.year} · {formatPrice(v.price)}</p>
                       </div>
-                      <ArrowRight01Icon className="h-4 w-4 text-noir-300" />
+                      <ArrowRight01Icon className="h-4 w-4 text-[var(--mm-grey-muted)]" aria-hidden="true" />
                     </Link>
                   </motion.div>
                 ))

@@ -1,49 +1,41 @@
 'use client'
 
-import { Link } from '@/lib/router'
 import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Add01Icon, UserIcon, Car01Icon, DollarCircleIcon } from 'hugeicons-react'
-import { cn, formatPrice } from '@/lib/utils'
+import { formatPrice } from '@/lib/utils'
 import { DashButton, DashPageHeader } from '@/components/dashboard'
 import { dealsApi, invalidateMotorsQueries, type ApiDeal, type DealStatus } from '@/lib/api'
 import { useToast } from '@/components/ui/Toast'
 import type { DealsBoard } from '@/server/deals'
 
-const COLUMNS: { status: DealStatus; label: string; color: string; dot: string }[] = [
-  { status: 'lead',        label: 'Prospect',    color: 'border-blue-200 bg-blue-50',       dot: 'bg-blue-400' },
-  { status: 'negotiation', label: 'Négociation', color: 'border-amber-200 bg-amber-50',     dot: 'bg-amber-400' },
-  { status: 'closed-won',  label: 'Conclu',      color: 'border-emerald-200 bg-emerald-50', dot: 'bg-emerald-500' },
-  { status: 'closed-lost', label: 'Perdu',       color: 'border-slate-200 bg-slate-50',     dot: 'bg-slate-400' },
+const COLUMNS: { status: DealStatus; label: string }[] = [
+  { status: 'lead', label: 'Prospect' },
+  { status: 'negotiation', label: 'Négociation' },
+  { status: 'closed-won', label: 'Conclu' },
+  { status: 'closed-lost', label: 'Perdu' },
 ]
-
-const STATUS_BADGE: Record<DealStatus, string> = {
-  lead: 'bg-blue-100 text-blue-700', negotiation: 'bg-amber-100 text-amber-700',
-  'closed-won': 'bg-emerald-100 text-emerald-700', 'closed-lost': 'bg-slate-100 text-slate-600',
-}
 
 function DealCard({ deal, onMove }: { deal: ApiDeal; onMove: (id: string, status: DealStatus) => void }) {
   return (
-    <motion.div layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-      className="border border-noir-200 bg-white p-4 shadow-sm space-y-3">
+    <motion.div layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mm-deal-card">
       <div className="flex items-start gap-2">
-        <Car01Icon className="h-3.5 w-3.5 text-noir-400 mt-0.5 flex-shrink-0" />
-        <p className="text-sm font-semibold text-noir-950 leading-tight">{deal.vehicleName ?? 'Véhicule inconnu'}</p>
+        <Car01Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--mm-grey-muted)]" aria-hidden="true" />
+        <p className="text-sm font-medium leading-tight">{deal.vehicleName ?? 'Véhicule inconnu'}</p>
       </div>
       <div className="flex items-center gap-2">
-        <UserIcon className="h-3.5 w-3.5 text-noir-400 flex-shrink-0" />
-        <p className="text-xs text-noir-600">{deal.customerName ?? '—'}</p>
+        <UserIcon className="h-3.5 w-3.5 shrink-0 text-[var(--mm-grey-muted)]" aria-hidden="true" />
+        <p className="text-xs mm-muted">{deal.customerName ?? '—'}</p>
       </div>
       <div className="flex items-center gap-2">
-        <DollarCircleIcon className="h-3.5 w-3.5 text-gold-500 flex-shrink-0" />
-        <p className="text-sm font-bold text-noir-950">{formatPrice(deal.price)}</p>
+        <DollarCircleIcon className="h-3.5 w-3.5 shrink-0 text-[var(--mm-grey)]" aria-hidden="true" />
+        <p className="text-sm font-medium tabular-nums">{formatPrice(deal.price)}</p>
       </div>
-      <div className="pt-1 border-t border-noir-100">
-        <p className="text-[10px] uppercase tracking-wider text-noir-400 mb-1.5">Déplacer vers</p>
+      <div className="border-t border-[var(--mm-line)] pt-2">
+        <p className="mm-section-label mb-1.5">Déplacer vers</p>
         <div className="flex flex-wrap gap-1">
-          {COLUMNS.filter(c => c.status !== deal.status).map(({ status, label }) => (
-            <button key={status} onClick={() => onMove(deal.id, status)}
-              className={cn('px-2 py-1 text-[10px] font-semibold uppercase tracking-wider border hover:opacity-80 transition-colors', STATUS_BADGE[status])}>
+          {COLUMNS.filter((c) => c.status !== deal.status).map(({ status, label }) => (
+            <button key={status} type="button" onClick={() => onMove(deal.id, status)} className="mm-chip">
               {label}
             </button>
           ))}
@@ -128,17 +120,17 @@ export function MotorsSales({ initial }: { initial: DealsBoard }) {
             const colTotal = cards.reduce((sum, d) => sum + d.price, 0)
             return (
               <div key={col.status} className="flex flex-col gap-3">
-                <div className={cn('border px-3 py-2.5 flex items-center justify-between', col.color)}>
+                <div className="mm-kanban-head">
                   <div className="flex items-center gap-2">
-                    <span className={cn('h-2 w-2 rounded-full', col.dot)} />
-                    <span className="text-xs font-bold uppercase tracking-wider text-noir-700">{col.label}</span>
-                    <span className="flex h-5 w-5 items-center justify-center bg-white/70 text-[10px] font-bold text-noir-600 rounded-full">{cards.length}</span>
+                    <span className="h-2 w-2 rounded-full bg-[var(--mm-ink)]" aria-hidden="true" />
+                    <span className="text-xs font-bold uppercase tracking-wider">{col.label}</span>
+                    <span className="mm-kanban-count">{cards.length}</span>
                   </div>
-                  {colTotal > 0 && <span className="text-[10px] font-semibold text-noir-500">{formatPrice(colTotal)}</span>}
+                  {colTotal > 0 && <span className="text-[0.65rem] font-medium tabular-nums text-[var(--mm-grey)]">{formatPrice(colTotal)}</span>}
                 </div>
-                <div className="flex flex-col gap-2 min-h-[120px]">
+                <div className="flex min-h-[120px] flex-col gap-2">
                   {cards.length === 0 ? (
-                    <div className="flex items-center justify-center py-8 border border-dashed border-noir-200 text-xs text-noir-400">Aucune affaire</div>
+                    <div className="mm-empty">Aucune affaire</div>
                   ) : (
                     cards.map(deal => <DealCard key={deal.id} deal={deal} onMove={(id, status) => moveMutation.mutate({ id, status })} />)
                   )}

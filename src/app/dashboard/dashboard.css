@@ -340,8 +340,331 @@
 }
 @keyframes mm-dash-spin { to { transform: rotate(360deg); } }
 
+.mm-dash .mm-panel-title {
+  margin: 0;
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--mm-ink);
+}
+.mm-dash .mm-section-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mm-grey);
+}
+.mm-dash .mm-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mm-ink);
+  color: var(--mm-white);
+  font-weight: 500;
+}
+.mm-dash .mm-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.875rem;
+}
+.mm-dash .mm-meta-row > span:first-child { color: var(--mm-grey); }
+.mm-dash .mm-danger-soft {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: var(--mm-touch);
+  padding: 0 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--mm-stop) 40%, transparent);
+  border-radius: var(--mm-r);
+  background: transparent;
+  color: var(--mm-stop);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.mm-dash .mm-danger-soft:hover {
+  background: color-mix(in srgb, var(--mm-stop) 8%, #fff);
+}
+.mm-dash .mm-kanban-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--mm-line);
+  border-radius: var(--mm-r);
+  background: color-mix(in srgb, var(--mm-off) 70%, #fff);
+}
+.mm-dash .mm-kanban-count {
+  display: flex;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.35rem;
+  border-radius: var(--mm-r);
+  background: #fff;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--mm-grey);
+}
+.mm-dash .mm-deal-card {
+  border: 1px solid var(--mm-line);
+  border-radius: var(--mm-r);
+  background: #fff;
+  padding: 1rem;
+  display: grid;
+  gap: 0.55rem;
+}
+.mm-dash .mm-chip {
+  border: 1px solid var(--mm-line);
+  padding: 0.28rem 0.5rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--mm-grey);
+  cursor: pointer;
+  border-radius: var(--mm-r);
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+.mm-dash .mm-chip:hover {
+  background: var(--mm-ink);
+  border-color: var(--mm-ink);
+  color: var(--mm-white);
+}
+.mm-dash .mm-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 7.5rem;
+  padding: 1.5rem 1rem;
+  border: 1px dashed var(--mm-line);
+  border-radius: var(--mm-r);
+  color: var(--mm-grey-muted);
+  font-size: 0.75rem;
+  text-align: center;
+}
+.mm-dash .mm-progress {
+  height: 0.38rem;
+  width: 100%;
+  overflow: hidden;
+  background: var(--mm-off);
+  border-radius: var(--mm-r);
+}
+.mm-dash .mm-progress > * {
+  display: block;
+  height: 100%;
+  background: var(--mm-ink);
+  border-radius: inherit;
+}
+.mm-dash .mm-media-frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--mm-line);
+  border-radius: var(--mm-r);
+  background: var(--mm-off);
+  aspect-ratio: 16 / 10;
+}
+.mm-dash .mm-media-dot {
+  height: 0.38rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.55);
+  transition: width 0.3s var(--mm-ease), background-color 0.3s;
+}
+.mm-dash .mm-media-dot.is-active {
+  width: 1.5rem;
+  background: var(--mm-white);
+}
+.mm-dash .mm-thumb {
+  height: 4rem;
+  width: 6rem;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: var(--mm-r);
+  opacity: 0.65;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+.mm-dash .mm-thumb.is-active {
+  border-color: var(--mm-ink);
+  opacity: 1;
+}
+
+/* ── confirm dialog (rendered inside .mm-dash) ── */
+.mm-dash .mm-dialog-root {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+.mm-dash .mm-dialog-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgb(5 5 5 / 0.45);
+  backdrop-filter: blur(4px);
+}
+.mm-dash .mm-dialog-viewport {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  pointer-events: none;
+}
+.mm-dash .mm-dialog {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 26rem;
+  border: 1px solid var(--mm-line);
+  border-radius: var(--mm-r);
+  background: #fff;
+  padding: 1.25rem 1.25rem 1rem;
+  box-shadow: 0 24px 48px rgb(5 5 5 / 0.12);
+}
+.mm-dash .mm-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.mm-dash .mm-dialog-title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--mm-ink);
+}
+.mm-dash .mm-dialog-close {
+  flex-shrink: 0;
+  margin: -0.25rem -0.25rem 0 0;
+}
+.mm-dash .mm-dialog-message {
+  margin: 0 0 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--mm-grey);
+}
+.mm-dash .mm-dialog-actions {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.5rem;
+}
+@media (min-width: 24rem) {
+  .mm-dash .mm-dialog-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+}
+.mm-dash .mm-dialog-cancel {
+  min-height: var(--mm-touch);
+}
+.mm-dash .mm-dialog-confirm {
+  min-height: var(--mm-touch);
+}
+.mm-dash .mm-dialog-confirm[data-variant='danger'] {
+  background: var(--mm-stop);
+}
+.mm-dash .mm-dialog-confirm[data-variant='danger']:hover {
+  background: color-mix(in srgb, var(--mm-stop) 88%, #000);
+}
+.mm-dash .mm-dialog-confirm[data-variant='warning'] {
+  background: var(--mm-warn);
+}
+.mm-dash .mm-dialog-confirm[data-variant='warning']:hover {
+  background: color-mix(in srgb, var(--mm-warn) 88%, #000);
+}
+.mm-dash .mm-dialog-confirm[data-variant='info'] {
+  background: var(--mm-ink);
+}
+
+/* ── mobile density ── */
+@media (max-width: 639px) {
+  .mm-dash .mm-panel-pad { padding: 1rem; }
+  .mm-dash .mm-table thead th,
+  .mm-dash .mm-table tbody td {
+    padding: 0.65rem 0.5rem;
+    font-size: 0.8125rem;
+  }
+  .mm-dash .mm-table-col-narrow { display: none; }
+  .mm-dash .mm-seg-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+  .mm-dash .mm-seg-scroll .mm-seg { flex-wrap: nowrap; }
+  .mm-dash .mm-table-foot {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .mm-dash .mm-table-foot > div { justify-content: center; }
+}
+.mm-dash .mm-table-row-link {
+  cursor: pointer;
+}
+.mm-dash .mm-table-row-link:focus-visible {
+  outline: 2px solid var(--mm-ink);
+  outline-offset: -2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .mm-dash .mm-btn:active,
   .mm-dash .mm-soft:active { transform: none; }
   .mm-dash .mm-spinner { animation: none; border-top-color: var(--mm-grey); }
+  .mm-dash .mm-media-dot,
+  .mm-dash .mm-thumb,
+  .mm-dash aside { transition: none !important; }
+  .mm-dash * {
+    scroll-behavior: auto !important;
+  }
 }
+
+/* Toasts (provider sits outside .mm-dash; loaded via dashboard layout) */
+.mm-toast-stack {
+  --mm-ink: #121110;
+  --mm-grey: #4f4d48;
+  --mm-line: rgb(18 17 16 / 0.14);
+  --mm-stop: #d23b2f;
+  --mm-ok: #2a8f58;
+  --mm-r: 2px;
+}
+.mm-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 17.5rem;
+  max-width: 22rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--mm-line);
+  border-radius: var(--mm-r);
+  background: #fff;
+  box-shadow: 0 12px 32px rgb(5 5 5 / 0.1);
+}
+.mm-toast[data-type='success'] { border-left: 3px solid var(--mm-ok); }
+.mm-toast[data-type='error'] { border-left: 3px solid var(--mm-stop); }
+.mm-toast-message {
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--mm-ink);
+}
+.mm-toast-dismiss {
+  flex-shrink: 0;
+  display: flex;
+  min-height: 2rem;
+  min-width: 2rem;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--mm-grey);
+  cursor: pointer;
+  border-radius: var(--mm-r);
+}
+.mm-toast-dismiss:hover { color: var(--mm-ink); }

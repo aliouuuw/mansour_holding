@@ -48,11 +48,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
     return (
       <div className="mm-dash flex min-h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div
-            className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--mm-line)] border-t-[var(--mm-ink)]"
-            role="status"
-            aria-label="Chargement"
-          />
+          <div className="mm-spinner h-8 w-8" role="status" aria-label="Chargement" />
           <p className="text-sm text-[var(--mm-grey)]">Chargement…</p>
         </div>
       </div>

@@ -7,7 +7,6 @@ import { ArrowLeft01Icon } from 'hugeicons-react'
 import { vehiclesApi, invalidateMotorsQueries } from '@/lib/api'
 import { VehicleForm, arrivedAtFromForm, toExtras, type VehicleFormValues } from '@/components/motors/VehicleForm'
 import { useToast } from '@/components/ui/Toast'
-
 export function MotorsVehicleNew() {
   const navigate = useNavigate()
   const qc = useQueryClient()
@@ -38,22 +37,26 @@ export function MotorsVehicleNew() {
       className="mx-auto max-w-2xl space-y-6"
     >
       <div className="flex items-center gap-4">
-        <Link to="/dashboard/motors/inventory" className="rounded-sm p-2 text-noir-600 hover:bg-surface-dim transition-colors">
-          <ArrowLeft01Icon className="h-5 w-5" />
+        <Link to="/dashboard/motors/inventory" className="mm-icon-btn" aria-label="Retour à l'inventaire">
+          <ArrowLeft01Icon className="h-5 w-5" aria-hidden="true" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-noir-950">Nouveau véhicule</h1>
-          <p className="mt-0.5 text-sm text-noir-500">Remplissez les informations du véhicule</p>
+          <h1 className="mm-title">Nouveau véhicule</h1>
+          <p className="mm-lead">Remplissez les informations du véhicule</p>
         </div>
       </div>
 
-      <div className="border border-noir-200 bg-white p-6 shadow-sm">
+      <div className="mm-panel mm-panel-pad">
         {createMutation.error && (
-          <div className="mb-4 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="mm-alert-error">
             {(createMutation.error as Error).message}
           </div>
         )}
-        <VehicleForm onSubmit={async (v) => { await createMutation.mutateAsync(v) }} submitLabel="Créer le véhicule" loading={createMutation.isPending} />
+        <VehicleForm
+          onSubmit={async (v) => { await createMutation.mutateAsync(v) }}
+          submitLabel="Créer le véhicule"
+          loading={createMutation.isPending}
+        />
       </div>
     </motion.div>
   )

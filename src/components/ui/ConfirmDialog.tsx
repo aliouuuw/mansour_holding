@@ -1,4 +1,7 @@
-import { motion, AnimatePresence } from 'framer-motion'
+'use client'
+
+import { useEffect, useId, useRef } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Cancel01Icon } from 'hugeicons-react'
 
 interface ConfirmDialogProps {
@@ -24,68 +27,96 @@ export function ConfirmDialog({
   variant = 'danger',
   isLoading = false,
 }: ConfirmDialogProps) {
-  const variantStyles = {
-    danger: 'bg-red-500 hover:bg-red-600',
-    warning: 'bg-yellow-500 hover:bg-yellow-600',
-    info: 'bg-gold-400 hover:bg-gold-300',
-  }
+  const reduceMotion = useReducedMotion()
+  const titleId = useId()
+  const descId = useId()
+  const cancelRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (!isOpen) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !isLoading) onClose()
+    }
+    document.addEventListener('keydown', onKey)
+    cancelRef.current?.focus()
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prev
+    }
+  }, [isOpen, isLoading, onClose])
+
+  const motionProps = reduceMotion
+    ? { initial: false, animate: { opacity: 1 }, exit: { opacity: 0 } }
+    : {
+        initial: { opacity: 0, scale: 0.98, y: 12 },
+        animate: { opacity: 1, scale: 1, y: 0 },
+        exit: { opacity: 0, scale: 0.98, y: 12 },
+      }
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <>
-          {/* Backdrop */}
+        <div className="mm-dialog-root" role="presentation">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            transition={{ duration: reduceMotion ? 0 : 0.2 }}
+            onClick={isLoading ? undefined : onClose}
+            className="mm-dialog-backdrop"
+            aria-hidden="true"
           />
 
-          {/* Dialog */}
-          <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
+          <div className="mm-dialog-viewport">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-noir-900 border border-noir-800 rounded-lg shadow-2xl max-w-md w-full p-6"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={titleId}
+              aria-describedby={descId}
+              {...motionProps}
+              transition={{ duration: reduceMotion ? 0 : 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className="mm-dialog"
             >
-              {/* Header */}
-              <div className="flex items-start justify-between mb-4">
-                <h3 className="text-xl font-semibold text-white">{title}</h3>
+              <div className="mm-dialog-head">
+                <h3 id={titleId} className="mm-dialog-title">{title}</h3>
                 <button
+                  type="button"
                   onClick={onClose}
                   disabled={isLoading}
-                  className="text-white/40 hover:text-white/60 transition-colors disabled:opacity-50"
+                  className="mm-icon-btn mm-dialog-close"
+                  aria-label="Fermer"
                 >
-                  <Cancel01Icon className="w-5 h-5" />
+                  <Cancel01Icon className="h-5 w-5" aria-hidden="true" />
                 </button>
               </div>
 
-              {/* Message */}
-              <p className="text-white/70 mb-6">{message}</p>
+              <p id={descId} className="mm-dialog-message">{message}</p>
 
-              {/* Actions */}
-              <div className="flex gap-3 justify-end">
+              <div className="mm-dialog-actions">
                 <button
+                  ref={cancelRef}
+                  type="button"
                   onClick={onClose}
                   disabled={isLoading}
-                  className="px-4 py-2 text-white/70 hover:text-white transition-colors disabled:opacity-50"
+                  className="mm-soft mm-dialog-cancel"
                 >
                   {cancelText}
                 </button>
                 <button
+                  type="button"
                   onClick={onConfirm}
                   disabled={isLoading}
-                  className={`px-4 py-2 text-white font-semibold rounded transition-colors disabled:opacity-50 ${variantStyles[variant]}`}
+                  className="mm-btn mm-dialog-confirm"
+                  data-variant={variant}
                 >
-                  {isLoading ? 'En cours...' : confirmText}
+                  {isLoading ? 'En cours…' : confirmText}
                 </button>
               </div>
             </motion.div>
           </div>
-        </>
+        </div>
       )}
     </AnimatePresence>
   )

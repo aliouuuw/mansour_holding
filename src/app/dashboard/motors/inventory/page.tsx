@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Link } from '@/lib/router'
-import { motion } from 'framer-motion'
+import { Link, useNavigate } from '@/lib/router'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
 import { Search01Icon, Add01Icon, ViewIcon } from 'hugeicons-react'
 import { formatPrice, formatNumber } from '@/lib/utils'
@@ -34,8 +34,16 @@ const columns = [
       </div>
     ),
   }),
-  columnHelper.accessor('year', { header: 'Année', cell: (info) => <span className="text-sm tabular-nums">{info.getValue()}</span> }),
-  columnHelper.accessor('mileage', { header: 'Kilométrage', cell: (info) => <span className="text-sm tabular-nums">{formatNumber(info.getValue())} km</span> }),
+  columnHelper.accessor('year', {
+    header: 'Année',
+    meta: { narrow: true },
+    cell: (info) => <span className="text-sm tabular-nums">{info.getValue()}</span>,
+  }),
+  columnHelper.accessor('mileage', {
+    header: 'Kilométrage',
+    meta: { narrow: true },
+    cell: (info) => <span className="text-sm tabular-nums">{formatNumber(info.getValue())} km</span>,
+  }),
   columnHelper.accessor('price', { header: 'Prix', cell: (info) => <span className="text-sm font-medium tabular-nums">{formatPrice(info.getValue())}</span> }),
   columnHelper.accessor('status', {
     header: 'Statut',
@@ -52,6 +60,8 @@ const columns = [
 ]
 
 export function MotorsInventory() {
+  const navigate = useNavigate()
+  const reduceMotion = useReducedMotion()
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<VehicleStatus | 'all'>('all')
@@ -103,6 +113,7 @@ export function MotorsInventory() {
             className="mm-input mm-input--search text-sm"
           />
         </div>
+        <div className="mm-seg-scroll w-full sm:w-auto">
         <div className="mm-seg" role="group" aria-label="Filtrer par statut">
           {(['all', 'available', 'reserved', 'sold'] as const).map((s) => (
             <button
@@ -115,6 +126,7 @@ export function MotorsInventory() {
             </button>
           ))}
         </div>
+        </div>
       </div>
 
       <div className="mm-panel">
@@ -125,7 +137,10 @@ export function MotorsInventory() {
               {table.getHeaderGroups().map((hg) => (
                 <tr key={hg.id}>
                   {hg.headers.map((h) => (
-                    <th key={h.id}>
+                    <th
+                      key={h.id}
+                      className={(h.column.columnDef.meta as { narrow?: boolean } | undefined)?.narrow ? 'mm-table-col-narrow' : undefined}
+                    >
                       {h.isPlaceholder ? null : flexRender(h.column.columnDef.header, h.getContext())}
                     </th>
                   ))}
@@ -140,14 +155,40 @@ export function MotorsInventory() {
               ) : table.getRowModel().rows.length === 0 ? (
                 <tr><td colSpan={columns.length} className="py-12 text-center mm-muted">Aucun véhicule trouvé</td></tr>
               ) : (
-                table.getRowModel().rows.map((row, i) => (
-                  <motion.tr key={row.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.2, delay: i * 0.03 }}>
+                table.getRowModel().rows.map((row, i) => {
+                  const vehicleId = row.original.id
+                  const go = () => void navigate({ to: '/dashboard/motors/inventory/$vehicleId', params: { vehicleId } })
+                  return (
+                  <motion.tr
+                    key={row.id}
+                    tabIndex={0}
+                    role="link"
+                    aria-label={`Ouvrir ${row.original.make} ${row.original.model}`}
+                    className="mm-table-row-link"
+                    initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={reduceMotion ? { duration: 0 } : { duration: 0.2, delay: Math.min(i * 0.02, 0.25) }}
+                    onClick={go}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        go()
+                      }
+                    }}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                      <td
+                        key={cell.id}
+                        className={(cell.column.columnDef.meta as { narrow?: boolean } | undefined)?.narrow ? 'mm-table-col-narrow' : undefined}
+                        onClick={(e) => {
+                          if ((e.target as HTMLElement).closest('a, button')) e.stopPropagation()
+                        }}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
                     ))}
                   </motion.tr>
-                ))
+                )})
               )}
             </tbody>
           </table>

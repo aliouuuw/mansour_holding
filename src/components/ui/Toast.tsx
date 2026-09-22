@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { CheckmarkCircle01Icon, Alert01Icon, Cancel01Icon } from 'hugeicons-react'
 
 type ToastType = 'success' | 'error'
@@ -21,6 +21,7 @@ const ToastContext = createContext<ToastContextValue | null>(null)
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
   const counter = useRef(0)
+  const reduceMotion = useReducedMotion()
 
   const toast = useCallback((message: string, type: ToastType = 'success') => {
     const id = ++counter.current
@@ -30,31 +31,40 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 
   const dismiss = (id: number) => setToasts((t) => t.filter((x) => x.id !== id))
 
+  const motionProps = reduceMotion
+    ? { initial: false, animate: { opacity: 1 }, exit: { opacity: 0 } }
+    : {
+        initial: { opacity: 0, y: 16, scale: 0.98 },
+        animate: { opacity: 1, y: 0, scale: 1 },
+        exit: { opacity: 0, y: 8, scale: 0.98 },
+      }
+
   return (
     <ToastContext.Provider value={{ toast }}>
       {children}
-      <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-2 pointer-events-none">
+      <div className="mm-toast-stack fixed bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none sm:bottom-6 sm:right-6">
         <AnimatePresence>
           {toasts.map((t) => (
             <motion.div
               key={t.id}
-              initial={{ opacity: 0, y: 16, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.95 }}
-              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="pointer-events-auto flex items-center gap-3 border bg-white px-4 py-3 shadow-lg min-w-[280px] max-w-sm"
-              style={{ borderColor: t.type === 'success' ? '#d1fae5' : '#fee2e2' }}
+              {...motionProps}
+              transition={{ duration: reduceMotion ? 0 : 0.2, ease: [0.16, 1, 0.3, 1] }}
+              className="mm-toast"
+              data-type={t.type}
+              role="status"
             >
               {t.type === 'success'
-                ? <CheckmarkCircle01Icon className="h-4 w-4 flex-shrink-0 text-emerald-500" />
-                : <Alert01Icon className="h-4 w-4 flex-shrink-0 text-red-500" />
+                ? <CheckmarkCircle01Icon className="h-4 w-4 shrink-0 text-[var(--mm-ok)]" aria-hidden="true" />
+                : <Alert01Icon className="h-4 w-4 shrink-0 text-[var(--mm-stop)]" aria-hidden="true" />
               }
-              <p className="flex-1 text-sm font-medium text-noir-900">{t.message}</p>
+              <p className="mm-toast-message">{t.message}</p>
               <button
+                type="button"
                 onClick={() => dismiss(t.id)}
-                className="flex-shrink-0 text-noir-400 hover:text-noir-700 transition-colors"
+                className="mm-toast-dismiss"
+                aria-label="Fermer la notification"
               >
-                <Cancel01Icon className="h-3.5 w-3.5" />
+                <Cancel01Icon className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
             </motion.div>
           ))}
