@@ -5,6 +5,7 @@ import {
   updateVehicle,
   deleteVehicle,
   uploadVehicleImage,
+  replaceVehicleImage,
   type VehicleFilters,
   type VehicleSortField,
   type VehicleSortDir,
@@ -31,6 +32,7 @@ import {
   type DealStatus,
 } from '@/server/deals'
 import { getHoldingOverview, getMotorsOverview } from '@/server/overview'
+import { listInventorySuggestionMap } from '@/server/inventory-suggestions'
 import type { QueryClient } from '@tanstack/react-query'
 
 export type {
@@ -127,6 +129,15 @@ export const vehiclesApi = {
     form.append('file', file)
     return uploadVehicleImage(id, form)
   },
+  replaceImage: (id: string, index: number, file: File) => {
+    const form = new FormData()
+    form.append('file', file)
+    return replaceVehicleImage(id, index, form)
+  },
+}
+
+export const inventorySuggestionsApi = {
+  list: listInventorySuggestionMap,
 }
 
 export const publicVehiclesApi = {
@@ -167,4 +178,5 @@ export function invalidateMotorsQueries(qc: QueryClient) {
   void qc.invalidateQueries({ queryKey: ['deal'] })
   void qc.invalidateQueries({ queryKey: ['public-vehicles'] })
   void qc.invalidateQueries({ queryKey: ['public-featured-vehicles'] })
+  void qc.invalidateQueries({ queryKey: ['inventory-suggestions'] })
 }

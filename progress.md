@@ -14,6 +14,8 @@
 * **Enhancement (2026-09-22, round 4):** Notes affaire éditables sur fiche; filtre statut liste ventes (`status` + `view=list`); reset filtres liste au retour Pipeline.
 * **Enhancement (2026-09-22, round 5):** Recherche serveur liste ventes (`q` + joins); clients URL `q`/`page`, breadcrumbs, lignes cliquables; export CSV inventaire (filtres + tri courants, max 500).
 * **Enhancement (2026-09-22, round 6):** Export CSV clients (filtre `q`, max 500); raccourci `/` recherche inventaire + repère clavier; plafond `limit` serveur véhicules/clients à 500 pour exports.
+* **Enhancement (2026-09-22, inventaire grille):** Liste type tableur — cellules éditables (marque, modèle, année, km, prix, VIN, arrivée), statut en select, fiche via lien œil; mobile prix + statut inline; `useInventoryPatch` + optimistic cache.
+* **Enhancement (2026-09-22, inventaire combobox + médias):** Suggestions persistées (`inventory_field_suggestions` + valeurs distinctes du parc); combobox Notion par cellule; modal photos (slider, remplacer/supprimer, menu ajout). Migration `0004_superb_scarlet_witch.sql`.
 * **Enhancement backlog (IA / UX / UI):**
   - **UX:** Cartes mobile clients; pagination export multi-pages si >500 lignes.
 * **Verification:** `bun run type-check` (pass 2026-09-22).

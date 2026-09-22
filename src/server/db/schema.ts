@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, boolean, timestamp, text, integer, jsonb, pgEnum, index } from 'drizzle-orm/pg-core'
+import { pgTable, uuid, varchar, boolean, timestamp, text, integer, jsonb, pgEnum, index, uniqueIndex } from 'drizzle-orm/pg-core'
 
 // =================== AUTH SCHEMA (better-auth) ===================
 // Using varchar to support better-auth's nanoId format
@@ -87,6 +87,21 @@ export const vehicles = pgTable('vehicles', {
   index('vehicles_status_idx').on(t.status),
   index('vehicles_make_model_idx').on(t.make, t.model),
 ])
+
+export const inventoryFieldSuggestions = pgTable(
+  'inventory_field_suggestions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    field: varchar('field', { length: 32 }).notNull(),
+    value: text('value').notNull(),
+    useCount: integer('use_count').notNull().default(1),
+    lastUsedAt: timestamp('last_used_at').notNull().defaultNow(),
+  },
+  (t) => [
+    index('inventory_field_suggestions_field_idx').on(t.field),
+    uniqueIndex('inventory_field_suggestions_field_value_uidx').on(t.field, t.value),
+  ]
+)
 
 // =================== CUSTOMERS SCHEMA ===================
 

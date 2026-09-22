@@ -6,6 +6,7 @@ import { vehicles } from './db/schema'
 import { requireUser } from './session'
 import { createVehicleSchema, updateVehicleSchema, parseBody, iso } from './schemas'
 import { uploadToR2 } from './r2-upload'
+import { rememberInventoryPatch } from './inventory-suggestions'
 
 export type VehicleStatus = 'available' | 'reserved' | 'sold'
 export type FuelType = 'gasoline' | 'diesel' | 'hybrid' | 'electric'
@@ -107,6 +108,7 @@ export async function updateVehicle(id: string, data: unknown) {
     .where(eq(vehicles.id, id))
     .returning()
   if (!vehicle) throw new Error('Vehicle not found')
+  await rememberInventoryPatch(validated)
   return serializeVehicle(vehicle)
 }
 
@@ -145,5 +147,41 @@ export async function uploadVehicleImage(id: string, formData: FormData) {
     .where(eq(vehicles.id, id))
     .returning()
 
-  return { url: publicUrl, images: updated.images ?? [] }
+  const serialized = serializeVehicle(updated)
+  return { url: publicUrl, images: serialized.images }
+}
+
+export async function replaceVehicleImage(id: string, index: number, formData: FormData) {
+  await requireUser()
+  const [vehicle] = await db.select().from(vehicles).where(eq(vehicles.id, id))
+  if (!vehicle) throw new Error('Vehicle not found')
+
+  const images = vehicle.images ?? []
+  if (index < 0 || index >= images.length) throw new Error('Image index out of range')
+
+  const file = formData.get('file')
+  if (!(file instanceof File)) throw new Error('No file provided')
+
+  const ext = file.name.split('.').pop() ?? 'jpg'
+  const key = `vehicles/${id}/${Date.now()}.${ext}`
+  const buffer = await file.arrayBuffer()
+
+  try {
+    await uploadToR2(key, new Uint8Array(buffer), file.type)
+  } catch (err) {
+    console.error('R2 upload error:', err)
+    throw new Error('Upload failed')
+  }
+
+  const publicUrl = `${process.env.R2_PUBLIC_URL}/${key}`
+  const updatedImages = [...images]
+  updatedImages[index] = publicUrl
+
+  const [updated] = await db
+    .update(vehicles)
+    .set({ images: updatedImages, updatedAt: new Date() })
+    .where(eq(vehicles.id, id))
+    .returning()
+
+  return serializeVehicle(updated)
 }
