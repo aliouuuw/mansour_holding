@@ -46,17 +46,17 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
   if (!star) return null
   return (
     <section
-      className="hero ch-light relative isolate h-svh min-h-dvh overflow-hidden bg-mm-paper text-mm-ink"
+      className="hero ch-light"
       aria-label={fresh ? `${star.make} ${star.model}, dernière arrivée à Dakar` : `${star.make} ${star.model}`}
       ref={ref}
     >
-      <div className="hero-stage pointer-events-none z-0 origin-[72%_58%] max-mm:origin-[50%_58%]" aria-hidden="true">
-        <div className="hero-cam origin-[72%_58%] max-mm:origin-[50%_58%]">
-          <picture className="block size-full">
+      <div className="hero-stage" aria-hidden="true">
+        <div className="hero-cam">
+          <picture>
             <source media="(max-width: 860px)" srcSet="/mansour-motors/hero-still-m.jpg" width={1080} height={1920} />
             {/* local Higgsfield still, full-bleed cover */}
             <img
-              className="hero-still object-[58%_50%] max-mm:object-[50%_62%] [transform:translate3d(calc(var(--mx)*-1.5%),calc(var(--my)*-.9%),0)]"
+              className="hero-still"
               src="/mansour-motors/hero-still.jpg"
               alt=""
               width={2688}
@@ -68,11 +68,11 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
         </div>
         <div className="hero-glint" />
       </div>
-      <div className="hero-copy pointer-events-none absolute inset-0 z-[2] flex flex-col items-start justify-end gap-[.45rem] bg-[linear-gradient(to_top,rgb(243_242_239_/_0.82)_0%,rgb(243_242_239_/_0.38)_26%,rgb(243_242_239_/_0.08)_46%,transparent_62%)] px-[var(--pad)] pb-[4%] max-mm:gap-1.5 max-mm:bg-[linear-gradient(to_top,rgb(243_242_239_/_0.86)_0%,rgb(243_242_239_/_0.4)_28%,rgb(243_242_239_/_0.08)_48%,transparent_64%)] max-mm:pb-[calc(1.1rem+env(safe-area-inset-bottom,0px))]">
-        {fresh && <p className="hero-arrival mb-[.55em] text-[.78rem] font-medium uppercase tracking-[.22em] text-mm-grey max-mm:mb-[.28em] max-mm:tracking-[.2em]">Dernière arrivée à Dakar</p>}
-        <h2 className="hero-title text-balance text-[clamp(4rem,_13vw,_10.5rem)] font-extralight leading-[.86] tracking-[-.04em] [overflow-wrap:anywhere] text-mm-ink max-mm:text-[clamp(2.6rem,_11vw,_3.6rem)] max-mm:tracking-[-.03em]">{star.model}</h2>
+      <div className="hero-copy">
+        {fresh && <p className="hero-arrival">Dernière arrivée à Dakar</p>}
+        <h2 className="hero-title">{star.model}</h2>
         <p className="brand">{star.make}</p>
-        <Button className="pointer-events-auto" to={vehicleUrl(star)}>Voir le véhicule</Button>
+        <Button to={vehicleUrl(star)}>Voir le véhicule</Button>
       </div>
     </section>
   )

@@ -28,6 +28,7 @@ function framings(v: ApiVehicle, title: string) {
 }
 
 const gallerySwipeHintKey = 'mm-gallery-swipe-hint'
+const galleryEnlargeHintKey = 'mm-gallery-enlarge-hint'
 
 function isPhone() {
   return typeof window !== 'undefined' && matchMedia('(max-width: 860px)').matches
@@ -41,8 +42,12 @@ function Gallery({ v, title }: { v: ApiVehicle; title: string }) {
   const [at, setAt] = useState(0)
   const [lightbox, setLightbox] = useState<number | null>(null)
   const [swipeHint, setSwipeHint] = useState(true)
+  const [enlargeHint, setEnlargeHint] = useState(true)
   useEffect(() => {
-    try { if (sessionStorage.getItem(gallerySwipeHintKey) === '1') setSwipeHint(false) } catch { /* ponytail: private mode */ }
+    try {
+      if (sessionStorage.getItem(gallerySwipeHintKey) === '1') setSwipeHint(false)
+      if (sessionStorage.getItem(galleryEnlargeHintKey) === '1') setEnlargeHint(false)
+    } catch { /* ponytail: private mode */ }
   }, [])
   useEffect(() => {
     const el = ref.current
@@ -82,6 +87,10 @@ function Gallery({ v, title }: { v: ApiVehicle; title: string }) {
   const openLightbox = (i: number) => {
     if (!isPhone()) return
     setLightbox(i)
+    if (!enlargeHint) return
+    setEnlargeHint(false)
+    sectionRef.current?.setAttribute('data-enlarge-hint', 'off')
+    try { sessionStorage.setItem(galleryEnlargeHintKey, '1') } catch { /* noop */ }
   }
   const closeLightbox = () => setLightbox(null)
   const stepLightbox = (delta: number) => {
@@ -91,7 +100,7 @@ function Gallery({ v, title }: { v: ApiVehicle; title: string }) {
   const showSwipeHint = swipeHint && photos.length > 1
   const lb = lightbox === null ? null : photos[lightbox]
   return (
-    <section id="photos" className="gallery" aria-label="Photos" ref={sectionRef}>
+    <section id="photos" className="gallery" aria-label="Photos" ref={sectionRef} data-enlarge-hint={enlargeHint ? undefined : 'off'}>
       {showSwipeHint ? <GallerySwipeHint /> : null}
       <div className="photos" ref={ref}>
         {photos.map((p, i) => (
@@ -104,6 +113,7 @@ function Gallery({ v, title }: { v: ApiVehicle; title: string }) {
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- framing uses object-position and zoom */}
               <img src={p.src} alt="" style={{ '--pos': p.pos, '--zoom': p.zoom } as React.CSSProperties} loading={i ? 'lazy' : 'eager'} decoding="async" />
+              {i === 0 && enlargeHint ? <span className="photo-enlarge-hint" aria-hidden="true">Agrandir</span> : null}
             </button>
           </figure>
         ))}

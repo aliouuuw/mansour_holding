@@ -1,5 +1,14 @@
 # Project Progress Log
 
+## [Motors] Hero tokens and gallery enlarge hint
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Home hero layout lives in `motors.css` (size, gradient, type, phone safe area). Tailwind utilities removed from `Hero`. First fiche photo shows « Agrandir » once per session (`mm-gallery-enlarge-hint`), phone only, top of the frame so it does not cover « Glisser ».
+* **Verification:** `bun run type-check`.
+
+---
+
 ## [Motors] Polish pass + R2 catalogue assets
 
 * **Status:** Completed
