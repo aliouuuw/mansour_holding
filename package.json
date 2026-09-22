@@ -13,7 +13,8 @@
     "db:migrate": "bun run src/server/db/migrate.ts",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "bun run src/server/db/seed.ts"
+    "db:seed": "bun run src/server/db/seed.ts",
+    "assets:push-r2": "bun run src/server/db/sync-public-assets-r2.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.95.2",

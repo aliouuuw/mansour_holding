@@ -6,7 +6,7 @@ import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
 import { AtelierSwipeHint, Button, Chapter, Field, OpenNote, Shell, ShowroomMap } from './_ui'
 import { lineup, toCar } from './_ui/car'
-import { BUDGETS, CONTACT, DAY, HOURS, STATE, YEARS, pad2, vehicleUrl, waLink } from './_ui/shared'
+import { BUDGETS, CONTACT, DAY, HOURS, STATE, YEARS, cover, pad2, vehicleUrl, waLink } from './_ui/shared'
 
 function prestige(vehicles: ApiVehicle[]) {
   const open = vehicles.filter((v) => v.status !== 'sold')
@@ -93,6 +93,7 @@ function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) 
     ? `${total} véhicules au showroom, ${vehicles.length} sur le plateau`
     : `${available} disponible${available > 1 ? 's' : ''} sur ${total}`
   const firstDetailHref = vehicles[0] ? vehicleUrl(vehicles[0]) : '/mansour-motors/vehicules'
+  const firstAtelierImg = vehicles[0] ? cover(vehicles[0]) : ''
 
   useEffect(() => {
     let table: { destroy(): void } | undefined
@@ -158,7 +159,12 @@ function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) 
             <div className="atelier-hero-media" data-atelier-media>
               <AtelierSwipeHint />
               {/* eslint-disable-next-line @next/next/no-img-element -- filled by turntable.js */}
-              <img data-atelier-img alt="" decoding="async" />
+              <img
+                data-atelier-img
+                alt=""
+                decoding="async"
+                src={firstAtelierImg || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"}
+              />
             </div>
             <div className="atelier-meta">
               <div className="atelier-id">

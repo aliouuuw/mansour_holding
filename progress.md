@@ -1,5 +1,14 @@
 # Project Progress Log
 
+## [Motors] Polish pass + R2 catalogue assets
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Darker `--grey` on paper and lighter greys on `ch-dark` for label contrast. Liste tap hint hides price/status and sits bottom-right. Atelier hero `img` SSR uses first vehicle cover. Catalog intro uses `.catalog-intro` only (dropped redundant `.page-head .lead`). Shared `r2-upload.ts`, `bun run assets:push-r2`, Next rewrites for `/mansour-motors/{vehicles,covers}` when `R2_PUBLIC_URL` is set. **263 files** uploaded to R2 (vehicles + covers).
+* **Verification:** `bun run type-check`; `curl -sI` on R2 cover URL returns 200; `assets:push-r2` exit 0.
+
+---
+
 ## [Motors] Backlog 1–4: harden, liste hint, mobile toolbar, footer safe area
 
 * **Status:** Completed

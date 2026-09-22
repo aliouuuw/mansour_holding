@@ -76,8 +76,8 @@ html:has(.mm) ::selection { background: #b58d24; color: #121110; }
   --off: #eceae5;
   --paper: #f3f2ef;
   --ink: #121110;
-  --grey: #5e5c58;
-  --grey-2: #8a877f;
+  --grey: #4f4d48;
+  --grey-2: #6f6c66;
   --line: rgba(18, 17, 16, .14);
   --line-d: rgba(246, 245, 242, .16);
   --ok: #2a8f58;
@@ -117,7 +117,7 @@ button, input, select { font: inherit; color: inherit; }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .hint { color: var(--grey); font-size: .9rem; }
 /* ── chapters ──────────────────────────────────────────────────────── */
-.ch-dark { background: var(--black); color: var(--white); --line: var(--line-d); --grey: #a39e96; --grey-2: #6e6b66; --white: #f6f5f2; }
+.ch-dark { background: var(--black); color: var(--white); --line: var(--line-d); --grey: #b5b0a9; --grey-2: #94908a; --white: #f6f5f2; }
 .ch-light { background: var(--paper); color: var(--ink); }
 /* ── type ──────────────────────────────────────────────────────────── */
 .display, .h2 { font-weight: 200; letter-spacing: -.03em; line-height: 1; }
@@ -633,7 +633,7 @@ input::placeholder { color: var(--grey-2); }
   display: grid; grid-template-columns: minmax(0, 1fr) auto;
   align-items: end; gap: .6rem 3rem;
 }
-.page-head .lead { margin: 0 0 .5rem; max-width: 30ch; text-align: right; font-size: .92rem; line-height: 1.5; }
+.page-head .catalog-intro { margin: 0 0 .5rem; max-width: 30ch; text-align: right; font-size: .92rem; line-height: 1.5; color: var(--grey); }
 .page-head h1 {
   font-weight: 350;
   font-size: clamp(3.2rem, 7vw, 5.6rem);
@@ -654,7 +654,6 @@ input::placeholder { color: var(--grey-2); }
     clip: rect(0 0 0 0); white-space: nowrap;
   }
   .page-head .wrap { display: block; }
-  .page-head .lead { margin: 0; max-width: 34ch; text-align: left; font-size: .86rem; }
   .page-head .catalog-intro { display: none; }
   .dock-lead { flex-wrap: wrap; align-items: baseline; row-gap: .15rem; }
 }
@@ -878,7 +877,6 @@ input::placeholder { color: var(--grey-2); }
 }
 .catalog-count [data-live] { color: var(--ink); font-weight: 600; }
 .catalog-count [data-active-label] { color: #8a6a1e; font-weight: 600; letter-spacing: .06em; }
-.page-head .catalog-intro { margin: 0; }
 .card-open-hint {
   display: none;
   position: absolute; left: 50%; bottom: .7rem; z-index: 2;
@@ -895,10 +893,12 @@ input::placeholder { color: var(--grey-2); }
 }
 @media (max-width: 860px) {
   .mm main.is-grid:not([data-card-hint='off']) .card[data-open-hint] .card-open-hint { display: inline-flex; }
+  .mm main.is-list:not([data-card-hint='off']) .index a[data-open-hint] .idx-price,
+  .mm main.is-list:not([data-card-hint='off']) .index a[data-open-hint] .status { opacity: 0; }
   .mm main.is-list:not([data-card-hint='off']) .index a[data-open-hint]::after {
     content: 'Voir la fiche';
-    position: absolute; right: 0; top: 50%; z-index: 1;
-    transform: translateY(-50%);
+    position: absolute; right: 0; bottom: .85rem; z-index: 1;
+    transform: none;
     padding: .42rem .75rem .44rem;
     border: 1px solid rgba(255, 255, 255, .22);
     border-radius: 999px;

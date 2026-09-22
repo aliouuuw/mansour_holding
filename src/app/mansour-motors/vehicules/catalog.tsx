@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import type { ApiVehicle } from '@/lib/api'
 import { AtelierSwipeHint, Button, Card, Shell } from '../_ui'
 import { toCar } from '../_ui/car'
-import { BUDGETS, FUEL, vehicleUrl } from '../_ui/shared'
+import { BUDGETS, FUEL, cover, vehicleUrl } from '../_ui/shared'
 
 const KMS = [1000, 5000, 10000, 20000]
 
@@ -19,6 +19,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
   const models = useMemo(() => Object.fromEntries(makes.map((m) => [m, [...new Set(vehicles.filter((v) => v.make === m).map((v) => v.model))]])), [makes, vehicles])
   const fuels = useMemo(() => [...new Set(vehicles.map((v) => v.fuelType))], [vehicles])
   const firstDetailHref = vehicles[0] ? vehicleUrl(vehicles[0]) : '/mansour-motors/vehicules'
+  const firstAtelierImg = vehicles[0] ? cover(vehicles[0]) : ''
 
   useEffect(() => {
     let destroy: (() => void) | undefined
@@ -36,7 +37,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
         <header className="page-head">
           <div className="wrap">
             <h1 className="display">Véhicules</h1>
-            <p className="lead catalog-intro">Stock au showroom de Dakar.</p>
+            <p className="catalog-intro">Stock au showroom de Dakar.</p>
           </div>
         </header>
 
@@ -116,7 +117,12 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
               <div className="atelier-hero-media" data-atelier-media>
                 <AtelierSwipeHint />
                 {/* eslint-disable-next-line @next/next/no-img-element -- filled by stock.js */}
-                <img data-atelier-img alt="" decoding="async" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" />
+                <img
+                  data-atelier-img
+                  alt=""
+                  decoding="async"
+                  src={firstAtelierImg || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"}
+                />
               </div>
               <div className="atelier-meta">
                 <div className="atelier-id">
