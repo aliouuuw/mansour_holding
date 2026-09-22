@@ -97,6 +97,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
                 <p className="catalog-count" aria-live="polite">
                   <span data-live /> <span data-active-label />
                 </p>
+                <p className="catalog-place">Stock au showroom de Dakar.</p>
               </div>
             </div>
           </div>

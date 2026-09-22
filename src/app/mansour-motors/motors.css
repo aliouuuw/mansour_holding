@@ -681,6 +681,7 @@ input::placeholder { color: var(--grey-2); }
   .page-head .wrap { display: block; }
   .page-head .catalog-intro { display: none; }
   .dock-lead { flex-wrap: wrap; align-items: baseline; row-gap: .15rem; }
+  .catalog-place { display: block; flex: 1 0 100%; }
 }
 
 .filterbar {
@@ -902,6 +903,7 @@ input::placeholder { color: var(--grey-2); }
 }
 .catalog-count [data-live] { color: var(--ink); font-weight: 600; }
 .catalog-count [data-active-label] { color: #8a6a1e; font-weight: 600; letter-spacing: .06em; }
+.catalog-place { display: none; margin: 0; color: var(--grey); font-size: .78rem; line-height: 1.35; }
 .card-open-hint {
   display: none;
   position: absolute; left: 50%; bottom: .7rem; z-index: 2;
@@ -919,11 +921,11 @@ input::placeholder { color: var(--grey-2); }
 @media (max-width: 860px) {
   .mm main.is-grid:not([data-card-hint='off']) .card[data-open-hint] .card-open-hint { display: inline-flex; }
   .mm main.is-list:not([data-card-hint='off']) .index a[data-open-hint] .idx-price,
-  .mm main.is-list:not([data-card-hint='off']) .index a[data-open-hint] .status { opacity: 0; }
+  .mm main.is-list:not([data-card-hint='off']) .index a[data-open-hint] .status { display: none; }
   .mm main.is-list:not([data-card-hint='off']) .index a[data-open-hint]::after {
     content: 'Voir la fiche';
-    position: absolute; right: 0; bottom: .85rem; z-index: 1;
-    transform: none;
+    grid-column: 2; justify-self: start;
+    position: static;
     padding: .42rem .75rem .44rem;
     border: 1px solid rgba(255, 255, 255, .22);
     border-radius: 999px;
@@ -1326,6 +1328,7 @@ input::placeholder { color: var(--grey-2); }
     max-width: 100%; max-height: 100%; width: auto; height: auto;
     object-fit: contain; object-position: var(--pos, 50% 55%);
     transform: scale(var(--zoom, 1)); transform-origin: var(--pos, 50% 55%);
+    touch-action: none;
   }
   .gallery-lightbox-close {
     position: absolute; top: calc(var(--head-total) + .35rem); right: var(--pad); z-index: 2;

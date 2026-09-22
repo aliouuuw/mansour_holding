@@ -1,5 +1,14 @@
 # Project Progress Log
 
+## [Motors] Low UX: catalog place, list hint, lightbox focus
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Phone catalog dock shows « Stock au showroom de Dakar. » Liste hint replaces price and status in the second column. Lightbox returns focus to the opened photo and accepts a horizontal swipe to change image.
+* **Verification:** `bun run type-check`.
+
+---
+
 ## [Motors] Hero tokens and gallery enlarge hint
 
 * **Status:** Completed

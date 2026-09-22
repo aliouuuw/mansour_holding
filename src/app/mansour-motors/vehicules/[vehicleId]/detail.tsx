@@ -39,6 +39,7 @@ function Gallery({ v, title }: { v: ApiVehicle; title: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
   const lightboxRef = useRef<HTMLDialogElement>(null)
+  const returnFocus = useRef(0)
   const [at, setAt] = useState(0)
   const [lightbox, setLightbox] = useState<number | null>(null)
   const [swipeHint, setSwipeHint] = useState(true)
@@ -86,13 +87,20 @@ function Gallery({ v, title }: { v: ApiVehicle; title: string }) {
   }, [lightbox])
   const openLightbox = (i: number) => {
     if (!isPhone()) return
+    returnFocus.current = i
     setLightbox(i)
     if (!enlargeHint) return
     setEnlargeHint(false)
     sectionRef.current?.setAttribute('data-enlarge-hint', 'off')
     try { sessionStorage.setItem(galleryEnlargeHintKey, '1') } catch { /* noop */ }
   }
-  const closeLightbox = () => setLightbox(null)
+  const closeLightbox = () => {
+    const i = returnFocus.current
+    setLightbox(null)
+    requestAnimationFrame(() => {
+      sectionRef.current?.querySelectorAll<HTMLButtonElement>('.photo-enlarge')[i]?.focus()
+    })
+  }
   const stepLightbox = (delta: number) => {
     if (lightbox === null) return
     setLightbox((lightbox + delta + photos.length) % photos.length)
@@ -141,7 +149,26 @@ function Gallery({ v, title }: { v: ApiVehicle; title: string }) {
               </>
             ) : null}
             {/* eslint-disable-next-line @next/next/no-img-element -- full-screen preview */}
-            <img className="gallery-lightbox-img" src={lb.src} alt={lb.alt} style={{ '--pos': lb.pos, '--zoom': lb.zoom } as React.CSSProperties} />
+            <img
+              className="gallery-lightbox-img"
+              src={lb.src}
+              alt={lb.alt}
+              style={{ '--pos': lb.pos, '--zoom': lb.zoom } as React.CSSProperties}
+              onPointerDown={(e) => {
+                if (photos.length < 2) return
+                e.currentTarget.setPointerCapture(e.pointerId)
+                e.currentTarget.dataset.x = String(e.clientX)
+              }}
+              onPointerUp={(e) => {
+                const start = Number(e.currentTarget.dataset.x)
+                delete e.currentTarget.dataset.x
+                if (!Number.isFinite(start) || photos.length < 2) return
+                const dx = e.clientX - start
+                if (Math.abs(dx) < 48) return
+                stepLightbox(dx < 0 ? 1 : -1)
+              }}
+              onPointerCancel={(e) => { delete e.currentTarget.dataset.x }}
+            />
             <p className="gallery-lightbox-count" aria-live="polite">
               <b>{pad2((lightbox ?? 0) + 1)}</b> / {pad2(photos.length)}
             </p>
