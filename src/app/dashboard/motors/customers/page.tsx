@@ -4,8 +4,10 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from '@/lib/router'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
-import { useQuery } from '@tanstack/react-query'
-import { Search01Icon, Add01Icon, ViewIcon } from 'hugeicons-react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { Search01Icon, Add01Icon, ViewIcon, Download01Icon } from 'hugeicons-react'
+import { downloadCsv } from '@/lib/csv'
+import { useToast } from '@/components/ui/Toast'
 import { formatDate } from '@/lib/utils'
 import { DashBreadcrumbs, DashButton, DashPageHeader } from '@/components/dashboard'
 import { customersApi, type ApiCustomer, type CustomerSource } from '@/lib/api'
@@ -60,6 +62,7 @@ const columns = [
 
 function MotorsCustomersContent() {
   const navigate = useNavigate()
+  const toast = useToast()
   const reduceMotion = useReducedMotion()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -110,6 +113,31 @@ function MotorsCustomersContent() {
     void navigate({ to: '/dashboard/motors/customers/$customerId', params: { customerId } })
   }
 
+  const exportMutation = useMutation({
+    mutationFn: () =>
+      customersApi.list({
+        page: 1,
+        limit: 500,
+        ...(queryQ ? { search: queryQ } : {}),
+      }),
+    onSuccess: (res) => {
+      downloadCsv(
+        `clients-${new Date().toISOString().slice(0, 10)}.csv`,
+        ['Prénom', 'Nom', 'Email', 'Téléphone', 'Source', 'Ajouté le'],
+        res.data.map((c) => [
+          c.firstName,
+          c.lastName,
+          c.email ?? '',
+          c.phone ?? '',
+          sourceLabels[c.source],
+          formatDate(c.createdAt),
+        ])
+      )
+      toast(`${res.data.length} client${res.data.length === 1 ? '' : 's'} exporté${res.data.length === 1 ? '' : 's'}`)
+    },
+    onError: (e) => toast((e as Error).message, 'error'),
+  })
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="space-y-6">
       <DashBreadcrumbs
@@ -122,9 +150,20 @@ function MotorsCustomersContent() {
         title="Clients"
         lead={`${pagination.total} client${pagination.total === 1 ? '' : 's'}${hasSearch ? ' (filtrés)' : ''}`}
         actions={
-          <DashButton to="/dashboard/motors/customers/new">
-            <Add01Icon className="h-4 w-4" aria-hidden="true" /> Nouveau client
-          </DashButton>
+          <>
+            <DashButton
+              type="button"
+              variant="soft"
+              disabled={exportMutation.isPending || pagination.total === 0}
+              onClick={() => exportMutation.mutate()}
+            >
+              <Download01Icon className="h-4 w-4" aria-hidden="true" />
+              {exportMutation.isPending ? 'Export…' : 'Exporter CSV'}
+            </DashButton>
+            <DashButton to="/dashboard/motors/customers/new">
+              <Add01Icon className="h-4 w-4" aria-hidden="true" /> Nouveau client
+            </DashButton>
+          </>
         }
       />
 

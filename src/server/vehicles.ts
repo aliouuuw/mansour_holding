@@ -51,7 +51,7 @@ function serializeVehicle(row: typeof vehicles.$inferSelect) {
 
 export async function listVehicles(filters: VehicleFilters = {}) {
   const pageNum = Math.max(1, filters.page ?? 1)
-  const limitNum = Math.min(100, Math.max(1, filters.limit ?? 20))
+  const limitNum = Math.min(500, Math.max(1, filters.limit ?? 20))
   const offset = (pageNum - 1) * limitNum
 
   const conditions = []

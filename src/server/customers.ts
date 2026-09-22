@@ -19,7 +19,7 @@ function serializeCustomer(row: typeof customers.$inferSelect) {
 export async function listCustomers(params: { page?: number; limit?: number; search?: string } = {}) {
   await requireUser()
   const pageNum = Math.max(1, params.page ?? 1)
-  const limitNum = Math.min(100, Math.max(1, params.limit ?? 20))
+  const limitNum = Math.min(500, Math.max(1, params.limit ?? 20))
   const offset = (pageNum - 1) * limitNum
 
   const where = params.search

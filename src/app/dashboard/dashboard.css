@@ -217,6 +217,21 @@
 }
 .mm-dash .mm-input--search {
   padding-left: 1.65rem;
+  padding-right: 2rem;
+}
+.mm-dash .mm-search-kbd {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--mm-font-mono, ui-monospace, monospace);
+  font-size: 0.65rem;
+  line-height: 1;
+  padding: 0.2rem 0.35rem;
+  border: 1px solid var(--mm-line);
+  border-radius: 3px;
+  color: var(--mm-grey-muted);
+  pointer-events: none;
 }
 
 /* ── segmented control ── */

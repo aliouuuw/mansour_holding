@@ -85,10 +85,32 @@ export function MotorsInventory() {
 
   const [searchInput, setSearchInput] = useState(queryQ)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setSearchInput(queryQ)
   }, [queryQ])
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const el = e.target
+      const tag = el instanceof HTMLElement ? el.tagName : ''
+      const editable =
+        el instanceof HTMLElement &&
+        (el.isContentEditable || tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT')
+
+      if (e.key === '/' && !editable && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault()
+        searchInputRef.current?.focus()
+        return
+      }
+      if (e.key === 'Escape' && document.activeElement === searchInputRef.current) {
+        searchInputRef.current?.blur()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [])
 
   const patchParams = useCallback(
     (patch: Record<string, string | null>) => {
@@ -280,15 +302,18 @@ export function MotorsInventory() {
       />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="mm-search">
+        <div className="mm-search flex-1 sm:max-w-md">
           <Search01Icon className="mm-search-icon h-4 w-4" aria-hidden="true" />
           <input
+            ref={searchInputRef}
             type="search"
             placeholder="Rechercher par marque ou modèle…"
             value={searchInput}
             onChange={(e) => handleSearch(e.target.value)}
             className="mm-input mm-input--search text-sm"
+            aria-keyshortcuts="/"
           />
+          <span className="mm-search-kbd hidden sm:inline" aria-hidden="true">/</span>
         </div>
         <div className="mm-seg-scroll w-full sm:w-auto">
           <div className="mm-seg" role="group" aria-label="Filtrer par statut">
