@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
 import { Search01Icon, Add01Icon, ViewIcon } from 'hugeicons-react'
-import { formatPrice, formatNumber } from '@/lib/utils'
+import { formatPrice, formatNumber, formatDate } from '@/lib/utils'
 import {
   DashBreadcrumbs,
   DashButton,
@@ -177,6 +177,11 @@ export function MotorsInventory() {
       header: () => <SortHeader label="Prix" field="price" sortBy={sortBy} sortDir={sortDir} onSort={toggleSort} />,
       cell: (info) => <span className="text-sm font-medium tabular-nums">{formatPrice(info.getValue())}</span>,
     }),
+    columnHelper.accessor('arrivedAt', {
+      header: () => <SortHeader label="Arrivée" field="arrivedAt" sortBy={sortBy} sortDir={sortDir} onSort={toggleSort} />,
+      meta: { narrow: true },
+      cell: (info) => <span className="text-xs tabular-nums mm-muted">{formatDate(info.getValue())}</span>,
+    }),
     columnHelper.accessor('status', {
       header: 'Statut',
       cell: (info) => <DashStatus status={info.getValue()} />,
@@ -271,7 +276,7 @@ export function MotorsInventory() {
                 )}
                 <div className="min-w-0 flex-1 text-left">
                   <p className="truncate font-medium">{v.make} {v.model}</p>
-                  <p className="text-xs mm-muted">{v.year} · {formatNumber(v.mileage)} km</p>
+                  <p className="text-xs mm-muted">{v.year} · {formatNumber(v.mileage)} km · {formatDate(v.arrivedAt)}</p>
                   <p className="mt-1 text-sm font-semibold tabular-nums">{formatPrice(v.price)}</p>
                   <div className="mt-1.5"><DashStatus status={v.status} /></div>
                 </div>

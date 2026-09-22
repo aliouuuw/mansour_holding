@@ -5,6 +5,7 @@ import { Link } from '@/lib/router'
 export type DashCrumb = {
   label: string
   to?: string
+  params?: Record<string, string>
 }
 
 export function DashBreadcrumbs({ items }: { items: DashCrumb[] }) {
@@ -17,7 +18,7 @@ export function DashBreadcrumbs({ items }: { items: DashCrumb[] }) {
           return (
             <li key={`${item.label}-${index}`} className="mm-breadcrumb-item">
               {item.to && !isLast ? (
-                <Link to={item.to} className="mm-breadcrumb-link">{item.label}</Link>
+                <Link to={item.to} params={item.params} className="mm-breadcrumb-link">{item.label}</Link>
               ) : (
                 <span className="mm-breadcrumb-current" aria-current={isLast ? 'page' : undefined}>
                   {item.label}

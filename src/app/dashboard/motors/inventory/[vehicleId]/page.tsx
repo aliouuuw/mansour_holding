@@ -129,7 +129,7 @@ export function MotorsVehicleDetail() {
           items={[
             { label: 'Mansour Motors', to: '/dashboard/motors' },
             { label: 'Inventaire', to: '/dashboard/motors/inventory' },
-            { label: `${vehicle.make} ${vehicle.model}`, to: `/dashboard/motors/inventory/${vehicle.id}` },
+            { label: `${vehicle.make} ${vehicle.model}`, to: '/dashboard/motors/inventory/$vehicleId', params: { vehicleId: vehicle.id } },
             { label: 'Modifier' },
           ]}
         />

@@ -164,6 +164,7 @@ export function invalidateMotorsQueries(qc: QueryClient) {
   void qc.invalidateQueries({ queryKey: ['deals'] })
   void qc.invalidateQueries({ queryKey: ['deals-board'] })
   void qc.invalidateQueries({ queryKey: ['deals-summary'] })
+  void qc.invalidateQueries({ queryKey: ['deal'] })
   void qc.invalidateQueries({ queryKey: ['public-vehicles'] })
   void qc.invalidateQueries({ queryKey: ['public-featured-vehicles'] })
 }

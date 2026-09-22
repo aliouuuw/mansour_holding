@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { UserIcon, Car01Icon, DollarCircleIcon } from 'hugeicons-react'
+import { Link } from '@/lib/router'
 import { formatPrice } from '@/lib/utils'
 import { DashButton } from '@/components/dashboard'
 import { dealsApi, invalidateMotorsQueries, type ApiDeal, type DealStatus } from '@/lib/api'
@@ -21,7 +22,13 @@ function DealCard({ deal, onMove }: { deal: ApiDeal; onMove: (id: string, status
     <motion.div layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mm-deal-card">
       <div className="flex items-start gap-2">
         <Car01Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--mm-grey-muted)]" aria-hidden="true" />
-        <p className="text-sm font-medium leading-tight">{deal.vehicleName ?? 'Véhicule inconnu'}</p>
+        <Link
+          to="/dashboard/motors/sales/$dealId"
+          params={{ dealId: deal.id }}
+          className="mm-link text-sm font-medium leading-tight"
+        >
+          {deal.vehicleName ?? 'Véhicule inconnu'}
+        </Link>
       </div>
       <div className="flex items-center gap-2">
         <UserIcon className="h-3.5 w-3.5 shrink-0 text-[var(--mm-grey-muted)]" aria-hidden="true" />

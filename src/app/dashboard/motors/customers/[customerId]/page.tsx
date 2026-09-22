@@ -125,7 +125,7 @@ export function MotorsCustomerDetail() {
           items={[
             { label: 'Mansour Motors', to: '/dashboard/motors' },
             { label: 'Clients', to: '/dashboard/motors/customers' },
-            { label: `${customer.firstName} ${customer.lastName}`, to: `/dashboard/motors/customers/${customer.id}` },
+            { label: `${customer.firstName} ${customer.lastName}`, to: '/dashboard/motors/customers/$customerId', params: { customerId: customer.id } },
             { label: 'Modifier' },
           ]}
         />
