@@ -19,37 +19,116 @@ function prestige(vehicles: ApiVehicle[]) {
 /* ── chapter 1: the prestige car on the floor. Camera enters the room. ── */
 function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
   const ref = useRef<HTMLElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [clip, setClip] = useState(false)
+  const [phone, setPhone] = useState(false)
   useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const fine = window.matchMedia('(pointer: fine)').matches
-    const motion = window.matchMedia('(prefers-reduced-motion: no-preference)').matches
-    if (!fine || !motion) return
-    const onMove = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect()
-      const x = ((e.clientX - r.left) / r.width) * 2 - 1
-      const y = ((e.clientY - r.top) / r.height) * 2 - 1
-      el.style.setProperty('--mx', String(Math.max(-1, Math.min(1, x))))
-      el.style.setProperty('--my', String(Math.max(-1, Math.min(1, y))))
+    const motion = window.matchMedia('(prefers-reduced-motion: no-preference)')
+    const narrow = window.matchMedia('(max-width: 860px)')
+    const sync = () => {
+      setClip(motion.matches)
+      setPhone(narrow.matches)
     }
-    const onLeave = () => {
-      el.style.setProperty('--mx', '0')
-      el.style.setProperty('--my', '0')
-    }
-    el.addEventListener('pointermove', onMove)
-    el.addEventListener('pointerleave', onLeave)
+    sync()
+    motion.addEventListener('change', sync)
+    narrow.addEventListener('change', sync)
     return () => {
-      el.removeEventListener('pointermove', onMove)
-      el.removeEventListener('pointerleave', onLeave)
+      motion.removeEventListener('change', sync)
+      narrow.removeEventListener('change', sync)
     }
   }, [])
+  useEffect(() => {
+    const video = videoRef.current
+    const hero = ref.current
+    if (!clip || !video || !hero) return
+    const step = 1 / 24
+    let mode: 'play' | 'scrub' = 'play'
+    let goal = 0
+    let shown = 0
+    let raf = 0
+    let seeking = false
+    const timeAtScroll = () => {
+      const dur = video.duration
+      if (!Number.isFinite(dur) || dur <= 0) return null
+      const forth = Math.max(0, dur / 2 - step)
+      const run = Math.max(1, hero.offsetHeight - innerHeight)
+      const p = Math.max(0, Math.min(1, -hero.getBoundingClientRect().top / run))
+      return p * forth
+    }
+    const seek = (t: number) => {
+      video.pause()
+      if (seeking || Math.abs(video.currentTime - t) < step * 0.5) return
+      seeking = true
+      video.currentTime = t
+    }
+    const tick = () => {
+      raf = 0
+      if (mode !== 'scrub') return
+      video.pause()
+      const next = timeAtScroll()
+      if (next == null) return
+      goal = next
+      shown += (goal - shown) * 0.42
+      if (Math.abs(goal - shown) < 0.01) shown = goal
+      seek(shown)
+      if (shown !== goal) raf = requestAnimationFrame(tick)
+    }
+    const kick = () => {
+      if (mode === 'scrub' && !raf) raf = requestAnimationFrame(tick)
+    }
+    const arm = () => {
+      if (mode === 'scrub') return
+      mode = 'scrub'
+      video.pause()
+      const next = timeAtScroll()
+      shown = next ?? 0
+      goal = shown
+      kick()
+    }
+    let baseY = scrollY
+    const settle = requestAnimationFrame(() => { baseY = scrollY })
+    const onScroll = () => {
+      if (mode === 'play') {
+        if (Math.abs(scrollY - baseY) < 24) return
+        arm()
+        return
+      }
+      kick()
+    }
+    const onSeeked = () => {
+      seeking = false
+      if (mode !== 'scrub') return
+      video.pause()
+      if (Math.abs(video.currentTime - shown) >= step * 0.5) seek(shown)
+    }
+    const onPlay = () => {
+      if (mode === 'scrub') video.pause()
+    }
+    const onEnded = () => arm()
+    video.addEventListener('seeked', onSeeked)
+    video.addEventListener('ended', onEnded)
+    video.addEventListener('play', onPlay)
+    addEventListener('scroll', onScroll, { passive: true })
+    addEventListener('resize', kick)
+    void video.play().catch(() => {})
+    return () => {
+      if (raf) cancelAnimationFrame(raf)
+      cancelAnimationFrame(settle)
+      video.removeEventListener('seeked', onSeeked)
+      video.removeEventListener('ended', onEnded)
+      video.removeEventListener('play', onPlay)
+      removeEventListener('scroll', onScroll)
+      removeEventListener('resize', kick)
+    }
+  }, [clip, phone])
   if (!star) return null
   return (
     <section
       className="hero ch-light"
-      aria-label={fresh ? `${star.make} ${star.model}, dernière arrivée à Dakar` : `${star.make} ${star.model}`}
+      aria-label={fresh ? `${star.make} ${star.model}, dernier arrivage à Dakar` : `${star.make} ${star.model}`}
       ref={ref}
     >
+      <div className="hero-pin">
       <div className="hero-stage" aria-hidden="true">
         <div className="hero-cam">
           <picture>
@@ -65,14 +144,44 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
               fetchPriority="high"
             />
           </picture>
+          {clip && (
+            <video
+              className="hero-still hero-clip"
+              ref={videoRef}
+              key={phone ? 'phone' : 'desk'}
+              muted
+              playsInline
+              autoPlay
+              preload="auto"
+              poster={phone ? '/mansour-motors/hero-still-m.jpg' : '/mansour-motors/hero-still.jpg'}
+              width={phone ? 720 : 1276}
+              height={phone ? 1280 : 720}
+              aria-hidden="true"
+            >
+              <source
+                src={phone ? '/mansour-motors/hero-intro-m.mp4' : '/mansour-motors/hero-intro.mp4'}
+                type="video/mp4"
+              />
+            </video>
+          )}
         </div>
-        <div className="hero-glint" />
       </div>
-      <div className="hero-copy">
-        {fresh && <p className="hero-arrival">Dernière arrivée à Dakar</p>}
-        <h2 className="hero-title">{star.model}</h2>
-        <p className="brand">{star.make}</p>
-        <Button to={vehicleUrl(star)}>Voir le véhicule</Button>
+      {fresh && (
+        <p className="hero-ledger">
+          <span className="hero-ledger-mark" aria-hidden="true" />
+          Dernier arrivage à Dakar
+        </p>
+      )}
+      <div className="hero-shelf">
+        <div className="hero-shelf-copy">
+          <p className="brand">{star.make}</p>
+          <h2 className="hero-title">{star.model}</h2>
+        </div>
+        <div className="hero-shelf-action">
+          <span className="hero-year" aria-hidden="true">{star.year}</span>
+          <Button to={vehicleUrl(star)}>Voir le véhicule</Button>
+        </div>
+      </div>
       </div>
     </section>
   )
@@ -371,7 +480,11 @@ function Alert() {
 export function MansourMotorsLanding({ vehicles }: { vehicles: ApiVehicle[] }) {
   const ordered = useMemo(() => lineup(vehicles), [vehicles])
   const star = prestige(ordered)
-  const fresh = !!star && ordered.every((v) => v.createdAt <= star.createdAt)
+  const openYears = ordered.filter((v) => v.status !== 'sold').map((v) => v.year)
+  const newestYear = openYears.length ? Math.max(...openYears) : 0
+  /* createdAt follows insert order, so a later row hid this line.
+     The newest model year on the floor is the arrival. */
+  const fresh = !!star && star.status !== 'sold' && star.year === newestYear
   return (
     <Shell>
       <main>

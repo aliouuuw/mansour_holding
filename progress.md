@@ -1,5 +1,95 @@
 # Project Progress Log
 
+## [Motors] Hero plays once, then scroll drives the forth half
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** The clip plays once on load, forth then back. After that, scroll down seeks only the first half. Scroll up seeks that same half backward, so the car appears to reverse.
+* **Verification:** Browser: time advances on its own, then stays at or below half the duration while scrollY changes.
+
+---
+
+## [Motors] Hero scrub seeks one frame at a time
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Hero clips are all-intra (every frame is a keyframe). Scroll eases the target time and the player seeks only when the last seek has finished. The load zoom on the camera is gone. Lenis stays out: the hitch was the decoder, not the scroll position.
+* **Verification:** Browser scroll moves `currentTime` with `scrollY` and rewinds on the way up. Video stays paused.
+
+---
+
+## [Motors] Hero clip scrubs with scroll
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Hero is a 200svh runway with a sticky frame. Scroll down seeks the clip forward. Scroll up seeks it back. No autoplay, no loop.
+* **Verification:** Browser: currentTime rises with scrollY and falls on scroll up. Video stays paused.
+
+---
+
+## [Motors] Hero clip plays once, then on scroll
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Cursor parallax and glint are gone. Hero video has no loop. It plays once on load, freezes, then plays once more when the visitor scrolls while the hero is in view.
+* **Verification:** Browser: load until ended, scroll, confirm a second play then freeze.
+
+---
+
+## [Motors] Hero uses 16:9 and 9:16 clips
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Home hero plays `hero-intro.mp4` (16:9) above 860px and `hero-intro-m.mp4` (9:16) on phone. Still is the poster. Reduced motion keeps the photo.
+* **Verification:** Browser on `/mansour-motors` at phone and desktop. Video currentSrc matches the breakpoint.
+
+---
+
+## [Motors] Hero uses intro clip
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Home hero plays `hero-intro.mp4` over `hero-still.jpg`. Reduced motion keeps the still only. Clip is mute, loop, inline.
+* **Verification:** Browser on `/mansour-motors`. Video element covers the stage. Still remains as poster.
+
+---
+
+## [Motors] Hero editorial shelf
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Hero uses a full-bleed still with no wash. Copy sits on a solid paper shelf (make, model, year watermark, nickel CTA). « Dernière arrivée » is a wall ledger with a gold rule. Shelf slides up on load.
+* **Verification:** Browser at 390×844. Photo stays clear above the shelf.
+
+---
+
+## [Motors] Arrival as running head
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** « Dernière arrivée à Dakar » sits under the header on the white wall, not on the marble. Bottom wash ends at 18%. Phone CTA keeps clear of the WhatsApp button.
+* **Verification:** Browser at 390×844. Kicker y 59–79, title y 677–751, button y 782–826. Button and WhatsApp do not overlap.
+
+---
+
+## [Motors] Hero arrival in house language
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Arrival is a tracked gold kicker with a hairline, same language as `.atelier-kicker` and `.brand`. The SaaS pill, gold pip, bounce, heavy title, and ink button are gone. The phone wash still fades out by 24%. Title stays weight 200. The CTA is the nickel plate.
+* **Verification:** Browser at 390×844: kicker gold rgb(181,141,36), no fill, tracking ~2px, title weight 200, button nickel gradient. Desktop 1280: hairline plus « Dernière arrivée à Dakar » above the thin title.
+
+---
+
+## [Motors] Hero arrival mark and lighter wash
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** The home hero shows « Dernière arrivée à Dakar » when the featured car has the newest model year. A gold pip plays once. The paper wash ends at 26% height on a phone (was a solid band to 64%).
+* **Verification:** Browser at 390×844. The pill is in view (y 626–656). The title stays at y 671–745. The marble floor shows through the wash.
+
+---
+
 ## [Motors] Phone hero readability
 
 * **Status:** Completed
