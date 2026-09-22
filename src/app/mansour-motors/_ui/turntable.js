@@ -899,16 +899,15 @@ export function mountTurntable(root, {
     featured = cars.indexOf(c)
     if (img) {
       const next = c.img
-        if (img.getAttribute('src') !== next) {
-        img.src = next
-        img.alt = `${c.make} ${c.model}`
-        img.style.setProperty('--pos', c.pos)
-        img.classList.toggle('is-cutout', !!c.cutout)
-        if (!reduceMotion.matches) {
-          img.classList.remove('is-in')
-          void img.offsetWidth
-          img.classList.add('is-in')
-        }
+      const srcChanged = img.getAttribute('src') !== next
+      if (srcChanged) img.src = next
+      img.alt = `${c.make} ${c.model}`
+      img.style.setProperty('--pos', c.pos)
+      img.classList.toggle('is-cutout', !!c.cutout)
+      if (srcChanged && !reduceMotion.matches) {
+        img.classList.remove('is-in')
+        void img.offsetWidth
+        img.classList.add('is-in')
       }
     }
     const brand = $('[data-atelier-brand]', atelier)
@@ -1113,6 +1112,34 @@ export function mountTurntable(root, {
     if (!img) return
     img.classList.remove('is-dragging')
     img.style.transform = ''
+    img.style.opacity = ''
+  }
+  const animateAtelierRelease = (img, dx, commit, done) => {
+    if (!img) { done(); return }
+    img.classList.remove('is-dragging')
+    if (reduceMotion.matches) {
+      resetSwipeDrag(img)
+      done()
+      return
+    }
+    const dir = dx < 0 ? -1 : 1
+    const slide = commit ? Math.min(img.offsetWidth * 0.3, 104) * dir : 0
+    if (commit) img.style.opacity = '0'
+    img.style.transform = `translate3d(${slide}px, 0, 0)`
+    let finished = false
+    const finish = () => {
+      if (finished) return
+      finished = true
+      img.removeEventListener('transitionend', onEnd)
+      resetSwipeDrag(img)
+      done()
+    }
+    const onEnd = (e) => {
+      if (e.target !== img || (e.propertyName !== 'transform' && e.propertyName !== 'opacity')) return
+      finish()
+    }
+    img.addEventListener('transitionend', onEnd)
+    setTimeout(finish, 480)
   }
   atelier?.addEventListener('pointerdown', (e) => {
     if (mode !== 'atelier') return
@@ -1132,7 +1159,7 @@ export function mountTurntable(root, {
     if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 6) e.preventDefault()
     const img = $('[data-atelier-img]', atelier)
     if (!img || reduceMotion.matches) return
-    const shift = Math.max(-28, Math.min(28, dx * 0.22))
+    const shift = Math.max(-40, Math.min(40, dx * 0.38))
     img.classList.add('is-dragging')
     img.style.transform = `translate3d(${shift}px, 0, 0)`
   }, { signal })
@@ -1140,13 +1167,15 @@ export function mountTurntable(root, {
     if (!swiping) return
     swiping = false
     const img = $('[data-atelier-img]', atelier)
-    resetSwipeDrag(img)
-    if (mode !== 'atelier' || !cars.length) return
     const dx = e.clientX - swipeX
-    if (Math.abs(dx) < 40) return
-    didSwipe = true
-    dismissSwipeHint()
-    stepFeatured(dx < 0 ? 1 : -1)
+    const commit = mode === 'atelier' && cars.length && Math.abs(dx) >= 40
+    if (commit) {
+      didSwipe = true
+      dismissSwipeHint()
+    }
+    animateAtelierRelease(img, dx, commit, () => {
+      if (commit) stepFeatured(dx < 0 ? 1 : -1)
+    })
   }
   atelier?.addEventListener('pointerup', endSwipe, { signal })
   atelier?.addEventListener('pointercancel', endSwipe, { signal })

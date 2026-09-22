@@ -6,7 +6,7 @@ import type { ApiVehicle } from '@/lib/api'
 import { AtelierSwipeHint, Button, Card, Shell } from '../_ui'
 import { toCar } from '../_ui/car'
 import { IconFilters, IconGrid, IconList, IconSwipe } from '../_ui/icons'
-import { BUDGETS, FUEL, RANGES, cover, rangeOf, vehicleUrl } from '../_ui/shared'
+import { BUDGETS, FUEL, RANGES, cover, focal, isCutout, rangeOf, vehicleUrl } from '../_ui/shared'
 
 const KMS = [1000, 5000, 10000, 20000]
 
@@ -20,7 +20,8 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
   const models = useMemo(() => Object.fromEntries(makes.map((m) => [m, [...new Set(vehicles.filter((v) => v.make === m).map((v) => v.model))]])), [makes, vehicles])
   const fuels = useMemo(() => [...new Set(vehicles.map((v) => v.fuelType))], [vehicles])
   const firstDetailHref = vehicles[0] ? vehicleUrl(vehicles[0]) : '/mansour-motors/vehicules'
-  const firstAtelierImg = vehicles[0] ? cover(vehicles[0]) : ''
+  const firstVehicle = vehicles[0]
+  const firstAtelierImg = firstVehicle ? cover(firstVehicle) : ''
 
   useEffect(() => {
     let destroy: (() => void) | undefined
@@ -198,6 +199,8 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
                   data-atelier-img
                   alt=""
                   decoding="async"
+                  className={firstVehicle && isCutout(firstVehicle) ? 'is-cutout' : undefined}
+                  style={firstVehicle ? ({ '--pos': focal(firstVehicle) } as React.CSSProperties) : undefined}
                   src={firstAtelierImg || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"}
                 />
               </div>

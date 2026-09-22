@@ -5,8 +5,8 @@ export const CONTACT = {
   phone: '+221 33 860 05 55',
   tel: 'tel:+221338600555',
   email: 'info@mansourmotors.sn',
-  /* the live site publishes no WhatsApp number */
-  whatsapp: '221771234567',
+  whatsapp: '221786154334',
+  instagram: 'https://www.instagram.com/mansourmotors/',
   address: 'Route de la Corniche Ouest, Almadies, Dakar',
   landmark: 'En face du Vogue Lounge, près de BIO 24',
   /* the Google Maps place itself, not the nearby Plus Code PFPR+9J7 */

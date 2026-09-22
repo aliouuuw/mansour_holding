@@ -6,7 +6,7 @@ import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
 import { AtelierSwipeHint, Button, Chapter, Field, OpenNote, Shell, ShowroomMap } from './_ui'
 import { arrivalMs, lineup, toCar } from './_ui/car'
-import { BUDGETS, CONTACT, DAY, HOURS, STATE, YEARS, cover, pad2, vehicleUrl, waLink } from './_ui/shared'
+import { BUDGETS, CONTACT, DAY, HOURS, STATE, YEARS, cover, focal, isCutout, pad2, vehicleUrl, waLink } from './_ui/shared'
 
 function prestige(vehicles: ApiVehicle[]) {
   const open = vehicles.filter((v) => v.status !== 'sold')
@@ -202,7 +202,8 @@ function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) 
     ? `${total} véhicules au showroom, ${vehicles.length} sur le plateau`
     : `${available} disponible${available > 1 ? 's' : ''} sur ${total}`
   const firstDetailHref = vehicles[0] ? vehicleUrl(vehicles[0]) : '/mansour-motors/vehicules'
-  const firstAtelierImg = vehicles[0] ? cover(vehicles[0]) : ''
+  const firstVehicle = vehicles[0]
+  const firstAtelierImg = firstVehicle ? cover(firstVehicle) : ''
 
   useEffect(() => {
     let table: { destroy(): void } | undefined
@@ -272,6 +273,8 @@ function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) 
                 data-atelier-img
                 alt=""
                 decoding="async"
+                className={firstVehicle && isCutout(firstVehicle) ? 'is-cutout' : undefined}
+                style={firstVehicle ? ({ '--pos': focal(firstVehicle) } as React.CSSProperties) : undefined}
                 src={firstAtelierImg || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E"}
               />
             </div>
