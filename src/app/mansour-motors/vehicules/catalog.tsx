@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import type { ApiVehicle } from '@/lib/api'
 import { AtelierSwipeHint, Button, Card, Shell } from '../_ui'
 import { toCar } from '../_ui/car'
-import { BUDGETS, FUEL } from '../_ui/shared'
+import { BUDGETS, FUEL, vehicleUrl } from '../_ui/shared'
 
 const KMS = [1000, 5000, 10000, 20000]
 
@@ -18,6 +18,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
   const makeCounts = useMemo(() => Object.fromEntries(makes.map((make) => [make, vehicles.filter((vehicle) => vehicle.make === make).length])), [makes, vehicles])
   const models = useMemo(() => Object.fromEntries(makes.map((m) => [m, [...new Set(vehicles.filter((v) => v.make === m).map((v) => v.model))]])), [makes, vehicles])
   const fuels = useMemo(() => [...new Set(vehicles.map((v) => v.fuelType))], [vehicles])
+  const firstDetailHref = vehicles[0] ? vehicleUrl(vehicles[0]) : '/mansour-motors/vehicules'
 
   useEffect(() => {
     let destroy: (() => void) | undefined
@@ -41,30 +42,30 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
 
         <div className="filterbar">
           <div className="wrap catalog-tools">
-              <details className="filters" data-filters>
+            <div className="viewbar-tools">
+              <div className="seg" role="group" aria-label="Affichage" data-view>
+                <button type="button" data-mode="grid" aria-pressed="true">Grille</button>
+                <button type="button" data-mode="list" aria-pressed="false">Liste</button>
+                <button type="button" data-mode="atelier" aria-pressed="false">Atelier</button>
+              </div>
+              <select aria-label="Trier par" data-sort defaultValue="">
+                <option value="">Arrivée récente</option>
+                <option value="price-asc">Prix croissant</option>
+                <option value="price-desc">Prix décroissant</option>
+                <option value="km-asc">Kilométrage croissant</option>
+                <option value="year-desc">Année, plus récente</option>
+              </select>
+              <button type="button" className="reset" data-reset hidden>
+                <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+                <span>Effacer</span>
+              </button>
+            </div>
+            <details className="filters" data-filters>
               <summary>
                 <span>Filtrer</span>
                 <span className="filter-summary-count" data-active-count />
               </summary>
               <div className="filter-sheet">
-                <div className="viewbar-tools">
-                  <div className="seg" role="group" aria-label="Affichage" data-view>
-                    <button type="button" data-mode="grid" aria-pressed="true">Grille</button>
-                    <button type="button" data-mode="list" aria-pressed="false">Liste</button>
-                    <button type="button" data-mode="atelier" aria-pressed="false">Atelier</button>
-                  </div>
-                  <select aria-label="Trier par" data-sort defaultValue="">
-                    <option value="">Arrivée récente</option>
-                    <option value="price-asc">Prix croissant</option>
-                    <option value="price-desc">Prix décroissant</option>
-                    <option value="km-asc">Kilométrage croissant</option>
-                    <option value="year-desc">Année, plus récente</option>
-                  </select>
-                  <button type="button" className="reset" data-reset hidden>
-                    <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
-                    <span>Effacer</span>
-                  </button>
-                </div>
                 <form className="filters-body" data-filter-form>
                   <select name="marque" aria-label="Marque" data-make defaultValue="">
                     <option value="" data-count={vehicles.length}>Toutes marques</option>
@@ -107,7 +108,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
           <div className="atelier-slide">
             <a
               className="atelier-hero ch-dark"
-              href="#"
+              href={firstDetailHref}
               data-atelier-hero
               aria-describedby="catalog-atelier-instructions"
             >

@@ -92,6 +92,7 @@ function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) 
   const shown = total > vehicles.length
     ? `${total} véhicules au showroom, ${vehicles.length} sur le plateau`
     : `${available} disponible${available > 1 ? 's' : ''} sur ${total}`
+  const firstDetailHref = vehicles[0] ? vehicleUrl(vehicles[0]) : '/mansour-motors/vehicules'
 
   useEffect(() => {
     let table: { destroy(): void } | undefined
@@ -147,13 +148,13 @@ function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) 
               <p className="ring-specs" data-lineup-specs />
             </div>
             <p className="ring-price" data-lineup-price />
-            <Button href="#" data-open-front="">Voir le véhicule</Button>
+            <Button href={firstDetailHref} data-open-front="">Voir le véhicule</Button>
           </div>
           <p className="vh" aria-live="polite" data-live />
           <ol className="index wrap" data-index hidden />
         </div>
         <div className="atelier" data-atelier hidden>
-          <a className="atelier-hero ch-dark" href="#" data-atelier-hero>
+          <a className="atelier-hero ch-dark" href={firstDetailHref} data-atelier-hero>
             <div className="atelier-hero-media" data-atelier-media>
               <AtelierSwipeHint />
               {/* eslint-disable-next-line @next/next/no-img-element -- filled by turntable.js */}

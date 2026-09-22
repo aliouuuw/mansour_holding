@@ -895,6 +895,20 @@ input::placeholder { color: var(--grey-2); }
 }
 @media (max-width: 860px) {
   .mm main.is-grid:not([data-card-hint='off']) .card[data-open-hint] .card-open-hint { display: inline-flex; }
+  .mm main.is-list:not([data-card-hint='off']) .index a[data-open-hint]::after {
+    content: 'Voir la fiche';
+    position: absolute; right: 0; top: 50%; z-index: 1;
+    transform: translateY(-50%);
+    padding: .42rem .75rem .44rem;
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 999px;
+    background: rgba(8, 8, 8, .72);
+    color: #f6f5f2;
+    font-size: .62rem; font-weight: 600; letter-spacing: .14em;
+    text-transform: uppercase; line-height: 1;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, .35);
+    pointer-events: none;
+  }
 }
 .viewbar .custom-select.is-sort,
 .viewbar-tools .custom-select.is-sort { flex: 0 0 auto; min-width: 12.8rem; }
@@ -1138,20 +1152,27 @@ input::placeholder { color: var(--grey-2); }
   .sign-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.6rem 1.2rem; font-size: .88rem; }
   .sign-col:first-child { grid-column: 1 / -1; }
   .sign-foot { flex-direction: column; align-items: flex-start; gap: .5rem; }
+  .sign { padding-bottom: calc(.5rem + env(safe-area-inset-bottom, 0px)); }
+  .sign-top { min-height: var(--touch); }
+  .wordmark { margin-bottom: env(safe-area-inset-bottom, 0px); }
   .filterbar { margin-bottom: 0; padding-block: 0; border-top: 0; background: var(--paper); }
   .catalog-tools {
     position: relative; display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: none;
-    grid-template-rows: auto;
-    align-items: center; min-height: 0; padding: .15rem 0; gap: .25rem .5rem;
+    grid-template-rows: auto auto;
+    align-items: center; min-height: 0; padding: .15rem 0; gap: .35rem .5rem;
   }
-  .filters { display: block; grid-column: 2; grid-row: 1; min-width: 0; margin-left: 0;
+  .catalog-tools > .viewbar-tools {
+    grid-column: 1 / -1; grid-row: 1;
+    margin-bottom: .1rem;
+  }
+  .filters { display: block; grid-column: 2; grid-row: 2; min-width: 0; margin-left: 0;
     grid-template-columns: none; grid-template-rows: none; }
   .viewbar { display: contents; }
   .dock-lead {
     display: flex; align-items: baseline; gap: .55rem; min-width: 0;
-    grid-column: 1; grid-row: 1;
+    grid-column: 1; grid-row: 2;
   }
   .dock-title {
     display: block; flex: 0 0 auto;

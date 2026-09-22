@@ -1,5 +1,14 @@
 # Project Progress Log
 
+## [Motors] Backlog 1–4: harden, liste hint, mobile toolbar, footer safe area
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Atelier hero and lineup CTA ship a real vehicle URL before JS. Liste mode shows the same « Voir la fiche » pill on the first row (shared tap-hint session key). Mobile catalog keeps Grille/Liste/Atelier + tri above « Filtrer » (removed `parkTools`). Footer/sign gets safe-area padding and 44px « Haut de page » on phone.
+* **Verification:** `bun run type-check`; manual `/vehicules` at ≤860px (toolbar visible, liste hint); home footer above home indicator.
+
+---
+
 ## [Motors] Catalog copy (clarify)
 
 * **Status:** Completed

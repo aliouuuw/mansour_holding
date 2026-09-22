@@ -54,16 +54,8 @@ export function mountStock(root, cars, { models, navigate }) {
 
   const filters = $('[data-filters]', root)
   const sheet = $('.filter-sheet', root)
-  const viewbar = $('.viewbar', root)
-  const tools = $('.viewbar-tools', root)
-  const phone = () => matchMedia('(max-width: 860px)').matches
-  const parkTools = () => {
-    if (phone()) { if (tools.parentElement !== sheet) sheet.prepend(tools) }
-    else if (tools.parentElement !== viewbar) viewbar.append(tools)
-  }
-  parkTools()
-  matchMedia('(max-width: 860px)').addEventListener('change', parkTools, { signal })
   const summary = $('summary', filters)
+  const phone = () => matchMedia('(max-width: 860px)').matches
   const behind = () => $$('.mm > .header, .mm > .sign, .mm > .wa, .mm main > :not(.filterbar)')
   let trapped = false
   let trapFrame = 0
@@ -106,28 +98,35 @@ export function mountStock(root, cars, { models, navigate }) {
 
   const nodes = new Map($$('.card', grid).map((el) => [el.dataset.n, el]))
   const touch = focusOnTouch([...nodes.values()])
-  const cardHintKey = 'mm-catalog-card-hint'
-  let cardHintOff = false
-  try { cardHintOff = sessionStorage.getItem(cardHintKey) === '1' } catch { /* ponytail: private mode */ }
-  if (cardHintOff) root.dataset.cardHint = 'off'
+  const tapHintKey = 'mm-catalog-tap-hint'
+  let tapHintOff = false
+  try {
+    tapHintOff = sessionStorage.getItem(tapHintKey) === '1'
+      || sessionStorage.getItem('mm-catalog-card-hint') === '1'
+  } catch { /* ponytail: private mode */ }
+  if (tapHintOff) root.dataset.cardHint = 'off'
 
-  function dismissCardHint() {
-    if (cardHintOff) return
-    cardHintOff = true
+  function dismissTapHint() {
+    if (tapHintOff) return
+    tapHintOff = true
     root.dataset.cardHint = 'off'
-    try { sessionStorage.setItem(cardHintKey, '1') } catch { /* noop */ }
+    try { sessionStorage.setItem(tapHintKey, '1') } catch { /* noop */ }
     for (const el of nodes.values()) el.removeAttribute('data-open-hint')
+    const indexEl = $('[data-index]', root)
+    if (indexEl) for (const a of $$('a', indexEl)) a.removeAttribute('data-open-hint')
   }
 
-  function syncCardOpenHint(list) {
+  function syncTapHints(list) {
     for (const el of nodes.values()) el.removeAttribute('data-open-hint')
-    if (cardHintOff || table.mode !== 'grid') return
-    const first = list[0]
-    if (first) nodes.get(first.n)?.setAttribute('data-open-hint', '')
+    const indexEl = $('[data-index]', root)
+    if (indexEl) for (const a of $$('a', indexEl)) a.removeAttribute('data-open-hint')
+    if (tapHintOff || !list[0]) return
+    if (table.mode === 'grid') nodes.get(list[0].n)?.setAttribute('data-open-hint', '')
+    else if (table.mode === 'list' && indexEl) $('a', indexEl)?.setAttribute('data-open-hint', '')
   }
 
   root.addEventListener('click', (e) => {
-    if (e.target.closest('.card-link')) dismissCardHint()
+    if (e.target.closest('.card-link, .index a')) dismissTapHint()
   }, { signal })
 
   function read() {
@@ -179,7 +178,7 @@ export function mountStock(root, cars, { models, navigate }) {
     $('[data-active-label]', root).textContent = active ? `· ${active} filtre${active > 1 ? 's' : ''}` : ''
     $('[data-reset]', root).hidden = !active && !s.tri
     table.setCars(list)
-    syncCardOpenHint(list)
+    syncTapHints(list)
 
     // the URL always describes what is on screen, so it can be shared as is
     const q = new URLSearchParams(Object.entries(s).filter(([, v]) => v))
