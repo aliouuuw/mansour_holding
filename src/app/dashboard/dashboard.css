@@ -1,0 +1,31 @@
+/* Mansour Motors admin shell — tokens aligned with public .mm (motors.css), scoped under .mm-dash */
+
+.mm-dash {
+  --mm-black: #050505;
+  --mm-paper: #f3f2ef;
+  --mm-ink: #121110;
+  --mm-white: #f6f5f2;
+  --mm-off: #eceae5;
+  --mm-grey: #4f4d48;
+  --mm-grey-muted: #94908a;
+  --mm-line: rgb(18 17 16 / 0.14);
+  --mm-line-d: rgb(246 245 242 / 0.14);
+  --mm-ok: #2a8f58;
+  --mm-warn: #c07a12;
+  --mm-stop: #d23b2f;
+  --mm-r: 2px;
+  --mm-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --mm-touch: 44px;
+  --mm-sidebar: 16rem;
+
+  min-height: 100vh;
+  background: var(--mm-paper);
+  color: var(--mm-ink);
+  font-family: var(--font-mm);
+  -webkit-font-smoothing: antialiased;
+}
+
+.mm-dash :focus-visible {
+  outline: 2px solid var(--mm-ink);
+  outline-offset: 3px;
+}
