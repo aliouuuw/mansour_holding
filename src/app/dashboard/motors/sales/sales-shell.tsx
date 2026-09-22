@@ -34,8 +34,13 @@ function SalesPageContent({ initial }: { initial: DealsBoard }) {
   const setView = useCallback(
     (next: SalesView) => {
       const params = new URLSearchParams(searchParams.toString())
-      if (next === 'board') params.delete('view')
-      else params.set('view', next)
+      if (next === 'board') {
+        params.delete('view')
+        params.delete('status')
+        params.delete('page')
+      } else {
+        params.set('view', next)
+      }
       const qs = params.toString()
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
     },

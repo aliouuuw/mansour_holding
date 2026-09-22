@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams, useNavigate } from '@/lib/router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Delete01Icon } from 'hugeicons-react'
 import { formatDate, formatPrice } from '@/lib/utils'
-import { DashBreadcrumbs, DashButton } from '@/components/dashboard'
+import { DashBreadcrumbs, DashButton, mmLabelClass, mmTextareaClass } from '@/components/dashboard'
 import { dealsApi, invalidateMotorsQueries, type DealStatus } from '@/lib/api'
 import { useToast } from '@/components/ui/Toast'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
@@ -30,11 +30,26 @@ export function MotorsDealDetail() {
   const qc = useQueryClient()
   const toast = useToast()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [notesDraft, setNotesDraft] = useState('')
 
   const { data: deal, isLoading, error } = useQuery({
     queryKey: ['deal', dealId],
     queryFn: () => dealsApi.get(dealId!),
     enabled: !!dealId,
+  })
+
+  useEffect(() => {
+    if (deal) setNotesDraft(deal.notes ?? '')
+  }, [deal?.notes, deal])
+
+  const notesMutation = useMutation({
+    mutationFn: () => dealsApi.update(deal!.id, { notes: notesDraft.trim() || null }),
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: ['deal', dealId] })
+      invalidateMotorsQueries(qc)
+      toast('Notes enregistrées')
+    },
+    onError: (e) => toast((e as Error).message, 'error'),
   })
 
   const statusMutation = useMutation({
@@ -127,12 +142,26 @@ export function MotorsDealDetail() {
             </div>
           </div>
 
-          {deal.notes ? (
-            <div className="mm-panel mm-panel-pad">
-              <h2 className="mm-panel-title">Notes</h2>
-              <p className="mt-3 text-sm leading-relaxed mm-muted">{deal.notes}</p>
-            </div>
-          ) : null}
+          <div className="mm-panel mm-panel-pad">
+            <h2 className="mm-panel-title">Notes</h2>
+            <label className={`${mmLabelClass} mt-4`} htmlFor="deal-notes">Notes internes</label>
+            <textarea
+              id="deal-notes"
+              rows={4}
+              value={notesDraft}
+              onChange={(e) => setNotesDraft(e.target.value)}
+              className={`${mmTextareaClass} resize-none`}
+              placeholder="Suivi commercial, conditions, rappels…"
+            />
+            <DashButton
+              type="button"
+              className="mt-3"
+              disabled={notesMutation.isPending || notesDraft === (deal.notes ?? '')}
+              onClick={() => notesMutation.mutate()}
+            >
+              {notesMutation.isPending ? 'Enregistrement…' : 'Enregistrer les notes'}
+            </DashButton>
+          </div>
         </div>
 
         <div className="space-y-4">
