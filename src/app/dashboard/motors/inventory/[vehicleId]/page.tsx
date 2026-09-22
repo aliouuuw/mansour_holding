@@ -11,9 +11,9 @@ import {
   Upload01Icon, Cancel01Icon, Delete02Icon,
 } from 'hugeicons-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { cn, formatPrice, formatNumber } from '@/lib/utils'
+import { cn, formatDate, formatPrice, formatNumber } from '@/lib/utils'
 import { vehiclesApi, invalidateMotorsQueries, type VehicleStatus } from '@/lib/api'
-import { VehicleForm, featureEntries, formExtras, toExtras, type VehicleFormValues } from '@/components/motors/VehicleForm'
+import { VehicleForm, arrivedAtFromForm, arrivedAtToForm, featureEntries, formExtras, toExtras, type VehicleFormValues } from '@/components/motors/VehicleForm'
 import { useToast } from '@/components/ui/Toast'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 
@@ -50,6 +50,7 @@ export function MotorsVehicleDetail() {
       vin: values.vin || null,
       description: values.description || null,
       extras: toExtras(values, vehicle?.extras ?? {}),
+      arrivedAt: arrivedAtFromForm(values.arrivedAt),
     }),
     onSuccess: (updated) => {
       qc.setQueryData(['vehicle', vehicleId], updated)
@@ -119,6 +120,7 @@ export function MotorsVehicleDetail() {
       mileage: vehicle.mileage, price: vehicle.price ?? undefined, status: vehicle.status,
       fuelType: vehicle.fuelType, transmission: vehicle.transmission,
       color: vehicle.color, vin: vehicle.vin ?? '', description: vehicle.description ?? '',
+      arrivedAt: arrivedAtToForm(vehicle.arrivedAt),
       ...formExtras(extras),
     }
     return (
@@ -256,6 +258,7 @@ export function MotorsVehicleDetail() {
             <h2 className="text-xs font-semibold uppercase tracking-wider text-noir-500 mb-4">Caractéristiques</h2>
             <div className="space-y-3">
               {[
+                { label: 'Arrivée showroom', value: formatDate(vehicle.arrivedAt), icon: Calendar01Icon },
                 { label: 'Année', value: vehicle.year.toString(), icon: Calendar01Icon },
                 { label: 'Kilométrage', value: `${formatNumber(vehicle.mileage)} km`, icon: DashboardSpeed01Icon },
                 { label: 'Carburant', value: fuelLabels[vehicle.fuelType] ?? vehicle.fuelType, icon: Fuel01Icon },

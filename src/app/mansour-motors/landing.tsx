@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
 import { AtelierSwipeHint, Button, Chapter, Field, OpenNote, Shell, ShowroomMap } from './_ui'
-import { lineup, toCar } from './_ui/car'
+import { arrivalMs, lineup, toCar } from './_ui/car'
 import { BUDGETS, CONTACT, DAY, HOURS, STATE, YEARS, cover, pad2, vehicleUrl, waLink } from './_ui/shared'
 
 function prestige(vehicles: ApiVehicle[]) {
@@ -303,7 +303,7 @@ const PROMISE = 'Une maison, un stock réel. Chaque véhicule présenté ici est
 
 /* 8 bays: the cars on the floor first (oldest arrival in bay 01), then the latest sold as traces */
 function bays(vs: ApiVehicle[]) {
-  const byArrival = [...vs].sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+  const byArrival = [...vs].sort((a, b) => arrivalMs(a) - arrivalMs(b))
   const floor = byArrival.filter((v) => v.status !== 'sold')
   const sold = byArrival.filter((v) => v.status === 'sold').reverse()
   return [...floor, ...sold].slice(0, 8)
@@ -401,12 +401,15 @@ function Visit() {
       <div className="wrap visit-home">
         <p className="brand">Showroom</p>
         <h2 className="address">Route de la Corniche Ouest<br />Almadies, Dakar</h2>
+        <p className="visit-landmark">{CONTACT.landmark}</p>
         <p className="week-note"><OpenNote /></p>
         <Week />
+        <p className="visit-rent">Location de véhicules de prestige, sur demande.</p>
         <div className="actions">
           <Button href={CONTACT.tel}>Appeler</Button>
           <Button tone="soft" href={CONTACT.maps} target="_blank" rel="noopener">Itinéraire</Button>
         </div>
+        <p className="visit-voice">« Équipe accueillante et belles voitures. » <span>El Hadj Seck · Abdou Diop</span></p>
       </div>
       <p className="map-credit">Plan : © contributeurs OpenStreetMap</p>
     </Chapter>

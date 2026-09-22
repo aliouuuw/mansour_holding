@@ -79,6 +79,8 @@ export const vehicles = pgTable('vehicles', {
   extras: jsonb('extras').$type<Record<string, string>>().notNull().default({}),
   organizationId: uuid('organization_id'),
   createdBy: varchar('created_by', { length: 36 }).references(() => user.id),
+  /* when the car went on the showroom floor (catalog « Arrivée récente ») */
+  arrivedAt: timestamp('arrived_at').notNull().defaultNow(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 }, (t) => [

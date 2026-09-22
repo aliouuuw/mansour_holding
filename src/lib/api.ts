@@ -50,6 +50,7 @@ export type ApiVehicle = {
   extras: Record<string, string>
   organizationId: string | null
   createdBy: string | null
+  arrivedAt: string
   createdAt: string
   updatedAt: string
 }

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft01Icon } from 'hugeicons-react'
 import { vehiclesApi, invalidateMotorsQueries } from '@/lib/api'
-import { VehicleForm, toExtras, type VehicleFormValues } from '@/components/motors/VehicleForm'
+import { VehicleForm, arrivedAtFromForm, toExtras, type VehicleFormValues } from '@/components/motors/VehicleForm'
 import { useToast } from '@/components/ui/Toast'
 
 export function MotorsVehicleNew() {
@@ -20,6 +20,7 @@ export function MotorsVehicleNew() {
       description: values.description || null,
       images: [],
       extras: toExtras(values),
+      arrivedAt: arrivedAtFromForm(values.arrivedAt),
     }),
     onSuccess: async (vehicle) => {
       invalidateMotorsQueries(qc)

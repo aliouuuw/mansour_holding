@@ -1,14 +1,34 @@
 import type { ApiVehicle } from '@/lib/api'
 
-/* ── the house: one place for contact details (still the current site's placeholders) ── */
+/* ── the house: phone and mail from mansourmotors.sn. The street is the confirmed showroom. ── */
 export const CONTACT = {
-  phone: '+221 33 123 45 67',
-  tel: 'tel:+221331234567',
-  email: 'motors@mansour.sn',
+  phone: '+221 33 860 05 55',
+  tel: 'tel:+221338600555',
+  email: 'info@mansourmotors.sn',
+  /* the live site publishes no WhatsApp number */
   whatsapp: '221771234567',
   address: 'Route de la Corniche Ouest, Almadies, Dakar',
+  landmark: 'En face du Vogue Lounge, près de BIO 24',
   /* the Google Maps place itself, not the nearby Plus Code PFPR+9J7 */
   maps: 'https://www.google.com/maps/place/Mansour+Motors/@14.7347277,-17.5085261,19z',
+}
+
+/* four ranges from the live site. One car, one range. */
+export const RANGES = [
+  { id: 'luxe', label: 'Luxe' },
+  { id: 'sport', label: 'Sport' },
+  { id: 'suv', label: '4x4 / SUV' },
+  { id: 'pickup', label: 'Pick-up' },
+] as const
+export type RangeId = (typeof RANGES)[number]['id']
+
+/* ponytail: keyword scan, no body-type field. Pickup wins over Sport (Hilux GR Sport). */
+export function rangeOf(v: { make: string; model: string }): RangeId {
+  const s = `${v.make} ${v.model}`
+  if (/hilux|l200|\b79\b|double cabine|pick-?up/i.test(s)) return 'pickup'
+  if (/rolls-royce|bentley|maybach|cullinan|black badge|autobiography/i.test(s)) return 'luxe'
+  if (/\bamg\b|gr sport|svr|coup[eé]/i.test(s)) return 'sport'
+  return 'suv'
 }
 
 export const BUDGETS = [30, 50, 70, 100]

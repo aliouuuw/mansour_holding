@@ -23,6 +23,7 @@ function serializeVehicle(row: typeof vehicles.$inferSelect) {
     ...row,
     images: row.images ?? [],
     extras: row.extras ?? {},
+    arrivedAt: iso(row.arrivedAt)!,
     createdAt: iso(row.createdAt)!,
     updatedAt: iso(row.updatedAt)!,
   }

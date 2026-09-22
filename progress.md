@@ -1,5 +1,78 @@
 # Project Progress Log
 
+## [Motors] Showroom arrival date (`arrivedAt`)
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Vehicles store `arrived_at` (showroom floor). Catalog default tri « Arrivée récente » sorts on `arrivedAt` via `toCar.arrived`. Dashboard form field « Arrivée au showroom ». Migration backfills `created_at` for existing rows.
+* **Verification:** `bun run db:migrate`, `bun test src/app/mansour-motors/_ui/arrival.test.ts`, `bun run type-check`.
+
+---
+
+## [Motors] Gamme in filter sheet + list toolbar clearance
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Range chips (Toutes, Luxe, Sport, …) live in the Filtres sheet, not the sticky toolbar. Phone toolbar is one row (count + view + filtres). `main` gets `padding-top: head-total` so list rows are not covered by sticky filterbar under the fixed header.
+* **Verification:** Browser `/mansour-motors/vehicules?vue=liste` ~390px; Filtres shows Gamme; first list row visible below toolbar.
+
+---
+
+## [Motors] Mobile catalog list rows
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** List mode on phone uses thumb + body rows on paper (not full-bleed dark text). Markup splits make, model, year · km · fuel, price, and status. CSS resets desktop hover flyout thumbs so they stay in the grid on narrow viewports. Removed the old « Voir la fiche » pill on list rows.
+* **Verification:** Browser at `/mansour-motors/vehicules?vue=liste` ~390px. `bun run type-check`.
+
+---
+
+## [Motors] Catalog toolbar icons on phone
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** On mobile, Grille / Liste / Atelier / Filtres use Heroicons-style SVGs. Labels stay for screen readers. Desktop keeps text only.
+* **Verification:** Browser at `/mansour-motors/vehicules` at 390px width.
+
+---
+
+## [Motors] Mobile catalog toolbar compact
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Phone stock bar drops the extra « Véhicules » row and showroom line. Ranges scroll edge to edge. One count line sits above Grille / Liste / Atelier and Filtres.
+* **Verification:** Browser at `/mansour-motors/vehicules` at 390px width. Filter bar height is about two rows.
+
+---
+
+## [Motors] Catalog filter sheet — paper, no gold
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Filtres sheet uses paper, ink, and grey like the landing. Desktop opens a panel under the button. Mobile keeps a bottom sheet. Active chips fill ink. Gold is removed from the sheet and toolbar count.
+* **Verification:** Browser at `/mansour-motors/vehicules` with Filtres open (desktop panel + mobile sheet).
+
+---
+
+## [Motors] Catalog filter bar polish
+
+* **Status:** Superseded by filter sheet — paper, no gold
+* **Date:** 2026-09-22
+* **Change:** Filtres opens a dark control sheet (tri, marque, budget, km, énergie, disponibilité). The bar stays one row. Gold marks the active choice.
+* **Verification:** Browser at `/mansour-motors/vehicules` desktop. Filter bar height is near one row until Affiner opens.
+
+---
+
+## [Motors] Contact, ranges, location, one client line
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Phone and email come from mansourmotors.sn. The street stays Route de la Corniche Ouest. The visit adds the Vogue Lounge landmark, a location line, and one client line. Stock filters by Luxe, Sport, 4x4 / SUV, Pick-up.
+* **Verification:** `bun test src/app/mansour-motors/_ui/range.test.ts`. Browser: header phone, visit block, `/mansour-motors/vehicules` range filter.
+* **Left:** WhatsApp number is still the placeholder. The live site does not publish one.
+
+---
+
 ## [Motors] Statement and alert sit closer
 
 * **Status:** Completed

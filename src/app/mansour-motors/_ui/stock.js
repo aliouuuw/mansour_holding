@@ -1,7 +1,7 @@
 /* The stock page, ported from prototype/launch/stock.js. React renders the markup and every
    card once; this module filters, sorts and moves the cards (FLIP), drives the atelier and
    keeps the URL describing what is on screen. Client only: loaded with a dynamic import. */
-import { $, $$, reduceMotion, segThumb, focusOnTouch } from './dom.js'
+import { $, $$, reduceMotion, focusOnTouch } from './dom.js'
 import { mountSelectbox } from './selectbox.js'
 import { mountTurntable } from './turntable.js'
 
@@ -24,24 +24,39 @@ export function mountStock(root, cars, { models, navigate }) {
   const sortSel = $('[data-sort]', root)
   const makeSel = $('[data-make]', root)
   const modelSel = $('[data-model]', root)
-  const fuelSeg = $('[data-fuel]', root)
   const params = new URLSearchParams(location.search)
   const table = mountTurntable(root, { drive: 'pointer', modes: ['atelier', 'list', 'grid'], navigate })
   table.setMode(VUES[params.get('vue')] || 'grid')
 
   function fillModels(keep) {
     const make = makeSel.value
+    const list = make ? models[make] ?? [] : []
     modelSel.disabled = !make
     modelSel.replaceChildren(new Option(make ? 'Tous modèles' : 'Modèle', ''),
-      ...(make ? models[make] ?? [] : []).map((m) => new Option(m, m, false, m === keep)))
+      ...list.map((m) => new Option(m, m, false, m === keep)))
+    const row = $('[data-model-row]', form)
+    const box = $('[data-model-chips]', form)
+    if (!row || !box) return
+    row.hidden = !make
+    box.replaceChildren()
+    const all = document.createElement('button')
+    all.type = 'button'
+    all.dataset.set = 'modele'
+    all.dataset.value = ''
+    all.textContent = 'Tous'
+    box.append(all)
+    for (const m of list) {
+      const b = document.createElement('button')
+      b.type = 'button'
+      b.dataset.set = 'modele'
+      b.dataset.value = m
+      b.textContent = m
+      box.append(b)
+    }
   }
 
   let fuel = ''
-  const pressFuel = () => {
-    for (const b of $$('button', fuelSeg)) b.setAttribute('aria-pressed', String(b.dataset.value === fuel))
-    segThumb(fuelSeg)
-  }
-
+  let range = ''
   /* state in from the URL (the home search lands here) */
   makeSel.value = params.get('marque') || ''
   fillModels(params.get('modele'))
@@ -49,20 +64,23 @@ export function mountStock(root, cars, { models, navigate }) {
   form.elements.km.value = params.get('km') || ''
   form.elements.dispo.checked = params.get('dispo') === '1'
   fuel = params.get('energie') || ''
+  range = params.get('gamme') || ''
   sortSel.value = params.get('tri') || ''
-  for (const select of $$('select', root)) mountSelectbox(select, { signal })
+  for (const select of $$('select', root)) {
+    if (select.closest('.filter-sheet')) continue
+    mountSelectbox(select, { signal })
+  }
 
   const filters = $('[data-filters]', root)
   const sheet = $('.filter-sheet', root)
   const summary = $('summary', filters)
-  const phone = () => matchMedia('(max-width: 860px)').matches
   const behind = () => $$('.mm > .header, .mm > .sign, .mm > .wa, .mm main > :not(.filterbar)')
   let trapped = false
   let trapFrame = 0
   const sheetItems = () => $$('button, a, input, select, textarea, [tabindex]', sheet)
-    .filter((el) => !el.disabled && !el.hidden && el.tabIndex >= 0 && el.getClientRects().length > 0)
+    .filter((el) => !el.disabled && !el.hidden && !el.classList.contains('vh') && el.tabIndex >= 0 && el.getClientRects().length > 0)
   const syncTrap = () => {
-    const on = phone() && filters.open
+    const on = filters.open
     for (const el of behind()) el.inert = on
     const token = ++trapFrame
     if (on) {
@@ -73,16 +91,16 @@ export function mountStock(root, cars, { models, navigate }) {
       requestAnimationFrame(() => { if (token === trapFrame) summary?.focus() })
     }
   }
-  filters.open = !phone()
+  const detailKeys = ['marque', 'modele', 'budget', 'km', 'energie', 'dispo', 'tri', 'gamme']
+  filters.open = detailKeys.some((k) => params.get(k))
   filters.addEventListener('toggle', () => {
-    requestAnimationFrame(() => segThumb(fuelSeg))
     syncTrap()
   }, { signal })
   filters.addEventListener('click', (e) => {
-    if (phone() && e.target === filters) filters.open = false
+    if (e.target === filters) filters.open = false
   }, { signal })
   addEventListener('keydown', (e) => {
-    if (!phone() || !filters.open) return
+    if (!filters.open) return
     if (e.key === 'Escape') { filters.open = false; return }
     if (e.key !== 'Tab') return
     const items = sheetItems()
@@ -92,9 +110,9 @@ export function mountStock(root, cars, { models, navigate }) {
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
   }, { signal })
-  pressFuel()
-  addEventListener('resize', () => segThumb(fuelSeg), { signal })
-  document.fonts?.ready.then(() => segThumb(fuelSeg))
+  for (const b of $$('[data-sheet-close]', root)) {
+    b.addEventListener('click', () => { filters.open = false }, { signal })
+  }
 
   const nodes = new Map($$('.card', grid).map((el) => [el.dataset.n, el]))
   const touch = focusOnTouch([...nodes.values()])
@@ -122,7 +140,6 @@ export function mountStock(root, cars, { models, navigate }) {
     if (indexEl) for (const a of $$('a', indexEl)) a.removeAttribute('data-open-hint')
     if (tapHintOff || !list[0]) return
     if (table.mode === 'grid') nodes.get(list[0].n)?.setAttribute('data-open-hint', '')
-    else if (table.mode === 'list' && indexEl) $('a', indexEl)?.setAttribute('data-open-hint', '')
   }
 
   root.addEventListener('click', (e) => {
@@ -132,7 +149,7 @@ export function mountStock(root, cars, { models, navigate }) {
   function read() {
     const f = form.elements
     return {
-      marque: makeSel.value, modele: modelSel.value, energie: fuel,
+      marque: makeSel.value, modele: modelSel.value, energie: fuel, gamme: range,
       budget: f.budget.value, km: f.km.value,
       dispo: f.dispo.checked ? '1' : '', tri: sortSel.value,
     }
@@ -144,10 +161,11 @@ export function mountStock(root, cars, { models, navigate }) {
       (!s.marque || c.make === s.marque) &&
       (!s.modele || c.model === s.modele) &&
       (!s.energie || c.fuel === s.energie) &&
+      (!s.gamme || c.range === s.gamme) &&
       (!s.budget || c.price == null || c.price <= Number(s.budget)) &&
       (!s.km || c.km <= Number(s.km)) &&
       (!s.dispo || c.status === 'available'))
-    // newest arrivals first by default
+    // default tri: showroom arrival (arrivedAt), not record createdAt
     list = [...list].sort(SORTS[s.tri] || ((a, b) => b.arrived - a.arrived))
 
     // FLIP: each card travels from where it was to where it now is
@@ -171,12 +189,15 @@ export function mountStock(root, cars, { models, navigate }) {
       }
     }
 
-    $('[data-live]', root).textContent = `${list.length} véhicule${list.length > 1 ? 's' : ''}`
+    const count = `${list.length} véhicule${list.length > 1 ? 's' : ''}`
+    for (const el of $$('[data-live]', root)) el.textContent = count
     $('[data-empty]', root).hidden = list.length > 0
-    const active = ['marque', 'modele', 'energie', 'budget', 'km', 'dispo'].filter((k) => s[k]).length
-    $('[data-active-count]', root).textContent = active ? `${active} actif${active > 1 ? 's' : ''}` : ''
-    $('[data-active-label]', root).textContent = active ? `· ${active} filtre${active > 1 ? 's' : ''}` : ''
-    $('[data-reset]', root).hidden = !active && !s.tri
+    const sheetN = ['marque', 'modele', 'energie', 'budget', 'km', 'dispo', 'tri', 'gamme'].filter((k) => s[k]).length
+    $('[data-active-count]', root).textContent = sheetN ? String(sheetN) : ''
+    const activeLabel = sheetN ? `· ${sheetN} filtre${sheetN > 1 ? 's' : ''} actif${sheetN > 1 ? 's' : ''}` : ''
+    for (const el of $$('[data-active-label]', root)) el.textContent = activeLabel
+    $('[data-reset]', root).hidden = sheetN === 0
+    pressChips(s)
     table.setCars(list)
     syncTapHints(list)
 
@@ -186,24 +207,42 @@ export function mountStock(root, cars, { models, navigate }) {
     history.replaceState(history.state, '', q.toString() ? `?${q}` : location.pathname)
   }
 
-  makeSel.addEventListener('change', () => { fillModels(); update() }, { signal })
-  form.addEventListener('change', (e) => { if (e.target !== makeSel) update() }, { signal })
-  sortSel.addEventListener('change', update, { signal })
-  fuelSeg.addEventListener('click', (e) => {
-    const b = e.target.closest('button')
-    if (!b) return
-    fuel = b.dataset.value
-    pressFuel()
+  function pressChips(s) {
+    for (const chip of $$('[data-set]', form)) {
+      const key = chip.dataset.set
+      const cur = s[key] || ''
+      chip.setAttribute('aria-pressed', String((chip.dataset.value || '') === String(cur)))
+    }
+    const row = $('[data-model-row]', form)
+    if (row) row.hidden = !s.marque
+  }
+
+  form.addEventListener('click', (e) => {
+    const chip = e.target.closest('[data-set]')
+    if (!chip) return
+    const key = chip.dataset.set
+    const value = chip.dataset.value ?? ''
+    if (key === 'tri') sortSel.value = value
+    else if (key === 'energie') fuel = value
+    else if (key === 'gamme') range = value
+    else if (form.elements[key]) {
+      form.elements[key].value = value
+      if (key === 'marque') {
+        modelSel.value = ''
+        fillModels()
+      }
+    }
     update()
-  })
+  }, { signal })
+  form.addEventListener('change', (e) => { if (e.target !== makeSel) update() }, { signal })
   $('[data-reset]', root).addEventListener('click', () => {
     form.reset()
     makeSel.value = ''
     fillModels()
     fuel = ''
+    range = ''
     sortSel.value = ''
-    pressFuel()
-    sortSel.dispatchEvent(new Event('change', { bubbles: true }))
+    update()
   })
   $('[data-view]', root).addEventListener('click', () => {
     requestAnimationFrame(() => update({ animate: false }))

@@ -1,5 +1,5 @@
 import type { ApiVehicle } from '@/lib/api'
-import { cover, face, focal, isCutout } from './shared'
+import { cover, face, focal, isCutout, rangeOf, type RangeId } from './shared'
 
 /* the shape the plateau (turntable.js) reads; `n` carries the vehicle id for links */
 export type PlateauCar = {
@@ -16,8 +16,13 @@ export type PlateauCar = {
   status: ApiVehicle['status']
   color: string | null
   fuel: ApiVehicle['fuelType']
+  range: RangeId
   arrived: number
 }
+
+/** Showroom arrival instant; legacy rows without `arrivedAt` use record creation. */
+export const arrivalMs = (v: Pick<ApiVehicle, 'arrivedAt' | 'createdAt'>) =>
+  Date.parse(v.arrivedAt || v.createdAt)
 
 export const toCar = (v: ApiVehicle): PlateauCar => ({
   n: v.id,
@@ -33,7 +38,8 @@ export const toCar = (v: ApiVehicle): PlateauCar => ({
   status: v.status,
   color: v.color,
   fuel: v.fuelType,
-  arrived: Date.parse(v.createdAt),
+  range: rangeOf(v),
+  arrived: arrivalMs(v),
 })
 
 /* the line-up order: what you can buy first, the dearest first */

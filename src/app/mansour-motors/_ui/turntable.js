@@ -1,6 +1,7 @@
 import {
   $, $$, esc, fcfa, km, pad2, detailUrl, status, reduceMotion, segThumb,
 } from './dom.js'
+import { FUEL } from './shared'
 
 const TAU = Math.PI * 2
 
@@ -859,15 +860,20 @@ export function mountTurntable(root, {
     if (!indexEl) return
     indexEl.innerHTML = cars.map((c, i) => `
       <li>
-        <a href="${detailUrl(c)}" data-n="${c.n}">
+        <a href="${detailUrl(c)}" data-n="${c.n}" aria-label="Voir la fiche : ${esc(c.make)} ${esc(c.model)}">
           <span class="idx-n">${pad2(i + 1)}</span>
-          <span class="idx-body">
-            <span class="idx-name">${esc(c.make)} ${esc(c.model)}</span>
-            <span class="idx-meta">${c.year} · ${km(c.km)}</span>
+          <span class="idx-thumb">
+            <img src="${esc(c.img)}" alt="" class="idx-shot${c.cutout ? ' is-cutout' : ''}" style="--pos:${c.pos}" loading="lazy" decoding="async">
           </span>
-          <span class="idx-price">${fcfa(c.price)}</span>
-          ${status(c)}
-          <img src="${esc(c.img)}" alt="" class="idx-shot${c.cutout ? ' is-cutout' : ''}" style="--pos:${c.pos}">
+          <span class="idx-body">
+            <span class="idx-make">${esc(c.make)}</span>
+            <span class="idx-name">${esc(c.model)}</span>
+            <span class="idx-meta">${c.year} · ${km(c.km)} · ${esc(FUEL[c.fuel] ?? c.fuel ?? '')}</span>
+            <span class="idx-foot">
+              <span class="idx-price">${fcfa(c.price)}</span>
+              ${status(c)}
+            </span>
+          </span>
         </a>
       </li>`).join('')
   }

@@ -15,6 +15,8 @@ export interface VehicleFormValues {
   color?: string | null
   vin: string
   description: string
+  /** YYYY-MM-DD, showroom floor arrival */
+  arrivedAt: string
   extras: { key: string; value: string }[]
   /* public site: which way the car's nose points in the first photo, and where to centre it */
   photoFace: 'left' | 'right'
@@ -33,6 +35,14 @@ export function formExtras(extras: Record<string, string>) {
     photoFace: extras.face === 'right' ? 'right' as const : 'left' as const,
     photoFocus: extras.pos ?? '',
   }
+}
+
+export function arrivedAtFromForm(day: string) {
+  return new Date(`${day}T12:00:00`)
+}
+
+export function arrivedAtToForm(iso: string) {
+  return iso.slice(0, 10)
 }
 
 export function toExtras(values: VehicleFormValues, previous: Record<string, string> = {}): Record<string, string> {
@@ -64,6 +74,7 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
       extras: [],
       photoFace: 'left',
       photoFocus: '',
+      arrivedAt: new Date().toISOString().slice(0, 10),
       ...defaultValues,
     },
   })
@@ -94,6 +105,12 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
           />
           {errors.year && <p className={errorClass}>{errors.year.message}</p>}
         </div>
+      </div>
+
+      <div>
+        <label className={labelClass}>Arrivée au showroom</label>
+        <input type="date" {...register('arrivedAt', { required: 'Requis' })} className={inputClass} />
+        {errors.arrivedAt && <p className={errorClass}>{errors.arrivedAt.message}</p>}
       </div>
 
       {/* Mileage / Price */}

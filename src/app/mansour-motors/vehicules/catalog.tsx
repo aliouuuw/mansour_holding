@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import type { ApiVehicle } from '@/lib/api'
 import { AtelierSwipeHint, Button, Card, Shell } from '../_ui'
 import { toCar } from '../_ui/car'
-import { BUDGETS, FUEL, cover, vehicleUrl } from '../_ui/shared'
+import { IconFilters, IconGrid, IconList, IconSwipe } from '../_ui/icons'
+import { BUDGETS, FUEL, RANGES, cover, rangeOf, vehicleUrl } from '../_ui/shared'
 
 const KMS = [1000, 5000, 10000, 20000]
 
@@ -43,61 +44,136 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
 
         <div className="filterbar">
           <div className="wrap catalog-tools">
-            <div className="viewbar-tools">
-              <div className="seg" role="group" aria-label="Affichage" data-view>
-                <button type="button" data-mode="grid" aria-pressed="true">Grille</button>
-                <button type="button" data-mode="list" aria-pressed="false">Liste</button>
-                <button type="button" data-mode="atelier" aria-pressed="false">Atelier</button>
-              </div>
-              <select aria-label="Trier par" data-sort defaultValue="">
-                <option value="">Arrivée récente</option>
-                <option value="price-asc">Prix croissant</option>
-                <option value="price-desc">Prix décroissant</option>
-                <option value="km-asc">Kilométrage croissant</option>
-                <option value="year-desc">Année, plus récente</option>
-              </select>
-              <button type="button" className="reset" data-reset hidden>
-                <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
-                <span>Effacer</span>
-              </button>
-            </div>
-            <details className="filters" data-filters>
-              <summary>
-                <span>Filtrer</span>
-                <span className="filter-summary-count" data-active-count />
-              </summary>
-              <div className="filter-sheet">
-                <form className="filters-body" data-filter-form>
-                  <select name="marque" aria-label="Marque" data-make defaultValue="">
-                    <option value="" data-count={vehicles.length}>Toutes marques</option>
-                    {makes.map((m) => <option key={m} data-count={makeCounts[m]}>{m}</option>)}
-                  </select>
-                  <select name="modele" aria-label="Modèle" data-model disabled><option value="">Modèle</option></select>
-                  <select name="budget" aria-label="Budget maximum" data-max defaultValue="">
-                    <option value="">Tous budgets</option>
-                    {BUDGETS.map((b) => <option key={b} value={b * 1_000_000}>{b} M FCFA max.</option>)}
-                  </select>
-                  <select name="km" aria-label="Kilométrage maximum" defaultValue="">
-                    <option value="">Tous kilométrages</option>
-                    {KMS.map((k) => <option key={k} value={k}>{k.toLocaleString('fr-FR').replace(/ /g, ' ')} km max.</option>)}
-                  </select>
-                  <div className="seg" role="group" aria-label="Énergie" data-fuel>
-                    {[['', 'Toutes'] as const, ...fuels.map((f) => [f, FUEL[f]] as const)].map(([v, label]) => (
-                      <button key={v} type="button" data-value={v} aria-pressed="false">{label}</button>
-                    ))}
-                  </div>
-                  <label className="switch"><input type="checkbox" name="dispo" value="1" /> Disponibles</label>
-                </form>
-              </div>
-            </details>
-
-            <div className="viewbar">
-              <div className="dock-lead">
-                <p className="dock-title">Véhicules</p>
-                <p className="catalog-count" aria-live="polite">
+            <div className="catalog-toolbar">
+              <p className="catalog-count catalog-count--toolbar" aria-live="polite">
+                <span data-live /> <span data-active-label />
+              </p>
+              <div className="viewbar-tools">
+                <p className="catalog-count catalog-count--mobile" aria-live="polite">
                   <span data-live /> <span data-active-label />
                 </p>
-                <p className="catalog-place">Stock au showroom de Dakar.</p>
+                <div className="seg" role="group" aria-label="Affichage" data-view>
+                  <button type="button" data-mode="grid" aria-pressed="true" aria-label="Grille">
+                    <IconGrid size={18} />
+                    <span className="toolbar-label">Grille</span>
+                  </button>
+                  <button type="button" data-mode="list" aria-pressed="false" aria-label="Liste">
+                    <IconList size={18} />
+                    <span className="toolbar-label">Liste</span>
+                  </button>
+                  <button type="button" data-mode="atelier" aria-pressed="false" aria-label="Atelier">
+                    <IconSwipe size={18} />
+                    <span className="toolbar-label">Atelier</span>
+                  </button>
+                </div>
+                <details className="filters" data-filters>
+                  <summary aria-label="Filtres">
+                    <IconFilters size={18} />
+                    <span className="toolbar-label">Filtres</span>
+                    <span className="filter-summary-count" data-active-count />
+                  </summary>
+                  <div className="filter-sheet" role="dialog" aria-label="Filtres">
+                    <div className="sheet-head">
+                      <div>
+                        <p className="sheet-title">Filtres</p>
+                        <p className="sheet-sub"><span data-live /></p>
+                      </div>
+                      <button type="button" data-sheet-close aria-label="Fermer">Fermer</button>
+                    </div>
+                    <form className="sheet-form" data-filter-form>
+                      <fieldset className="sheet-row">
+                        <legend>Tri</legend>
+                        <div className="sheet-chips">
+                          {([
+                            ['', 'Arrivée récente'],
+                            ['price-asc', 'Prix croissant'],
+                            ['price-desc', 'Prix décroissant'],
+                            ['km-asc', 'Kilométrage'],
+                            ['year-desc', 'Année'],
+                          ] as const).map(([value, label]) => (
+                            <button key={label} type="button" data-set="tri" data-value={value} aria-pressed={value === ''}>{label}</button>
+                          ))}
+                        </div>
+                        <select className="vh" aria-label="Trier par" data-sort defaultValue="">
+                          <option value="">Arrivée récente</option>
+                          <option value="price-asc">Prix croissant</option>
+                          <option value="price-desc">Prix décroissant</option>
+                          <option value="km-asc">Kilométrage croissant</option>
+                          <option value="year-desc">Année, plus récente</option>
+                        </select>
+                      </fieldset>
+                      <fieldset className="sheet-row">
+                        <legend>Gamme</legend>
+                        <div className="sheet-chips" role="group" aria-label="Gamme">
+                          <button type="button" data-set="gamme" data-value="" aria-pressed="true">Toutes</button>
+                          {RANGES.filter((r) => vehicles.some((v) => rangeOf(v) === r.id)).map((r) => (
+                            <button key={r.id} type="button" data-set="gamme" data-value={r.id} aria-pressed="false">{r.label}</button>
+                          ))}
+                        </div>
+                      </fieldset>
+                      <fieldset className="sheet-row">
+                        <legend>Marque</legend>
+                        <div className="sheet-chips">
+                          <button type="button" data-set="marque" data-value="" aria-pressed="true">Toutes</button>
+                          {makes.map((m) => (
+                            <button key={m} type="button" data-set="marque" data-value={m} aria-pressed="false">{m}</button>
+                          ))}
+                        </div>
+                        <select className="vh" name="marque" aria-label="Marque" data-make defaultValue="">
+                          <option value="">Toutes marques</option>
+                          {makes.map((m) => <option key={m} data-count={makeCounts[m]}>{m}</option>)}
+                        </select>
+                      </fieldset>
+                      <fieldset className="sheet-row" data-model-row hidden>
+                        <legend>Modèle</legend>
+                        <div className="sheet-chips" data-model-chips />
+                        <select className="vh" name="modele" aria-label="Modèle" data-model disabled><option value="">Modèle</option></select>
+                      </fieldset>
+                      <fieldset className="sheet-row">
+                        <legend>Budget maximum</legend>
+                        <div className="sheet-chips">
+                          <button type="button" data-set="budget" data-value="" aria-pressed="true">Tous</button>
+                          {BUDGETS.map((b) => (
+                            <button key={b} type="button" data-set="budget" data-value={String(b * 1_000_000)} aria-pressed="false">{b} M</button>
+                          ))}
+                        </div>
+                        <select className="vh" name="budget" aria-label="Budget maximum" data-max defaultValue="">
+                          <option value="">Tous budgets</option>
+                          {BUDGETS.map((b) => <option key={b} value={b * 1_000_000}>{b} M FCFA max.</option>)}
+                        </select>
+                      </fieldset>
+                      <fieldset className="sheet-row">
+                        <legend>Kilométrage</legend>
+                        <div className="sheet-chips">
+                          <button type="button" data-set="km" data-value="" aria-pressed="true">Tous</button>
+                          {KMS.map((k) => (
+                            <button key={k} type="button" data-set="km" data-value={String(k)} aria-pressed="false">{k.toLocaleString('fr-FR').replace(/ /g, ' ')}</button>
+                          ))}
+                        </div>
+                        <select className="vh" name="km" aria-label="Kilométrage maximum" defaultValue="">
+                          <option value="">Tous kilométrages</option>
+                          {KMS.map((k) => <option key={k} value={k}>{k.toLocaleString('fr-FR').replace(/ /g, ' ')} km max.</option>)}
+                        </select>
+                      </fieldset>
+                      <fieldset className="sheet-row">
+                        <legend>Énergie</legend>
+                        <div className="sheet-chips" role="group" aria-label="Énergie" data-fuel>
+                          {[['', 'Toutes'] as const, ...fuels.map((f) => [f, FUEL[f]] as const)].map(([v, label]) => (
+                            <button key={v || 'all'} type="button" data-set="energie" data-value={v} aria-pressed={v === ''}>{label}</button>
+                          ))}
+                        </div>
+                      </fieldset>
+                      <label className="sheet-toggle switch">
+                        <span>Disponibles seulement</span>
+                        <input type="checkbox" name="dispo" value="1" />
+                      </label>
+                    </form>
+                    <div className="sheet-foot">
+                      <button type="button" className="sheet-clear" data-reset hidden>Effacer</button>
+                      <button type="button" className="sheet-done" data-sheet-close>Voir le stock</button>
+                    </div>
+                  </div>
+                </details>
               </div>
             </div>
           </div>
