@@ -4,10 +4,17 @@ import { Link, useNavigate } from '@/lib/router'
 import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
-import { ArrowLeft01Icon, Loading03Icon } from 'hugeicons-react'
+import { ArrowLeft01Icon } from 'hugeicons-react'
 import { vehiclesApi, customersApi, dealsApi, invalidateMotorsQueries, type DealStatus } from '@/lib/api'
 import { useToast } from '@/components/ui/Toast'
 import { formatPrice } from '@/lib/utils'
+import {
+  DashButton,
+  mmInputClass,
+  mmLabelClass,
+  mmSelectClass,
+  mmTextareaClass,
+} from '@/components/dashboard'
 
 interface DealFormValues {
   vehicleId: string
@@ -16,9 +23,6 @@ interface DealFormValues {
   status: DealStatus
   notes: string
 }
-
-const inputClass = 'w-full border border-noir-200 bg-white px-3 py-2.5 text-sm text-noir-900 outline-none transition-all focus:border-gold-400 focus:ring-1 focus:ring-gold-400/20'
-const labelClass = 'block text-xs font-semibold uppercase tracking-wider text-noir-500 mb-1.5'
 
 export function MotorsDealNew() {
   const navigate = useNavigate()
@@ -63,7 +67,7 @@ export function MotorsDealNew() {
   if (loadingVehicles || loadingCustomers) {
     return (
       <div className="flex items-center justify-center py-20">
-        <Loading03Icon className="h-8 w-8 animate-spin text-gold-400" />
+        <div className="mm-spinner" role="status" aria-label="Chargement" />
       </div>
     )
   }
@@ -72,90 +76,87 @@ export function MotorsDealNew() {
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
       className="mx-auto max-w-2xl space-y-6">
       <div className="flex items-center gap-4">
-        <Link to="/dashboard/motors/sales" className="rounded-sm p-2 text-noir-600 hover:bg-surface-dim transition-colors">
-          <ArrowLeft01Icon className="h-5 w-5" />
+        <Link to="/dashboard/motors/sales" className="mm-icon-btn" aria-label="Retour aux ventes">
+          <ArrowLeft01Icon className="h-5 w-5" aria-hidden="true" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-noir-950">Nouvelle affaire</h1>
-          <p className="mt-0.5 text-sm text-noir-500">Associez un véhicule à un client</p>
+          <h1 className="mm-title">Nouvelle affaire</h1>
+          <p className="mm-lead">Associez un véhicule à un client</p>
         </div>
       </div>
 
-      <div className="border border-noir-200 bg-white p-6 shadow-sm">
+      <div className="mm-panel mm-panel-pad">
         {createMutation.error && (
-          <div className="mb-4 border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div className="mm-alert-error">
             {(createMutation.error as Error).message}
           </div>
         )}
         <form onSubmit={handleSubmit((v) => createMutation.mutate(v))} className="space-y-6">
-          {/* Vehicle */}
           <div>
-            <label className={labelClass}>Véhicule</label>
+            <label className={mmLabelClass}>Véhicule</label>
             <select
               {...register('vehicleId', { required: 'Requis' })}
-              className={inputClass}
+              className={mmSelectClass}
               onChange={(e) => {
-                const v = vehicles.find(v => v.id === e.target.value)
+                const v = vehicles.find((veh) => veh.id === e.target.value)
                 if (v?.price != null) setValue('price', v.price)
                 register('vehicleId').onChange(e)
               }}
             >
               <option value="">Sélectionner un véhicule</option>
-              {vehicles.map(v => (
+              {vehicles.map((v) => (
                 <option key={v.id} value={v.id}>
                   {v.make} {v.model} {v.year} — {formatPrice(v.price)}
                 </option>
               ))}
             </select>
-            {errors.vehicleId && <p className="mt-1 text-xs text-red-600">{errors.vehicleId.message}</p>}
+            {errors.vehicleId && <p className="mm-field-error">{errors.vehicleId.message}</p>}
           </div>
 
-          {/* Customer */}
           <div>
-            <label className={labelClass}>Client</label>
-            <select {...register('customerId', { required: 'Requis' })} className={inputClass}>
+            <label className={mmLabelClass}>Client</label>
+            <select {...register('customerId', { required: 'Requis' })} className={mmSelectClass}>
               <option value="">Sélectionner un client</option>
-              {customers.map(c => (
+              {customers.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.firstName} {c.lastName} — {c.phone}
                 </option>
               ))}
             </select>
-            {errors.customerId && <p className="mt-1 text-xs text-red-600">{errors.customerId.message}</p>}
-            <Link to="/dashboard/motors/customers/new"
-              className="mt-1.5 inline-block text-xs font-medium text-gold-600 hover:text-gold-700 transition-colors">
+            {errors.customerId && <p className="mm-field-error">{errors.customerId.message}</p>}
+            <Link to="/dashboard/motors/customers/new" className="mm-link mt-2 inline-block">
               + Créer un nouveau client
             </Link>
           </div>
 
-          {/* Price + Status */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>Prix proposé (F CFA)</label>
-              <input type="number" {...register('price', { required: 'Requis', valueAsNumber: true, min: { value: 1, message: 'Invalide' } })}
-                className={inputClass} />
-              {errors.price && <p className="mt-1 text-xs text-red-600">{errors.price.message}</p>}
+              <label className={mmLabelClass}>Prix proposé (F CFA)</label>
+              <input
+                type="number"
+                {...register('price', { required: 'Requis', valueAsNumber: true, min: { value: 1, message: 'Invalide' } })}
+                className={mmInputClass}
+              />
+              {errors.price && <p className="mm-field-error">{errors.price.message}</p>}
             </div>
             <div>
-              <label className={labelClass}>Statut initial</label>
-              <select {...register('status')} className={inputClass}>
+              <label className={mmLabelClass}>Statut initial</label>
+              <select {...register('status')} className={mmSelectClass}>
                 <option value="lead">Prospect</option>
                 <option value="negotiation">Négociation</option>
               </select>
             </div>
           </div>
 
-          {/* Notes */}
           <div>
-            <label className={labelClass}>Notes (optionnel)</label>
-            <textarea {...register('notes')} rows={3} className={`${inputClass} resize-none`}
+            <label className={mmLabelClass}>Notes (optionnel)</label>
+            <textarea {...register('notes')} rows={3} className={`${mmTextareaClass} resize-none`}
               placeholder="Détails sur l'affaire..." />
           </div>
 
-          <button type="submit" disabled={createMutation.isPending}
-            className="w-full bg-noir-950 px-4 py-3 text-sm font-semibold text-white hover:bg-noir-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-            {createMutation.isPending ? 'Enregistrement...' : 'Créer l\'affaire'}
-          </button>
+          <DashButton type="submit" disabled={createMutation.isPending} full>
+            {createMutation.isPending ? 'Enregistrement…' : "Créer l'affaire"}
+          </DashButton>
         </form>
       </div>
     </motion.div>

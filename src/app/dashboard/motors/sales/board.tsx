@@ -3,8 +3,9 @@
 import { Link } from '@/lib/router'
 import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Add01Icon, Loading03Icon, UserIcon, Car01Icon, DollarCircleIcon } from 'hugeicons-react'
+import { Add01Icon, UserIcon, Car01Icon, DollarCircleIcon } from 'hugeicons-react'
 import { cn, formatPrice } from '@/lib/utils'
+import { DashButton, DashPageHeader } from '@/components/dashboard'
 import { dealsApi, invalidateMotorsQueries, type ApiDeal, type DealStatus } from '@/lib/api'
 import { useToast } from '@/components/ui/Toast'
 import type { DealsBoard } from '@/server/deals'
@@ -106,23 +107,20 @@ export function MotorsSales({ initial }: { initial: DealsBoard }) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-motors-display text-2xl font-medium text-noir-950">Pipeline des ventes</h1>
-          <p className="mt-1 text-sm text-noir-500">
-            {totalActive} affaire{totalActive !== 1 ? 's' : ''} en cours · {formatPrice(totalWon)} conclus
-          </p>
-        </div>
-        <Link to="/dashboard/motors/sales/new"
-          className="inline-flex items-center gap-2 bg-noir-950 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-noir-800 transition-colors">
-          <Add01Icon className="h-4 w-4" /> Nouvelle affaire
-        </Link>
-      </div>
+      <DashPageHeader
+        title="Pipeline des ventes"
+        lead={`${totalActive} affaire${totalActive !== 1 ? 's' : ''} en cours · ${formatPrice(totalWon)} conclus`}
+        actions={
+          <DashButton to="/dashboard/motors/sales/new">
+            <Add01Icon className="h-4 w-4" aria-hidden="true" /> Nouvelle affaire
+          </DashButton>
+        }
+      />
 
-      {error && <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{(error as Error).message}</div>}
+      {error && <div className="mm-alert-error">{(error as Error).message}</div>}
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-20"><Loading03Icon className="h-8 w-8 animate-spin text-gold-400" /></div>
+        <div className="flex items-center justify-center py-20"><div className="mm-spinner" role="status" aria-label="Chargement" /></div>
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
           {COLUMNS.map((col) => {

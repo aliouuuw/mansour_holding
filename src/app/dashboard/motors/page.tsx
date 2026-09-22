@@ -12,6 +12,7 @@ import {
   ShoppingCart01Icon,
 } from 'hugeicons-react'
 import { cn, formatPrice, formatNumber } from '@/lib/utils'
+import { DashButton, DashPageHeader } from '@/components/dashboard'
 import { overviewApi } from '@/lib/api'
 
 export function MotorsDashboard() {
@@ -58,7 +59,7 @@ export function MotorsDashboard() {
       value: formatNumber(totalCustomers),
       total: 'Enregistrés',
       icon: UserMultiple02Icon,
-      color: 'text-gold-700 bg-gold-50 border-gold-200',
+      color: 'border border-[var(--mm-line)] bg-[var(--mm-off)] text-[var(--mm-ink)]',
       href: '/dashboard/motors/customers' as const,
     },
   ]
@@ -77,26 +78,21 @@ export function MotorsDashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-      >
-        <div>
-          <h1 className="font-motors-display text-2xl font-medium text-noir-950">Mansour Motors</h1>
-          <p className="mt-1 text-sm text-noir-500">Tableau de bord du concessionnaire</p>
-        </div>
-        <div className="flex gap-3">
-          <Link to="/dashboard/motors/inventory"
-            className="inline-flex items-center gap-2 border border-noir-200 bg-white px-4 py-2.5 text-sm font-medium text-noir-900 shadow-sm hover:bg-surface-dim hover:border-noir-300 transition-all">
-            <Car01Icon className="h-4 w-4" /> Inventaire
-          </Link>
-          <Link to="/dashboard/motors/sales/new"
-            className="inline-flex items-center gap-2 bg-gold-400 px-4 py-2.5 text-sm font-semibold text-noir-950 shadow-sm hover:bg-gold-300 transition-all">
-            <Add01Icon className="h-4 w-4" /> Nouvelle affaire
-          </Link>
-        </div>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+        <DashPageHeader
+          title="Mansour Motors"
+          lead="Tableau de bord du concessionnaire"
+          actions={
+            <>
+              <DashButton to="/dashboard/motors/inventory" variant="soft">
+                <Car01Icon className="h-4 w-4" aria-hidden="true" /> Inventaire
+              </DashButton>
+              <DashButton to="/dashboard/motors/sales/new">
+                <Add01Icon className="h-4 w-4" aria-hidden="true" /> Nouvelle affaire
+              </DashButton>
+            </>
+          }
+        />
       </motion.div>
 
       {/* KPIs */}
@@ -110,7 +106,7 @@ export function MotorsDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: index * 0.1 }}
-              className="group border border-noir-200 bg-white p-5 shadow-sm hover:shadow-md hover:border-noir-300 transition-all cursor-pointer"
+              className="group mm-panel mm-panel-pad cursor-pointer transition-colors hover:bg-[var(--mm-off)]/40"
             >
               <div className="flex items-start justify-between">
                 <div>
@@ -134,10 +130,10 @@ export function MotorsDashboard() {
         className="grid gap-6 lg:grid-cols-5"
       >
         {/* Recent Deals */}
-        <div className="lg:col-span-3 border border-noir-200 bg-white shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between border-b border-noir-200 px-6 py-4 bg-surface-dim/50">
-            <h2 className="font-motors-display text-lg font-medium text-noir-950">Dernières affaires</h2>
-            <Link to="/dashboard/motors/sales" className="text-xs font-medium uppercase tracking-wider text-gold-600 hover:text-gold-700 transition-colors">
+        <div className="lg:col-span-3 mm-panel overflow-hidden">
+          <div className="mm-panel-head">
+            <h2>Dernières affaires</h2>
+            <Link to="/dashboard/motors/sales" className="mm-link uppercase tracking-wider">
               Voir tout
             </Link>
           </div>

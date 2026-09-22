@@ -1,6 +1,13 @@
 import { useForm, useFieldArray } from 'react-hook-form'
 import { cn } from '@/lib/utils'
 import { Add01Icon, Delete01Icon } from 'hugeicons-react'
+import {
+  DashButton,
+  mmInputClass,
+  mmLabelClass,
+  mmSelectClass,
+  mmTextareaClass,
+} from '@/components/dashboard'
 import type { FuelType, Transmission, VehicleStatus } from '@/lib/api'
 
 export interface VehicleFormValues {
@@ -61,9 +68,7 @@ interface Props {
   loading?: boolean
 }
 
-const inputClass = 'w-full border border-noir-200 bg-white px-3 py-2.5 text-sm text-noir-900 outline-none transition-all focus:border-gold-400 focus:ring-1 focus:ring-gold-400/20'
-const labelClass = 'block text-xs font-semibold uppercase tracking-wider text-noir-500 mb-1.5'
-const errorClass = 'mt-1 text-xs text-red-600'
+const errorClass = 'mm-field-error'
 
 export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: Props) {
   const { register, handleSubmit, control, formState: { errors } } = useForm<VehicleFormValues>({
@@ -86,21 +91,21 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
       {/* Make / Model / Year */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
-          <label className={labelClass}>Marque</label>
-          <input {...register('make', { required: 'Requis' })} className={inputClass} placeholder="Toyota" />
+          <label className={mmLabelClass}>Marque</label>
+          <input {...register('make', { required: 'Requis' })} className={mmInputClass} placeholder="Toyota" />
           {errors.make && <p className={errorClass}>{errors.make.message}</p>}
         </div>
         <div>
-          <label className={labelClass}>Modèle</label>
-          <input {...register('model', { required: 'Requis' })} className={inputClass} placeholder="Land Cruiser 300" />
+          <label className={mmLabelClass}>Modèle</label>
+          <input {...register('model', { required: 'Requis' })} className={mmInputClass} placeholder="Land Cruiser 300" />
           {errors.model && <p className={errorClass}>{errors.model.message}</p>}
         </div>
         <div>
-          <label className={labelClass}>Année</label>
+          <label className={mmLabelClass}>Année</label>
           <input
             type="number"
             {...register('year', { required: 'Requis', valueAsNumber: true, min: { value: 1900, message: 'Invalide' }, max: { value: new Date().getFullYear() + 1, message: 'Invalide' } })}
-            className={inputClass}
+            className={mmInputClass}
             placeholder="2024"
           />
           {errors.year && <p className={errorClass}>{errors.year.message}</p>}
@@ -108,32 +113,32 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
       </div>
 
       <div>
-        <label className={labelClass}>Arrivée au showroom</label>
-        <input type="date" {...register('arrivedAt', { required: 'Requis' })} className={inputClass} />
+        <label className={mmLabelClass}>Arrivée au showroom</label>
+        <input type="date" {...register('arrivedAt', { required: 'Requis' })} className={mmInputClass} />
         {errors.arrivedAt && <p className={errorClass}>{errors.arrivedAt.message}</p>}
       </div>
 
       {/* Mileage / Price */}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelClass}>Kilométrage (km)</label>
+          <label className={mmLabelClass}>Kilométrage (km)</label>
           <input
             type="number"
             {...register('mileage', { required: 'Requis', valueAsNumber: true, min: { value: 0, message: 'Invalide' } })}
-            className={inputClass}
+            className={mmInputClass}
             placeholder="0"
           />
           {errors.mileage && <p className={errorClass}>{errors.mileage.message}</p>}
         </div>
         <div>
-          <label className={labelClass}>Prix (F CFA)</label>
+          <label className={mmLabelClass}>Prix (F CFA)</label>
           <input
             type="number"
             {...register('price', {
               setValueAs: (v) => (v === '' || v == null ? null : Number(v)),
               min: { value: 0, message: 'Invalide' },
             })}
-            className={inputClass}
+            className={mmInputClass}
             placeholder="Laisser vide : « Prix sur demande »"
           />
           {errors.price && <p className={errorClass}>{errors.price.message}</p>}
@@ -143,16 +148,16 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
       {/* Status / Fuel / Transmission */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div>
-          <label className={labelClass}>Statut</label>
-          <select {...register('status')} className={inputClass}>
+          <label className={mmLabelClass}>Statut</label>
+          <select {...register('status')} className={mmSelectClass}>
             <option value="available">Disponible</option>
             <option value="reserved">Réservé</option>
             <option value="sold">Vendu</option>
           </select>
         </div>
         <div>
-          <label className={labelClass}>Carburant</label>
-          <select {...register('fuelType')} className={inputClass}>
+          <label className={mmLabelClass}>Carburant</label>
+          <select {...register('fuelType')} className={mmSelectClass}>
             <option value="diesel">Diesel</option>
             <option value="gasoline">Essence</option>
             <option value="hybrid">Hybride</option>
@@ -160,8 +165,8 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
           </select>
         </div>
         <div>
-          <label className={labelClass}>Transmission</label>
-          <select {...register('transmission')} className={inputClass}>
+          <label className={mmLabelClass}>Transmission</label>
+          <select {...register('transmission')} className={mmSelectClass}>
             <option value="automatic">Automatique</option>
             <option value="manual">Manuelle</option>
             <option value="cvt">CVT</option>
@@ -172,23 +177,23 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
       {/* Color / VIN */}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelClass}>Couleur</label>
-          <input {...register('color')} className={inputClass} placeholder="Blanc Perle (facultatif)" />
+          <label className={mmLabelClass}>Couleur</label>
+          <input {...register('color')} className={mmInputClass} placeholder="Blanc Perle (facultatif)" />
           {errors.color && <p className={errorClass}>{errors.color.message}</p>}
         </div>
         <div>
-          <label className={labelClass}>VIN (optionnel)</label>
-          <input {...register('vin')} className={inputClass} placeholder="JTMAB3FV5RD123456" maxLength={17} />
+          <label className={mmLabelClass}>VIN (optionnel)</label>
+          <input {...register('vin')} className={mmInputClass} placeholder="JTMAB3FV5RD123456" maxLength={17} />
         </div>
       </div>
 
       {/* Description */}
       <div>
-        <label className={labelClass}>Description (optionnel)</label>
+        <label className={mmLabelClass}>Description (optionnel)</label>
         <textarea
           {...register('description')}
           rows={3}
-          className={cn(inputClass, 'resize-none')}
+          className={cn(mmTextareaClass, 'resize-none')}
           placeholder="Full options, cuir, toit ouvrant..."
         />
       </div>
@@ -196,16 +201,16 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
       {/* Photo settings for the public site */}
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelClass} htmlFor="photoFace">Photo : sens du véhicule</label>
-          <select id="photoFace" {...register('photoFace')} className={inputClass}>
+          <label className={mmLabelClass} htmlFor="photoFace">Photo : sens du véhicule</label>
+          <select id="photoFace" {...register('photoFace')} className={mmSelectClass}>
             <option value="left">L&apos;avant pointe vers la gauche</option>
             <option value="right">L&apos;avant pointe vers la droite</option>
           </select>
           <p className="mt-1 text-xs text-noir-400">Sur le plateau, les voitures voisines se tournent vers la voiture au centre.</p>
         </div>
         <div>
-          <label className={labelClass} htmlFor="photoFocus">Photo : cadrage</label>
-          <select id="photoFocus" {...register('photoFocus')} className={inputClass}>
+          <label className={mmLabelClass} htmlFor="photoFocus">Photo : cadrage</label>
+          <select id="photoFocus" {...register('photoFocus')} className={mmSelectClass}>
             <option value="">Centré</option>
             <option value="35% 52%">Décalé vers la gauche</option>
             <option value="65% 52%">Décalé vers la droite</option>
@@ -217,7 +222,7 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
       {/* Extras — custom key/value features */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className={cn(labelClass, 'mb-0')}>Caractéristiques supplémentaires</label>
+          <label className={cn(mmLabelClass, 'mb-0')}>Caractéristiques supplémentaires</label>
           <button
             type="button"
             onClick={() => append({ key: '', value: '' })}
@@ -236,12 +241,12 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
             <div key={field.id} className="flex gap-2">
               <input
                 {...register(`extras.${index}.key`, { required: true })}
-                className={cn(inputClass, 'flex-1')}
+                className={cn(mmInputClass, 'flex-1')}
                 placeholder="Caractéristique"
               />
               <input
                 {...register(`extras.${index}.value`, { required: true })}
-                className={cn(inputClass, 'flex-1')}
+                className={cn(mmInputClass, 'flex-1')}
                 placeholder="Valeur"
               />
               <button
@@ -256,13 +261,9 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
         </div>
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-noir-950 px-4 py-3 text-sm font-semibold text-white hover:bg-noir-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-      >
-        {loading ? 'Enregistrement...' : submitLabel}
-      </button>
+      <DashButton type="submit" disabled={loading} full>
+        {loading ? 'Enregistrement…' : submitLabel}
+      </DashButton>
     </form>
   )
 }

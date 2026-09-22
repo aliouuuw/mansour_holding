@@ -2,14 +2,14 @@
 
 ## [Dashboard] Align admin UI with Mansour Motors design system
 
-* **Status:** Phase 1 done (2026-09-22). Phases 2–4 pending.
+* **Status:** Phase 2 done (2026-09-22). Phases 3–4 pending.
 * **Source of truth:** `src/app/mansour-motors/motors.css` tokens under `.mm`.
-* **Phase 1 (done):** `src/app/dashboard/dashboard.css` (`.mm-dash` tokens), server `app/dashboard/layout.tsx` (Excon, favicons), `DashboardLayout` — carbon sidebar, paper top bar, white MM logo, ink active nav, 44px targets, link to site public.
+* **Phase 1 (done):** Shell + tokens (see prior entry).
+* **Phase 2 (done):** `dashboard.css` primitives (`mm-btn`, `mm-soft`, `mm-field`, `mm-seg`, `mm-status`, `mm-panel`, `mm-table`); `components/dashboard/primitives.tsx`; wired into `VehicleForm`, inventory/customers lists, customer/deal forms, motors home, sales board header.
 * **Next:**
-  2. **Primitives** — Buttons, inputs, tables, status chips like public `.btn` / `.field` / `.status`.
-  3. **Motors pages** — Inventory, forms, sales board, customers.
-  4. **Polish** — Reduced motion, mobile pass.
-* **Verification:** `bun run type-check`. Visual pass on `/dashboard/motors`.
+  3. **Motors pages** — Customer detail, inventory new/edit shells, sales kanban cards, holding overview.
+  4. **Polish** — ConfirmDialog, reduced motion pass, mobile density.
+* **Verification:** `bun run type-check`.
 
 ---
 
