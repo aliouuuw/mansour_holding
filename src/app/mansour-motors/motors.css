@@ -681,7 +681,6 @@ input::placeholder { color: var(--grey-2); }
   .page-head .wrap { display: block; }
   .page-head .catalog-intro { display: none; }
   .dock-lead { flex-wrap: wrap; align-items: baseline; row-gap: .15rem; }
-  .catalog-place { display: block; flex: 1 0 100%; }
 }
 
 .filterbar {
@@ -1211,6 +1210,7 @@ input::placeholder { color: var(--grey-2); }
     text-transform: none;
   }
   .catalog-count { display: inline-flex; grid-column: auto; grid-row: auto; min-width: 0; padding-left: 0; }
+  .catalog-place { display: block; flex: 1 0 100%; }
   .filters:not([open]) .filter-sheet { display: none; }
   .filters[open]::before {
     content: ''; position: fixed; inset: 0; z-index: 31;
@@ -1673,6 +1673,8 @@ input::placeholder { color: var(--grey-2); }
   }
   .hero-arrival { margin-bottom: .28em; letter-spacing: .2em; }
   .hero-title { font-size: clamp(2.6rem, 11vw, 3.6rem); letter-spacing: -.03em; }
+  .stock-stage .index { padding-top: calc(1.2rem + var(--head)); }
+  main.is-grid .grid { padding-top: var(--head); }
   .hide-phone { display: none !important; }
   .hide-desk { display: block; }
   /* before turntable.js mounts the root still carries is-ring; the phone never hovers */
