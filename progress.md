@@ -1,5 +1,14 @@
 # Project Progress Log
 
+## [Motors] Touch targets (--touch 44px)
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** `--touch: 44px` on `.mm`. Header phone + menu, catalog viewbar/sort/reset, mobile Filtrer summary and filter segments use min 44px hit area.
+* **Verification:** Visual check at 390px on `/vehicules` header and open filter sheet.
+
+---
+
 ## [Motors] Atelier hero: mobile swipe + hint
 
 * **Status:** Completed
