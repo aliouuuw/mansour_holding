@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
-import { Button, Card, Field, Fieldset, Shell } from '../../_ui'
+import { Button, Card, Field, Fieldset, GallerySwipeHint, Shell } from '../../_ui'
 import { CONTACT, FUEL, GEARBOX, STATE, bookingDays, fcfa, focal, km, pad2, waLink } from '../../_ui/shared'
 
 const TABS = [
@@ -27,10 +27,17 @@ function framings(v: ApiVehicle, title: string) {
   ]
 }
 
+const gallerySwipeHintKey = 'mm-gallery-swipe-hint'
+
 function Gallery({ v, title }: { v: ApiVehicle; title: string }) {
   const photos = useMemo(() => framings(v, title), [v, title])
   const ref = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
   const [at, setAt] = useState(0)
+  const [swipeHint, setSwipeHint] = useState(true)
+  useEffect(() => {
+    try { if (sessionStorage.getItem(gallerySwipeHintKey) === '1') setSwipeHint(false) } catch { /* ponytail: private mode */ }
+  }, [])
   useEffect(() => {
     const el = ref.current
     if (!el) return
@@ -46,8 +53,23 @@ function Gallery({ v, title }: { v: ApiVehicle; title: string }) {
     figs.forEach((p) => io.observe(p))
     return () => io.disconnect()
   }, [photos])
+  useEffect(() => {
+    const el = ref.current
+    const section = sectionRef.current
+    if (!el || !section || photos.length < 2 || !swipeHint) return
+    if (!matchMedia('(max-width: 860px)').matches) return
+    const dismiss = () => {
+      setSwipeHint(false)
+      section.dataset.swipeHint = 'off'
+      try { sessionStorage.setItem(gallerySwipeHintKey, '1') } catch { /* noop */ }
+    }
+    el.addEventListener('scroll', dismiss, { once: true, passive: true })
+    return () => el.removeEventListener('scroll', dismiss)
+  }, [photos.length, swipeHint])
+  const showSwipeHint = swipeHint && photos.length > 1
   return (
-    <section id="photos" className="gallery" aria-label="Photos">
+    <section id="photos" className="gallery" aria-label="Photos" ref={sectionRef}>
+      {showSwipeHint ? <GallerySwipeHint /> : null}
       <div className="photos" ref={ref}>
         {photos.map((p, i) => (
           <figure key={i} className="media photo is-colour">

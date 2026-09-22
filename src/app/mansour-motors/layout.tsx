@@ -1,5 +1,9 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './motors.css'
+
+export const viewport: Viewport = {
+  viewportFit: 'cover',
+}
 
 export const metadata: Metadata = {
   title: 'Mansour Motors',

@@ -95,17 +95,15 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
                 <p className="catalog-count" aria-live="polite">
                   <span data-live /> <span data-active-label />
                 </p>
-                <p className="catalog-hint catalog-hint-grid">Touchez une carte pour ouvrir la fiche.</p>
-                <p className="catalog-hint catalog-hint-list">Prix et état sur chaque ligne. Touchez pour ouvrir.</p>
-                <p id="catalog-atelier-instructions" className="catalog-hint catalog-hint-atelier">
-                  Glissez la photo pour changer. Touchez pour ouvrir la fiche.
-                </p>
               </div>
             </div>
           </div>
         </div>
 
         <section className="atelier" data-atelier hidden aria-label="Atelier">
+          <p id="catalog-atelier-instructions" className="vh">
+            Glissez la photo pour changer de véhicule. Touchez la photo pour ouvrir la fiche.
+          </p>
           <div className="atelier-slide">
             <a
               className="atelier-hero ch-dark"

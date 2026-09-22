@@ -6,10 +6,15 @@ import { FUEL, STATE, cover, fcfa, focal, isCutout, km, vehicleUrl } from './sha
 export function Card({ v, eager = false }: { v: ApiVehicle; eager?: boolean }) {
   return (
     <article className="card" data-n={v.id} data-status={v.status}>
-      <a className="card-link" href={vehicleUrl(v)}>
+      <a
+        className="card-link"
+        href={vehicleUrl(v)}
+        aria-label={`Voir la fiche : ${v.make} ${v.model}`}
+      >
         <div className="media card-media">
           {/* eslint-disable-next-line @next/next/no-img-element -- object-position comes from the vehicle's focal point */}
-          <img src={cover(v)} alt={`${v.make} ${v.model}`} className={isCutout(v) ? 'is-cutout' : undefined} style={{ '--pos': focal(v) } as React.CSSProperties} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+          <img src={cover(v)} alt="" className={isCutout(v) ? 'is-cutout' : undefined} style={{ '--pos': focal(v) } as React.CSSProperties} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+          <span className="card-open-hint" aria-hidden="true">Voir la fiche</span>
         </div>
         <div className="card-body">
           <p className="brand">{v.make}</p>
