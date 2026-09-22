@@ -29,11 +29,17 @@ function framings(v: ApiVehicle, title: string) {
 
 const gallerySwipeHintKey = 'mm-gallery-swipe-hint'
 
+function isPhone() {
+  return typeof window !== 'undefined' && matchMedia('(max-width: 860px)').matches
+}
+
 function Gallery({ v, title }: { v: ApiVehicle; title: string }) {
   const photos = useMemo(() => framings(v, title), [v, title])
   const ref = useRef<HTMLDivElement>(null)
   const sectionRef = useRef<HTMLElement>(null)
+  const lightboxRef = useRef<HTMLDialogElement>(null)
   const [at, setAt] = useState(0)
+  const [lightbox, setLightbox] = useState<number | null>(null)
   const [swipeHint, setSwipeHint] = useState(true)
   useEffect(() => {
     try { if (sessionStorage.getItem(gallerySwipeHintKey) === '1') setSwipeHint(false) } catch { /* ponytail: private mode */ }
@@ -66,18 +72,72 @@ function Gallery({ v, title }: { v: ApiVehicle; title: string }) {
     el.addEventListener('scroll', dismiss, { once: true, passive: true })
     return () => el.removeEventListener('scroll', dismiss)
   }, [photos.length, swipeHint])
+  useEffect(() => {
+    const d = lightboxRef.current
+    if (!d) return
+    if (lightbox !== null) {
+      if (!d.open) d.showModal()
+    } else if (d.open) d.close()
+  }, [lightbox])
+  const openLightbox = (i: number) => {
+    if (!isPhone()) return
+    setLightbox(i)
+  }
+  const closeLightbox = () => setLightbox(null)
+  const stepLightbox = (delta: number) => {
+    if (lightbox === null) return
+    setLightbox((lightbox + delta + photos.length) % photos.length)
+  }
   const showSwipeHint = swipeHint && photos.length > 1
+  const lb = lightbox === null ? null : photos[lightbox]
   return (
     <section id="photos" className="gallery" aria-label="Photos" ref={sectionRef}>
       {showSwipeHint ? <GallerySwipeHint /> : null}
       <div className="photos" ref={ref}>
         {photos.map((p, i) => (
           <figure key={i} className="media photo is-colour">
-            {/* eslint-disable-next-line @next/next/no-img-element -- framing uses object-position and zoom */}
-            <img src={p.src} alt={p.alt} style={{ '--pos': p.pos, '--zoom': p.zoom } as React.CSSProperties} loading={i ? 'lazy' : 'eager'} decoding="async" />
+            <button
+              type="button"
+              className="photo-enlarge"
+              aria-label={`Agrandir : ${p.alt}`}
+              onClick={() => openLightbox(i)}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element -- framing uses object-position and zoom */}
+              <img src={p.src} alt="" style={{ '--pos': p.pos, '--zoom': p.zoom } as React.CSSProperties} loading={i ? 'lazy' : 'eager'} decoding="async" />
+            </button>
           </figure>
         ))}
       </div>
+      <dialog
+        ref={lightboxRef}
+        className="gallery-lightbox"
+        aria-label="Photo agrandie"
+        onClose={closeLightbox}
+        onClick={(e) => { if (e.target === e.currentTarget) closeLightbox() }}
+      >
+        {lb ? (
+          <div className="gallery-lightbox-inner">
+            <button type="button" className="gallery-lightbox-close" aria-label="Fermer" onClick={closeLightbox}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>
+            </button>
+            {photos.length > 1 ? (
+              <>
+                <button type="button" className="gallery-lightbox-step is-prev" aria-label="Photo précédente" onClick={() => stepLightbox(-1)}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+                <button type="button" className="gallery-lightbox-step is-next" aria-label="Photo suivante" onClick={() => stepLightbox(1)}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </button>
+              </>
+            ) : null}
+            {/* eslint-disable-next-line @next/next/no-img-element -- full-screen preview */}
+            <img className="gallery-lightbox-img" src={lb.src} alt={lb.alt} style={{ '--pos': lb.pos, '--zoom': lb.zoom } as React.CSSProperties} />
+            <p className="gallery-lightbox-count" aria-live="polite">
+              <b>{pad2((lightbox ?? 0) + 1)}</b> / {pad2(photos.length)}
+            </p>
+          </div>
+        ) : null}
+      </dialog>
       <p className="photo-bar" aria-live="polite">
         <span><b>{pad2(at + 1)}</b> / {pad2(photos.length)}</span>
         <span className="rail" aria-hidden="true"><i style={{ '--p': String((at + 1) / photos.length) } as React.CSSProperties} /></span>
