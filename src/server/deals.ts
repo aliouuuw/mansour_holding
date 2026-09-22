@@ -53,6 +53,7 @@ export async function listDeals(params: { page?: number; limit?: number; status?
       .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
       .leftJoin(customers, eq(deals.customerId, customers.id))
       .where(where)
+      .orderBy(desc(deals.createdAt))
       .limit(limitNum)
       .offset(offset),
     db.select({ count: sql<number>`count(*)::int` }).from(deals).where(where),

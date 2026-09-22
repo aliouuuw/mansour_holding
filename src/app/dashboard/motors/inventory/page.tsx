@@ -14,62 +14,58 @@ import {
   DashStatus,
   dashVehicleStatusLabels,
 } from '@/components/dashboard'
-import { overviewApi, vehiclesApi, type ApiVehicle, type VehicleStatus } from '@/lib/api'
+import {
+  overviewApi,
+  vehiclesApi,
+  type ApiVehicle,
+  type VehicleSortDir,
+  type VehicleSortField,
+  type VehicleStatus,
+} from '@/lib/api'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 const statusLabels = dashVehicleStatusLabels
+const columnHelper = createColumnHelper<ApiVehicle>()
 
 function parseStatus(raw: string | null): VehicleStatus | 'all' {
   if (raw === 'available' || raw === 'reserved' || raw === 'sold') return raw
   return 'all'
 }
 
-const columnHelper = createColumnHelper<ApiVehicle>()
-const columns = [
-  columnHelper.display({
-    id: 'image',
-    header: '',
-    cell: (info) => {
-      const img = info.row.original.images?.[0]
-      return img
-        ? <img src={img} alt="" className="h-14 w-20 rounded-[var(--mm-r)] object-cover" loading="lazy" decoding="async" />
-        : <div className="flex h-14 w-20 items-center justify-center rounded-[var(--mm-r)] bg-[var(--mm-off)] text-xs text-[var(--mm-grey-muted)]">—</div>
-    },
-    size: 90,
-  }),
-  columnHelper.accessor((row) => `${row.make} ${row.model}`, {
-    id: 'name', header: 'Véhicule',
-    cell: (info) => (
-      <div>
-        <p className="font-medium text-[var(--mm-ink)]">{info.getValue()}</p>
-        {info.row.original.vin && <p className="font-mono text-xs text-[var(--mm-grey)]">{info.row.original.vin}</p>}
-      </div>
-    ),
-  }),
-  columnHelper.accessor('year', {
-    header: 'Année',
-    meta: { narrow: true },
-    cell: (info) => <span className="text-sm tabular-nums">{info.getValue()}</span>,
-  }),
-  columnHelper.accessor('mileage', {
-    header: 'Kilométrage',
-    meta: { narrow: true },
-    cell: (info) => <span className="text-sm tabular-nums">{formatNumber(info.getValue())} km</span>,
-  }),
-  columnHelper.accessor('price', { header: 'Prix', cell: (info) => <span className="text-sm font-medium tabular-nums">{formatPrice(info.getValue())}</span> }),
-  columnHelper.accessor('status', {
-    header: 'Statut',
-    cell: (info) => <DashStatus status={info.getValue()} />,
-  }),
-  columnHelper.display({
-    id: 'actions', header: '',
-    cell: (info) => (
-      <Link to="/dashboard/motors/inventory/$vehicleId" params={{ vehicleId: info.row.original.id }} className="mm-link inline-flex items-center gap-1.5">
-        <ViewIcon className="h-3.5 w-3.5" aria-hidden="true" /> Voir
-      </Link>
-    ),
-  }),
-]
+const SORT_FIELDS: VehicleSortField[] = ['make', 'year', 'mileage', 'price', 'arrivedAt']
+
+function parseSortBy(raw: string | null): VehicleSortField {
+  if (raw && SORT_FIELDS.includes(raw as VehicleSortField)) return raw as VehicleSortField
+  return 'arrivedAt'
+}
+
+function parseSortDir(raw: string | null): VehicleSortDir {
+  return raw === 'asc' ? 'asc' : 'desc'
+}
+
+function SortHeader({
+  label,
+  field,
+  sortBy,
+  sortDir,
+  onSort,
+}: {
+  label: string
+  field: VehicleSortField
+  sortBy: VehicleSortField
+  sortDir: VehicleSortDir
+  onSort: (field: VehicleSortField) => void
+}) {
+  const ariaSort = sortBy !== field ? 'none' : sortDir === 'asc' ? 'ascending' : 'descending'
+  return (
+    <button type="button" className="mm-th-sort" aria-sort={ariaSort} onClick={() => onSort(field)}>
+      {label}
+      <span className="mm-th-sort-icon" aria-hidden="true">
+        {sortBy === field ? (sortDir === 'asc' ? '↑' : '↓') : '↕'}
+      </span>
+    </button>
+  )
+}
 
 export function MotorsInventory() {
   const navigate = useNavigate()
@@ -81,6 +77,8 @@ export function MotorsInventory() {
   const queryQ = searchParams.get('q') ?? ''
   const statusFilter = parseStatus(searchParams.get('status'))
   const page = Math.max(1, Number.parseInt(searchParams.get('page') ?? '1', 10) || 1)
+  const sortBy = parseSortBy(searchParams.get('sort'))
+  const sortDir = parseSortDir(searchParams.get('dir'))
 
   const [searchInput, setSearchInput] = useState(queryQ)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -102,6 +100,18 @@ export function MotorsInventory() {
     [pathname, router, searchParams]
   )
 
+  const toggleSort = (field: VehicleSortField) => {
+    if (sortBy === field) {
+      patchParams({ dir: sortDir === 'asc' ? 'desc' : 'asc', page: null })
+      return
+    }
+    patchParams({
+      sort: field === 'arrivedAt' ? null : field,
+      dir: field === 'make' ? 'asc' : 'desc',
+      page: null,
+    })
+  }
+
   const handleSearch = (val: string) => {
     setSearchInput(val)
     if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -117,9 +127,11 @@ export function MotorsInventory() {
   })
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['vehicles', page, statusFilter, queryQ],
+    queryKey: ['vehicles', page, statusFilter, queryQ, sortBy, sortDir],
     queryFn: () => vehiclesApi.list({
       page, limit: 20,
+      sortBy,
+      sortDir,
       ...(statusFilter !== 'all' ? { status: statusFilter } : {}),
       ...(queryQ ? { search: queryQ } : {}),
     }),
@@ -129,7 +141,62 @@ export function MotorsInventory() {
   const vehicles = data?.data ?? []
   const pagination = data?.pagination ?? { total: 0, pages: 1 }
 
+  const columns = [
+    columnHelper.display({
+      id: 'image',
+      header: '',
+      cell: (info) => {
+        const img = info.row.original.images?.[0]
+        return img
+          ? <img src={img} alt="" className="h-14 w-20 rounded-[var(--mm-r)] object-cover" loading="lazy" decoding="async" />
+          : <div className="flex h-14 w-20 items-center justify-center rounded-[var(--mm-r)] bg-[var(--mm-off)] text-xs text-[var(--mm-grey-muted)]">—</div>
+      },
+      size: 90,
+    }),
+    columnHelper.accessor((row) => `${row.make} ${row.model}`, {
+      id: 'name',
+      header: () => <SortHeader label="Véhicule" field="make" sortBy={sortBy} sortDir={sortDir} onSort={toggleSort} />,
+      cell: (info) => (
+        <div>
+          <p className="font-medium text-[var(--mm-ink)]">{info.getValue()}</p>
+          {info.row.original.vin && <p className="font-mono text-xs text-[var(--mm-grey)]">{info.row.original.vin}</p>}
+        </div>
+      ),
+    }),
+    columnHelper.accessor('year', {
+      header: () => <SortHeader label="Année" field="year" sortBy={sortBy} sortDir={sortDir} onSort={toggleSort} />,
+      meta: { narrow: true },
+      cell: (info) => <span className="text-sm tabular-nums">{info.getValue()}</span>,
+    }),
+    columnHelper.accessor('mileage', {
+      header: () => <SortHeader label="Kilométrage" field="mileage" sortBy={sortBy} sortDir={sortDir} onSort={toggleSort} />,
+      meta: { narrow: true },
+      cell: (info) => <span className="text-sm tabular-nums">{formatNumber(info.getValue())} km</span>,
+    }),
+    columnHelper.accessor('price', {
+      header: () => <SortHeader label="Prix" field="price" sortBy={sortBy} sortDir={sortDir} onSort={toggleSort} />,
+      cell: (info) => <span className="text-sm font-medium tabular-nums">{formatPrice(info.getValue())}</span>,
+    }),
+    columnHelper.accessor('status', {
+      header: 'Statut',
+      cell: (info) => <DashStatus status={info.getValue()} />,
+    }),
+    columnHelper.display({
+      id: 'actions',
+      header: '',
+      cell: (info) => (
+        <Link to="/dashboard/motors/inventory/$vehicleId" params={{ vehicleId: info.row.original.id }} className="mm-link inline-flex items-center gap-1.5">
+          <ViewIcon className="h-3.5 w-3.5" aria-hidden="true" /> Voir
+        </Link>
+      ),
+    }),
+  ]
+
   const table = useReactTable({ data: vehicles, columns, getCoreRowModel: getCoreRowModel() })
+
+  const openVehicle = (vehicleId: string) => {
+    void navigate({ to: '/dashboard/motors/inventory/$vehicleId', params: { vehicleId } })
+  }
 
   const totalStock = overview?.vehicleTotal ?? pagination.total
   const availableStock = overview?.availableCount ?? 0
@@ -187,7 +254,33 @@ export function MotorsInventory() {
 
       <div className="mm-panel">
         {error && <div className="mm-alert-error border-b">{(error as Error).message}</div>}
-        <div className="overflow-x-auto">
+
+        {!isLoading && vehicles.length > 0 && (
+          <div className="mm-inventory-cards">
+            {vehicles.map((v) => (
+              <button
+                key={v.id}
+                type="button"
+                className="mm-inventory-card"
+                onClick={() => openVehicle(v.id)}
+              >
+                {v.images?.[0] ? (
+                  <img src={v.images[0]} alt="" className="h-16 w-20 shrink-0 rounded-[var(--mm-r)] object-cover" loading="lazy" decoding="async" />
+                ) : (
+                  <div className="flex h-16 w-20 shrink-0 items-center justify-center rounded-[var(--mm-r)] bg-[var(--mm-off)] text-xs text-[var(--mm-grey-muted)]">—</div>
+                )}
+                <div className="min-w-0 flex-1 text-left">
+                  <p className="truncate font-medium">{v.make} {v.model}</p>
+                  <p className="text-xs mm-muted">{v.year} · {formatNumber(v.mileage)} km</p>
+                  <p className="mt-1 text-sm font-semibold tabular-nums">{formatPrice(v.price)}</p>
+                  <div className="mt-1.5"><DashStatus status={v.status} /></div>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="mm-table-desktop overflow-x-auto">
           <table className="mm-table">
             <thead>
               {table.getHeaderGroups().map((hg) => (
@@ -239,7 +332,7 @@ export function MotorsInventory() {
               ) : (
                 table.getRowModel().rows.map((row, i) => {
                   const vehicleId = row.original.id
-                  const go = () => void navigate({ to: '/dashboard/motors/inventory/$vehicleId', params: { vehicleId } })
+                  const go = () => openVehicle(vehicleId)
                   return (
                     <motion.tr
                       key={row.id}

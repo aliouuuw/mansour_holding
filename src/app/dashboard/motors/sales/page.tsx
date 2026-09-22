@@ -1,7 +1,7 @@
 import { listDealsBoard } from '@/server/deals'
-import { MotorsSales } from './board'
+import { MotorsSalesPage } from './sales-shell'
 
 export default async function Page() {
   const board = await listDealsBoard()
-  return <MotorsSales initial={board} />
+  return <MotorsSalesPage initial={board} />
 }

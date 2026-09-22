@@ -661,6 +661,62 @@
   outline: 2px solid var(--mm-ink);
   outline-offset: -2px;
 }
+.mm-dash .mm-th-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+.mm-dash .mm-th-sort:hover { color: var(--mm-ink); }
+.mm-dash .mm-th-sort-icon {
+  font-size: 0.65rem;
+  color: var(--mm-grey-muted);
+  line-height: 1;
+}
+.mm-dash .mm-th-sort[aria-sort='ascending'] .mm-th-sort-icon,
+.mm-dash .mm-th-sort[aria-sort='descending'] .mm-th-sort-icon {
+  color: var(--mm-ink);
+}
+.mm-dash .mm-inventory-card {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--mm-line);
+  border-radius: var(--mm-r);
+  background: #fff;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.mm-dash .mm-inventory-card:hover {
+  background: color-mix(in srgb, var(--mm-off) 45%, #fff);
+}
+.mm-dash .mm-inventory-card:focus-visible {
+  outline: 2px solid var(--mm-ink);
+  outline-offset: 2px;
+}
+.mm-dash .mm-inventory-cards {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+@media (min-width: 768px) {
+  .mm-dash .mm-inventory-cards { display: none; }
+}
+.mm-dash .mm-table-desktop {
+  display: none;
+}
+@media (min-width: 768px) {
+  .mm-dash .mm-table-desktop { display: block; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .mm-dash .mm-btn:active,

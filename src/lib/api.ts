@@ -6,6 +6,8 @@ import {
   deleteVehicle,
   uploadVehicleImage,
   type VehicleFilters,
+  type VehicleSortField,
+  type VehicleSortDir,
   type VehicleStatus,
   type FuelType,
   type Transmission,
@@ -31,7 +33,16 @@ import {
 import { getHoldingOverview, getMotorsOverview } from '@/server/overview'
 import type { QueryClient } from '@tanstack/react-query'
 
-export type { VehicleStatus, FuelType, Transmission, VehicleFilters, CustomerSource, DealStatus }
+export type {
+  VehicleStatus,
+  FuelType,
+  Transmission,
+  VehicleFilters,
+  VehicleSortField,
+  VehicleSortDir,
+  CustomerSource,
+  DealStatus,
+}
 
 export type ApiVehicle = {
   id: string

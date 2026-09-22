@@ -9,9 +9,10 @@
 * **Phase 3 (done):** Holding overview (`dashboard/page.tsx`); motors home pipeline + lists; customer + vehicle detail (view/edit, gallery `mm-media-*`); inventory new shell; sales kanban cards/columns (`mm-deal-card`, `mm-kanban-head`, `mm-chip`). No remaining `noir-` / `gold-` classes under `src/app/dashboard`.
 * **Phase 4 (done):** `ConfirmDialog` + `Toast` on Motors tokens; `mm-dialog-*`; mobile table density (`mm-table-col-narrow`, `mm-seg-scroll`); inventory row → fiche (clic / Entrée); `prefers-reduced-motion` pass on spinner, sidebar, toasts, list stagger.
 * **Enhancement (2026-09-22, partial):** `DashBreadcrumbs`; inventaire filtres URL (`q`, `status`, `page`); compteur disponibles via `overviewApi`; états vides + CTA; cloche notifications retirée; KPI holding `mm-section-label`.
+* **Enhancement (2026-09-22, round 2):** Ventes `?view=board|list` (Pipeline / Liste); tri serveur inventaire (`sort`, `dir`); cartes mobile inventaire; focus trap `ConfirmDialog`; deals list triées par date.
 * **Enhancement backlog (IA / UX / UI):**
-  - **IA:** Regrouper Ventes (liste + kanban) sous onglets; liens breadcrumb avec params route `$id` si on unifie le routeur.
-  - **UX:** Tri colonnes inventaire; carte mobile inventaire; focus trap modale.
+  - **IA:** Breadcrumb `Link` avec `params` routeur; fiche affaire dédiée.
+  - **UX:** Tri « arrivée showroom » visible en colonne; pagination liste ventes.
 * **Verification:** `bun run type-check` (pass 2026-09-22).
 
 ---

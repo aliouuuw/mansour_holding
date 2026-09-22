@@ -31,6 +31,7 @@ export function ConfirmDialog({
   const titleId = useId()
   const descId = useId()
   const cancelRef = useRef<HTMLButtonElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!isOpen) return
@@ -46,6 +47,37 @@ export function ConfirmDialog({
       document.body.style.overflow = prev
     }
   }, [isOpen, isLoading, onClose])
+
+  useEffect(() => {
+    const root = dialogRef.current
+    if (!isOpen || !root) return
+
+    const focusable = () =>
+      Array.from(
+        root.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+      )
+
+    const onTab = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return
+      const els = focusable()
+      if (els.length === 0) return
+      const first = els[0]
+      const last = els[els.length - 1]
+      const active = document.activeElement
+      if (e.shiftKey && active === first) {
+        e.preventDefault()
+        last.focus()
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault()
+        first.focus()
+      }
+    }
+
+    root.addEventListener('keydown', onTab)
+    return () => root.removeEventListener('keydown', onTab)
+  }, [isOpen])
 
   const motionProps = reduceMotion
     ? { initial: false, animate: { opacity: 1 }, exit: { opacity: 0 } }
@@ -71,6 +103,7 @@ export function ConfirmDialog({
 
           <div className="mm-dialog-viewport">
             <motion.div
+              ref={dialogRef}
               role="dialog"
               aria-modal="true"
               aria-labelledby={titleId}

@@ -1,6 +1,6 @@
 'use server'
 
-import { eq, and, sql } from 'drizzle-orm'
+import { eq, and, sql, asc, desc } from 'drizzle-orm'
 import { db } from './db/index'
 import { vehicles } from './db/schema'
 import { requireUser } from './session'
@@ -11,11 +11,31 @@ export type VehicleStatus = 'available' | 'reserved' | 'sold'
 export type FuelType = 'gasoline' | 'diesel' | 'hybrid' | 'electric'
 export type Transmission = 'manual' | 'automatic' | 'cvt'
 
+export type VehicleSortField = 'arrivedAt' | 'price' | 'year' | 'mileage' | 'make'
+export type VehicleSortDir = 'asc' | 'desc'
+
 export type VehicleFilters = {
   page?: number
   limit?: number
   status?: VehicleStatus
   search?: string
+  sortBy?: VehicleSortField
+  sortDir?: VehicleSortDir
+}
+
+function vehicleSortColumn(field: VehicleSortField) {
+  switch (field) {
+    case 'price':
+      return vehicles.price
+    case 'year':
+      return vehicles.year
+    case 'mileage':
+      return vehicles.mileage
+    case 'make':
+      return vehicles.make
+    default:
+      return vehicles.arrivedAt
+  }
 }
 
 function serializeVehicle(row: typeof vehicles.$inferSelect) {
@@ -44,8 +64,15 @@ export async function listVehicles(filters: VehicleFilters = {}) {
 
   const where = conditions.length > 0 ? and(...conditions) : undefined
 
+  const sortBy =
+    filters.sortBy && ['arrivedAt', 'price', 'year', 'mileage', 'make'].includes(filters.sortBy)
+      ? filters.sortBy
+      : 'arrivedAt'
+  const col = vehicleSortColumn(sortBy)
+  const order = filters.sortDir === 'asc' ? asc(col) : desc(col)
+
   const [rows, [{ count }]] = await Promise.all([
-    db.select().from(vehicles).where(where).limit(limitNum).offset(offset),
+    db.select().from(vehicles).where(where).orderBy(order).limit(limitNum).offset(offset),
     db.select({ count: sql<number>`count(*)::int` }).from(vehicles).where(where),
   ])
 

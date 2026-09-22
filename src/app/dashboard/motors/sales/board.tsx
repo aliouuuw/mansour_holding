@@ -2,9 +2,9 @@
 
 import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Add01Icon, UserIcon, Car01Icon, DollarCircleIcon } from 'hugeicons-react'
+import { UserIcon, Car01Icon, DollarCircleIcon } from 'hugeicons-react'
 import { formatPrice } from '@/lib/utils'
-import { DashBreadcrumbs, DashButton, DashPageHeader } from '@/components/dashboard'
+import { DashButton } from '@/components/dashboard'
 import { dealsApi, invalidateMotorsQueries, type ApiDeal, type DealStatus } from '@/lib/api'
 import { useToast } from '@/components/ui/Toast'
 import type { DealsBoard } from '@/server/deals'
@@ -65,7 +65,7 @@ function moveInBoard(board: DealsBoard, id: string, status: DealStatus): DealsBo
   }
 }
 
-export function MotorsSales({ initial }: { initial: DealsBoard }) {
+export function MotorsSalesBoard({ initial }: { initial: DealsBoard }) {
   const qc = useQueryClient()
   const toast = useToast()
 
@@ -85,7 +85,7 @@ export function MotorsSales({ initial }: { initial: DealsBoard }) {
     },
     onSuccess: (_, { status }) => {
       invalidateMotorsQueries(qc)
-      toast(`Affaire déplacée vers ${COLUMNS.find(c => c.status === status)?.label}`)
+      toast(`Affaire déplacée vers ${COLUMNS.find((c) => c.status === status)?.label}`)
     },
     onError: (e, _, ctx) => {
       if (ctx?.prev) qc.setQueryData(['deals-board'], ctx.prev)
@@ -94,65 +94,51 @@ export function MotorsSales({ initial }: { initial: DealsBoard }) {
   })
 
   const board = data
-  const totalActive = board.activeCount
-  const totalWon = board.wonRevenue
+
+  if (error) return <div className="mm-alert-error">{(error as Error).message}</div>
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="mm-spinner" role="status" aria-label="Chargement" />
+      </div>
+    )
+  }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="space-y-6">
-      <DashBreadcrumbs
-        items={[
-          { label: 'Mansour Motors', to: '/dashboard/motors' },
-          { label: 'Ventes' },
-        ]}
-      />
-      <DashPageHeader
-        title="Pipeline des ventes"
-        lead={`${totalActive} affaire${totalActive !== 1 ? 's' : ''} en cours · ${formatPrice(totalWon)} conclus`}
-        actions={
-          <DashButton to="/dashboard/motors/sales/new">
-            <Add01Icon className="h-4 w-4" aria-hidden="true" /> Nouvelle affaire
-          </DashButton>
-        }
-      />
-
-      {error && <div className="mm-alert-error">{(error as Error).message}</div>}
-
-      {isLoading ? (
-        <div className="flex items-center justify-center py-20"><div className="mm-spinner" role="status" aria-label="Chargement" /></div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {COLUMNS.map((col) => {
-            const cards = board.columns[col.status]
-            const colTotal = cards.reduce((sum, d) => sum + d.price, 0)
-            return (
-              <div key={col.status} className="flex flex-col gap-3">
-                <div className="mm-kanban-head">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[var(--mm-ink)]" aria-hidden="true" />
-                    <span className="text-xs font-bold uppercase tracking-wider">{col.label}</span>
-                    <span className="mm-kanban-count">{cards.length}</span>
-                  </div>
-                  {colTotal > 0 && <span className="text-[0.65rem] font-medium tabular-nums text-[var(--mm-grey)]">{formatPrice(colTotal)}</span>}
-                </div>
-                <div className="flex min-h-[120px] flex-col gap-2">
-                  {cards.length === 0 ? (
-                    <div className="mm-empty-cta">
-                      <p>Aucune affaire</p>
-                      {col.status === 'lead' ? (
-                        <DashButton to="/dashboard/motors/sales/new" variant="soft" className="!min-h-0 !py-2 !text-xs">
-                          Nouvelle affaire
-                        </DashButton>
-                      ) : null}
-                    </div>
-                  ) : (
-                    cards.map(deal => <DealCard key={deal.id} deal={deal} onMove={(id, status) => moveMutation.mutate({ id, status })} />)
-                  )}
-                </div>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {COLUMNS.map((col) => {
+        const cards = board.columns[col.status]
+        const colTotal = cards.reduce((sum, d) => sum + d.price, 0)
+        return (
+          <div key={col.status} className="flex flex-col gap-3">
+            <div className="mm-kanban-head">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[var(--mm-ink)]" aria-hidden="true" />
+                <span className="text-xs font-bold uppercase tracking-wider">{col.label}</span>
+                <span className="mm-kanban-count">{cards.length}</span>
               </div>
-            )
-          })}
-        </div>
-      )}
-    </motion.div>
+              {colTotal > 0 && <span className="text-[0.65rem] font-medium tabular-nums text-[var(--mm-grey)]">{formatPrice(colTotal)}</span>}
+            </div>
+            <div className="flex min-h-[120px] flex-col gap-2">
+              {cards.length === 0 ? (
+                <div className="mm-empty-cta">
+                  <p>Aucune affaire</p>
+                  {col.status === 'lead' ? (
+                    <DashButton to="/dashboard/motors/sales/new" variant="soft" className="!min-h-0 !py-2 !text-xs">
+                      Nouvelle affaire
+                    </DashButton>
+                  ) : null}
+                </div>
+              ) : (
+                cards.map((deal) => (
+                  <DealCard key={deal.id} deal={deal} onMove={(id, status) => moveMutation.mutate({ id, status })} />
+                ))
+              )}
+            </div>
+          </div>
+        )
+      })}
+    </div>
   )
 }
