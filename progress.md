@@ -1,5 +1,106 @@
 # Project Progress Log
 
+## [Motors] Phone menu: drop gold current-page dot
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Removed `.nav.is-open > a[aria-current='page']::after` gold disc. Current page is white label only.
+* **Verification:** 390 px open sheet on home: Accueil has no dot; `::after` content is `none`.
+
+---
+
+## [Motors] Phone menu mark: two hairlines
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** Replaced the three-bar disc with two 1.3 px rules (same stroke as the phone). They rotate into an X when the sheet is open. No circle.
+* **Verification:** 390 px closed: logo, phone, equals mark. Open: aria-expanded true, paths rotate 45 / −45.
+
+---
+
+## [Motors] Desktop header: hide the mobile nav sheet
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Cause:** `.nav-sheet-foot` (phone, WhatsApp, address) lived inside `.nav`. Desktop `.nav` is a flex row, so that block sat in the centre and hid Accueil / Véhicules / Showroom.
+* **Fix:** `.nav-sheet-foot { display: none }` on wide screens. Sheet chrome mounts only when the menu is open. Desktop phone is text again, no plate.
+* **Verification:** 1440 px home and `/vehicules`: logo, three links, hours, phone. Sheet display none. 390 px: logo, call icon, menu. Menu opens Accueil / Véhicules / Showroom.
+
+---
+
+## [Motors] Vehicules UI: aligned cards, composed head, usable filter sheet
+
+* **Status:** Completed
+* **Date:** 2026-09-21
+* **Defects found (from the shipped page, measured in the browser):**
+  - Grid columns were ragged: a two-line model name pushed its specs, price and status below the neighbours. Classic misaligned comparison grid.
+  - Card hover used the lift + bloom shadow + gold halo preset.
+  - The head was one word on an empty band; the live count sat in the toolbar, 4px off the filter rail's own text line.
+  - Phone filter sheet: energy segment and availability toggle had no plate, sat outside the sheet grid, and the toggle was shaved by the bottom edge. Rows were 0.3rem apart at 2.1rem touch height.
+  - List and atelier views opened with a stray paper band between the sticky bar and the dark plane.
+* **Actions Taken:**
+  - `.card` and `.card-link` stretch to one height; `.card-model` clamps to and reserves two lines; `.card-foot` anchors to the bottom.
+  - Hover keeps the photograph scale, drops the lift and the gold ring for a tight directional shadow.
+  - Head is a two-part composition: the title left, one line of intro right on the same baseline. On a phone the title stays in the sticky bar and the intro opens the page.
+  - Count aligned to the rail's first label.
+  - Phone sheet: 0.5rem gutters, 2.6rem controls, energy and availability on the same white plate as the selects, view segment on its own full-width row, 1.3rem plus safe-area under the last control.
+  - Dark views meet the bar with no seam.
+* **Verification Results:**
+  - Measured at 1440px: all three columns 476.1px tall, specs y=759, price y=793.4, status y=804.2 (identical across columns). Same at 900px and 430px.
+  - `bun run type-check` passes. `bun run lint` reports no error in the touched files (repo baseline unchanged).
+  - No page errors on `?vue=liste` and `?vue=atelier`; filterbar bottom 313.1 = stage top 313.1.
+* **Result:** Success
+
+---
+
+## [Motors] Phone menu, dock title, filter focus
+
+* **Status:** Completed
+* **Date:** 2026-09-21
+
+### What was done
+* Phone header has a Menu button. It opens Accueil, Véhicules, and Showroom.
+* The stock dock shows "Véhicules" beside the count. The big title stays on desktop.
+* An open phone filter sheet marks the page inert, keeps Tab inside the sheet, and returns focus to Filtrer on Escape.
+
+### Verification
+* 390 px: Menu lists the three links. The phone number stays visible. Dock reads "Véhicules 19 VÉHICULES".
+* Open Filtrer: focus moves to Trier par. Header and stock are inert. Escape closes the sheet and focuses Filtrer.
+* Desktop: the three links stay in the header. The dock title is hidden. Sort stays on the view bar.
+
+---
+
+## [Motors] Phone filterbar sits flush under the header
+
+* **Status:** Completed
+* **Date:** 2026-09-21
+
+### What was done
+* Mobile `--head` was stuck at 68 px (`html:has(.mm)` beat `:root`). It is 52 px now.
+* Header and filterbar share paper, no top border, 0 px gap.
+
+### Verification
+* 428 px: header 52 px, filterbar 46 px at y=52, gap 0.
+* 1280 px: `--head` stays 68 px. Title padding stays.
+
+---
+
+## [Motors] Sort and view live in the mobile filter sheet
+
+* **Status:** Completed
+* **Date:** 2026-09-21
+
+### What was done
+* Phone dock is count + Filtrer only. Sort and GRILLE/LISTE/ATELIER sit in the bottom sheet.
+* Disponibles is a 100 x 25 content-width switch, not a full-width row.
+* Desktop parks those tools in the viewbar (count left, tools right). Nested `display: contents` did not size grid tracks.
+
+### Verification
+* 390 px: dock has no sort row. Open Filtrer: tools parent is `.filter-sheet`. Switch is 100 x 25.
+* 1280 px: filters 1171 px on row 1. Viewbar 40 px with count at x=52 and tools at x=799.
+
+---
+
 ## [Motors] Véhicules route: compact sticky tools
 
 * **Status:** Completed

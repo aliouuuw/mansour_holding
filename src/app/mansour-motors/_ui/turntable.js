@@ -1117,7 +1117,7 @@ export function mountTurntable(root, {
   })
   addEventListener('keydown', (e) => {
     if (mode !== 'atelier' || !cars.length) return
-    if (e.target.closest('input, select, textarea, button[data-mode]')) return
+    if (e.target.closest('input, select, textarea, .filterbar, .custom-select')) return
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
       e.preventDefault()
       stepFeatured(1)

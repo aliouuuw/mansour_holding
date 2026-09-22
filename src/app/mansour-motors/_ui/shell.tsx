@@ -37,11 +37,14 @@ function CarSprite() {
   )
 }
 
+const WA_PATH = 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z'
+
 function Header() {
   const ref = useRef<HTMLElement>(null)
   const pathname = usePathname()
   /* pathname and the clock are client-only; paint the same markup on the server first */
   const [live, setLive] = useState(false)
+  const [menu, setMenu] = useState(false)
   useEffect(() => {
     setLive(true)
     const header = ref.current
@@ -59,39 +62,90 @@ function Header() {
     onScroll()
     return () => removeEventListener('scroll', onScroll)
   }, [pathname])
+  useEffect(() => { setMenu(false) }, [pathname])
+  useEffect(() => {
+    if (!menu) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenu(false) }
+    addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    return () => { removeEventListener('keydown', onKey); document.body.style.overflow = '' }
+  }, [menu])
 
   return (
     <header className="header" ref={ref}>
       <div className="wrap">
         <Link className="logo" to="/mansour-motors">Mansour Motors</Link>
-        <nav className="nav" aria-label="Principal">
-          {NAV.map((n) => (
-            <Link key={n.to} to={n.to} aria-current={live && pathname === n.to ? 'page' : undefined}>{n.label}</Link>
+        <nav id="site-nav" className={menu ? 'nav is-open' : 'nav'} aria-label="Principal">
+          {NAV.map((n, i) => (
+            <Link key={n.to} to={n.to} data-i={String(i + 1).padStart(2, '0')} aria-current={live && pathname === n.to ? 'page' : undefined} onClick={() => setMenu(false)}>{n.label}</Link>
           ))}
+          {menu ? (
+            <div className="nav-sheet-foot">
+              <a className="nav-sheet-call" href={CONTACT.tel}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 3c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1L6.6 10.8z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+                {CONTACT.phone}
+              </a>
+              <a className="nav-sheet-wa" href={waLink('Bonjour Mansour Motors, je souhaite des informations.')} target="_blank" rel="noopener">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={WA_PATH} /></svg>
+                WhatsApp
+              </a>
+              <p className="nav-sheet-addr"><OpenNote /> · {CONTACT.address}</p>
+            </div>
+          ) : null}
         </nav>
         <div className="header-end">
           <OpenNote />
-          <a href={CONTACT.tel}>{CONTACT.phone}</a>
+          <a href={CONTACT.tel}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="header-call-icon"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 3c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1L6.6 10.8z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+            <span className="header-call-text">{CONTACT.phone}</span>
+          </a>
+          <button type="button" className="nav-toggle" aria-expanded={menu} aria-controls="site-nav" aria-label={menu ? 'Fermer le menu' : 'Ouvrir le menu'} onClick={() => setMenu((open) => !open)}>
+            <svg width="18" height="12" viewBox="0 0 18 12" aria-hidden="true" focusable="false">
+              <path d="M0 1h18" />
+              <path d="M0 11h18" />
+            </svg>
+          </button>
         </div>
       </div>
     </header>
   )
 }
 
-function Footer() {
+/* the signature: three columns on one grid, a colophon line, then the house name
+   set to the exact measure of the page so no letter is ever shaved by the edge */
+function Footer({ innerRef }: { innerRef?: React.Ref<HTMLElement> }) {
   return (
-    <footer className="sign ch-dark">
-      <div className="wrap sign-links">
-        <p><b>Showroom</b>{CONTACT.address}</p>
-        <p><b>Contact</b><a href={CONTACT.tel}>{CONTACT.phone}</a><br /><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></p>
-        <p><b>Mansour Holding</b>Mansour Motors est une maison Mansour Holding.</p>
+    <footer className="sign ch-dark" ref={innerRef}>
+      <div className="wrap sign-grid">
+        <div className="sign-col">
+          <p className="sign-label">Showroom</p>
+          <a className="sign-line" href={CONTACT.maps} target="_blank" rel="noopener">{CONTACT.address}</a>
+          <OpenNote className="sign-open" />
+        </div>
+        <div className="sign-col">
+          <p className="sign-label">Contact</p>
+          <a className="sign-line" href={CONTACT.tel}>{CONTACT.phone}</a>
+          <a className="sign-line" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+          <a className="sign-line" href={waLink('Bonjour Mansour Motors, je souhaite des informations.')} target="_blank" rel="noopener">WhatsApp</a>
+        </div>
+        <nav className="sign-col" aria-label="Pied de page">
+          <p className="sign-label">Naviguer</p>
+          {NAV.map((n) => <Link key={n.to} className="sign-line" to={n.to}>{n.label}</Link>)}
+        </nav>
       </div>
-      <p className="wordmark" aria-hidden="true">MANSOUR</p>
+      <div className="wrap sign-foot">
+        <p>Mansour Motors est une maison Mansour Holding.</p>
+        <button type="button" className="sign-top" onClick={() => scrollTo({ top: 0, behavior: 'smooth' })}>
+          Haut de page
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M6 10.5V1.5M1.8 5.7 6 1.5l4.2 4.2" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </button>
+      </div>
+      <svg className="wordmark" viewBox="0 0 1000 152" preserveAspectRatio="xMidYMax meet" aria-hidden="true" focusable="false">
+        <text x="0" y="152" textLength="1000" lengthAdjust="spacing">MANSOUR</text>
+      </svg>
     </footer>
   )
 }
-
-const WA_PATH = 'M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z'
 
 /* every public motors page: header, content, footer, WhatsApp. `tone` sets the header over the first screen. */
 export function Shell({ children, className = '', waText = 'Bonjour Mansour Motors, je souhaite des informations.' }: {
@@ -100,8 +154,17 @@ export function Shell({ children, className = '', waText = 'Bonjour Mansour Moto
   waText?: string
 }) {
   const [ready, setReady] = useState(false)
+  const foot = useRef<HTMLElement>(null)
   const router = useRouter()
   useEffect(() => { requestAnimationFrame(() => setReady(true)) }, [])
+  /* the WhatsApp disc steps aside once the signature is on screen, so it never sits on the name */
+  useEffect(() => {
+    const el = foot.current
+    if (!el || !('IntersectionObserver' in window)) return
+    const io = new IntersectionObserver(([e]) => el.closest('.mm')?.classList.toggle('at-sign', e.isIntersecting), { rootMargin: '0px 0px -35% 0px' })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
   /* the plateau, the stock grid and the cards write plain <a> links; route them in the app */
   const route = (e: React.MouseEvent) => {
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
@@ -116,7 +179,7 @@ export function Shell({ children, className = '', waText = 'Bonjour Mansour Moto
       <CarSprite />
       <Header />
       {children}
-      <Footer />
+      <Footer innerRef={foot} />
       <a className="wa" href={waLink(waText)} target="_blank" rel="noopener" aria-label="WhatsApp">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d={WA_PATH} /></svg>
       </a>

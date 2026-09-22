@@ -18,16 +18,19 @@ export function mountSelectbox(select, { signal } = {}) {
   const menu = document.createElement('div')
   const label = select.getAttribute('aria-label') || 'Sélection'
 
+  const menuId = `mm-select-${Math.random().toString(36).slice(2, 8)}`
   host.className = `custom-select${select.hasAttribute('data-sort') ? ' is-sort' : ''}${select.name ? ` is-${select.name}` : ''}`
   trigger.type = 'button'
   trigger.className = 'custom-select-trigger'
   trigger.setAttribute('aria-haspopup', 'listbox')
   trigger.setAttribute('aria-expanded', 'false')
+  trigger.setAttribute('aria-controls', menuId)
   trigger.setAttribute('aria-label', label)
   value.className = 'custom-select-value'
   icon.className = 'custom-select-icon'
   icon.setAttribute('aria-hidden', 'true')
   icon.innerHTML = '<svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1.25L5 4.75L9 1.25" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  menu.id = menuId
   menu.className = 'custom-select-menu'
   menu.setAttribute('role', 'listbox')
   menu.setAttribute('aria-label', label)

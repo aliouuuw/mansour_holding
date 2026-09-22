@@ -35,66 +35,72 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
         <header className="page-head">
           <div className="wrap">
             <h1 className="display">Véhicules</h1>
+            <p className="lead">Le stock présent au showroom de Dakar. Chaque voiture est photographiée sur place, contrôlée et disponible à l&rsquo;essai.</p>
           </div>
         </header>
 
         <div className="filterbar">
           <div className="wrap catalog-tools">
-            <details className="filters" open data-filters>
+              <details className="filters" data-filters>
               <summary>
                 <span>Filtrer</span>
                 <span className="filter-summary-count" data-active-count />
               </summary>
-              <form className="filters-body" data-filter-form>
-                <select name="marque" aria-label="Marque" data-make defaultValue="">
-                  <option value="" data-count={vehicles.length}>Toutes marques</option>
-                  {makes.map((m) => <option key={m} data-count={makeCounts[m]}>{m}</option>)}
-                </select>
-                <select name="modele" aria-label="Modèle" data-model disabled><option value="">Modèle</option></select>
-                <select name="budget" aria-label="Budget maximum" data-max defaultValue="">
-                  <option value="">Tous budgets</option>
-                  {BUDGETS.map((b) => <option key={b} value={b * 1_000_000}>{b} M FCFA max.</option>)}
-                </select>
-                <select name="km" aria-label="Kilométrage maximum" defaultValue="">
-                  <option value="">Tous kilométrages</option>
-                  {KMS.map((k) => <option key={k} value={k}>{k.toLocaleString('fr-FR').replace(/ /g, ' ')} km max.</option>)}
-                </select>
-                <div className="seg" role="group" aria-label="Énergie" data-fuel>
-                  {[['', 'Toutes'] as const, ...fuels.map((f) => [f, FUEL[f]] as const)].map(([v, label]) => (
-                    <button key={v} type="button" data-value={v} aria-pressed="false">{label}</button>
-                  ))}
+              <div className="filter-sheet">
+                <div className="viewbar-tools">
+                  <select aria-label="Trier par" data-sort defaultValue="">
+                    <option value="">Arrivée récente</option>
+                    <option value="price-asc">Prix croissant</option>
+                    <option value="price-desc">Prix décroissant</option>
+                    <option value="km-asc">Kilométrage croissant</option>
+                    <option value="year-desc">Année, plus récente</option>
+                  </select>
+                  <button type="button" className="reset" data-reset hidden>
+                    <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+                    <span>Effacer</span>
+                  </button>
+                  <div className="seg" role="group" aria-label="Affichage" data-view>
+                    <button type="button" data-mode="grid" aria-pressed="true">Grille</button>
+                    <button type="button" data-mode="list" aria-pressed="false">Liste</button>
+                    <button type="button" data-mode="atelier" aria-pressed="false">Atelier</button>
+                  </div>
                 </div>
-                <label className="switch"><input type="checkbox" name="dispo" value="1" /> Disponibles</label>
-              </form>
+                <form className="filters-body" data-filter-form>
+                  <select name="marque" aria-label="Marque" data-make defaultValue="">
+                    <option value="" data-count={vehicles.length}>Toutes marques</option>
+                    {makes.map((m) => <option key={m} data-count={makeCounts[m]}>{m}</option>)}
+                  </select>
+                  <select name="modele" aria-label="Modèle" data-model disabled><option value="">Modèle</option></select>
+                  <select name="budget" aria-label="Budget maximum" data-max defaultValue="">
+                    <option value="">Tous budgets</option>
+                    {BUDGETS.map((b) => <option key={b} value={b * 1_000_000}>{b} M FCFA max.</option>)}
+                  </select>
+                  <select name="km" aria-label="Kilométrage maximum" defaultValue="">
+                    <option value="">Tous kilométrages</option>
+                    {KMS.map((k) => <option key={k} value={k}>{k.toLocaleString('fr-FR').replace(/ /g, ' ')} km max.</option>)}
+                  </select>
+                  <div className="seg" role="group" aria-label="Énergie" data-fuel>
+                    {[['', 'Toutes'] as const, ...fuels.map((f) => [f, FUEL[f]] as const)].map(([v, label]) => (
+                      <button key={v} type="button" data-value={v} aria-pressed="false">{label}</button>
+                    ))}
+                  </div>
+                  <label className="switch"><input type="checkbox" name="dispo" value="1" /> Disponibles</label>
+                </form>
+              </div>
             </details>
 
             <div className="viewbar">
-              <p className="catalog-count" aria-live="polite">
-                <span data-live /> <span data-active-label />
-              </p>
-              <div className="viewbar-tools">
-                <select aria-label="Trier par" data-sort defaultValue="">
-                  <option value="">Arrivée récente</option>
-                  <option value="price-asc">Prix croissant</option>
-                  <option value="price-desc">Prix décroissant</option>
-                  <option value="km-asc">Kilométrage croissant</option>
-                  <option value="year-desc">Année, plus récente</option>
-                </select>
-                <button type="button" className="reset" data-reset hidden>
-                  <svg width="9" height="9" viewBox="0 0 10 10" fill="none" aria-hidden="true"><path d="M1.5 1.5L8.5 8.5M8.5 1.5L1.5 8.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
-                  <span>Effacer</span>
-                </button>
-                <div className="seg" role="group" aria-label="Affichage" data-view>
-                  <button type="button" data-mode="grid" aria-pressed="true">Grille</button>
-                  <button type="button" data-mode="list" aria-pressed="false">Liste</button>
-                  <button type="button" data-mode="atelier" aria-pressed="false">Atelier</button>
-                </div>
+              <div className="dock-lead">
+                <p className="dock-title">Véhicules</p>
+                <p className="catalog-count" aria-live="polite">
+                  <span data-live /> <span data-active-label />
+                </p>
               </div>
             </div>
           </div>
         </div>
 
-        <section className="atelier" data-atelier hidden>
+        <section className="atelier" data-atelier hidden aria-label="Atelier">
           <div className="atelier-slide">
             <a className="atelier-hero ch-dark" href="#" data-atelier-hero>
               <span className="crop" aria-hidden="true" />

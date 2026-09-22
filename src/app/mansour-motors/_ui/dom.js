@@ -31,7 +31,7 @@ export function segThumb(seg) {
   }
   const on = $('[aria-pressed="true"], [aria-current="true"]', seg)
   thumb.hidden = !on
-  if (!on) return
+  if (!on || seg.clientWidth < 8 || on.offsetWidth < 8) return
   const t = on.offsetTop
   const l = on.offsetLeft
   thumb.style.setProperty('--t', `${t}px`)

@@ -53,8 +53,53 @@ export function mountStock(root, cars, { models, navigate }) {
   for (const select of $$('select', root)) mountSelectbox(select, { signal })
 
   const filters = $('[data-filters]', root)
-  filters.open = !matchMedia('(max-width: 860px)').matches
-  filters.addEventListener('toggle', () => segThumb(fuelSeg))
+  const sheet = $('.filter-sheet', root)
+  const viewbar = $('.viewbar', root)
+  const tools = $('.viewbar-tools', root)
+  const phone = () => matchMedia('(max-width: 860px)').matches
+  const parkTools = () => {
+    if (phone()) { if (tools.parentElement !== sheet) sheet.prepend(tools) }
+    else if (tools.parentElement !== viewbar) viewbar.append(tools)
+  }
+  parkTools()
+  matchMedia('(max-width: 860px)').addEventListener('change', parkTools, { signal })
+  const summary = $('summary', filters)
+  const behind = () => $$('.mm > .header, .mm > .sign, .mm > .wa, .mm main > :not(.filterbar)')
+  let trapped = false
+  let trapFrame = 0
+  const sheetItems = () => $$('button, a, input, select, textarea, [tabindex]', sheet)
+    .filter((el) => !el.disabled && !el.hidden && el.tabIndex >= 0 && el.getClientRects().length > 0)
+  const syncTrap = () => {
+    const on = phone() && filters.open
+    for (const el of behind()) el.inert = on
+    const token = ++trapFrame
+    if (on) {
+      trapped = true
+      requestAnimationFrame(() => { if (token === trapFrame) sheetItems()[0]?.focus() })
+    } else if (trapped) {
+      trapped = false
+      requestAnimationFrame(() => { if (token === trapFrame) summary?.focus() })
+    }
+  }
+  filters.open = !phone()
+  filters.addEventListener('toggle', () => {
+    requestAnimationFrame(() => segThumb(fuelSeg))
+    syncTrap()
+  }, { signal })
+  filters.addEventListener('click', (e) => {
+    if (phone() && e.target === filters) filters.open = false
+  }, { signal })
+  addEventListener('keydown', (e) => {
+    if (!phone() || !filters.open) return
+    if (e.key === 'Escape') { filters.open = false; return }
+    if (e.key !== 'Tab') return
+    const items = sheetItems()
+    if (!items.length) return
+    const first = items[0]
+    const last = items[items.length - 1]
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+  }, { signal })
   pressFuel()
   addEventListener('resize', () => segThumb(fuelSeg), { signal })
   document.fonts?.ready.then(() => segThumb(fuelSeg))
@@ -145,6 +190,7 @@ export function mountStock(root, cars, { models, navigate }) {
 
   return () => {
     life.abort()
+    for (const el of behind()) el.inert = false
     touch?.disconnect()
     table.destroy()
   }
