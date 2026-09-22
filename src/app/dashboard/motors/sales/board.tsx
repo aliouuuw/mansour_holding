@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Add01Icon, UserIcon, Car01Icon, DollarCircleIcon } from 'hugeicons-react'
 import { formatPrice } from '@/lib/utils'
-import { DashButton, DashPageHeader } from '@/components/dashboard'
+import { DashBreadcrumbs, DashButton, DashPageHeader } from '@/components/dashboard'
 import { dealsApi, invalidateMotorsQueries, type ApiDeal, type DealStatus } from '@/lib/api'
 import { useToast } from '@/components/ui/Toast'
 import type { DealsBoard } from '@/server/deals'
@@ -99,6 +99,12 @@ export function MotorsSales({ initial }: { initial: DealsBoard }) {
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="space-y-6">
+      <DashBreadcrumbs
+        items={[
+          { label: 'Mansour Motors', to: '/dashboard/motors' },
+          { label: 'Ventes' },
+        ]}
+      />
       <DashPageHeader
         title="Pipeline des ventes"
         lead={`${totalActive} affaire${totalActive !== 1 ? 's' : ''} en cours · ${formatPrice(totalWon)} conclus`}
@@ -130,7 +136,14 @@ export function MotorsSales({ initial }: { initial: DealsBoard }) {
                 </div>
                 <div className="flex min-h-[120px] flex-col gap-2">
                   {cards.length === 0 ? (
-                    <div className="mm-empty">Aucune affaire</div>
+                    <div className="mm-empty-cta">
+                      <p>Aucune affaire</p>
+                      {col.status === 'lead' ? (
+                        <DashButton to="/dashboard/motors/sales/new" variant="soft" className="!min-h-0 !py-2 !text-xs">
+                          Nouvelle affaire
+                        </DashButton>
+                      ) : null}
+                    </div>
                   ) : (
                     cards.map(deal => <DealCard key={deal.id} deal={deal} onMove={(id, status) => moveMutation.mutate({ id, status })} />)
                   )}

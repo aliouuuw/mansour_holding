@@ -12,7 +12,6 @@ import {
   ArrowDown01Icon,
   Logout01Icon,
   UserIcon,
-  Notification02Icon,
 } from 'hugeicons-react'
 import { cn } from '@/lib/utils'
 import { useSession, signOut } from '@/lib/auth'
@@ -204,14 +203,6 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
           </div>
 
           <div className="flex items-center gap-1">
-            <button
-              type="button"
-              className="relative flex min-h-[var(--mm-touch)] min-w-[var(--mm-touch)] items-center justify-center rounded-[var(--mm-r)] text-[var(--mm-grey)] transition-colors hover:bg-[var(--mm-off)]"
-              aria-label="Notifications"
-            >
-              <Notification02Icon className="h-5 w-5" aria-hidden="true" />
-              <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-[var(--mm-ink)]" aria-hidden="true" />
-            </button>
             <button
               type="button"
               className="flex min-h-[var(--mm-touch)] min-w-[var(--mm-touch)] items-center justify-center rounded-[var(--mm-r)] text-[var(--mm-grey)] transition-colors hover:bg-[var(--mm-off)] lg:hidden"

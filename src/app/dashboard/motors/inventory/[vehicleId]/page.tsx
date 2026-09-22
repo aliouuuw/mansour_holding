@@ -16,7 +16,7 @@ import { vehiclesApi, invalidateMotorsQueries } from '@/lib/api'
 import { VehicleForm, arrivedAtFromForm, arrivedAtToForm, featureEntries, formExtras, toExtras, type VehicleFormValues } from '@/components/motors/VehicleForm'
 import { useToast } from '@/components/ui/Toast'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
-import { DashButton, DashStatus } from '@/components/dashboard'
+import { DashBreadcrumbs, DashButton, DashStatus } from '@/components/dashboard'
 const fuelLabels: Record<string, string> = { gasoline: 'Essence', diesel: 'Diesel', hybrid: 'Hybride', electric: 'Électrique' }
 const transLabels: Record<string, string> = { manual: 'Manuelle', automatic: 'Automatique', cvt: 'CVT' }
 
@@ -125,6 +125,14 @@ export function MotorsVehicleDetail() {
     }
     return (
       <div className="mx-auto max-w-2xl space-y-6">
+        <DashBreadcrumbs
+          items={[
+            { label: 'Mansour Motors', to: '/dashboard/motors' },
+            { label: 'Inventaire', to: '/dashboard/motors/inventory' },
+            { label: `${vehicle.make} ${vehicle.model}`, to: `/dashboard/motors/inventory/${vehicle.id}` },
+            { label: 'Modifier' },
+          ]}
+        />
         <div className="flex items-center gap-4">
           <button type="button" onClick={() => setEditing(false)} className="mm-icon-btn" aria-label="Annuler">
             <Cancel01Icon className="h-5 w-5" aria-hidden="true" />
@@ -156,10 +164,14 @@ export function MotorsVehicleDetail() {
 
   return (
     <div className="space-y-6">
+      <DashBreadcrumbs
+        items={[
+          { label: 'Mansour Motors', to: '/dashboard/motors' },
+          { label: 'Inventaire', to: '/dashboard/motors/inventory' },
+          { label: `${vehicle.make} ${vehicle.model}` },
+        ]}
+      />
       <div className="flex items-center gap-3 flex-wrap">
-        <Link to="/dashboard/motors/inventory" className="mm-icon-btn" aria-label="Retour à l'inventaire">
-          <ArrowLeft01Icon className="h-5 w-5" aria-hidden="true" />
-        </Link>
         <div className="flex-1 min-w-0">
           <h1 className="mm-title">{vehicle.make} {vehicle.model}</h1>
           <p className="mm-lead">{vehicle.year}{vehicle.vin ? ` · ${vehicle.vin}` : ''}</p>

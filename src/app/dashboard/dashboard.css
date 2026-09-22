@@ -494,6 +494,56 @@
   opacity: 1;
 }
 
+/* ── breadcrumb ── */
+.mm-dash .mm-breadcrumb { margin-bottom: 0.75rem; }
+.mm-dash .mm-breadcrumb-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.75rem;
+  color: var(--mm-grey);
+}
+.mm-dash .mm-breadcrumb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.mm-dash .mm-breadcrumb-link {
+  color: var(--mm-grey);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+.mm-dash .mm-breadcrumb-link:hover {
+  color: var(--mm-ink);
+  border-bottom-color: var(--mm-ink);
+}
+.mm-dash .mm-breadcrumb-current {
+  color: var(--mm-ink);
+  font-weight: 500;
+}
+.mm-dash .mm-breadcrumb-sep {
+  color: var(--mm-grey-muted);
+  user-select: none;
+}
+.mm-dash .mm-empty-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+.mm-dash .mm-empty-cta p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--mm-grey);
+}
+
 /* ── confirm dialog (rendered inside .mm-dash) ── */
 .mm-dash .mm-dialog-root {
   position: fixed;

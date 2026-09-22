@@ -1,3 +1,4 @@
+export { DashBreadcrumbs, type DashCrumb } from './Breadcrumbs'
 export {
   DashButton,
   DashIconButton,

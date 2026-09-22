@@ -1,16 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from '@/lib/router'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
 import { Search01Icon, Add01Icon, ViewIcon } from 'hugeicons-react'
 import { formatPrice, formatNumber } from '@/lib/utils'
-import { DashButton, DashPageHeader, DashStatus, dashVehicleStatusLabels } from '@/components/dashboard'
-import { vehiclesApi, type ApiVehicle, type VehicleStatus } from '@/lib/api'
+import {
+  DashBreadcrumbs,
+  DashButton,
+  DashPageHeader,
+  DashStatus,
+  dashVehicleStatusLabels,
+} from '@/components/dashboard'
+import { overviewApi, vehiclesApi, type ApiVehicle, type VehicleStatus } from '@/lib/api'
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 const statusLabels = dashVehicleStatusLabels
+
+function parseStatus(raw: string | null): VehicleStatus | 'all' {
+  if (raw === 'available' || raw === 'reserved' || raw === 'sold') return raw
+  return 'all'
+}
 
 const columnHelper = createColumnHelper<ApiVehicle>()
 const columns = [
@@ -20,8 +32,8 @@ const columns = [
     cell: (info) => {
       const img = info.row.original.images?.[0]
       return img
-        ? <img src={img} alt="" className="h-14 w-20 object-cover" loading="lazy" decoding="async" />
-        : <div className="flex h-14 w-20 items-center justify-center bg-[var(--mm-off)] text-xs text-[var(--mm-grey-muted)]">—</div>
+        ? <img src={img} alt="" className="h-14 w-20 rounded-[var(--mm-r)] object-cover" loading="lazy" decoding="async" />
+        : <div className="flex h-14 w-20 items-center justify-center rounded-[var(--mm-r)] bg-[var(--mm-off)] text-xs text-[var(--mm-grey-muted)]">—</div>
     },
     size: 90,
   }),
@@ -62,27 +74,56 @@ const columns = [
 export function MotorsInventory() {
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
-  const [search, setSearch] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<VehicleStatus | 'all'>('all')
-  const [page, setPage] = useState(1)
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const pathname = usePathname()
 
-  // Debounce search
-  const [debounceTimer, setDebounceTimer] = useState<ReturnType<typeof setTimeout> | null>(null)
+  const queryQ = searchParams.get('q') ?? ''
+  const statusFilter = parseStatus(searchParams.get('status'))
+  const page = Math.max(1, Number.parseInt(searchParams.get('page') ?? '1', 10) || 1)
+
+  const [searchInput, setSearchInput] = useState(queryQ)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    setSearchInput(queryQ)
+  }, [queryQ])
+
+  const patchParams = useCallback(
+    (patch: Record<string, string | null>) => {
+      const next = new URLSearchParams(searchParams.toString())
+      for (const [key, value] of Object.entries(patch)) {
+        if (value === null || value === '') next.delete(key)
+        else next.set(key, value)
+      }
+      const qs = next.toString()
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+    },
+    [pathname, router, searchParams]
+  )
+
   const handleSearch = (val: string) => {
-    setSearch(val)
-    if (debounceTimer) clearTimeout(debounceTimer)
-    setDebounceTimer(setTimeout(() => { setDebouncedSearch(val); setPage(1) }, 300))
+    setSearchInput(val)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      patchParams({ q: val.trim() || null, page: null })
+    }, 300)
   }
 
+  const { data: overview } = useQuery({
+    queryKey: ['overview', 'motors'],
+    queryFn: overviewApi.motors,
+    staleTime: 60_000,
+  })
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ['vehicles', page, statusFilter, debouncedSearch],
+    queryKey: ['vehicles', page, statusFilter, queryQ],
     queryFn: () => vehiclesApi.list({
       page, limit: 20,
       ...(statusFilter !== 'all' ? { status: statusFilter } : {}),
-      ...(debouncedSearch ? { search: debouncedSearch } : {}),
+      ...(queryQ ? { search: queryQ } : {}),
     }),
-    placeholderData: (prev) => prev, // keep previous data while fetching next page
+    placeholderData: (prev) => prev,
   })
 
   const vehicles = data?.data ?? []
@@ -90,11 +131,26 @@ export function MotorsInventory() {
 
   const table = useReactTable({ data: vehicles, columns, getCoreRowModel: getCoreRowModel() })
 
+  const totalStock = overview?.vehicleTotal ?? pagination.total
+  const availableStock = overview?.availableCount ?? 0
+  const lead =
+    statusFilter !== 'all' || queryQ
+      ? `${pagination.total} résultat${pagination.total === 1 ? '' : 's'} · ${availableStock} disponibles au showroom`
+      : `${totalStock} véhicules · ${availableStock} disponibles au showroom`
+
+  const hasFilters = statusFilter !== 'all' || queryQ.length > 0
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="space-y-6">
+      <DashBreadcrumbs
+        items={[
+          { label: 'Mansour Motors', to: '/dashboard/motors' },
+          { label: 'Inventaire' },
+        ]}
+      />
       <DashPageHeader
         title="Inventaire"
-        lead={`${pagination.total} véhicules · ${vehicles.filter((v) => v.status === 'available').length} disponibles`}
+        lead={lead}
         actions={
           <DashButton to="/dashboard/motors/inventory/new">
             <Add01Icon className="h-4 w-4" aria-hidden="true" /> Ajouter un véhicule
@@ -108,24 +164,24 @@ export function MotorsInventory() {
           <input
             type="search"
             placeholder="Rechercher par marque ou modèle…"
-            value={search}
+            value={searchInput}
             onChange={(e) => handleSearch(e.target.value)}
             className="mm-input mm-input--search text-sm"
           />
         </div>
         <div className="mm-seg-scroll w-full sm:w-auto">
-        <div className="mm-seg" role="group" aria-label="Filtrer par statut">
-          {(['all', 'available', 'reserved', 'sold'] as const).map((s) => (
-            <button
-              key={s}
-              type="button"
-              aria-pressed={statusFilter === s}
-              onClick={() => { setStatusFilter(s); setPage(1) }}
-            >
-              {s === 'all' ? 'Tous' : statusLabels[s]}
-            </button>
-          ))}
-        </div>
+          <div className="mm-seg" role="group" aria-label="Filtrer par statut">
+            {(['all', 'available', 'reserved', 'sold'] as const).map((s) => (
+              <button
+                key={s}
+                type="button"
+                aria-pressed={statusFilter === s}
+                onClick={() => patchParams({ status: s === 'all' ? null : s, page: null })}
+              >
+                {s === 'all' ? 'Tous' : statusLabels[s]}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -153,42 +209,69 @@ export function MotorsInventory() {
                   <div className="mm-spinner mx-auto" role="status" aria-label="Chargement" />
                 </td></tr>
               ) : table.getRowModel().rows.length === 0 ? (
-                <tr><td colSpan={columns.length} className="py-12 text-center mm-muted">Aucun véhicule trouvé</td></tr>
+                <tr>
+                  <td colSpan={columns.length}>
+                    <div className="mm-empty-cta">
+                      <p>
+                        {hasFilters
+                          ? 'Aucun véhicule ne correspond à vos critères.'
+                          : 'Aucun véhicule en stock pour le moment.'}
+                      </p>
+                      {hasFilters ? (
+                        <DashButton
+                          type="button"
+                          variant="soft"
+                          onClick={() => {
+                            setSearchInput('')
+                            patchParams({ q: null, status: null, page: null })
+                          }}
+                        >
+                          Réinitialiser les filtres
+                        </DashButton>
+                      ) : (
+                        <DashButton to="/dashboard/motors/inventory/new">
+                          <Add01Icon className="h-4 w-4" aria-hidden="true" /> Ajouter un véhicule
+                        </DashButton>
+                      )}
+                    </div>
+                  </td>
+                </tr>
               ) : (
                 table.getRowModel().rows.map((row, i) => {
                   const vehicleId = row.original.id
                   const go = () => void navigate({ to: '/dashboard/motors/inventory/$vehicleId', params: { vehicleId } })
                   return (
-                  <motion.tr
-                    key={row.id}
-                    tabIndex={0}
-                    role="link"
-                    aria-label={`Ouvrir ${row.original.make} ${row.original.model}`}
-                    className="mm-table-row-link"
-                    initial={reduceMotion ? false : { opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={reduceMotion ? { duration: 0 } : { duration: 0.2, delay: Math.min(i * 0.02, 0.25) }}
-                    onClick={go}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        go()
-                      }
-                    }}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <td
-                        key={cell.id}
-                        className={(cell.column.columnDef.meta as { narrow?: boolean } | undefined)?.narrow ? 'mm-table-col-narrow' : undefined}
-                        onClick={(e) => {
-                          if ((e.target as HTMLElement).closest('a, button')) e.stopPropagation()
-                        }}
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    ))}
-                  </motion.tr>
-                )})
+                    <motion.tr
+                      key={row.id}
+                      tabIndex={0}
+                      role="link"
+                      aria-label={`Ouvrir ${row.original.make} ${row.original.model}`}
+                      className="mm-table-row-link"
+                      initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={reduceMotion ? { duration: 0 } : { duration: 0.2, delay: Math.min(i * 0.02, 0.25) }}
+                      onClick={go}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault()
+                          go()
+                        }
+                      }}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td
+                          key={cell.id}
+                          className={(cell.column.columnDef.meta as { narrow?: boolean } | undefined)?.narrow ? 'mm-table-col-narrow' : undefined}
+                          onClick={(e) => {
+                            if ((e.target as HTMLElement).closest('a, button')) e.stopPropagation()
+                          }}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </motion.tr>
+                  )
+                })
               )}
             </tbody>
           </table>
@@ -197,10 +280,22 @@ export function MotorsInventory() {
           <div className="mm-table-foot">
             <p>Page {page} sur {pagination.pages} · {pagination.total} résultats</p>
             <div className="flex gap-2">
-              <DashButton type="button" variant="soft" className="!min-h-0 !py-1.5 !text-xs" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
+              <DashButton
+                type="button"
+                variant="soft"
+                className="!min-h-0 !py-1.5 !text-xs"
+                disabled={page === 1}
+                onClick={() => patchParams({ page: page <= 2 ? null : String(page - 1) })}
+              >
                 Précédent
               </DashButton>
-              <DashButton type="button" variant="soft" className="!min-h-0 !py-1.5 !text-xs" disabled={page === pagination.pages} onClick={() => setPage((p) => Math.min(pagination.pages, p + 1))}>
+              <DashButton
+                type="button"
+                variant="soft"
+                className="!min-h-0 !py-1.5 !text-xs"
+                disabled={page === pagination.pages}
+                onClick={() => patchParams({ page: String(page + 1) })}
+              >
                 Suivant
               </DashButton>
             </div>
@@ -211,4 +306,18 @@ export function MotorsInventory() {
   )
 }
 
-export default MotorsInventory
+function InventoryPageFallback() {
+  return (
+    <div className="flex items-center justify-center py-20">
+      <div className="mm-spinner" role="status" aria-label="Chargement" />
+    </div>
+  )
+}
+
+export default function MotorsInventoryPage() {
+  return (
+    <Suspense fallback={<InventoryPageFallback />}>
+      <MotorsInventory />
+    </Suspense>
+  )
+}

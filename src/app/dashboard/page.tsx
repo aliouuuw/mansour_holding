@@ -59,7 +59,7 @@ export function DashboardHome() {
         {kpis.map((kpi) => (
           <div key={kpi.label} className="mm-panel mm-panel-pad">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-medium text-[var(--mm-grey)]">{kpi.label}</p>
+              <p className="mm-section-label mb-0">{kpi.label}</p>
               <div className="border border-[var(--mm-line)] bg-[var(--mm-off)] p-2 text-[var(--mm-ink)]">
                 <kpi.icon className="h-4 w-4" aria-hidden="true" />
               </div>

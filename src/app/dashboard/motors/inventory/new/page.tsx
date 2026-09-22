@@ -1,9 +1,9 @@
 'use client'
 
-import { Link, useNavigate } from '@/lib/router'
+import { useNavigate } from '@/lib/router'
 import { motion } from 'framer-motion'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft01Icon } from 'hugeicons-react'
+import { DashBreadcrumbs } from '@/components/dashboard'
 import { vehiclesApi, invalidateMotorsQueries } from '@/lib/api'
 import { VehicleForm, arrivedAtFromForm, toExtras, type VehicleFormValues } from '@/components/motors/VehicleForm'
 import { useToast } from '@/components/ui/Toast'
@@ -36,14 +36,16 @@ export function MotorsVehicleNew() {
       transition={{ duration: 0.4 }}
       className="mx-auto max-w-2xl space-y-6"
     >
-      <div className="flex items-center gap-4">
-        <Link to="/dashboard/motors/inventory" className="mm-icon-btn" aria-label="Retour à l'inventaire">
-          <ArrowLeft01Icon className="h-5 w-5" aria-hidden="true" />
-        </Link>
-        <div>
-          <h1 className="mm-title">Nouveau véhicule</h1>
-          <p className="mm-lead">Remplissez les informations du véhicule</p>
-        </div>
+      <DashBreadcrumbs
+        items={[
+          { label: 'Mansour Motors', to: '/dashboard/motors' },
+          { label: 'Inventaire', to: '/dashboard/motors/inventory' },
+          { label: 'Nouveau véhicule' },
+        ]}
+      />
+      <div>
+        <h1 className="mm-title">Nouveau véhicule</h1>
+        <p className="mm-lead">Remplissez les informations du véhicule</p>
       </div>
 
       <div className="mm-panel mm-panel-pad">

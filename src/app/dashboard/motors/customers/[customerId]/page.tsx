@@ -5,11 +5,12 @@ import { Link, useParams, useNavigate } from '@/lib/router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import {
-  ArrowLeft01Icon, Mail01Icon, SmartPhone01Icon, Location01Icon,
+  Mail01Icon, SmartPhone01Icon, Location01Icon,
   Edit01Icon, Delete01Icon, Cancel01Icon,
 } from 'hugeicons-react'
 import { formatDate } from '@/lib/utils'
 import {
+  DashBreadcrumbs,
   DashButton,
   mmInputClass,
   mmLabelClass,
@@ -120,6 +121,14 @@ export function MotorsCustomerDetail() {
   if (editing) {
     return (
       <div className="mx-auto max-w-2xl space-y-6">
+        <DashBreadcrumbs
+          items={[
+            { label: 'Mansour Motors', to: '/dashboard/motors' },
+            { label: 'Clients', to: '/dashboard/motors/customers' },
+            { label: `${customer.firstName} ${customer.lastName}`, to: `/dashboard/motors/customers/${customer.id}` },
+            { label: 'Modifier' },
+          ]}
+        />
         <div className="flex items-center gap-4">
           <button type="button" onClick={() => setEditing(false)} className="mm-icon-btn" aria-label="Annuler">
             <Cancel01Icon className="h-5 w-5" aria-hidden="true" />
@@ -200,11 +209,14 @@ export function MotorsCustomerDetail() {
   // ── View mode ──
   return (
     <div className="space-y-6">
-      {/* Back + title + actions */}
+      <DashBreadcrumbs
+        items={[
+          { label: 'Mansour Motors', to: '/dashboard/motors' },
+          { label: 'Clients', to: '/dashboard/motors/customers' },
+          { label: `${customer.firstName} ${customer.lastName}` },
+        ]}
+      />
       <div className="flex items-center gap-4">
-        <Link to="/dashboard/motors/customers" className="mm-icon-btn" aria-label="Retour aux clients">
-          <ArrowLeft01Icon className="h-5 w-5" aria-hidden="true" />
-        </Link>
         <div className="flex flex-1 items-center gap-4">
           <div className="mm-avatar h-12 w-12 text-sm">
             {customer.firstName[0]}{customer.lastName[0]}
