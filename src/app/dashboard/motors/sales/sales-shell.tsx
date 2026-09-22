@@ -38,6 +38,7 @@ function SalesPageContent({ initial }: { initial: DealsBoard }) {
         params.delete('view')
         params.delete('status')
         params.delete('page')
+        params.delete('q')
       } else {
         params.set('view', next)
       }

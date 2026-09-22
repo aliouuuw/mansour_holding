@@ -1,9 +1,10 @@
 'use client'
 
-import { Suspense, useCallback } from 'react'
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Link } from '@/lib/router'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
+import { Search01Icon } from 'hugeicons-react'
 import { formatPrice, formatDate } from '@/lib/utils'
 import { DashButton } from '@/components/dashboard'
 import { dealsApi, type DealStatus } from '@/lib/api'
@@ -28,6 +29,13 @@ function MotorsSalesListContent() {
   const pathname = usePathname()
   const page = Math.max(1, Number.parseInt(searchParams.get('page') ?? '1', 10) || 1)
   const statusFilter = parseStatus(searchParams.get('status'))
+  const queryQ = searchParams.get('q') ?? ''
+  const [searchInput, setSearchInput] = useState(queryQ)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    setSearchInput(queryQ)
+  }, [queryQ])
 
   const patchParams = useCallback(
     (patch: Record<string, string | null>) => {
@@ -50,18 +58,27 @@ function MotorsSalesListContent() {
     [patchParams]
   )
 
+  const handleSearch = (val: string) => {
+    setSearchInput(val)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      patchParams({ q: val.trim() || null, page: null })
+    }, 300)
+  }
+
   const { data, isLoading, error } = useQuery({
-    queryKey: ['deals', 'list', page, statusFilter],
+    queryKey: ['deals', 'list', page, statusFilter, queryQ],
     queryFn: () => dealsApi.list({
       page,
       limit: PAGE_SIZE,
       ...(statusFilter !== 'all' ? { status: statusFilter } : {}),
+      ...(queryQ ? { search: queryQ } : {}),
     }),
   })
 
   const deals = data?.data ?? []
   const pagination = data?.pagination ?? { page: 1, pages: 1, total: 0, limit: PAGE_SIZE }
-  const hasStatusFilter = statusFilter !== 'all'
+  const hasFilters = statusFilter !== 'all' || queryQ.length > 0
 
   if (error) {
     return <div className="mm-alert-error">{(error as Error).message}</div>
@@ -69,6 +86,18 @@ function MotorsSalesListContent() {
 
   return (
     <div className="space-y-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mm-search max-w-md flex-1">
+          <Search01Icon className="mm-search-icon h-4 w-4" aria-hidden="true" />
+          <input
+            type="search"
+            placeholder="Véhicule, client ou téléphone…"
+            value={searchInput}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="mm-input mm-input--search text-sm"
+          />
+        </div>
+      </div>
       <div className="mm-seg-scroll w-full sm:w-auto">
         <div className="mm-seg" role="group" aria-label="Filtrer par statut">
           {(['all', 'lead', 'negotiation', 'closed-won', 'closed-lost'] as const).map((s) => (
@@ -90,10 +119,10 @@ function MotorsSalesListContent() {
         </div>
       ) : deals.length === 0 ? (
         <div className="mm-empty-cta mm-panel">
-          <p>{hasStatusFilter ? 'Aucune affaire pour ce statut.' : 'Aucune affaire enregistrée.'}</p>
-          {hasStatusFilter ? (
-            <DashButton type="button" variant="soft" onClick={() => patchParams({ status: null, page: null })}>
-              Réinitialiser le filtre
+          <p>{hasFilters ? 'Aucune affaire ne correspond à vos critères.' : 'Aucune affaire enregistrée.'}</p>
+          {hasFilters ? (
+            <DashButton type="button" variant="soft" onClick={() => { setSearchInput(''); patchParams({ status: null, q: null, page: null }) }}>
+              Réinitialiser les filtres
             </DashButton>
           ) : (
             <DashButton to="/dashboard/motors/sales/new">Nouvelle affaire</DashButton>

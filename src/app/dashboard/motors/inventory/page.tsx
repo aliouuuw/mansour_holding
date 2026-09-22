@@ -4,8 +4,10 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from '@/lib/router'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
-import { useQuery } from '@tanstack/react-query'
-import { Search01Icon, Add01Icon, ViewIcon } from 'hugeicons-react'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { Search01Icon, Add01Icon, ViewIcon, Download01Icon } from 'hugeicons-react'
+import { downloadCsv } from '@/lib/csv'
+import { useToast } from '@/components/ui/Toast'
 import { formatPrice, formatNumber, formatDate } from '@/lib/utils'
 import {
   DashBreadcrumbs,
@@ -70,6 +72,7 @@ function SortHeader({
 export function MotorsInventory() {
   const navigate = useNavigate()
   const reduceMotion = useReducedMotion()
+  const toast = useToast()
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -212,6 +215,41 @@ export function MotorsInventory() {
 
   const hasFilters = statusFilter !== 'all' || queryQ.length > 0
 
+  const exportMutation = useMutation({
+    mutationFn: () =>
+      vehiclesApi.list({
+        page: 1,
+        limit: 500,
+        sortBy,
+        sortDir,
+        ...(statusFilter !== 'all' ? { status: statusFilter } : {}),
+        ...(queryQ ? { search: queryQ } : {}),
+      }),
+    onSuccess: (res) => {
+      const statusExport: Record<string, string> = {
+        available: 'Disponible',
+        reserved: 'Réservé',
+        sold: 'Vendu',
+      }
+      downloadCsv(
+        `inventaire-${new Date().toISOString().slice(0, 10)}.csv`,
+        ['Marque', 'Modèle', 'Année', 'Kilométrage', 'Prix', 'Statut', 'VIN', 'Arrivée showroom'],
+        res.data.map((v) => [
+          v.make,
+          v.model,
+          v.year,
+          v.mileage,
+          v.price ?? '',
+          statusExport[v.status] ?? v.status,
+          v.vin ?? '',
+          formatDate(v.arrivedAt),
+        ])
+      )
+      toast(`${res.data.length} véhicules exportés`)
+    },
+    onError: (e) => toast((e as Error).message, 'error'),
+  })
+
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="space-y-6">
       <DashBreadcrumbs
@@ -224,9 +262,20 @@ export function MotorsInventory() {
         title="Inventaire"
         lead={lead}
         actions={
-          <DashButton to="/dashboard/motors/inventory/new">
-            <Add01Icon className="h-4 w-4" aria-hidden="true" /> Ajouter un véhicule
-          </DashButton>
+          <>
+            <DashButton
+              type="button"
+              variant="soft"
+              disabled={exportMutation.isPending || pagination.total === 0}
+              onClick={() => exportMutation.mutate()}
+            >
+              <Download01Icon className="h-4 w-4" aria-hidden="true" />
+              {exportMutation.isPending ? 'Export…' : 'Exporter CSV'}
+            </DashButton>
+            <DashButton to="/dashboard/motors/inventory/new">
+              <Add01Icon className="h-4 w-4" aria-hidden="true" /> Ajouter un véhicule
+            </DashButton>
+          </>
         }
       />
 

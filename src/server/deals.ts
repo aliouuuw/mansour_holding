@@ -1,6 +1,6 @@
 'use server'
 
-import { desc, eq, sql } from 'drizzle-orm'
+import { and, desc, eq, ilike, or, sql } from 'drizzle-orm'
 import { db } from './db/index'
 import { deals, vehicles, customers } from './db/schema'
 import { requireUser } from './session'
@@ -39,24 +39,45 @@ function serializeDeal(row: {
   }
 }
 
-export async function listDeals(params: { page?: number; limit?: number; status?: DealStatus } = {}) {
+function dealListWhere(params: { status?: DealStatus; search?: string }) {
+  const parts = []
+  if (params.status) parts.push(eq(deals.status, params.status))
+  if (params.search?.trim()) {
+    const term = `%${params.search.trim()}%`
+    parts.push(
+      or(
+        ilike(vehicles.make, term),
+        ilike(vehicles.model, term),
+        ilike(customers.firstName, term),
+        ilike(customers.lastName, term),
+        ilike(customers.phone, term)
+      )
+    )
+  }
+  return parts.length > 0 ? and(...parts) : undefined
+}
+
+export async function listDeals(params: { page?: number; limit?: number; status?: DealStatus; search?: string } = {}) {
   await requireUser()
   const pageNum = Math.max(1, params.page ?? 1)
   const limitNum = Math.min(100, Math.max(1, params.limit ?? 50))
   const offset = (pageNum - 1) * limitNum
-  const where = params.status ? eq(deals.status, params.status) : undefined
+  const where = dealListWhere(params)
+
+  const base = db
+    .select(dealSelect)
+    .from(deals)
+    .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
+    .leftJoin(customers, eq(deals.customerId, customers.id))
 
   const [rows, [{ count }]] = await Promise.all([
+    base.where(where).orderBy(desc(deals.createdAt)).limit(limitNum).offset(offset),
     db
-      .select(dealSelect)
+      .select({ count: sql<number>`count(*)::int` })
       .from(deals)
       .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
       .leftJoin(customers, eq(deals.customerId, customers.id))
-      .where(where)
-      .orderBy(desc(deals.createdAt))
-      .limit(limitNum)
-      .offset(offset),
-    db.select({ count: sql<number>`count(*)::int` }).from(deals).where(where),
+      .where(where),
   ])
 
   return {

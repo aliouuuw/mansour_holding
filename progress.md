@@ -12,8 +12,9 @@
 * **Enhancement (2026-09-22, round 2):** Ventes `?view=board|list` (Pipeline / Liste); tri serveur inventaire (`sort`, `dir`); cartes mobile inventaire; focus trap `ConfirmDialog`; deals list triées par date.
 * **Enhancement (2026-09-22, round 3):** Fiche affaire `/dashboard/motors/sales/[dealId]`; breadcrumbs `params`; colonne + tri « Arrivée » inventaire; liste ventes paginée (`page` avec `view=list`).
 * **Enhancement (2026-09-22, round 4):** Notes affaire éditables sur fiche; filtre statut liste ventes (`status` + `view=list`); reset filtres liste au retour Pipeline.
+* **Enhancement (2026-09-22, round 5):** Recherche serveur liste ventes (`q` + joins); clients URL `q`/`page`, breadcrumbs, lignes cliquables; export CSV inventaire (filtres + tri courants, max 500).
 * **Enhancement backlog (IA / UX / UI):**
-  - **UX:** Recherche texte liste ventes / clients; export CSV inventaire (si demandé).
+  - **UX:** Export CSV clients; raccourcis clavier liste inventaire.
 * **Verification:** `bun run type-check` (pass 2026-09-22).
 
 ---
