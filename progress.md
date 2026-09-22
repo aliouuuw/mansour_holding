@@ -1,5 +1,14 @@
 # Project Progress Log
 
+## [Motors] Phone hero readability
+
+* **Status:** Completed
+* **Date:** 2026-09-22
+* **Change:** At 860px and below, the hero scrim is solid paper through the title. The title is weight 500. The button is ink, weight 600, 44px tall. The still sits higher so the grille clears the copy. Desktop type stays weight 200.
+* **Verification:** Browser at 390×844. Title y 671–745, button y 780–824, both inside 844. Bottom crop shows black type on paper. Desktop 1280 keeps title weight 200 and still position 58% 50%.
+
+---
+
 ## [Motors] Low UX: catalog place, list hint, lightbox focus
 
 * **Status:** Completed
