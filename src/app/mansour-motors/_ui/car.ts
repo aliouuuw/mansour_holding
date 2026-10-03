@@ -18,6 +18,7 @@ export type PlateauCar = {
   fuel: ApiVehicle['fuelType']
   range: RangeId
   arrived: number
+  order: number
 }
 
 /** Showroom arrival instant; legacy rows without `arrivedAt` use record creation. */
@@ -40,6 +41,7 @@ export const toCar = (v: ApiVehicle): PlateauCar => ({
   fuel: v.fuelType,
   range: rangeOf(v),
   arrived: arrivalMs(v),
+  order: v.sortOrder ?? 0,
 })
 
 /* the line-up order: what you can buy first, the dearest first */

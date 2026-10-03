@@ -14,6 +14,7 @@ const SORTS = {
   'price-desc': (a, b) => (b.price ?? -LAST) - (a.price ?? -LAST),
   'km-asc': (a, b) => a.km - b.km,
   'year-desc': (a, b) => b.year - a.year || a.km - b.km,
+  'arrived-desc': (a, b) => b.arrived - a.arrived,
 }
 
 export function mountStock(root, cars, { models, navigate }) {
@@ -165,8 +166,8 @@ export function mountStock(root, cars, { models, navigate }) {
       (!s.budget || c.price == null || c.price <= Number(s.budget)) &&
       (!s.km || c.km <= Number(s.km)) &&
       (!s.dispo || c.status === 'available'))
-    // default tri: showroom arrival (arrivedAt), not record createdAt
-    list = [...list].sort(SORTS[s.tri] || ((a, b) => b.arrived - a.arrived))
+    // empty tri: backoffice showroom order (sortOrder), then arrival
+    list = [...list].sort(SORTS[s.tri] || ((a, b) => a.order - b.order || b.arrived - a.arrived))
 
     // FLIP: each card travels from where it was to where it now is
     const before = new Map()

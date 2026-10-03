@@ -4,6 +4,6 @@ import { PublicVehicles } from './catalog'
 export const revalidate = 60
 
 export default async function Page() {
-  const { data } = await listVehicles({ limit: 200 })
+  const { data } = await listVehicles({ limit: 200, sortBy: 'sortOrder', sortDir: 'asc' })
   return <PublicVehicles vehicles={data} />
 }

@@ -25,7 +25,7 @@ export const createVehicleSchema = z.object({
   color: z.string().max(50).nullable(),
   vin: z.string().min(17).max(17).nullable(),
   description: z.string().nullable(),
-  images: z.array(z.string().url()),
+  images: z.array(z.string().min(1).max(2048)),
   extras: z.record(z.string()).optional(),
   organizationId: idSchema.optional().nullable(),
   arrivedAt: z.coerce.date().optional(),

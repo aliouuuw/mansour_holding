@@ -4,7 +4,7 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'rea
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { Search01Icon, Add01Icon, Download01Icon } from 'hugeicons-react'
+import { Search01Icon, Add01Icon, Download01Icon, DragDropVerticalIcon } from 'hugeicons-react'
 import { downloadCsv } from '@/lib/csv'
 import { useToast } from '@/components/ui/Toast'
 import { formatDate } from '@/lib/utils'
@@ -26,6 +26,7 @@ import {
   type ApiVehicle,
 } from '@/lib/api'
 import { VehicleImagesModal } from '@/components/dashboard/inventory/VehicleImagesModal'
+import { VehicleOrderDialog } from '@/components/dashboard/inventory/VehicleOrderDialog'
 import type { InventorySuggestionField } from '@/components/dashboard/inventory/useInventoryPatch'
 
 const statusLabels = dashVehicleStatusLabels
@@ -35,15 +36,16 @@ function parseStatus(raw: string | null): VehicleStatus | 'all' {
   return 'all'
 }
 
-const SORT_FIELDS: VehicleSortField[] = ['make', 'year', 'mileage', 'price', 'arrivedAt']
+const SORT_FIELDS: VehicleSortField[] = ['make', 'year', 'mileage', 'price', 'arrivedAt', 'sortOrder']
 
 function parseSortBy(raw: string | null): VehicleSortField {
   if (raw && SORT_FIELDS.includes(raw as VehicleSortField)) return raw as VehicleSortField
-  return 'arrivedAt'
+  return 'sortOrder'
 }
 
-function parseSortDir(raw: string | null): VehicleSortDir {
-  return raw === 'asc' ? 'asc' : 'desc'
+function parseSortDir(raw: string | null, sortBy: VehicleSortField): VehicleSortDir {
+  if (raw === 'asc' || raw === 'desc') return raw
+  return sortBy === 'sortOrder' ? 'asc' : 'desc'
 }
 
 export function MotorsInventory() {
@@ -56,10 +58,11 @@ export function MotorsInventory() {
   const statusFilter = parseStatus(searchParams.get('status'))
   const page = Math.max(1, Number.parseInt(searchParams.get('page') ?? '1', 10) || 1)
   const sortBy = parseSortBy(searchParams.get('sort'))
-  const sortDir = parseSortDir(searchParams.get('dir'))
+  const sortDir = parseSortDir(searchParams.get('dir'), sortBy)
 
   const [searchInput, setSearchInput] = useState(queryQ)
   const [mediaVehicle, setMediaVehicle] = useState<ApiVehicle | null>(null)
+  const [orderOpen, setOrderOpen] = useState(false)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -103,12 +106,18 @@ export function MotorsInventory() {
 
   const toggleSort = (field: VehicleSortField) => {
     if (sortBy === field) {
-      patchParams({ dir: sortDir === 'asc' ? 'desc' : 'asc', page: null })
+      const nextDir = sortDir === 'asc' ? 'desc' : 'asc'
+      const backToShowroom = field === 'sortOrder' && nextDir === 'asc'
+      patchParams({
+        sort: field === 'sortOrder' ? null : field,
+        dir: backToShowroom ? null : nextDir,
+        page: null,
+      })
       return
     }
     patchParams({
-      sort: field === 'arrivedAt' ? null : field,
-      dir: field === 'make' ? 'asc' : 'desc',
+      sort: field === 'sortOrder' ? null : field,
+      dir: field === 'sortOrder' ? null : field === 'make' ? 'asc' : 'desc',
       page: null,
     })
   }
@@ -222,6 +231,10 @@ export function MotorsInventory() {
         lead={lead}
         actions={
           <>
+            <DashButton type="button" variant="soft" onClick={() => setOrderOpen(true)}>
+              <DragDropVerticalIcon className="h-4 w-4" aria-hidden="true" />
+              Ordre d&apos;affichage
+            </DashButton>
             <DashButton
               type="button"
               variant="soft"
@@ -344,6 +357,11 @@ export function MotorsInventory() {
         vehicle={mediaVehicleLive}
         vehiclesQueryKey={vehiclesQueryKey}
         onClose={() => setMediaVehicle(null)}
+      />
+      <VehicleOrderDialog
+        open={orderOpen}
+        onClose={() => setOrderOpen(false)}
+        onSaved={() => patchParams({ sort: null, dir: null, page: null })}
       />
     </motion.div>
   )

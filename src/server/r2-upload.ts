@@ -11,6 +11,18 @@ export function contentTypeForPath(filePath: string): string {
   return MIME[ext] ?? 'application/octet-stream'
 }
 
+/** Copy a view so HMAC and the PUT body hash only the file bytes. */
+export function exactBytes(data: Uint8Array): Uint8Array<ArrayBuffer> {
+  if (
+    data.byteOffset === 0 &&
+    data.byteLength === data.buffer.byteLength &&
+    data.buffer instanceof ArrayBuffer
+  ) {
+    return data as Uint8Array<ArrayBuffer>
+  }
+  return new Uint8Array(data)
+}
+
 export async function uploadToR2(key: string, body: Uint8Array, contentType: string): Promise<void> {
   const endpoint = process.env.R2_ENDPOINT!
   const bucket = process.env.R2_BUCKET_NAME!
@@ -23,8 +35,9 @@ export async function uploadToR2(key: string, body: Uint8Array, contentType: str
   const now = new Date()
   const dateStamp = now.toISOString().slice(0, 10).replace(/-/g, '')
   const amzDate = now.toISOString().replace(/[:-]/g, '').slice(0, 15) + 'Z'
+  const payload = exactBytes(body)
 
-  const payloadHash = await crypto.subtle.digest('SHA-256', body.buffer as ArrayBuffer)
+  const payloadHash = await crypto.subtle.digest('SHA-256', payload)
   const payloadHashHex = Array.from(new Uint8Array(payloadHash)).map((b) => b.toString(16).padStart(2, '0')).join('')
 
   const host = new URL(url).host
@@ -40,13 +53,8 @@ export async function uploadToR2(key: string, body: Uint8Array, contentType: str
   const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${credentialScope}\n${canonicalRequestHashHex}`
 
   async function hmac(key: ArrayBuffer | Uint8Array, data: string): Promise<ArrayBuffer> {
-    const k = await crypto.subtle.importKey(
-      'raw',
-      key instanceof Uint8Array ? (key.buffer as ArrayBuffer) : key,
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign'],
-    )
+    const raw = key instanceof Uint8Array ? exactBytes(key) : key
+    const k = await crypto.subtle.importKey('raw', raw, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
     return crypto.subtle.sign('HMAC', k, new TextEncoder().encode(data))
   }
   const kDate = await hmac(new TextEncoder().encode(`AWS4${secretAccessKey}`), dateStamp)
@@ -66,7 +74,7 @@ export async function uploadToR2(key: string, body: Uint8Array, contentType: str
       'x-amz-date': amzDate,
       Authorization: authorization,
     },
-    body: body.buffer as ArrayBuffer,
+    body: payload,
   })
 
   if (!res.ok) {

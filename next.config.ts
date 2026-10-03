@@ -2,6 +2,12 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   agentRules: false,
+  experimental: {
+    serverActions: {
+      /* phone photos exceed the 1 MB Server Action default */
+      bodySizeLimit: '12mb',
+    },
+  },
   serverExternalPackages: ['postgres'],
   async redirects() {
     return [

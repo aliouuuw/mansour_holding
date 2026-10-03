@@ -1054,6 +1054,75 @@
   padding: 1rem 1rem 0.5rem;
   margin-bottom: 0;
 }
+.mm-dash .mm-dialog--order {
+  max-width: 32rem;
+  max-height: min(40rem, calc(100vh - 2rem));
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+.mm-dash .mm-dialog--order .mm-dialog-head {
+  padding: 1rem 1rem 0.75rem;
+  margin-bottom: 0;
+}
+.mm-dash .mm-order-list {
+  overflow-y: auto;
+  margin: 0;
+  padding: 0 0.75rem;
+  list-style: none;
+  min-height: 8rem;
+}
+.mm-dash .mm-order-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.25rem;
+  border-top: 1px solid var(--mm-line);
+  cursor: grab;
+}
+.mm-dash .mm-order-row.is-drag {
+  background: var(--mm-off);
+}
+.mm-dash .mm-order-handle {
+  display: flex;
+  color: var(--mm-grey);
+}
+.mm-dash .mm-order-pos {
+  width: 1.4rem;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--mm-grey);
+}
+.mm-dash .mm-order-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.875rem;
+  color: var(--mm-ink);
+}
+.mm-dash .mm-order-meta {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--mm-grey);
+}
+.mm-dash .mm-order-actions {
+  display: flex;
+  gap: 0.15rem;
+}
+.mm-dash .mm-order-status {
+  margin: 0;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--mm-grey);
+}
+.mm-dash .mm-order-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid var(--mm-line);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .mm-dash .mm-btn:active,

@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { eq, and, sql, asc, desc } from 'drizzle-orm'
 import { db } from './db/index'
 import { vehicles } from './db/schema'
@@ -7,12 +8,14 @@ import { requireUser } from './session'
 import { createVehicleSchema, updateVehicleSchema, parseBody, iso } from './schemas'
 import { uploadToR2 } from './r2-upload'
 import { rememberInventoryPatch } from './inventory-suggestions'
+import { vehicleImageMeta } from './vehicle-image'
+import { assertReorderIds } from './vehicle-order'
 
 export type VehicleStatus = 'available' | 'reserved' | 'sold'
 export type FuelType = 'gasoline' | 'diesel' | 'hybrid' | 'electric'
 export type Transmission = 'manual' | 'automatic' | 'cvt'
 
-export type VehicleSortField = 'arrivedAt' | 'price' | 'year' | 'mileage' | 'make'
+export type VehicleSortField = 'arrivedAt' | 'price' | 'year' | 'mileage' | 'make' | 'sortOrder'
 export type VehicleSortDir = 'asc' | 'desc'
 
 export type VehicleFilters = {
@@ -34,6 +37,8 @@ function vehicleSortColumn(field: VehicleSortField) {
       return vehicles.mileage
     case 'make':
       return vehicles.make
+    case 'sortOrder':
+      return vehicles.sortOrder
     default:
       return vehicles.arrivedAt
   }
@@ -66,7 +71,7 @@ export async function listVehicles(filters: VehicleFilters = {}) {
   const where = conditions.length > 0 ? and(...conditions) : undefined
 
   const sortBy =
-    filters.sortBy && ['arrivedAt', 'price', 'year', 'mileage', 'make'].includes(filters.sortBy)
+    filters.sortBy && ['arrivedAt', 'price', 'year', 'mileage', 'make', 'sortOrder'].includes(filters.sortBy)
       ? filters.sortBy
       : 'arrivedAt'
   const col = vehicleSortColumn(sortBy)
@@ -92,11 +97,30 @@ export async function getVehicle(id: string) {
 export async function createVehicle(data: unknown) {
   const user = await requireUser()
   const validated = parseBody(createVehicleSchema, data)
+  const [{ minOrder }] = await db
+    .select({ minOrder: sql<number>`coalesce(min(${vehicles.sortOrder}), 1)::int` })
+    .from(vehicles)
   const [vehicle] = await db
     .insert(vehicles)
-    .values({ ...validated, createdBy: user.id })
+    .values({ ...validated, createdBy: user.id, sortOrder: minOrder - 1 })
     .returning()
   return serializeVehicle(vehicle)
+}
+
+export async function reorderVehicles(orderedIds: string[]) {
+  await requireUser()
+  const rows = await db.select({ id: vehicles.id }).from(vehicles)
+  assertReorderIds(orderedIds, rows.map((row) => row.id))
+  await db.transaction(async (tx) => {
+    for (let i = 0; i < orderedIds.length; i++) {
+      await tx
+        .update(vehicles)
+        .set({ sortOrder: i, updatedAt: new Date() })
+        .where(eq(vehicles.id, orderedIds[i]!))
+    }
+  })
+  revalidatePath('/mansour-motors/vehicules')
+  return { success: true as const }
 }
 
 export async function updateVehicle(id: string, data: unknown) {
@@ -119,31 +143,35 @@ export async function deleteVehicle(id: string) {
   return { success: true as const }
 }
 
+async function storeVehicleFile(id: string, file: File) {
+  const { type, ext } = vehicleImageMeta(file)
+  const base = process.env.R2_PUBLIC_URL?.replace(/\/$/, '')
+  if (!base) throw new Error('Stockage photo indisponible.')
+  const key = `vehicles/${id}/${Date.now()}.${ext}`
+  try {
+    await uploadToR2(key, new Uint8Array(await file.arrayBuffer()), type)
+  } catch (err) {
+    console.error('R2 upload error:', err)
+    throw new Error('Envoi de la photo impossible.')
+  }
+  return `${base}/${key}`
+}
+
 export async function uploadVehicleImage(id: string, formData: FormData) {
   await requireUser()
-  const [vehicle] = await db.select().from(vehicles).where(eq(vehicles.id, id))
+  const [vehicle] = await db.select({ id: vehicles.id }).from(vehicles).where(eq(vehicles.id, id))
   if (!vehicle) throw new Error('Vehicle not found')
 
   const file = formData.get('file')
   if (!(file instanceof File)) throw new Error('No file provided')
 
-  const ext = file.name.split('.').pop() ?? 'jpg'
-  const key = `vehicles/${id}/${Date.now()}.${ext}`
-  const buffer = await file.arrayBuffer()
-
-  try {
-    await uploadToR2(key, new Uint8Array(buffer), file.type)
-  } catch (err) {
-    console.error('R2 upload error:', err)
-    throw new Error('Upload failed')
-  }
-
-  const publicUrl = `${process.env.R2_PUBLIC_URL}/${key}`
-  const updatedImages = [...(vehicle.images ?? []), publicUrl]
-
+  const publicUrl = await storeVehicleFile(id, file)
   const [updated] = await db
     .update(vehicles)
-    .set({ images: updatedImages, updatedAt: new Date() })
+    .set({
+      images: sql`coalesce(${vehicles.images}, '[]'::jsonb) || jsonb_build_array(${publicUrl}::text)`,
+      updatedAt: new Date(),
+    })
     .where(eq(vehicles.id, id))
     .returning()
 
@@ -153,35 +181,26 @@ export async function uploadVehicleImage(id: string, formData: FormData) {
 
 export async function replaceVehicleImage(id: string, index: number, formData: FormData) {
   await requireUser()
-  const [vehicle] = await db.select().from(vehicles).where(eq(vehicles.id, id))
-  if (!vehicle) throw new Error('Vehicle not found')
-
-  const images = vehicle.images ?? []
-  if (index < 0 || index >= images.length) throw new Error('Image index out of range')
-
+  const [existing] = await db.select({ id: vehicles.id }).from(vehicles).where(eq(vehicles.id, id))
+  if (!existing) throw new Error('Vehicle not found')
   const file = formData.get('file')
   if (!(file instanceof File)) throw new Error('No file provided')
+  if (!Number.isInteger(index) || index < 0) throw new Error('Image index out of range')
 
-  const ext = file.name.split('.').pop() ?? 'jpg'
-  const key = `vehicles/${id}/${Date.now()}.${ext}`
-  const buffer = await file.arrayBuffer()
-
-  try {
-    await uploadToR2(key, new Uint8Array(buffer), file.type)
-  } catch (err) {
-    console.error('R2 upload error:', err)
-    throw new Error('Upload failed')
-  }
-
-  const publicUrl = `${process.env.R2_PUBLIC_URL}/${key}`
-  const updatedImages = [...images]
-  updatedImages[index] = publicUrl
-
-  const [updated] = await db
-    .update(vehicles)
-    .set({ images: updatedImages, updatedAt: new Date() })
-    .where(eq(vehicles.id, id))
-    .returning()
+  const publicUrl = await storeVehicleFile(id, file)
+  const updated = await db.transaction(async (tx) => {
+    const [vehicle] = await tx.select().from(vehicles).where(eq(vehicles.id, id)).for('update')
+    if (!vehicle) throw new Error('Vehicle not found')
+    const images = [...(vehicle.images ?? [])]
+    if (index >= images.length) throw new Error('Image index out of range')
+    images[index] = publicUrl
+    const [row] = await tx
+      .update(vehicles)
+      .set({ images, updatedAt: new Date() })
+      .where(eq(vehicles.id, id))
+      .returning()
+    return row
+  })
 
   return serializeVehicle(updated)
 }

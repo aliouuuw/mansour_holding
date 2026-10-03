@@ -6,6 +6,7 @@ import {
   deleteVehicle,
   uploadVehicleImage,
   replaceVehicleImage,
+  reorderVehicles,
   type VehicleFilters,
   type VehicleSortField,
   type VehicleSortDir,
@@ -64,6 +65,7 @@ export type ApiVehicle = {
   organizationId: string | null
   createdBy: string | null
   arrivedAt: string
+  sortOrder: number
   createdAt: string
   updatedAt: string
 }
@@ -124,6 +126,7 @@ export const vehiclesApi = {
   create: createVehicle,
   update: updateVehicle,
   delete: deleteVehicle,
+  reorder: reorderVehicles,
   uploadImage: (id: string, file: File) => {
     const form = new FormData()
     form.append('file', file)

@@ -1,5 +1,14 @@
 # Project Progress Log
 
+## [Motors] Showroom order and photo upload
+
+* **Status:** Done (2026-10-02).
+* **Order:** `vehicles.sort_order`. Inventaire button « Ordre d'affichage » saves the full list. Lower number is first on `/mansour-motors/vehicules` when the visitor sort is « Ordre du showroom ». The inventory table uses that same order unless a column sort is active. Saving the order clears the column sort. A new vehicle is inserted at the front. Migration `0005` backfills the previous arrival order.
+* **Photos:** Server Action body limit raised to 12 MB (the default is 1 MB). JPEG, PNG, WebP, and GIF only, 10 MB max. R2 hash uses the file bytes, not a padded buffer. Deletes accept catalogue paths, not only absolute URLs. Append casts the URL as `text` so Postgres accepts `jsonb_build_array` (error 42P18).
+* **Verification:** `bun test src/server/vehicle-image.test.ts src/server/vehicle-order.test.ts src/server/r2-upload.test.ts`, `bun run type-check`, `bun run db:migrate`.
+
+---
+
 ## [Dashboard] Align admin UI with Mansour Motors design system
 
 * **Status:** Phase 4 done (2026-09-22).

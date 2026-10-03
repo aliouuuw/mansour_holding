@@ -86,7 +86,8 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
                         <legend>Tri</legend>
                         <div className="sheet-chips">
                           {([
-                            ['', 'Arrivée récente'],
+                            ['', 'Ordre du showroom'],
+                            ['arrived-desc', 'Arrivée récente'],
                             ['price-asc', 'Prix croissant'],
                             ['price-desc', 'Prix décroissant'],
                             ['km-asc', 'Kilométrage'],
@@ -96,7 +97,8 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
                           ))}
                         </div>
                         <select className="vh" aria-label="Trier par" data-sort defaultValue="">
-                          <option value="">Arrivée récente</option>
+                          <option value="">Ordre du showroom</option>
+                          <option value="arrived-desc">Arrivée récente</option>
                           <option value="price-asc">Prix croissant</option>
                           <option value="price-desc">Prix décroissant</option>
                           <option value="km-asc">Kilométrage croissant</option>

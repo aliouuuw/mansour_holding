@@ -72,7 +72,10 @@ export function VehicleImagesModal({
       setMediaAction('')
       if (addInputRef.current) addInputRef.current.value = ''
     },
-    onError: (e) => toast((e as Error).message, 'error'),
+    onError: (e) => {
+      toast((e as Error).message, 'error')
+      if (addInputRef.current) addInputRef.current.value = ''
+    },
   })
 
   const replaceMutation = useMutation({
@@ -84,7 +87,10 @@ export function VehicleImagesModal({
       setMediaAction('')
       if (replaceInputRef.current) replaceInputRef.current.value = ''
     },
-    onError: (e) => toast((e as Error).message, 'error'),
+    onError: (e) => {
+      toast((e as Error).message, 'error')
+      if (replaceInputRef.current) replaceInputRef.current.value = ''
+    },
   })
 
   const deleteMutation = useMutation({
@@ -238,7 +244,7 @@ export function VehicleImagesModal({
                 <input
                   ref={addInputRef}
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
                   className="sr-only"
                   onChange={(e) => {
                     const file = e.target.files?.[0]
@@ -248,7 +254,7 @@ export function VehicleImagesModal({
                 <input
                   ref={replaceInputRef}
                   type="file"
-                  accept="image/*"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
                   className="sr-only"
                   onChange={(e) => {
                     const file = e.target.files?.[0]

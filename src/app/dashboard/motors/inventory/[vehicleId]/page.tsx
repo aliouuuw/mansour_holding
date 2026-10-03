@@ -81,7 +81,10 @@ export function MotorsVehicleDetail() {
       toast('Photo ajoutée')
       if (fileInputRef.current) fileInputRef.current.value = ''
     },
-    onError: (e) => toast((e as Error).message, 'error'),
+    onError: (e) => {
+      toast((e as Error).message, 'error')
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    },
   })
 
   const removeImageMutation = useMutation({
@@ -240,7 +243,7 @@ export function MotorsVehicleDetail() {
           )}
 
           <div>
-            <input ref={fileInputRef} type="file" accept="image/*" className="hidden"
+            <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden"
               onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadMutation.mutate(f) }} />
             <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploadMutation.isPending}
               className="mm-soft flex w-full items-center justify-center gap-2 border border-dashed disabled:opacity-50">
