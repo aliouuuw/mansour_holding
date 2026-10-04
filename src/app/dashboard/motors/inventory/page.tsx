@@ -231,6 +231,9 @@ export function MotorsInventory() {
         lead={lead}
         actions={
           <>
+            <DashButton to="/dashboard/motors/inventory/new">
+              <Add01Icon className="h-4 w-4" aria-hidden="true" /> Ajouter un véhicule
+            </DashButton>
             <DashButton type="button" variant="soft" onClick={() => setOrderOpen(true)}>
               <DragDropVerticalIcon className="h-4 w-4" aria-hidden="true" />
               Ordre d&apos;affichage
@@ -243,9 +246,6 @@ export function MotorsInventory() {
             >
               <Download01Icon className="h-4 w-4" aria-hidden="true" />
               {exportMutation.isPending ? 'Export…' : 'Exporter CSV'}
-            </DashButton>
-            <DashButton to="/dashboard/motors/inventory/new">
-              <Add01Icon className="h-4 w-4" aria-hidden="true" /> Ajouter un véhicule
             </DashButton>
           </>
         }

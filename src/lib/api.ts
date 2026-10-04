@@ -34,6 +34,13 @@ import {
 } from '@/server/deals'
 import { getHoldingOverview, getMotorsOverview } from '@/server/overview'
 import { listInventorySuggestionMap } from '@/server/inventory-suggestions'
+import {
+  suggestVehicleFromTitle,
+  generateVehicleDescription,
+  listVehicleAiModels,
+} from '@/server/vehicle-ai'
+import type { VehicleSuggestPayload } from '@/server/vehicle-ai-parse'
+import type { VehicleDescriptionFacts } from '@/server/vehicle-ai-parse'
 import type { QueryClient } from '@tanstack/react-query'
 
 export type {
@@ -141,6 +148,14 @@ export const vehiclesApi = {
 
 export const inventorySuggestionsApi = {
   list: listInventorySuggestionMap,
+}
+
+export type { VehicleSuggestPayload, VehicleDescriptionFacts }
+
+export const vehiclesAiApi = {
+  listModels: listVehicleAiModels,
+  suggestFromTitle: suggestVehicleFromTitle,
+  generateDescription: generateVehicleDescription,
 }
 
 export const publicVehiclesApi = {

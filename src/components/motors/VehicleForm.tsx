@@ -9,6 +9,7 @@ import {
   mmTextareaClass,
 } from '@/components/dashboard'
 import type { FuelType, Transmission, VehicleStatus } from '@/lib/api'
+import { VehicleFormAiAssist } from '@/components/motors/VehicleFormAiAssist'
 
 export interface VehicleFormValues {
   make: string
@@ -71,7 +72,7 @@ interface Props {
 const errorClass = 'mm-field-error'
 
 export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: Props) {
-  const { register, handleSubmit, control, formState: { errors } } = useForm<VehicleFormValues>({
+  const { register, handleSubmit, control, setValue, getValues, formState: { errors } } = useForm<VehicleFormValues>({
     defaultValues: {
       status: 'available',
       fuelType: 'diesel',
@@ -88,6 +89,8 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <VehicleFormAiAssist control={control} setValue={setValue} getValues={getValues} />
+
       {/* Make / Model / Year */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div>

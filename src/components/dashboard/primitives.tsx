@@ -96,12 +96,12 @@ export function DashPageHeader({
   actions?: ReactNode
 }) {
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div>
+    <div className="mm-page-head">
+      <div className="mm-page-head-copy">
         <h1 className="mm-title">{title}</h1>
         {lead ? <p className="mm-lead">{lead}</p> : null}
       </div>
-      {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
+      {actions ? <div className="mm-page-actions">{actions}</div> : null}
     </div>
   )
 }

@@ -3,7 +3,7 @@
 import { useNavigate } from '@/lib/router'
 import { motion } from 'framer-motion'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { DashBreadcrumbs } from '@/components/dashboard'
+import { DashBreadcrumbs, DashPageHeader } from '@/components/dashboard'
 import { vehiclesApi, invalidateMotorsQueries } from '@/lib/api'
 import { VehicleForm, arrivedAtFromForm, toExtras, type VehicleFormValues } from '@/components/motors/VehicleForm'
 import { useToast } from '@/components/ui/Toast'
@@ -43,10 +43,10 @@ export function MotorsVehicleNew() {
           { label: 'Nouveau véhicule' },
         ]}
       />
-      <div>
-        <h1 className="mm-title">Nouveau véhicule</h1>
-        <p className="mm-lead">Remplissez les informations du véhicule</p>
-      </div>
+      <DashPageHeader
+        title="Nouveau véhicule"
+        lead="Collez un titre, puis vérifiez chaque champ avant d'enregistrer."
+      />
 
       <div className="mm-panel mm-panel-pad">
         {createMutation.error && (

@@ -1,5 +1,17 @@
 # Project Progress Log
 
+## [Motors] OpenRouter assistant (inventaire)
+
+* **Status:** Done (2026-10-04).
+* **Scope:** Server actions `suggestVehicleFromTitle` and `generateVehicleDescription` via OpenRouter (`OPENROUTER_API_KEY`). Auth required (`requireUser`). JSON parsed with Zod; extras use catalogue-style French labels when the model fills them.
+* **Models:** `listVehicleAiModels` fetches [OpenRouter catalog](https://openrouter.ai/api/v1/models), caches 15 min, exposes 3 free + 2 cheap paid (text + JSON). UI selector; only listed IDs accepted on chat calls.
+* **UI:** Panel on `VehicleForm` (new + edit fiche): paste titre → « Compléter depuis le titre »; « Générer la description » from current form facts only.
+* **Fix (2026-10-04):** Free reasoning models returned `content: null` (`finish_reason: length`). Chat calls set `reasoning.enabled: false`. Empty replies fall back to JSON inside `reasoning`. Description stays disabled until marque and modèle exist.
+* **UI:** Inventory actions sit on one row under the title. Primary action is « Ajouter un véhicule ». Assistant block uses dashboard tokens.
+* **Verification:** `bun test src/server/vehicle-ai-parse.test.ts src/server/openrouter-models.test.ts src/server/openrouter.test.ts`, `bun run type-check`.
+
+---
+
 ## [Motors] Showroom order and photo upload
 
 * **Status:** Done (2026-10-02).
