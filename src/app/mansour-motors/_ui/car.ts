@@ -44,8 +44,7 @@ export const toCar = (v: ApiVehicle): PlateauCar => ({
   order: v.sortOrder ?? 0,
 })
 
-/* the line-up order: what you can buy first, the dearest first */
+/* the line-up order: what you can buy first, then the showroom order staff set in the back office */
 const ORDER = { available: 0, reserved: 1, sold: 2 } as const
-const dear = (p: number | null) => (p == null ? -1 : p)
 export const lineup = (vs: ApiVehicle[]) =>
-  [...vs].sort((a, b) => ORDER[a.status] - ORDER[b.status] || dear(b.price) - dear(a.price))
+  [...vs].sort((a, b) => ORDER[a.status] - ORDER[b.status] || a.sortOrder - b.sortOrder)

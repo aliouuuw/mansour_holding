@@ -193,13 +193,16 @@ function bake(img, pos, cutout) {
   return c
 }
 
-function loadImage(url) {
+function loadImage(url, retry = 1) {
   return new Promise((resolve, reject) => {
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.onload = () => resolve(img)
-    img.onerror = () => reject(new Error('img'))
-    img.src = url
+    /* the optimizer can 500 while it resizes several 3 MB uploads at once: one retry */
+    img.onerror = () => (retry ? loadImage(url, retry - 1).then(resolve, reject) : reject(new Error('img')))
+    /* WebGL needs CORS and the R2 bucket sends none: fetch remote photos through
+       the same-origin Next optimizer, which also shrinks the 3 MB uploads */
+    img.src = /^https?:/.test(url) ? `/_next/image?url=${encodeURIComponent(url)}&w=1080&q=75` : url
   })
 }
 

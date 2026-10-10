@@ -27,3 +27,10 @@ export function vehicleImageMeta(file: { type: string; name: string; size: numbe
   if (!type || !ext) throw new Error('Format non pris en charge. Utilisez JPEG, PNG ou WebP.')
   return { type, ext }
 }
+
+/* the studio cutout in extras.cover stands for the first photo; once staff change that photo, the cutout is stale */
+export function coverFor(extras: Record<string, string>, before: string[], after: string[]) {
+  if (before[0] === after[0] || !('cover' in extras)) return extras
+  const { cover: _, ...rest } = extras
+  return rest
+}

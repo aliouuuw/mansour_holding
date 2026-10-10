@@ -8,7 +8,7 @@ import { requireUser } from './session'
 import { createVehicleSchema, updateVehicleSchema, parseBody, iso } from './schemas'
 import { uploadToR2 } from './r2-upload'
 import { rememberInventoryPatch } from './inventory-suggestions'
-import { vehicleImageMeta } from './vehicle-image'
+import { coverFor, vehicleImageMeta } from './vehicle-image'
 import { assertReorderIds } from './vehicle-order'
 
 export type VehicleStatus = 'available' | 'reserved' | 'sold'
@@ -43,6 +43,9 @@ function vehicleSortColumn(field: VehicleSortField) {
       return vehicles.arrivedAt
   }
 }
+
+/* landing, stock and detail pages are ISR: refresh them on every staff change */
+const refreshSite = () => revalidatePath('/mansour-motors', 'layout')
 
 function serializeVehicle(row: typeof vehicles.$inferSelect) {
   return {
@@ -104,6 +107,7 @@ export async function createVehicle(data: unknown) {
     .insert(vehicles)
     .values({ ...validated, createdBy: user.id, sortOrder: minOrder - 1 })
     .returning()
+  refreshSite()
   return serializeVehicle(vehicle)
 }
 
@@ -119,20 +123,28 @@ export async function reorderVehicles(orderedIds: string[]) {
         .where(eq(vehicles.id, orderedIds[i]!))
     }
   })
-  revalidatePath('/mansour-motors/vehicules')
+  refreshSite()
   return { success: true as const }
 }
 
 export async function updateVehicle(id: string, data: unknown) {
   await requireUser()
   const validated = parseBody(updateVehicleSchema, data)
-  const [vehicle] = await db
-    .update(vehicles)
-    .set({ ...validated, updatedAt: new Date() })
-    .where(eq(vehicles.id, id))
-    .returning()
-  if (!vehicle) throw new Error('Vehicle not found')
+  const vehicle = await db.transaction(async (tx) => {
+    const [existing] = await tx.select().from(vehicles).where(eq(vehicles.id, id)).for('update')
+    if (!existing) throw new Error('Vehicle not found')
+    const extras = validated.images
+      ? coverFor(validated.extras ?? existing.extras ?? {}, existing.images ?? [], validated.images)
+      : validated.extras
+    const [row] = await tx
+      .update(vehicles)
+      .set({ ...validated, ...(extras && { extras }), updatedAt: new Date() })
+      .where(eq(vehicles.id, id))
+      .returning()
+    return row
+  })
   await rememberInventoryPatch(validated)
+  refreshSite()
   return serializeVehicle(vehicle)
 }
 
@@ -140,6 +152,7 @@ export async function deleteVehicle(id: string) {
   await requireUser()
   const [deleted] = await db.delete(vehicles).where(eq(vehicles.id, id)).returning()
   if (!deleted) throw new Error('Vehicle not found')
+  refreshSite()
   return { success: true as const }
 }
 
@@ -175,7 +188,9 @@ export async function uploadVehicleImage(id: string, formData: FormData) {
     .where(eq(vehicles.id, id))
     .returning()
 
+  if (!updated) throw new Error('Vehicle not found')
   const serialized = serializeVehicle(updated)
+  refreshSite()
   return { url: publicUrl, images: serialized.images }
 }
 
@@ -191,16 +206,18 @@ export async function replaceVehicleImage(id: string, index: number, formData: F
   const updated = await db.transaction(async (tx) => {
     const [vehicle] = await tx.select().from(vehicles).where(eq(vehicles.id, id)).for('update')
     if (!vehicle) throw new Error('Vehicle not found')
-    const images = [...(vehicle.images ?? [])]
+    const before = vehicle.images ?? []
+    const images = [...before]
     if (index >= images.length) throw new Error('Image index out of range')
     images[index] = publicUrl
     const [row] = await tx
       .update(vehicles)
-      .set({ images, updatedAt: new Date() })
+      .set({ images, extras: coverFor(vehicle.extras ?? {}, before, images), updatedAt: new Date() })
       .where(eq(vehicles.id, id))
       .returning()
     return row
   })
 
+  refreshSite()
   return serializeVehicle(updated)
 }
