@@ -158,6 +158,13 @@
   background: color-mix(in srgb, var(--mm-ink) 4%, transparent);
 }
 .mm-dash .mm-soft:active { transform: scale(0.98); }
+.mm-dash .mm-soft:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  border-color: var(--mm-line);
+  background: transparent;
+}
 .mm-dash .mm-icon-btn {
   display: inline-flex;
   align-items: center;
@@ -398,6 +405,65 @@
   animation: mm-dash-spin 0.7s linear infinite;
 }
 @keyframes mm-dash-spin { to { transform: rotate(360deg); } }
+
+/* ── estimation KBB ── */
+.mm-dash .mm-kbb-ui {
+  padding: 0.05rem 0.35rem;
+  border: 1px solid var(--mm-line);
+  border-radius: var(--mm-r);
+  background: var(--mm-paper);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--mm-ink);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.mm-dash .mm-kbb-figure {
+  margin: 0.25rem 0 0;
+  font-size: 1.75rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  color: var(--mm-ink);
+}
+.mm-dash .mm-kbb-figure[data-empty] { color: var(--mm-grey-muted); }
+.mm-dash .mm-kbb-more summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: var(--mm-touch);
+  list-style: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--mm-grey);
+  transition: color 0.2s var(--mm-ease);
+}
+.mm-dash .mm-kbb-more summary::-webkit-details-marker { display: none; }
+.mm-dash .mm-kbb-more summary:hover { color: var(--mm-ink); }
+.mm-dash .mm-kbb-more summary svg { transition: rotate 0.3s var(--mm-ease); }
+.mm-dash .mm-kbb-more[open] summary svg { rotate: 180deg; }
+.mm-dash .mm-kbb-calc {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 1rem;
+  margin: 0.25rem 0 0;
+  font-size: 0.8125rem;
+}
+.mm-dash .mm-kbb-calc dt { color: var(--mm-grey); }
+.mm-dash .mm-kbb-calc dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.mm-dash .mm-kbb-guide {
+  margin: 0.25rem 0 0;
+  padding-left: 1.25rem;
+  list-style: decimal;
+  font-size: 0.875rem;
+  line-height: 2;
+}
+.mm-dash .mm-kbb-guide li::marker { color: var(--mm-grey); font-variant-numeric: tabular-nums; }
 
 .mm-dash .mm-panel-title {
   margin: 0;

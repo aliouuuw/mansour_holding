@@ -106,6 +106,16 @@ export const inventoryFieldSuggestions = pgTable(
   ]
 )
 
+// =================== KBB LINKS ===================
+// One kbb.com values-page link per model (no prices: KBB recalculates on open).
+
+export const kbbLinks = pgTable('kbb_links', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  modelKey: varchar('model_key', { length: 255 }).notNull().unique(),
+  url: text('url').notNull(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
+
 // =================== CUSTOMERS SCHEMA ===================
 
 export const customerSourceEnum = pgEnum('customer_source', ['walk-in', 'referral', 'online', 'phone'])

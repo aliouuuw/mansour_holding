@@ -12,6 +12,7 @@ import {
   ArrowDown01Icon,
   Logout01Icon,
   UserIcon,
+  Calculator01Icon,
 } from 'hugeicons-react'
 import { cn } from '@/lib/utils'
 import { useSession, signOut } from '@/lib/auth'
@@ -21,6 +22,7 @@ const motorsNavItems = [
   { label: 'Inventaire', href: '/dashboard/motors/inventory', icon: PackageIcon },
   { label: 'Ventes', href: '/dashboard/motors/sales', icon: ChartUpIcon },
   { label: 'Clients', href: '/dashboard/motors/customers', icon: UserMultiple02Icon },
+  { label: 'Estimation KBB', href: '/dashboard/motors/kbb', icon: Calculator01Icon },
 ]
 
 const navLinkClass = (active: boolean) =>

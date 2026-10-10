@@ -1,5 +1,17 @@
 # Project Progress Log
 
+## [Motors] Estimation KBB (DD et remise)
+
+* **Status:** Done (2026-10-10). Polish pass same day: browser-checked at 1440 and 390 px.
+* **Scope:** Page `/dashboard/motors/kbb` (nav « Estimation KBB »). VIN decoded via NHTSA vPIC (`src/server/vin-decode.ts`, auth required) → année, modèle, SUV auto. Page lists the KBB steps with computed mileage ((année courante − année) × 25 000) and ZIP 12345. Staff types the Private Party value (CV, USD) from kbb.com.
+* **Formula (`src/lib/kbb.ts`):** DD = ((CV × 600) + 900 000 SUV / 700 000 autre) × 64,38 %. Remise = DD × 65 %.
+* **Polish (2026-10-10):** 3 steps (Identifier · Saisir sur KBB · Reporter la valeur) plus a result panel that stays in view on wide screens. The VIN decodes automatically at 17 characters. KBB English labels are boxed (`lang="en"`). Copy buttons for VIN, mileage, ZIP, DD and Remise, plus « Copier le résumé ». Calculation breakdown can be expanded. `decodeVin` returns `{ ok, error }`, because Next.js hides thrown server-action messages in production.
+* **Distill (2026-10-10):** One form panel (VIN, année, catégorie · Mileage + ZIP + « Ouvrir KBB » · valeur Private Party) and one result panel. The KBB step-by-step guide and the calculation detail are closed `<details>` sections. Step boxes, helper sentences and the duplicated vehicle name in the result are removed.
+* **Saved KBB link per model (2026-10-10):** Table `kbb_links` (migration `drizzle/0006_striped_human_torch.sql`, applied by user 2026-10-10). Key = année|marque|modèle|finition from the VIN decode. Stores only the kbb.com values-page link (contains KBB `vehicleid` + option ids, no price). « Ouvrir les valeurs KBB » reuses it with the new VIN and mileage (`buildKbbLink`); KBB recalculates on open. A VIN-only link cannot work: `vehicleid` and option ids are KBB-internal (user-tested). `pricetype=private-party` / `privateparty` do not preselect Private Party: the operator clicks it once.
+* **Model key fix (2026-10-10):** NHTSA has no trim for some makes (2018 Ford F-150 `1FTFX1E57JKE37092`). Key now adds drive, cab and engine. Same-engine trims (XLT vs Lariat) can still collide: when the trim is empty, the page asks the operator to check the version on KBB.
+* **Not automated:** kbb.com itself (bot protection, ToS). The value stays a manual step.
+* **Verification:** `bun test src/lib/kbb.test.ts` (GLE 450, CV 44 790 → DD 17 880 901, remise 11 622 586), `bun run type-check`.
+
 ## [Motors] OpenRouter assistant (inventaire)
 
 * **Status:** Done (2026-10-04).

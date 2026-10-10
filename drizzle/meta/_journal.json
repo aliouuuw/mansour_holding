@@ -43,6 +43,13 @@
       "when": 1790978236923,
       "tag": "0005_tiresome_cammi",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791665824439,
+      "tag": "0006_striped_human_torch",
+      "breakpoints": true
     }
   ]
 }
