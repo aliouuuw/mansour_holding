@@ -5,4 +5,5 @@ export { Card } from './card'
 export { AtelierSwipeHint, GallerySwipeHint } from './atelier-swipe-hint'
 export { Shell, OpenNote } from './shell'
 export { ShowroomMap } from './showroom-map'
+export { ShowroomMapConakry } from './showroom-map-conakry'
 

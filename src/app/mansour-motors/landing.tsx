@@ -4,9 +4,9 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
-import { AtelierSwipeHint, Button, Chapter, Field, OpenNote, Shell, ShowroomMap } from './_ui'
+import { AtelierSwipeHint, Button, Chapter, Field, OpenNote, Shell, ShowroomMap, ShowroomMapConakry } from './_ui'
 import { arrivalMs, lineup, PLATEAU, toCar } from './_ui/car'
-import { BUDGETS, CONTACT, DAY, HOURS, STATE, YEARS, cover, focal, isCutout, pad2, vehicleUrl, waLink } from './_ui/shared'
+import { BUDGETS, CONAKRY, CONTACT, DAY, HOURS, STATE, YEARS, cover, focal, isCutout, pad2, vehicleUrl, waLink } from './_ui/shared'
 
 function prestige(vehicles: ApiVehicle[]) {
   const open = vehicles.filter((v) => v.status !== 'sold')
@@ -397,21 +397,40 @@ function Week() {
 }
 
 function Visit() {
+  const [site, setSite] = useState<'dakar' | 'conakry'>('dakar')
+  const dakar = site === 'dakar'
   return (
-    <Chapter tone="dark" className="visit-ch" id="showroom">
-      <div className="map-stage"><ShowroomMap /></div>
+    <Chapter tone="dark" className="visit-ch" id="showroom" data-site={site}>
+      <div className="map-stage">{dakar ? <ShowroomMap /> : <ShowroomMapConakry />}</div>
       <div className="wrap visit-home">
         <p className="brand">Showroom</p>
-        <h2 className="address">Route de la Corniche Ouest<br />Almadies, Dakar</h2>
-        <p className="visit-landmark">{CONTACT.landmark}</p>
-        <p className="week-note"><OpenNote /></p>
-        <Week />
-        <p className="visit-rent">Location de véhicules de prestige, sur demande.</p>
-        <div className="actions">
-          <Button href={CONTACT.tel}>Appeler</Button>
-          <Button tone="soft" href={CONTACT.maps} target="_blank" rel="noopener">Itinéraire</Button>
+        <div className="seg" role="group" aria-label="Choisir le showroom">
+          <button type="button" aria-pressed={dakar} onClick={() => setSite('dakar')}>Dakar</button>
+          <button type="button" aria-pressed={!dakar} onClick={() => setSite('conakry')}>Conakry</button>
         </div>
-        <p className="visit-voice">« Équipe accueillante et belles voitures. » <span>El Hadj Seck · Abdou Diop</span></p>
+        {dakar ? (
+          <>
+            <h2 className="address" id="showroom-dakar">Route de la Corniche Ouest<br />Almadies, Dakar</h2>
+            <p className="visit-landmark">{CONTACT.landmark}</p>
+            <p className="week-note"><OpenNote /></p>
+            <Week />
+            <p className="visit-rent">Location de véhicules de prestige, sur demande.</p>
+            <div className="actions">
+              <Button href={CONTACT.tel}>Appeler</Button>
+              <Button tone="soft" href={CONTACT.maps} target="_blank" rel="noopener">Itinéraire</Button>
+            </div>
+            <p className="visit-voice">« Équipe accueillante et belles voitures. » <span>El Hadj Seck · Abdou Diop</span></p>
+          </>
+        ) : (
+          <>
+            <h2 className="address" id="showroom-conakry">3e Avenue<br />Kaloum, Conakry</h2>
+            <p className="visit-landmark">{CONAKRY.phone}</p>
+            <div className="actions">
+              <Button href={CONAKRY.tel}>Appeler</Button>
+              <Button tone="soft" href={CONAKRY.maps} target="_blank" rel="noopener">Itinéraire</Button>
+            </div>
+          </>
+        )}
       </div>
       <p className="map-credit">Plan : © contributeurs OpenStreetMap</p>
     </Chapter>

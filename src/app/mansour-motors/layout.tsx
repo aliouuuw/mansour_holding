@@ -9,7 +9,7 @@ const iconBase = '/mansour-motors'
 
 export const metadata: Metadata = {
   title: 'Mansour Motors',
-  description: 'Véhicules premium à Dakar. Un stock réel, au showroom de la route de la Corniche Ouest.',
+  description: 'Véhicules premium. Showrooms à Dakar, route de la Corniche Ouest, et à Conakry, 3e Avenue, Kaloum.',
   icons: {
     icon: [
       { url: `${iconBase}/favicon-32.png`, sizes: '32x32', type: 'image/png' },

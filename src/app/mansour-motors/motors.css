@@ -559,6 +559,12 @@ input::placeholder { color: var(--grey-2); }
 .map-sea { fill: rgb(246 245 242 / .34); font-size: 15px; }
 .map-here { fill: var(--white); font-size: 16px; }
 .visit-home { position: relative; z-index: 1; width: 100%; display: grid; justify-items: start; }
+.visit-home .seg { margin-top: 1.15rem; }
+.visit-home .seg [aria-pressed='true'] {
+  background: var(--white);
+  color: var(--ink);
+  border-radius: calc(var(--r) - 2px);
+}
 .address { font-weight: 100; font-size: clamp(1.9rem, 3vw, 2.9rem); letter-spacing: -.03em; line-height: 1.05; margin-top: 1.2rem; }
 .visit-landmark { margin-top: .7rem; color: var(--grey); font-size: .92rem; }
 .week-note { margin-top: 1.4rem; color: var(--grey); font-size: .92rem; }
@@ -1402,6 +1408,7 @@ input::placeholder { color: var(--grey-2); }
   .alert { grid-template-columns: minmax(0, 1fr); }
   /* phone: the map becomes a plate above the copy, still fading at its edges */
   .visit-ch { display: block; min-height: 0; padding-top: 3rem; }
+  .visit-home .seg button { min-height: var(--touch); }
   .map-stage {
     position: relative; inset: auto; aspect-ratio: 800 / 631; margin: 0 0 1.5rem;
     -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 86%, transparent);

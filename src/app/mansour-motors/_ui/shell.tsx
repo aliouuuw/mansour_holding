@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { Link } from '@/lib/router'
-import { CONTACT, openState, waLink } from './shared'
+import { CONAKRY, CONTACT, openState, waLink } from './shared'
 
 const NAV = [
   { label: 'Accueil', to: '/mansour-motors' },
@@ -133,6 +133,7 @@ function Footer({ innerRef }: { innerRef?: React.Ref<HTMLElement> }) {
           <p className="sign-label">Showroom</p>
           <a className="sign-line" href={CONTACT.maps} target="_blank" rel="noopener">{CONTACT.address}</a>
           <OpenNote className="sign-open" />
+          <a className="sign-line" href={CONAKRY.maps} target="_blank" rel="noopener">{CONAKRY.address}</a>
         </div>
         <div className="sign-col">
           <p className="sign-label">Contact</p>

@@ -14,6 +14,14 @@ export const CONTACT = {
   maps: 'https://www.google.com/maps/place/Mansour+Motors/@14.7347277,-17.5085261,19z',
 }
 
+/* second house. Hours are not published here. */
+export const CONAKRY = {
+  address: '3e Avenue, Kaloum, Conakry',
+  phone: '+224 613 41 45 45',
+  tel: 'tel:+224613414545',
+  maps: 'https://www.google.com/maps/search/?api=1&query=3e+Avenue%2C+Kaloum%2C+Conakry',
+}
+
 /* four ranges from the live site. One car, one range. */
 export const RANGES = [
   { id: 'luxe', label: 'Luxe' },
