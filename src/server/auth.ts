@@ -26,6 +26,8 @@ export const auth = betterAuth({
     appUrl(),
     process.env.FRONTEND_URL || 'http://localhost:3000',
     'https://mansour-holding.vercel.app',
+    'https://mansourmotors.sn',
+    'https://www.mansourmotors.sn',
     'http://localhost:3000',
   ],
   advanced: {
