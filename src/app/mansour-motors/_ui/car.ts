@@ -44,7 +44,9 @@ export const toCar = (v: ApiVehicle): PlateauCar => ({
   order: v.sortOrder ?? 0,
 })
 
-/* the line-up order: what you can buy first, then the showroom order staff set in the back office */
-const ORDER = { available: 0, reserved: 1, sold: 2 } as const
+/* home plateau length; the order dialog marks the same prefix */
+export const PLATEAU = 7
+
+/* staff order from the inventory dialog. The home section shows the first PLATEAU cars. */
 export const lineup = (vs: ApiVehicle[]) =>
-  [...vs].sort((a, b) => ORDER[a.status] - ORDER[b.status] || a.sortOrder - b.sortOrder)
+  [...vs].sort((a, b) => a.sortOrder - b.sortOrder)

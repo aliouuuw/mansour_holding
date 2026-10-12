@@ -104,7 +104,23 @@ export function VehicleImagesModal({
     onError: (e) => toast((e as Error).message, 'error'),
   })
 
-  const busy = uploadMutation.isPending || replaceMutation.isPending || deleteMutation.isPending
+  const spotMutation = useMutation({
+    mutationFn: (url: string | null) => {
+      const extras = { ...vehicle!.extras }
+      if (url) extras.spot = url
+      else delete extras.spot
+      return vehiclesApi.update(vehicle!.id, { extras })
+    },
+    onSuccess: (updated) => {
+      patchListCache(updated)
+      toast(updated.extras.spot ? 'Image du showroom enregistrée' : 'Image du showroom retirée')
+    },
+    onError: (e) => toast((e as Error).message, 'error'),
+  })
+
+  const busy = uploadMutation.isPending || replaceMutation.isPending || deleteMutation.isPending || spotMutation.isPending
+  const current = images[activeIdx]
+  const chosen = !!current && vehicle?.extras.spot === current
 
   const nav = (dir: -1 | 1) => {
     if (images.length < 2) return
@@ -153,7 +169,9 @@ export function VehicleImagesModal({
                   Photos — {vehicle.make} {vehicle.model}
                 </h2>
                 <p className="mm-dialog-lead">
-                  {images.length === 0 ? 'Aucune photo' : `${activeIdx + 1} / ${images.length}`}
+                  {images.length === 0
+                    ? 'Aucune photo'
+                    : `${activeIdx + 1} / ${images.length}${chosen ? ' · Image du showroom' : ''}`}
                 </p>
               </div>
               <button type="button" className="mm-icon-btn" onClick={onClose} aria-label="Fermer">
@@ -213,7 +231,11 @@ export function VehicleImagesModal({
                       type="button"
                       role="tab"
                       aria-selected={i === activeIdx}
-                      className={i === activeIdx ? 'mm-media-thumb is-active' : 'mm-media-thumb'}
+                      className={[
+                        'mm-media-thumb',
+                        i === activeIdx ? 'is-active' : '',
+                        src === vehicle.extras.spot ? 'is-spot' : '',
+                      ].filter(Boolean).join(' ')}
                       onClick={() => {
                         setDirection(i > activeIdx ? 1 : -1)
                         setActiveIdx(i)
@@ -261,6 +283,14 @@ export function VehicleImagesModal({
                     if (file && images.length > 0) replaceMutation.mutate({ index: activeIdx, file })
                   }}
                 />
+                <DashButton
+                  type="button"
+                  variant="soft"
+                  disabled={images.length === 0 || busy}
+                  onClick={() => spotMutation.mutate(chosen ? null : current ?? null)}
+                >
+                  {chosen ? 'Retirer du showroom' : 'Image du showroom'}
+                </DashButton>
                 <DashButton
                   type="button"
                   variant="soft"

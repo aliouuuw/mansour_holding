@@ -14,9 +14,9 @@ test('arrivalMs falls back to createdAt', () => {
   expect(arrivalMs(v)).toBe(Date.parse(v.createdAt))
 })
 
-test('lineup follows the staff showroom order within a status', () => {
+test('lineup follows the staff inventory order across statuses', () => {
   const v = (id: string, status: 'available' | 'sold', sortOrder: number) =>
     ({ id, status, sortOrder, price: null }) as unknown as Parameters<typeof lineup>[0][number]
   const ids = lineup([v('a', 'available', 2), v('b', 'sold', 0), v('c', 'available', 1)]).map((x) => x.id)
-  expect(ids).toEqual(['c', 'a', 'b'])
+  expect(ids).toEqual(['b', 'c', 'a'])
 })

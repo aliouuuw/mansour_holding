@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowDown01Icon, ArrowUp01Icon, Cancel01Icon, DragDropVerticalIcon } from 'hugeicons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { vehiclesApi, invalidateMotorsQueries, type ApiVehicle } from '@/lib/api'
+import { PLATEAU } from '@/app/mansour-motors/_ui/car'
 import { useToast } from '@/components/ui/Toast'
 import { DashButton, dashVehicleStatusLabels } from '@/components/dashboard'
 
@@ -110,9 +111,9 @@ export function VehicleOrderDialog({
             >
               <header className="mm-dialog-head">
                 <div>
-                  <h2 id={titleId} className="mm-dialog-title">Ordre sur la page Véhicules</h2>
+                  <h2 id={titleId} className="mm-dialog-title">Ordre du stock</h2>
                   <p className="mm-dialog-lead">
-                    Le premier de la liste apparaît en premier. Un véhicule neuf se place en tête.
+                    Les {PLATEAU} premiers apparaissent dans « En stock au showroom ». La liste entière est l&apos;ordre de la page Véhicules. Un véhicule neuf se place en tête.
                   </p>
                 </div>
                 <button type="button" className="mm-icon-btn" onClick={onClose} aria-label="Fermer">
@@ -133,7 +134,12 @@ export function VehicleOrderDialog({
                   {items.map((vehicle, index) => (
                     <li
                       key={vehicle.id}
-                      className={dragIndex === index ? 'mm-order-row is-drag' : 'mm-order-row'}
+                      className={[
+                        'mm-order-row',
+                        dragIndex === index ? 'is-drag' : '',
+                        index < PLATEAU ? 'is-showroom' : '',
+                        index === PLATEAU ? 'is-rest' : '',
+                      ].filter(Boolean).join(' ')}
                       draggable
                       onDragStart={() => setDragIndex(index)}
                       onDragOver={(e) => {

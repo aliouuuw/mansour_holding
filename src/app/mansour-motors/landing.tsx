@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
 import { AtelierSwipeHint, Button, Chapter, Field, OpenNote, Shell, ShowroomMap } from './_ui'
-import { arrivalMs, lineup, toCar } from './_ui/car'
+import { arrivalMs, lineup, PLATEAU, toCar } from './_ui/car'
 import { BUDGETS, CONTACT, DAY, HOURS, STATE, YEARS, cover, focal, isCutout, pad2, vehicleUrl, waLink } from './_ui/shared'
 
 function prestige(vehicles: ApiVehicle[]) {
@@ -188,9 +188,8 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
 }
 
 /* ── chapter 2: the line-up. Hover pulls neighbouring plates (see _ui/turntable.js) ── */
-/* The plateau fans the cars across one frame. Past this many the plates
+/* The plateau fans the cars across one frame. Past PLATEAU the plates
    compress into slivers you cannot read, so the rest live on the stock page. */
-const PLATEAU = 7
 
 function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) {
   const ref = useRef<HTMLElement>(null)

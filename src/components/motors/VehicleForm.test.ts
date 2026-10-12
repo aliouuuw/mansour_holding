@@ -14,7 +14,7 @@ test('defaults are not written', () => {
 })
 
 test('cover and source stay hidden and survive a save', () => {
-  const stored = { Toit: 'Panoramique', cover: '/mansour-motors/covers/x.webp', source: 'catalogue-2026-09' }
+  const stored = { Toit: 'Panoramique', cover: '/mansour-motors/covers/x.webp', source: 'catalogue-2026-09', spot: '/photos/2.jpg' }
   const form = formExtras(stored)
   expect(form.extras).toEqual([{ key: 'Toit', value: 'Panoramique' }])
   expect(toExtras({ ...form } as VehicleFormValues, stored)).toEqual(stored)

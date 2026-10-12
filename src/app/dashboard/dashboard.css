@@ -1137,6 +1137,9 @@
 .mm-dash .mm-media-thumb.is-active {
   border-color: var(--mm-ink);
 }
+.mm-dash .mm-media-thumb.is-spot {
+  box-shadow: inset 0 0 0 2px var(--mm-gold, #b45309);
+}
 .mm-dash .mm-media-toolbar {
   display: flex;
   flex-wrap: wrap;
@@ -1193,6 +1196,15 @@
 }
 .mm-dash .mm-order-row.is-drag {
   background: var(--mm-off);
+}
+.mm-dash .mm-order-row.is-showroom .mm-order-pos {
+  color: var(--mm-ink);
+  font-weight: 600;
+}
+.mm-dash .mm-order-row.is-rest {
+  margin-top: 0.35rem;
+  border-top-width: 2px;
+  border-top-color: var(--mm-ink);
 }
 .mm-dash .mm-order-handle {
   display: flex;

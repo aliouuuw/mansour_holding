@@ -98,6 +98,21 @@ export function MotorsVehicleDetail() {
     onError: (e) => toast((e as Error).message, 'error'),
   })
 
+  const spotMutation = useMutation({
+    mutationFn: (url: string | null) => {
+      const extras = { ...vehicle!.extras }
+      if (url) extras.spot = url
+      else delete extras.spot
+      return vehiclesApi.update(vehicle!.id, { extras })
+    },
+    onSuccess: (updated) => {
+      qc.setQueryData(['vehicle', vehicleId], updated)
+      invalidateMotorsQueries(qc)
+      toast(updated.extras.spot ? 'Image du showroom enregistrée' : 'Image du showroom retirée')
+    },
+    onError: (e) => toast((e as Error).message, 'error'),
+  })
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-20">
@@ -250,6 +265,16 @@ export function MotorsVehicleDetail() {
               <Upload01Icon className="h-4 w-4" />
               {uploadMutation.isPending ? 'Upload en cours...' : 'Ajouter une photo'}
             </button>
+            {images.length > 0 && (
+              <button
+                type="button"
+                disabled={spotMutation.isPending}
+                onClick={() => spotMutation.mutate(vehicle.extras.spot === images[activeIdx] ? null : images[activeIdx] ?? null)}
+                className="mm-soft mt-2 flex w-full items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {vehicle.extras.spot === images[activeIdx] ? 'Retirer du showroom' : 'Image du showroom'}
+              </button>
+            )}
           </div>
 
           {vehicle.description && (

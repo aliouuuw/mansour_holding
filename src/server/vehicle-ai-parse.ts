@@ -53,7 +53,7 @@ export type VehicleDescriptionFacts = {
   extras: Record<string, string>
 }
 
-const PHOTO_KEYS = new Set(['face', 'pos', 'cover', 'source'])
+const PHOTO_KEYS = new Set(['face', 'pos', 'cover', 'source', 'spot'])
 
 export function featureExtrasForPrompt(extras: Record<string, string>) {
   return Object.fromEntries(

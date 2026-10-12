@@ -28,9 +28,31 @@ export function vehicleImageMeta(file: { type: string; name: string; size: numbe
   return { type, ext }
 }
 
-/* the studio cutout in extras.cover stands for the first photo; once staff change that photo, the cutout is stale */
+/** Chosen plate photo, when that file is still in the gallery. */
+export function spotlightSrc(extras: Record<string, string>, images: string[]) {
+  const pick = extras.spot
+  if (pick && images.includes(pick)) return pick
+  return extras.cover || images[0] || ''
+}
+
+export function spotlightIsCutout(extras: Record<string, string>, images: string[]) {
+  const pick = extras.spot
+  return Boolean(extras.cover) && !(pick && images.includes(pick))
+}
+
+/* the studio cutout in extras.cover stands for the first photo; once staff change that photo, the cutout is stale.
+   extras.spot is the photo staff chose for the showroom plate. */
 export function coverFor(extras: Record<string, string>, before: string[], after: string[]) {
-  if (before[0] === after[0] || !('cover' in extras)) return extras
-  const { cover: _, ...rest } = extras
+  let next = extras
+  if (before[0] !== after[0] && 'cover' in extras) {
+    const { cover: _, ...rest } = extras
+    next = rest
+  }
+  const spot = next.spot
+  if (!spot) return next
+  const at = before.indexOf(spot)
+  if (at >= 0 && after[at] && after[at] !== before[at]) return { ...next, spot: after[at] }
+  if (after.includes(spot)) return next
+  const { spot: _, ...rest } = next
   return rest
 }
