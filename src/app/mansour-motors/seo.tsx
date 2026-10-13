@@ -3,15 +3,23 @@ import { MOTORS_SITE } from '@/lib/motors-public-host'
 import { spotlightSrc } from '@/server/vehicle-image'
 import { CONAKRY, CONTACT, FUEL, GEARBOX, HOURS, pad2, vehicleUrl } from './_ui/shared'
 
-/* child openGraph replaces the layout's whole object, so pages spread this base */
-export const og = { type: 'website', siteName: 'Mansour Motors', locale: 'fr_SN' } as const
-
 const abs = (src: string) => new URL(src, MOTORS_SITE).href
 
-/* raw upload for social cards: crawlers want a plain JPEG, not the optimizer URL */
+// Share cards at 1200 px through the optimizer. Crawlers send "Accept: */*" and get a JPEG
+// of ~60-100 KB, under the ~300 KB above which WhatsApp drops the preview photo.
+const shareSized = (src: string) => abs(`/_next/image?url=${encodeURIComponent(src)}&w=1200&q=75`)
+
+/* child openGraph replaces the layout's whole object, so pages spread this base */
+export const og = {
+  type: 'website',
+  siteName: 'Mansour Motors',
+  locale: 'fr_SN',
+  images: [{ url: shareSized('/mansour-motors/hero-still.jpg'), width: 1200, height: 679 }],
+}
+
 export const shareImage = (v: ApiVehicle) => {
   const src = spotlightSrc(v.extras, v.images)
-  return src ? abs(src) : undefined
+  return src ? shareSized(src) : undefined
 }
 
 /* `<` escaped so a description cannot close the script tag */

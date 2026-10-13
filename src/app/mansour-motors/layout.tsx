@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import localFont from 'next/font/local'
 import { MOTORS_SITE } from '@/lib/motors-public-host'
+import { og } from './seo'
 import './motors.css'
 
 /* Excon (Fontshare, free licence), self-hosted: no third-party CSS on the critical path */
@@ -30,13 +31,7 @@ export const metadata: Metadata = {
     template: '%s | Mansour Motors',
   },
   description,
-  openGraph: {
-    type: 'website',
-    siteName: 'Mansour Motors',
-    locale: 'fr_SN',
-    description,
-    images: [{ url: '/mansour-motors/hero-still.jpg', width: 2688, height: 1520 }],
-  },
+  openGraph: { ...og, description },
   twitter: { card: 'summary_large_image' },
   icons: {
     icon: [

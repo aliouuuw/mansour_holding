@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import { listVehicles } from '@/server/vehicles'
 import { MansourMotorsLanding } from './landing'
-import { JsonLd, dealerLd } from './seo'
+import { JsonLd, dealerLd, og } from './seo'
 
 export const revalidate = 60
 
 export const metadata: Metadata = {
   alternates: { canonical: '/' },
+  openGraph: { ...og, url: '/' },
 }
 
 export default async function Page() {

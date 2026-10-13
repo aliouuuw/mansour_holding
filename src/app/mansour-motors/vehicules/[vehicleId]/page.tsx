@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       alternates: { canonical: vehicleUrl(v) },
-      openGraph: { ...og, title, description, url: vehicleUrl(v), images: image ? [image] : undefined },
+      openGraph: { ...og, title, description, url: vehicleUrl(v), images: image ? [image] : og.images },
     }
   } catch {
     return {}
