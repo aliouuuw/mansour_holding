@@ -16,12 +16,21 @@ function prestige(vehicles: ApiVehicle[]) {
     ?? vehicles[0]
 }
 
+function purosangue(vehicles: ApiVehicle[]) {
+  return vehicles.find((v) => /purosangue/i.test(v.model))
+    ?? vehicles.find((v) => v.make === 'Ferrari')
+}
+
+/* seconds when the blue Purosangue owns the frame in hero-pass.mp4 */
+const FERRARI_AT = { desk: 5.2, phone: 5.2 }
+
 /* ── chapter 1: the prestige car on the floor. Camera enters the room. ── */
-function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
+function Hero({ rolls, next, newestYear }: { rolls?: ApiVehicle; next?: ApiVehicle; newestYear: number }) {
   const ref = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [clip, setClip] = useState(false)
   const [phone, setPhone] = useState(false)
+  const [beat, setBeat] = useState<'rolls' | 'next'>('rolls')
   useEffect(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: no-preference)')
     const narrow = window.matchMedia('(max-width: 860px)')
@@ -42,6 +51,11 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
     const hero = ref.current
     if (!clip || !video || !hero) return
     const step = 1 / 24
+    const at = phone ? FERRARI_AT.phone : FERRARI_AT.desk
+    const mark = (t: number) => {
+      if (!next) return
+      setBeat(t >= at ? 'next' : 'rolls')
+    }
     let mode: 'play' | 'scrub' = 'play'
     let goal = 0
     let shown = 0
@@ -50,10 +64,10 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
     const timeAtScroll = () => {
       const dur = video.duration
       if (!Number.isFinite(dur) || dur <= 0) return null
-      const forth = Math.max(0, dur / 2 - step)
+      const end = Math.max(0, dur - step)
       const run = Math.max(1, hero.offsetHeight - innerHeight)
       const p = Math.max(0, Math.min(1, -hero.getBoundingClientRect().top / run))
-      return p * forth
+      return p * end
     }
     const seek = (t: number) => {
       video.pause()
@@ -65,11 +79,12 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
       raf = 0
       if (mode !== 'scrub') return
       video.pause()
-      const next = timeAtScroll()
-      if (next == null) return
-      goal = next
+      const target = timeAtScroll()
+      if (target == null) return
+      goal = target
       shown += (goal - shown) * 0.42
       if (Math.abs(goal - shown) < 0.01) shown = goal
+      mark(shown)
       seek(shown)
       if (shown !== goal) raf = requestAnimationFrame(tick)
     }
@@ -80,9 +95,10 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
       if (mode === 'scrub') return
       mode = 'scrub'
       video.pause()
-      const next = timeAtScroll()
-      shown = next ?? 0
+      const target = timeAtScroll()
+      shown = target ?? 0
       goal = shown
+      mark(shown)
       kick()
     }
     let baseY = scrollY
@@ -105,9 +121,13 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
       if (mode === 'scrub') video.pause()
     }
     const onEnded = () => arm()
+    const onTime = () => {
+      if (mode === 'play') mark(video.currentTime)
+    }
     video.addEventListener('seeked', onSeeked)
     video.addEventListener('ended', onEnded)
     video.addEventListener('play', onPlay)
+    video.addEventListener('timeupdate', onTime)
     addEventListener('scroll', onScroll, { passive: true })
     addEventListener('resize', kick)
     void video.play().catch(() => {})
@@ -117,15 +137,18 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
       video.removeEventListener('seeked', onSeeked)
       video.removeEventListener('ended', onEnded)
       video.removeEventListener('play', onPlay)
+      video.removeEventListener('timeupdate', onTime)
       removeEventListener('scroll', onScroll)
       removeEventListener('resize', kick)
     }
-  }, [clip, phone])
-  if (!star) return null
+  }, [clip, phone, next])
+  const car = beat === 'next' && next ? next : rolls
+  if (!car) return null
+  const fresh = car.status !== 'sold' && car.year === newestYear
   return (
     <section
       className="hero ch-light"
-      aria-label={fresh ? `${star.make} ${star.model}, dernier arrivage à Dakar` : `${star.make} ${star.model}`}
+      aria-label={fresh ? `${car.make} ${car.model}, dernier arrivage à Dakar` : `${car.make} ${car.model}`}
       ref={ref}
     >
       <div className="hero-pin">
@@ -159,7 +182,7 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
               aria-hidden="true"
             >
               <source
-                src={phone ? '/mansour-motors/hero-intro-m.mp4' : '/mansour-motors/hero-intro.mp4'}
+                src={phone ? '/mansour-motors/hero-pass-m.mp4' : '/mansour-motors/hero-pass.mp4'}
                 type="video/mp4"
               />
             </video>
@@ -174,12 +197,12 @@ function Hero({ star, fresh }: { star?: ApiVehicle; fresh?: boolean }) {
       )}
       <div className="hero-shelf">
         <div className="hero-shelf-copy">
-          <p className="brand">{star.make}</p>
-          <h2 className="hero-title">{star.model}</h2>
+          <p className="brand">{car.make}</p>
+          <h2 className="hero-title">{car.model}</h2>
         </div>
         <div className="hero-shelf-action">
-          <span className="hero-year" aria-hidden="true">{star.year}</span>
-          <Button to={vehicleUrl(star)}>Voir le véhicule</Button>
+          <span className="hero-year" aria-hidden="true">{car.year}</span>
+          <Button to={vehicleUrl(car)}>Voir le véhicule</Button>
         </div>
       </div>
       </div>
@@ -504,17 +527,15 @@ function Alert() {
 
 export function MansourMotorsLanding({ vehicles }: { vehicles: ApiVehicle[] }) {
   const ordered = useMemo(() => lineup(vehicles), [vehicles])
-  const star = prestige(ordered)
+  const rolls = prestige(ordered)
+  const next = purosangue(ordered)
   const openYears = ordered.filter((v) => v.status !== 'sold').map((v) => v.year)
   const newestYear = openYears.length ? Math.max(...openYears) : 0
-  /* createdAt follows insert order, so a later row hid this line.
-     The newest model year on the floor is the arrival. */
-  const fresh = !!star && star.status !== 'sold' && star.year === newestYear
   return (
     <Shell>
       <main>
         <h1 className="vh">Mansour Motors, véhicules premium à Dakar</h1>
-        <Hero star={star} fresh={fresh} />
+        <Hero rolls={rolls} next={next} newestYear={newestYear} />
         {ordered.length > 0 && <Lineup vehicles={ordered.slice(0, PLATEAU)} total={ordered.length} />}
         <Statement vehicles={vehicles} />
         <Alert />
