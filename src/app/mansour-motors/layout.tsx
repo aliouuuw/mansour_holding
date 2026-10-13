@@ -1,15 +1,43 @@
 import type { Metadata, Viewport } from 'next'
+import localFont from 'next/font/local'
+import { MOTORS_SITE } from '@/lib/motors-public-host'
 import './motors.css'
+
+/* Excon (Fontshare, free licence), self-hosted: no third-party CSS on the critical path */
+const excon = localFont({
+  src: [
+    { path: './fonts/excon-100.woff2', weight: '100' },
+    { path: './fonts/excon-300.woff2', weight: '300' },
+    { path: './fonts/excon-400.woff2', weight: '400' },
+    { path: './fonts/excon-500.woff2', weight: '500' },
+  ],
+  variable: '--font-excon',
+  display: 'swap',
+})
 
 export const viewport: Viewport = {
   viewportFit: 'cover',
 }
 
 const iconBase = '/mansour-motors'
+const description =
+  'Véhicules premium neufs et d’occasion : Toyota, Land Rover, Mercedes-Benz, Rolls-Royce. Showrooms à Dakar, route de la Corniche Ouest, et à Conakry, Kaloum.'
 
 export const metadata: Metadata = {
-  title: 'Mansour Motors',
-  description: 'Véhicules premium. Showrooms à Dakar, route de la Corniche Ouest, et à Conakry, 3e Avenue, Kaloum.',
+  metadataBase: new URL(MOTORS_SITE),
+  title: {
+    default: 'Mansour Motors | Véhicules premium à Dakar et Conakry',
+    template: '%s | Mansour Motors',
+  },
+  description,
+  openGraph: {
+    type: 'website',
+    siteName: 'Mansour Motors',
+    locale: 'fr_SN',
+    description,
+    images: [{ url: '/mansour-motors/hero-still.jpg', width: 2688, height: 1520 }],
+  },
+  twitter: { card: 'summary_large_image' },
   icons: {
     icon: [
       { url: `${iconBase}/favicon-32.png`, sizes: '32x32', type: 'image/png' },
@@ -20,11 +48,6 @@ export const metadata: Metadata = {
 }
 
 export default function MotorsLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      {/* Excon (Fontshare, free licence), the prototype's face */}
-      <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=excon@100,200,300,400,500&display=swap" precedence="default" />
-      {children}
-    </>
-  )
+  /* display: contents, so the wrapper only carries the font variable down to .mm */
+  return <div className={excon.variable} style={{ display: 'contents' }}>{children}</div>
 }

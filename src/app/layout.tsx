@@ -1,6 +1,15 @@
 import type { Metadata, Viewport } from 'next'
+import { Playfair_Display } from 'next/font/google'
 import { Providers } from '@/components/providers'
 import './globals.css'
+
+/* self-hosted by next/font: no render-blocking @import chain to Google. Only the holding page uses it. */
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  style: ['normal', 'italic'],
+  variable: '--font-playfair',
+  preload: false,
+})
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -10,17 +19,14 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: 'Mansour Holding',
-  description: 'L\'autorite de l\'excellence durable',
+  description: 'L\'autorité de l\'excellence durable',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={playfair.variable}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://images.unsplash.com" />
-        <link rel="dns-prefetch" href="https://pub-f32571f814724ac2a7ad9c9666a095bf.r2.dev" />
       </head>
       <body>
         <Providers>

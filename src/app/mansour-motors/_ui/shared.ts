@@ -58,8 +58,11 @@ export const vehicleUrl = (v: Pick<ApiVehicle, 'id'>) => `/mansour-motors/vehicu
 /* photo metadata lives in extras: which way the car's nose points, and the focal point */
 export const face = (v: ApiVehicle): 'left' | 'right' => (v.extras.face === 'right' ? 'right' : 'left')
 export const focal = (v: ApiVehicle) => v.extras.pos || '50% 52%'
+/* R2 uploads weigh 2-3 MB: serve them through the same-origin Next optimizer. w must be one of the default deviceSizes. */
+export const shrink = (src: string, w = 1080) =>
+  /^https?:/.test(src) ? `/_next/image?url=${encodeURIComponent(src)}&w=${w}&q=75` : src
 /* plateau + cards use the photo staff chose, else the studio cutout; the gallery stays the full set */
-export const cover = (v: ApiVehicle) => spotlightSrc(v.extras, v.images)
+export const cover = (v: ApiVehicle) => shrink(spotlightSrc(v.extras, v.images))
 export const isCutout = (v: ApiVehicle) => spotlightIsCutout(v.extras, v.images)
 
 /* ── hours: Dakar is UTC+0 all year, so UTC getters give showroom time ── */

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
 import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
 import { Button, Card, Field, Fieldset, GallerySwipeHint, Shell } from '../../_ui'
-import { CONTACT, FUEL, GEARBOX, STATE, bookingDays, fcfa, focal, km, pad2, waLink } from '../../_ui/shared'
+import { CONTACT, FUEL, GEARBOX, STATE, bookingDays, fcfa, focal, km, pad2, shrink, waLink } from '../../_ui/shared'
 
 const TABS = [
   { id: 'photos', label: 'Photos' },
@@ -18,8 +18,8 @@ const fmtLong = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeri
 
 /* photos: the record's own photographs; with a single one, three framings of it */
 function framings(v: ApiVehicle, title: string) {
-  if (v.images.length > 1) return v.images.map((src, i) => ({ src, pos: i ? '50% 50%' : focal(v), zoom: 1, alt: `${title}, photo ${i + 1}` }))
-  const src = v.images[0] ?? ''
+  if (v.images.length > 1) return v.images.map((src, i) => ({ src: shrink(src, 1920), pos: i ? '50% 50%' : focal(v), zoom: 1, alt: `${title}, photo ${i + 1}` }))
+  const src = shrink(v.images[0] ?? '', 1920)
   return [
     { src, pos: focal(v), zoom: 1, alt: v.color ? `${title}, ${v.color}` : title },
     { src, pos: '24% 58%', zoom: 1.7, alt: `${title}, détail avant` },
@@ -120,7 +120,7 @@ function Gallery({ v, title }: { v: ApiVehicle; title: string }) {
               onClick={() => openLightbox(i)}
             >
               {/* eslint-disable-next-line @next/next/no-img-element -- framing uses object-position and zoom */}
-              <img src={p.src} alt="" style={{ '--pos': p.pos, '--zoom': p.zoom } as React.CSSProperties} loading={i ? 'lazy' : 'eager'} decoding="async" />
+              <img src={p.src} alt={p.alt} style={{ '--pos': p.pos, '--zoom': p.zoom } as React.CSSProperties} loading={i ? 'lazy' : 'eager'} decoding="async" />
               {i === 0 && enlargeHint ? <span className="photo-enlarge-hint" aria-hidden="true">Agrandir</span> : null}
             </button>
           </figure>

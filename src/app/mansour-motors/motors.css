@@ -86,7 +86,7 @@ html:has(.mm) ::selection { background: #b58d24; color: #121110; }
   --max: 1440px;
   --head: 68px;
   --sheet: 0px; /* chapters meet as planes. No iOS card stack. */
-  --font: 'Excon', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font: var(--font-excon), system-ui, -apple-system, 'Segoe UI', sans-serif;
   --ease: cubic-bezier(.16, 1, .3, 1);
   --r: 2px; /* plates, buttons, media. Circles stay 50%. No pills. */
   --touch: 44px; /* min hit target (WCAG 2.5.5) */
