@@ -2,7 +2,9 @@
 
 ## [Motors] SEO and performance pass (seo-audit)
 
-* **Status:** Done (2026-10-13), not committed. No browser check: Playwright cannot start (Chrome is not installed).
+* **Status:** Done and live (2026-10-13). No browser check: Playwright cannot start (Chrome is not installed).
+* **Deploy failure:** the first push failed on Vercel (Bun 1.3.14 SIGABRT at exit after a complete `next build`, no stack). Not reproducible on macOS. `next/font/google` was the only new build-time fetch. Replaced with self-hosted Playfair (`src/app/fonts/`); the preview build then passed.
+* **Share images:** OG/Twitter images go through `/_next/image` at 1200 px. Crawlers get a JPEG of 60-100 KB (WhatsApp drops previews above ~300 KB). Catalog has the default image, home has `og:url`.
 * **Audit (live mansourmotors.sn):** robots.txt 404, sitemap.xml 404, every page titled « Mansour Motors », no canonical, no OG, no JSON-LD, unknown paths returned 200 with the home page (soft 404), card covers are raw 2.4 MB R2 JPEGs, render-blocking third-party fonts (3 Google `@import`s, of which 2 are unused, plus Fontshare CSS). `www.mansourmotors.sn` does not resolve (DNS).
 * **Changes:** `robots.ts` + `sitemap.ts` (all vehicles, `updatedAt`). Title template, `metadataBase`, OG/Twitter in the motors layout. Catalog metadata. Per-vehicle `generateMetadata` (title, description, canonical, OG image) and `Car` JSON-LD with an `Offer` when priced. `AutoDealer` JSON-LD for Dakar and Conakry on home. Middleware runs on `/` only, so unknown paths 404. `shrink()` sends R2 photos through `/_next/image` (cards 1080 w, gallery 1920 w). Excon self-hosted via `next/font/local`. Playfair via `next/font/google`. Outfit and Syncopate dropped (unused).
 * **Verification:** `bun run type-check` OK. `bun run build` OK. `next start` + curl with `Host: mansourmotors.sn`: robots, sitemap (24 URLs), titles, canonicals, JSON-LD, junk path 404, bad vehicle id noindex. Optimized photos are 14-180 KB webp. Prod optimizer: 12 cold images in parallel, all 200 in under 1.5 s. Lint: only pre-existing errors (setState in effects).
