@@ -1,12 +1,15 @@
 import type { Metadata, Viewport } from 'next'
-import { Playfair_Display } from 'next/font/google'
+import localFont from 'next/font/local'
 import { Providers } from '@/components/providers'
 import './globals.css'
 
-/* self-hosted by next/font: no render-blocking @import chain to Google. Only the holding page uses it. */
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  style: ['normal', 'italic'],
+/* self-hosted Playfair (variable, latin): no render-blocking @import chain to Google, and no font
+   fetch at build time. Only the holding page uses it. */
+const playfair = localFont({
+  src: [
+    { path: './fonts/playfair.woff2', weight: '400 900', style: 'normal' },
+    { path: './fonts/playfair-italic.woff2', weight: '400 900', style: 'italic' },
+  ],
   variable: '--font-playfair',
   preload: false,
 })
