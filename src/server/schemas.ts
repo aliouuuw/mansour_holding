@@ -50,6 +50,7 @@ export const createVehicleSchema = z.object({
   extras: z.record(z.string()).optional(),
   organizationId: idSchema.optional().nullable(),
   arrivedAt: z.coerce.date().optional(),
+  listed: z.boolean().optional(),
 })
 
 export const updateVehicleSchema = createVehicleSchema.partial()

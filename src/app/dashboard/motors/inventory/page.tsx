@@ -36,6 +36,21 @@ function parseStatus(raw: string | null): VehicleStatus | 'all' {
   return 'all'
 }
 
+type ContentGap = 'all' | 'price' | 'photo' | 'text' | 'hidden'
+
+function parseGap(raw: string | null): ContentGap {
+  if (raw === 'price' || raw === 'photo' || raw === 'text' || raw === 'hidden') return raw
+  return 'all'
+}
+
+const GAP_LABELS: Record<ContentGap, string> = {
+  all: 'Tout',
+  price: 'Sans prix',
+  photo: 'Sans photo',
+  text: 'Sans texte',
+  hidden: 'Masqués',
+}
+
 const SORT_FIELDS: VehicleSortField[] = ['make', 'year', 'mileage', 'price', 'arrivedAt', 'sortOrder']
 
 function parseSortBy(raw: string | null): VehicleSortField {
@@ -56,6 +71,7 @@ export function MotorsInventory() {
 
   const queryQ = searchParams.get('q') ?? ''
   const statusFilter = parseStatus(searchParams.get('status'))
+  const gapFilter = parseGap(searchParams.get('gap'))
   const page = Math.max(1, Number.parseInt(searchParams.get('page') ?? '1', 10) || 1)
   const sortBy = parseSortBy(searchParams.get('sort'))
   const sortDir = parseSortDir(searchParams.get('dir'), sortBy)
@@ -136,8 +152,8 @@ export function MotorsInventory() {
   }
 
   const vehiclesQueryKey = useMemo(
-    () => ['vehicles', page, statusFilter, queryQ, sortBy, sortDir],
-    [page, statusFilter, queryQ, sortBy, sortDir]
+    () => ['vehicles', page, statusFilter, gapFilter, queryQ, sortBy, sortDir],
+    [page, statusFilter, gapFilter, queryQ, sortBy, sortDir]
   )
 
   const { data: suggestionMap } = useQuery({
@@ -169,6 +185,8 @@ export function MotorsInventory() {
       sortBy,
       sortDir,
       ...(statusFilter !== 'all' ? { status: statusFilter } : {}),
+      ...(gapFilter === 'hidden' ? { listed: false } : {}),
+      ...(gapFilter === 'price' || gapFilter === 'photo' || gapFilter === 'text' ? { gap: gapFilter } : {}),
       ...(queryQ ? { search: queryQ } : {}),
     }),
     placeholderData: (prev) => prev,
@@ -182,11 +200,11 @@ export function MotorsInventory() {
   const totalStock = overview?.vehicleTotal ?? pagination.total
   const availableStock = overview?.availableCount ?? 0
   const lead =
-    statusFilter !== 'all' || queryQ
+    statusFilter !== 'all' || gapFilter !== 'all' || queryQ
       ? `${pagination.total} résultat${pagination.total === 1 ? '' : 's'} · ${availableStock} disponibles`
       : `${totalStock} véhicules · ${availableStock} disponibles`
 
-  const hasFilters = statusFilter !== 'all' || queryQ.length > 0
+  const hasFilters = statusFilter !== 'all' || gapFilter !== 'all' || queryQ.length > 0
 
   const exportMutation = useMutation({
     mutationFn: () =>
@@ -196,6 +214,8 @@ export function MotorsInventory() {
         sortBy,
         sortDir,
         ...(statusFilter !== 'all' ? { status: statusFilter } : {}),
+        ...(gapFilter === 'hidden' ? { listed: false } : {}),
+        ...(gapFilter === 'price' || gapFilter === 'photo' || gapFilter === 'text' ? { gap: gapFilter } : {}),
         ...(queryQ ? { search: queryQ } : {}),
       }),
     onSuccess: (res) => {
@@ -288,6 +308,21 @@ export function MotorsInventory() {
         </div>
       </div>
 
+      <div className="mm-seg-scroll">
+        <div className="mm-seg" role="group" aria-label="Filtrer le contenu">
+          {(Object.keys(GAP_LABELS) as ContentGap[]).map((gap) => (
+            <button
+              key={gap}
+              type="button"
+              aria-pressed={gapFilter === gap}
+              onClick={() => patchParams({ gap: gap === 'all' ? null : gap, page: null })}
+            >
+              {GAP_LABELS[gap]}
+            </button>
+          ))}
+        </div>
+      </div>
+
       <div className="mm-panel mm-panel--grid">
         {error && <div className="mm-alert-error border-b">{(error as Error).message}</div>}
 
@@ -304,7 +339,7 @@ export function MotorsInventory() {
                 variant="soft"
                 onClick={() => {
                   setSearchInput('')
-                  patchParams({ q: null, status: null, page: null })
+                  patchParams({ q: null, status: null, gap: null, page: null })
                 }}
               >
                 Réinitialiser les filtres

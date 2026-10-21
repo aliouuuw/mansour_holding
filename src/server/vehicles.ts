@@ -28,6 +28,9 @@ export type VehicleFilters = {
   sortDir?: VehicleSortDir
   /* public pages: a car with no photo and no studio cover stays off the site */
   withPhoto?: boolean
+  /* false = desk only. Omit to include both. */
+  listed?: boolean
+  gap?: 'price' | 'photo' | 'text'
 }
 
 function vehicleSortColumn(field: VehicleSortField) {
@@ -62,6 +65,11 @@ function serializeVehicle(row: typeof vehicles.$inferSelect) {
   }
 }
 
+/** Landing, catalogue, fiche, and sitemap. Hidden cars stay in the desk. */
+export async function listPublicVehicles(filters: Omit<VehicleFilters, 'listed'> = {}) {
+  return listVehicles({ ...filters, listed: true })
+}
+
 export async function listVehicles(filters: VehicleFilters = {}) {
   const pageNum = Math.max(1, filters.page ?? 1)
   const limitNum = Math.min(500, Math.max(1, filters.limit ?? 20))
@@ -69,9 +77,15 @@ export async function listVehicles(filters: VehicleFilters = {}) {
 
   const conditions = []
   if (filters.status) conditions.push(eq(vehicles.status, filters.status))
-  if (filters.withPhoto) {
-    conditions.push(sql`(jsonb_array_length(${vehicles.images}) > 0 or coalesce(${vehicles.extras}->>'cover', '') <> '')`)
+  const hasPhoto = sql`(jsonb_array_length(${vehicles.images}) > 0 or coalesce(${vehicles.extras}->>'cover', '') <> '')`
+  if (filters.withPhoto) conditions.push(hasPhoto)
+  if (filters.listed === true) conditions.push(eq(vehicles.listed, true))
+  if (filters.listed === false) conditions.push(eq(vehicles.listed, false))
+  if (filters.gap === 'price') conditions.push(sql`${vehicles.price} is null`)
+  if (filters.gap === 'photo') {
+    conditions.push(sql`not (jsonb_array_length(${vehicles.images}) > 0 or coalesce(${vehicles.extras}->>'cover', '') <> '')`)
   }
+  if (filters.gap === 'text') conditions.push(sql`coalesce(trim(${vehicles.description}), '') = ''`)
   if (filters.search) {
     /* "Toyota Land Cruiser" spans both columns; VIN is how staff find a specific car */
     conditions.push(
@@ -130,6 +144,40 @@ export async function createVehicle(data: unknown) {
       .returning()
     refreshSite()
     return serializeVehicle(vehicle)
+  })
+}
+
+export async function duplicateVehicle(id: string) {
+  return attempt(async () => {
+    const user = await requireUser()
+    const [existing] = await db.select().from(vehicles).where(eq(vehicles.id, id))
+    if (!existing) throw new UserError('Véhicule introuvable.')
+    const [{ minOrder }] = await db
+      .select({ minOrder: sql<number>`coalesce(min(${vehicles.sortOrder}), 1)::int` })
+      .from(vehicles)
+    const [copy] = await db
+      .insert(vehicles)
+      .values({
+        make: existing.make,
+        model: existing.model,
+        year: existing.year,
+        mileage: existing.mileage,
+        price: existing.price,
+        status: 'available',
+        fuelType: existing.fuelType,
+        transmission: existing.transmission,
+        color: existing.color,
+        description: existing.description,
+        images: existing.images ?? [],
+        extras: existing.extras ?? {},
+        arrivedAt: new Date(),
+        sortOrder: minOrder - 1,
+        listed: false,
+        createdBy: user.id,
+      })
+      .returning()
+    refreshSite()
+    return serializeVehicle(copy!)
   })
 }
 

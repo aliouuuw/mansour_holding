@@ -83,6 +83,8 @@ export const vehicles = pgTable('vehicles', {
   arrivedAt: timestamp('arrived_at').notNull().defaultNow(),
   /* lower comes first on /vehicules when no visitor sort is set */
   sortOrder: integer('sort_order').notNull().default(0),
+  /* false keeps the car in the desk and off the public site */
+  listed: boolean('listed').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
 }, (t) => [

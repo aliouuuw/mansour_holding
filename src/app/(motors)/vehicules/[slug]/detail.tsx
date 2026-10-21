@@ -5,6 +5,7 @@ import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
 import { Button, Card, Field, Fieldset, GallerySwipeHint, Shell } from '../../_ui'
 import { CONTACT, FUEL, GEARBOX, STATE, bookingDays, fcfa, focal, km, pad2, shrink, waLink } from '../../_ui/shared'
+import { featureLines } from '@/lib/vehicle-features'
 import { motorsRoutes } from '@/lib/motors-routes'
 
 const TABS = [
@@ -291,6 +292,7 @@ export function PublicVehicleDetail({ vehicle: v, others }: { vehicle: ApiVehicl
   ]
   if (v.color) facts.splice(4, 0, ['Couleur', v.color, true])
   if (v.vin) facts.push(['VIN', v.vin, true])
+  const lines = featureLines(v.extras)
 
   return (
     <Shell className="detail-page" waText={question}>
@@ -312,6 +314,13 @@ export function PublicVehicleDetail({ vehicle: v, others }: { vehicle: ApiVehicl
               <dl className="facts">
                 {facts.map(([label, value, small]) => <div key={label}><dt>{label}</dt><dd className={small ? 'small' : undefined}>{value}</dd></div>)}
               </dl>
+              {lines.length > 0 && (
+                <dl className="facts">
+                  {lines.map(([label, value]) => (
+                    <div key={label}><dt>{label}</dt><dd className="small">{value}</dd></div>
+                  ))}
+                </dl>
+              )}
             </section>
             <section id="description" className="block">
               <h2 className="h2">Description</h2>

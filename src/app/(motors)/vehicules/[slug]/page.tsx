@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound, permanentRedirect } from 'next/navigation'
 import { cache } from 'react'
-import { getVehicle, getVehicleByIdPrefix, listVehicles } from '@/server/vehicles'
+import { getVehicle, getVehicleByIdPrefix, listPublicVehicles } from '@/server/vehicles'
 import { parseVehicleSlug, vehicleSlug } from '@/lib/motors-routes'
 import { FUEL, GEARBOX, STATE, fcfa, km, vehicleUrl } from '../../_ui/shared'
 import { JsonLd, carLd, og, shareImage } from '../../seo'
@@ -15,7 +15,9 @@ const near = (a: number | null, b: number | null) =>
 const vehicleBySlug = cache(async (slug: string) => {
   const ref = parseVehicleSlug(slug)
   if (!ref) return null
-  return ('id' in ref ? getVehicle(ref.id) : getVehicleByIdPrefix(ref.prefix)).catch(() => null)
+  return ('id' in ref ? getVehicle(ref.id) : getVehicleByIdPrefix(ref.prefix))
+    .then((row) => (row.listed ? row : null))
+    .catch(() => null)
 })
 
 export const revalidate = 60
@@ -39,7 +41,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { slug } = await params
-  const [vehicle, all] = await Promise.all([vehicleBySlug(slug), listVehicles({ limit: 100, withPhoto: true })])
+  const [vehicle, all] = await Promise.all([vehicleBySlug(slug), listPublicVehicles({ limit: 100, withPhoto: true })])
   /* same rule as the lists: no photo, no public page yet */
   if (!vehicle || (!vehicle.images.length && !vehicle.extras.cover)) notFound()
   /* old uuid links and renamed cars land on the one canonical slug */

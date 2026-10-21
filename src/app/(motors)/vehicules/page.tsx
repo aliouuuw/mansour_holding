@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { listVehicles } from '@/server/vehicles'
+import { listPublicVehicles } from '@/server/vehicles'
 import { og } from '../seo'
 import { PublicVehicles } from './catalog'
 import { motorsRoutes } from '@/lib/motors-routes'
@@ -18,6 +18,6 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const { data } = await listVehicles({ limit: 200, sortBy: 'sortOrder', sortDir: 'asc', withPhoto: true })
+  const { data } = await listPublicVehicles({ limit: 200, sortBy: 'sortOrder', sortDir: 'asc', withPhoto: true })
   return <PublicVehicles vehicles={data} />
 }

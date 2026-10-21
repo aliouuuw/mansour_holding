@@ -915,6 +915,15 @@
 .mm-dash .mm-grid-th--actions { width: 4rem; }
 .mm-dash .mm-grid-th--status,
 .mm-dash .mm-grid-cell-td--status { min-width: 8.25rem; }
+.mm-dash .mm-grid-flag {
+  display: block;
+  margin-top: .2rem;
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--mm-grey);
+}
 .mm-dash .mm-grid-th--price { min-width: 8.5rem; }
 .mm-dash .mm-skel {
   height: 0.65rem;

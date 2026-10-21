@@ -147,6 +147,7 @@ function InventoryGridRow({
             <option key={s} value={s}>{statusLabels[s]}</option>
           ))}
         </select>
+        {vehicle.listed === false ? <span className="mm-grid-flag">Masqué</span> : null}
       </td>
       <InventoryFieldCombobox {...cellProps('vin')} />
       <InventoryFieldCombobox {...cellProps('arrivedAt')} />

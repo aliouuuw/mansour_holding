@@ -1,5 +1,15 @@
 # Project Progress Log
 
+## [Motors] Desk controls for what the site shows
+
+* **Status:** Done (2026-10-21). Browser-checked. Migration `0007` applied locally. Committed.
+* **Hide:** `listed` (default true). **Masquer sur le site** / **Afficher sur le site** on the fiche. A hidden car stays in Inventaire and is absent from the catalogue, the home page, the sitemap, and its public URL (404).
+* **Filters:** Inventaire adds **Sans prix**, **Sans photo**, **Sans texte**, **Masqués**. Sans texte returned the GLE53. Sans photo matches 0 today (every car has a cover).
+* **Fiche publique:** buyer-facing extras render under Caractéristiques. Photo keys stay hidden. A leading `: ` from the catalogue import is stripped.
+* **Desk fiche:** **Voir sur le site** (only when the car is listed and has a photo). **Dupliquer** copies the fiche, drops the VIN, sets Disponible, and leaves the copy hidden.
+* **Left open:** choosing the home hero (**À la une**). The hero is still the Rolls-Royce, then the Ferrari Purosangue, by name in code.
+* **Verification:** `bun test` 46/46. `bun run type-check` OK. Hide BMW → 404, show again → 200. Test duplicate deleted. Stock is 24, none hidden.
+
 ## [Motors] Second look — visible defects
 
 * **Status:** Done (2026-10-21). Browser-checked. Committed with the catalog pass.

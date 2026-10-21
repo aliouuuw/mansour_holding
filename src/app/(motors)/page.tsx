@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { listVehicles } from '@/server/vehicles'
+import { listPublicVehicles } from '@/server/vehicles'
 import { MansourMotorsLanding } from './landing'
 import { JsonLd, dealerLd, og } from './seo'
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   /* all statuses: the floor plan shows reserved and sold cars too */
-  const { data } = await listVehicles({ limit: 100, withPhoto: true })
+  const { data } = await listPublicVehicles({ limit: 100, withPhoto: true })
   return (
     <>
       <JsonLd data={dealerLd} />

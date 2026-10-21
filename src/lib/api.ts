@@ -1,9 +1,11 @@
 import {
   listVehicles,
+  listPublicVehicles,
   getVehicle,
   createVehicle,
   updateVehicle,
   deleteVehicle,
+  duplicateVehicle,
   uploadVehicleImage,
   replaceVehicleImage,
   reorderVehicles,
@@ -81,6 +83,7 @@ export type ApiVehicle = {
   createdBy: string | null
   arrivedAt: string
   sortOrder: number
+  listed: boolean
   createdAt: string
   updatedAt: string
 }
@@ -141,6 +144,7 @@ export const vehiclesApi = {
   create: u(createVehicle),
   update: u(updateVehicle),
   delete: u(deleteVehicle),
+  duplicate: u(duplicateVehicle),
   reorder: u(reorderVehicles),
   uploadImage: async (id: string, file: File) => {
     const form = new FormData()
@@ -167,7 +171,7 @@ export const vehiclesAiApi = {
 }
 
 export const publicVehiclesApi = {
-  list: listVehicles,
+  list: listPublicVehicles,
   get: getVehicle,
 }
 

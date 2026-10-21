@@ -17,6 +17,7 @@ import { VehicleForm, arrivedAtFromForm, arrivedAtToForm, featureEntries, formEx
 import { useToast } from '@/components/ui/Toast'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { DashBreadcrumbs, DashButton, DashStatus } from '@/components/dashboard'
+import { motorsRoutes } from '@/lib/motors-routes'
 const fuelLabels: Record<string, string> = { gasoline: 'Essence', diesel: 'Diesel', hybrid: 'Hybride', electric: 'Électrique' }
 const transLabels: Record<string, string> = { manual: 'Manuelle', automatic: 'Automatique', cvt: 'CVT' }
 
@@ -86,6 +87,26 @@ export function MotorsVehicleDetail() {
       toast((e as Error).message, 'error')
       if (fileInputRef.current) fileInputRef.current.value = ''
     },
+  })
+
+  const listedMutation = useMutation({
+    mutationFn: (listed: boolean) => vehiclesApi.update(vehicle!.id, { listed }),
+    onSuccess: (updated) => {
+      qc.setQueryData(['vehicle', vehicleId], updated)
+      invalidateMotorsQueries(qc)
+      toast(updated.listed ? 'Visible sur le site' : 'Masqué sur le site')
+    },
+    onError: (e) => toast((e as Error).message, 'error'),
+  })
+
+  const duplicateMutation = useMutation({
+    mutationFn: () => vehiclesApi.duplicate(vehicle!.id),
+    onSuccess: (copy) => {
+      invalidateMotorsQueries(qc)
+      toast('Copie créée. Elle est masquée sur le site.')
+      void navigate({ to: '/dashboard/motors/inventory/$vehicleId', params: { vehicleId: copy.id } })
+    },
+    onError: (e) => toast((e as Error).message, 'error'),
   })
 
   const removeImageMutation = useMutation({
@@ -200,6 +221,27 @@ export function MotorsVehicleDetail() {
           <p className="mm-lead">{vehicle.year}{vehicle.vin ? ` · ${vehicle.vin}` : ''}</p>
         </div>
         <DashStatus status={vehicle.status} />
+        {vehicle.listed && (vehicle.images.length > 0 || vehicle.extras.cover) ? (
+          <DashButton href={motorsRoutes.vehicle(vehicle)} variant="soft" target="_blank" rel="noopener">
+            Voir sur le site
+          </DashButton>
+        ) : null}
+        <DashButton
+          type="button"
+          variant="soft"
+          disabled={listedMutation.isPending}
+          onClick={() => listedMutation.mutate(!vehicle.listed)}
+        >
+          {vehicle.listed ? 'Masquer sur le site' : 'Afficher sur le site'}
+        </DashButton>
+        <DashButton
+          type="button"
+          variant="soft"
+          disabled={duplicateMutation.isPending}
+          onClick={() => duplicateMutation.mutate()}
+        >
+          {duplicateMutation.isPending ? 'Copie…' : 'Dupliquer'}
+        </DashButton>
         <DashButton type="button" variant="soft" onClick={() => setEditing(true)}>
           <Edit01Icon className="h-4 w-4" aria-hidden="true" /> Modifier
         </DashButton>

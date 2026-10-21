@@ -94,7 +94,7 @@ function MobileVehicleCard({
             >
               {vehicle.make} {vehicle.model}
             </Link>
-            <p className="text-xs mm-muted">{vehicle.year} · {formatNumber(vehicle.mileage)} km · {formatDate(vehicle.arrivedAt)}</p>
+            <p className="text-xs mm-muted">{vehicle.year} · {formatNumber(vehicle.mileage)} km · {formatDate(vehicle.arrivedAt)}{vehicle.listed === false ? ' · Masqué' : ''}</p>
           </div>
           <DashStatus status={vehicle.status} />
         </div>
