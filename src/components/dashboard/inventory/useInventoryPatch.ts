@@ -108,21 +108,24 @@ export function inventoryDisplayValue(vehicle: ApiVehicle, field: InventoryPatch
   }
 }
 
+/* "25 000 000", "25.000.000" and "45 000 km" are all whole numbers: keep the digits only.
+   No digit at all gives NaN, which validateInventoryPatch rejects. */
+function wholeNumber(raw: string) {
+  const digits = raw.replace(/\D/g, '')
+  return digits ? Number(digits) : Number.NaN
+}
+
 export function parseInventoryPatch(field: InventoryPatchField, raw: string): InventoryPatchBody {
   switch (field) {
     case 'make':
     case 'model':
       return { [field]: raw.trim() }
     case 'year':
-      return { year: Number.parseInt(raw, 10) }
+      return { year: wholeNumber(raw) }
     case 'mileage':
-      return { mileage: Number.parseInt(raw.replace(/\s/g, ''), 10) }
-    case 'price': {
-      const t = raw.trim()
-      if (!t) return { price: null }
-      const n = Number.parseInt(t.replace(/\s/g, ''), 10)
-      return { price: Number.isFinite(n) ? n : null }
-    }
+      return { mileage: wholeNumber(raw) }
+    case 'price':
+      return { price: raw.trim() ? wholeNumber(raw) : null }
     case 'status':
       return { status: raw as VehicleStatus }
     case 'vin': {
@@ -153,13 +156,13 @@ export function validateInventoryPatch(
   if ((field === 'make' || field === 'model') && (!patch[field] || patch[field]!.length === 0)) {
     return 'Champ requis.'
   }
-  if (field === 'year' && (patch.year! < 1900 || patch.year! > 2100)) {
+  if (field === 'year' && !(Number.isInteger(patch.year) && patch.year! >= 1900 && patch.year! <= 2100)) {
     return 'Année invalide.'
   }
-  if (field === 'mileage' && patch.mileage! < 0) {
+  if (field === 'mileage' && !Number.isSafeInteger(patch.mileage)) {
     return 'Kilométrage invalide.'
   }
-  if (field === 'price' && patch.price !== null && patch.price !== undefined && patch.price < 0) {
+  if (field === 'price' && patch.price !== null && !Number.isSafeInteger(patch.price)) {
     return 'Prix invalide.'
   }
   return null

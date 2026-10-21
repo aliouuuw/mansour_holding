@@ -34,7 +34,7 @@ const columns = [
       </div>
     ),
   }),
-  columnHelper.accessor('email', { header: 'Email', cell: (info) => <span className="text-sm mm-muted">{info.getValue()}</span> }),
+  columnHelper.accessor('email', { header: 'Email', cell: (info) => <span className="text-sm mm-muted">{info.getValue() || '—'}</span> }),
   columnHelper.accessor('phone', { header: 'Téléphone', cell: (info) => <span className="text-sm tabular-nums">{info.getValue()}</span> }),
   columnHelper.accessor('source', {
     header: 'Source',

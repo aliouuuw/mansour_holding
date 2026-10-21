@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, useParams, useNavigate } from '@/lib/router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Delete01Icon } from 'hugeicons-react'
@@ -31,6 +31,7 @@ export function MotorsDealDetail() {
   const toast = useToast()
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [notesDraft, setNotesDraft] = useState('')
+  const [notesFor, setNotesFor] = useState<string | null>(null)
 
   const { data: deal, isLoading, error } = useQuery({
     queryKey: ['deal', dealId],
@@ -38,13 +39,16 @@ export function MotorsDealDetail() {
     enabled: !!dealId,
   })
 
-  useEffect(() => {
-    if (deal) setNotesDraft(deal.notes ?? '')
-  }, [deal?.notes, deal])
+  /* seed the draft once per deal: a refetch (status change) must not erase unsaved notes */
+  if (deal && notesFor !== deal.id) {
+    setNotesFor(deal.id)
+    setNotesDraft(deal.notes ?? '')
+  }
 
   const notesMutation = useMutation({
     mutationFn: () => dealsApi.update(deal!.id, { notes: notesDraft.trim() || null }),
-    onSuccess: async () => {
+    onSuccess: async (updated) => {
+      setNotesDraft(updated.notes ?? '')
       await qc.invalidateQueries({ queryKey: ['deal', dealId] })
       invalidateMotorsQueries(qc)
       toast('Notes enregistrées')

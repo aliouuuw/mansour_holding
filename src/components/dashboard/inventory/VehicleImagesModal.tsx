@@ -13,6 +13,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { vehiclesApi, invalidateMotorsQueries, type ApiVehicle, type VehicleListResponse } from '@/lib/api'
 import { useToast } from '@/components/ui/Toast'
 import { DashButton } from '@/components/dashboard'
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import type { VehiclesQueryKey } from './useInventoryPatch'
 
 type MediaAction = '' | 'add' | 'replace'
@@ -36,6 +37,7 @@ export function VehicleImagesModal({
   const [activeIdx, setActiveIdx] = useState(0)
   const [direction, setDirection] = useState(0)
   const [mediaAction, setMediaAction] = useState<MediaAction>('')
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const images = vehicle?.images ?? []
 
@@ -45,6 +47,8 @@ export function VehicleImagesModal({
 
   useEffect(() => {
     if (!open) return
+    /* the delete confirmation owns the keyboard while it is open */
+    if (confirmDelete) return
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
       if (e.key === 'ArrowLeft') nav(-1)
@@ -52,7 +56,7 @@ export function VehicleImagesModal({
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [open, images.length])
+  }, [open, images.length, confirmDelete])
 
   const patchListCache = (updated: ApiVehicle) => {
     qc.setQueryData<VehicleListResponse>(vehiclesQueryKey, (prev) =>
@@ -99,9 +103,13 @@ export function VehicleImagesModal({
     onSuccess: (updated) => {
       patchListCache(updated)
       setActiveIdx((i) => Math.max(0, Math.min(i, updated.images.length - 1)))
+      setConfirmDelete(false)
       toast('Photo supprimée')
     },
-    onError: (e) => toast((e as Error).message, 'error'),
+    onError: (e) => {
+      setConfirmDelete(false)
+      toast((e as Error).message, 'error')
+    },
   })
 
   const spotMutation = useMutation({
@@ -141,6 +149,7 @@ export function VehicleImagesModal({
   }
 
   return (
+    <>
     <AnimatePresence>
       {open && vehicle && (
         <div className="mm-dialog-root" role="presentation">
@@ -295,7 +304,7 @@ export function VehicleImagesModal({
                   type="button"
                   variant="soft"
                   disabled={images.length === 0 || busy}
-                  onClick={() => deleteMutation.mutate(activeIdx)}
+                  onClick={() => setConfirmDelete(true)}
                 >
                   <Delete02Icon className="h-4 w-4" aria-hidden="true" />
                   Supprimer cette photo
@@ -316,5 +325,17 @@ export function VehicleImagesModal({
         </div>
       )}
     </AnimatePresence>
+    {/* after the modal in the DOM: same z-index, so it paints on top */}
+    <ConfirmDialog
+      isOpen={open && confirmDelete}
+      onClose={() => setConfirmDelete(false)}
+      onConfirm={() => deleteMutation.mutate(activeIdx)}
+      title="Supprimer cette photo"
+      message="La photo quitte la fiche et le site public."
+      confirmText="Supprimer"
+      variant="danger"
+      isLoading={deleteMutation.isPending}
+    />
+    </>
   )
 }

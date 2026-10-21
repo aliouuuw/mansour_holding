@@ -1,4 +1,31 @@
+import Link from 'next/link'
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+
+/* one error screen for app/error.tsx and this boundary. It sits above every layout, so it uses the
+   global mm colour tokens and a system font. The raw message stays in the console: in production it
+   is a generic English sentence. */
+export function ErrorScreen({ onRetry }: { onRetry: () => void }) {
+  return (
+    <main className="flex min-h-screen flex-col items-start justify-center gap-5 bg-mm-paper px-6 text-mm-ink sm:items-center sm:text-center">
+      <h1 className="text-2xl font-medium tracking-tight">Une erreur s&apos;est produite</h1>
+      <p className="max-w-md text-sm text-mm-grey">
+        La page n&apos;a pas pu s&apos;afficher. Réessayez. Si le problème continue, appelez le showroom.
+      </p>
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          onClick={onRetry}
+          className="min-h-11 rounded-mm bg-mm-ink px-5 text-sm font-medium text-mm-paper transition-colors hover:bg-mm-grey"
+        >
+          Réessayer
+        </button>
+        <Link href="/" className="flex min-h-11 items-center rounded-mm px-5 text-sm font-medium text-mm-ink underline-offset-4 hover:underline">
+          Accueil
+        </Link>
+      </div>
+    </main>
+  )
+}
 
 interface Props {
   children: ReactNode
@@ -7,17 +34,16 @@ interface Props {
 
 interface State {
   hasError: boolean
-  error: Error | null
 }
 
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
-    this.state = { hasError: false, error: null }
+    this.state = { hasError: false }
   }
 
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error }
+  static getDerivedStateFromError(): State {
+    return { hasError: true }
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
@@ -26,53 +52,8 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback
-      }
-
-      return (
-        <div className="min-h-screen bg-noir-950 flex items-center justify-center p-4">
-          <div className="max-w-md w-full bg-noir-900 border border-noir-800 rounded-lg p-8 text-center">
-            <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-red-500"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-            </div>
-            <h1 className="text-2xl font-serif text-white mb-2">Une erreur s'est produite</h1>
-            <p className="text-white/60 mb-6">
-              Nous sommes désolés, une erreur inattendue s'est produite. Veuillez rafraîchir la page ou réessayer plus tard.
-            </p>
-            {this.state.error && (
-              <details className="text-left mb-6">
-                <summary className="text-sm text-white/40 cursor-pointer hover:text-white/60 transition-colors">
-                  Détails techniques
-                </summary>
-                <pre className="mt-2 text-xs text-red-400 bg-noir-950 p-3 rounded overflow-auto max-h-32">
-                  {this.state.error.toString()}
-                </pre>
-              </details>
-            )}
-            <button
-              onClick={() => window.location.reload()}
-              className="px-6 py-2 bg-gold-400 text-noir-950 font-semibold rounded hover:bg-gold-300 transition-colors"
-            >
-              Rafraîchir la page
-            </button>
-          </div>
-        </div>
-      )
+      return this.props.fallback ?? <ErrorScreen onRetry={() => window.location.reload()} />
     }
-
     return this.props.children
   }
 }

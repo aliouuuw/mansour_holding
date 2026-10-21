@@ -83,13 +83,13 @@ export function MotorsCustomerNew() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={mmLabelClass}>Email</label>
-              <input type="email" {...register('email', { required: 'Requis' })} className={mmInputClass} placeholder="amadou@email.com" />
+              <label className={mmLabelClass}>Email (optionnel)</label>
+              <input type="email" {...register('email', { pattern: { value: /^\S+@\S+\.\S+$/, message: 'Email invalide' } })} className={mmInputClass} placeholder="amadou@email.com" />
               {errors.email && <p className="mm-field-error">{errors.email.message}</p>}
             </div>
             <div>
               <label className={mmLabelClass}>Téléphone</label>
-              <input {...register('phone', { required: 'Requis' })} className={mmInputClass} placeholder="+221 77 123 45 67" />
+              <input {...register('phone', { required: 'Requis', minLength: { value: 8, message: '8 caractères minimum' }, maxLength: { value: 20, message: '20 caractères maximum' } })} className={mmInputClass} placeholder="+221 77 123 45 67" />
               {errors.phone && <p className="mm-field-error">{errors.phone.message}</p>}
             </div>
           </div>

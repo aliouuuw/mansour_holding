@@ -11,8 +11,8 @@ import {
   ArrowRight01Icon,
   ShoppingCart01Icon,
 } from 'hugeicons-react'
-import { cn, formatPrice, formatNumber } from '@/lib/utils'
-import { DashButton, DashPageHeader } from '@/components/dashboard'
+import { formatPrice, formatNumber } from '@/lib/utils'
+import { DashButton, DashPageHeader, dashDealStatusTone } from '@/components/dashboard'
 import { overviewApi } from '@/lib/api'
 
 export function MotorsDashboard() {
@@ -35,7 +35,6 @@ export function MotorsDashboard() {
       value: formatNumber(availableCount),
       total: `${totalVehicles} total`,
       icon: Car01Icon,
-      color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
       href: '/dashboard/motors/inventory' as const,
     },
     {
@@ -43,7 +42,6 @@ export function MotorsDashboard() {
       value: formatNumber(activeDeals),
       total: `${data?.dealTotal ?? 0} total`,
       icon: ShoppingCart01Icon,
-      color: 'text-amber-700 bg-amber-50 border-amber-200',
       href: '/dashboard/motors/sales' as const,
     },
     {
@@ -51,7 +49,6 @@ export function MotorsDashboard() {
       value: formatPrice(totalRevenue),
       total: 'Affaires gagnées',
       icon: DollarCircleIcon,
-      color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
       href: '/dashboard/motors/sales' as const,
     },
     {
@@ -59,16 +56,15 @@ export function MotorsDashboard() {
       value: formatNumber(totalCustomers),
       total: 'Enregistrés',
       icon: UserMultiple02Icon,
-      color: 'border border-[var(--mm-line)] bg-[var(--mm-off)] text-[var(--mm-ink)]',
       href: '/dashboard/motors/customers' as const,
     },
   ]
 
   const pipelineStages = [
-    { label: 'Prospects', count: data?.lead ?? 0, color: 'bg-blue-500' },
-    { label: 'Négociation', count: data?.negotiation ?? 0, color: 'bg-amber-500' },
-    { label: 'Conclu', count: data?.['closed-won'] ?? 0, color: 'bg-emerald-500' },
-    { label: 'Perdu', count: data?.['closed-lost'] ?? 0, color: 'bg-slate-400' },
+    { label: 'Prospects', count: data?.lead ?? 0, tone: dashDealStatusTone.lead },
+    { label: 'Négociation', count: data?.negotiation ?? 0, tone: dashDealStatusTone.negotiation },
+    { label: 'Conclu', count: data?.['closed-won'] ?? 0, tone: dashDealStatusTone['closed-won'] },
+    { label: 'Perdu', count: data?.['closed-lost'] ?? 0, tone: dashDealStatusTone['closed-lost'] },
   ]
   const maxPipeline = Math.max(...pipelineStages.map(s => s.count), 1)
 
@@ -114,8 +110,8 @@ export function MotorsDashboard() {
                   <p className="mt-2 text-2xl font-semibold tracking-tight">{kpi.value}</p>
                   <p className="mt-1 text-xs mm-muted">{kpi.total}</p>
                 </div>
-                <div className={cn('border p-2.5 transition-colors', kpi.color)}>
-                  <kpi.icon className="h-5 w-5" />
+                <div className="border border-[var(--mm-line)] bg-[var(--mm-off)] p-2.5 text-[var(--mm-ink)]">
+                  <kpi.icon className="h-5 w-5" aria-hidden="true" />
                 </div>
               </div>
             </motion.div>
@@ -154,13 +150,9 @@ export function MotorsDashboard() {
                     <p className="text-xs mm-muted">{deal.customerName ?? '—'}</p>
                   </div>
                   <p className="text-sm font-semibold">{formatPrice(deal.price)}</p>
-                  <span className={cn('px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider',
-                    deal.status === 'closed-won' ? 'bg-emerald-100 text-emerald-700' :
-                    deal.status === 'closed-lost' ? 'bg-slate-100 text-slate-600' :
-                    deal.status === 'negotiation' ? 'bg-amber-100 text-amber-700' :
-                    'bg-blue-100 text-blue-700'
-                  )}>
-                    {deal.status === 'lead' ? 'Prospect' : deal.status === 'negotiation' ? 'Négo' : deal.status === 'closed-won' ? 'Conclu' : 'Perdu'}
+                  <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--mm-grey)]">
+                    <span className="h-2 w-2" style={{ background: dashDealStatusTone[deal.status] }} aria-hidden="true" />
+                    {deal.status === 'lead' ? 'Prospect' : deal.status === 'negotiation' ? 'Négociation' : deal.status === 'closed-won' ? 'Conclu' : 'Perdu'}
                   </span>
                 </motion.div>
               ))
@@ -183,7 +175,7 @@ export function MotorsDashboard() {
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-3">
-                      <div className={cn('h-2.5 w-2.5', stage.color)} />
+                      <div className="h-2.5 w-2.5" style={{ background: stage.tone }} aria-hidden="true" />
                       <span className="text-sm">{stage.label}</span>
                     </div>
                     <span className="text-sm font-semibold">{stage.count}</span>
@@ -193,7 +185,7 @@ export function MotorsDashboard() {
                       initial={{ width: 0 }}
                       animate={{ width: `${(stage.count / maxPipeline) * 100}%` }}
                       transition={{ duration: 0.8, delay: 0.6 + index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                      className={cn(stage.color)}
+                      style={{ background: stage.tone }}
                     />
                   </div>
                 </motion.div>

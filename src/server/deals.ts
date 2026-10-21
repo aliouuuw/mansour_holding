@@ -1,6 +1,7 @@
 'use server'
 
 import { UserError, attempt, type ActionResult } from './action-result'
+import { revalidatePath } from 'next/cache'
 import { and, desc, eq, ilike, or, sql } from 'drizzle-orm'
 import { db } from './db/index'
 import { deals, vehicles, customers } from './db/schema'
@@ -47,10 +48,9 @@ function dealListWhere(params: { status?: DealStatus; search?: string }) {
     const term = `%${params.search.trim()}%`
     parts.push(
       or(
-        ilike(vehicles.make, term),
-        ilike(vehicles.model, term),
-        ilike(customers.firstName, term),
-        ilike(customers.lastName, term),
+        ilike(sql`concat_ws(' ', ${vehicles.make}, ${vehicles.model})`, term),
+        ilike(sql`concat_ws(' ', ${customers.firstName}, ${customers.lastName})`, term),
+        ilike(sql`concat_ws(' ', ${customers.lastName}, ${customers.firstName})`, term),
         ilike(customers.phone, term)
       )
     )
@@ -184,17 +184,25 @@ export async function updateDeal(id: string, data: unknown) {
   return attempt(async () => {
     await requireUser()
     const validated = parseBody(updateDealSchema, data)
-    if (validated.status === 'closed-won' || validated.status === 'closed-lost') {
-      validated.closedAt = new Date()
+    if (validated.status) {
+      /* reopening a deal clears its close date */
+      validated.closedAt = validated.status === 'closed-won' || validated.status === 'closed-lost' ? new Date() : null
     }
 
-    const [deal] = await db
-      .update(deals)
-      .set({ ...validated, updatedAt: new Date() })
-      .where(eq(deals.id, id))
-      .returning()
-
-    if (!deal) throw new UserError('Affaire introuvable.')
+    const deal = await db.transaction(async (tx) => {
+      const [row] = await tx
+        .update(deals)
+        .set({ ...validated, updatedAt: new Date() })
+        .where(eq(deals.id, id))
+        .returning()
+      if (!row) throw new UserError('Affaire introuvable.')
+      /* a won deal sells the car: the public site shows it as Vendu. Reopening does not put it back on sale. */
+      if (validated.status === 'closed-won') {
+        await tx.update(vehicles).set({ status: 'sold', updatedAt: new Date() }).where(eq(vehicles.id, row.vehicleId))
+      }
+      return row
+    })
+    if (validated.status === 'closed-won') revalidatePath('/mansour-motors', 'layout')
 
     const [row] = await db
       .select(dealSelect)

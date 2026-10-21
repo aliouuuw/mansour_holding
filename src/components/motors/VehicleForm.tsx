@@ -187,7 +187,13 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
         </div>
         <div>
           <label className={mmLabelClass}>VIN (optionnel)</label>
-          <input {...register('vin')} className={mmInputClass} placeholder="JTMAB3FV5RD123456" maxLength={17} />
+          <input
+            {...register('vin', { validate: (v) => !v || v.length === 17 || 'Le VIN doit contenir 17 caractères.' })}
+            className={mmInputClass}
+            placeholder="JTMAB3FV5RD123456"
+            maxLength={17}
+          />
+          {errors.vin && <p className={errorClass}>{errors.vin.message}</p>}
         </div>
       </div>
 
@@ -210,7 +216,7 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
             <option value="left">L&apos;avant pointe vers la gauche</option>
             <option value="right">L&apos;avant pointe vers la droite</option>
           </select>
-          <p className="mt-1 text-xs text-noir-400">Sur le plateau, les voitures voisines se tournent vers la voiture au centre.</p>
+          <p className="mt-1 text-xs mm-muted">Sur le plateau, les voitures voisines se tournent vers la voiture au centre.</p>
         </div>
         <div>
           <label className={mmLabelClass} htmlFor="photoFocus">Photo : cadrage</label>
@@ -219,7 +225,7 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
             <option value="35% 52%">Décalé vers la gauche</option>
             <option value="65% 52%">Décalé vers la droite</option>
           </select>
-          <p className="mt-1 text-xs text-noir-400">Partie de la photo gardée quand elle est recadrée.</p>
+          <p className="mt-1 text-xs mm-muted">Partie de la photo gardée quand elle est recadrée.</p>
         </div>
       </div>
 
@@ -230,15 +236,15 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
           <button
             type="button"
             onClick={() => append({ key: '', value: '' })}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-gold-600 hover:text-gold-700 transition-colors"
+            className="mm-link inline-flex items-center gap-1.5 text-xs"
           >
-            <Add01Icon className="h-3.5 w-3.5" />
+            <Add01Icon className="h-3.5 w-3.5" aria-hidden="true" />
             Ajouter
           </button>
         </div>
-        <p className="mb-3 text-xs text-noir-400">Ex. : Toit ouvrant → Panoramique, Sièges → Cuir massant</p>
+        <p className="mb-3 text-xs mm-muted">Ex. : Toit ouvrant → Panoramique, Sièges → Cuir massant</p>
         {fields.length === 0 && (
-          <p className="text-xs text-noir-400 italic py-2">Aucune caractéristique supplémentaire.</p>
+          <p className="py-2 text-xs mm-muted">Aucune caractéristique supplémentaire.</p>
         )}
         <div className="space-y-2">
           {fields.map((field, index) => (
@@ -256,9 +262,10 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
               <button
                 type="button"
                 onClick={() => remove(index)}
-                className="flex-shrink-0 p-2.5 text-red-400 hover:text-red-600 hover:bg-red-50 border border-noir-200 transition-colors"
+                className="mm-icon-btn shrink-0"
+                aria-label="Retirer cette caractéristique"
               >
-                <Delete01Icon className="h-4 w-4" />
+                <Delete01Icon className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
           ))}

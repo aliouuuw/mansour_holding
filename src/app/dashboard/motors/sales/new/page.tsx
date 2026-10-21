@@ -1,5 +1,7 @@
 'use client'
 
+import { Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Link, useNavigate } from '@/lib/router'
 import { motion } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -24,26 +26,42 @@ interface DealFormValues {
   notes: string
 }
 
-export function MotorsDealNew() {
+function MotorsDealNewForm() {
   const navigate = useNavigate()
+  const searchParams = useSearchParams()
   const qc = useQueryClient()
   const toast = useToast()
 
   const { data: vehiclesData, isLoading: loadingVehicles } = useQuery({
     queryKey: ['vehicles-for-deal'],
-    queryFn: () => vehiclesApi.list({ limit: 100 }),
+    // ponytail: one page of 500 (the server max). Switch to a search combobox past that.
+    queryFn: () => vehiclesApi.list({ limit: 500, sortBy: 'make', sortDir: 'asc' }),
   })
 
   const { data: customersData, isLoading: loadingCustomers } = useQuery({
     queryKey: ['customers-for-deal'],
-    queryFn: () => customersApi.list({ limit: 100 }),
+    queryFn: () => customersApi.list({ limit: 500 }),
   })
 
-  const vehicles = vehiclesData?.data ?? []
-  const customers = customersData?.data ?? []
+  /* a sold car cannot start a new deal */
+  const vehicles = (vehiclesData?.data ?? []).filter((v) => v.status !== 'sold')
+  const customers = (customersData?.data ?? [])
+    .slice()
+    .sort((a, b) => `${a.lastName} ${a.firstName}`.localeCompare(`${b.lastName} ${b.firstName}`, 'fr'))
+
+  /* « Créer une affaire » on a vehicle or a client page passes it in the URL */
+  const presetVehicle = vehicles.find((v) => v.id === searchParams.get('vehicleId'))
+  const presetCustomer = searchParams.get('customerId') ?? ''
 
   const { register, handleSubmit, setValue, formState: { errors } } = useForm<DealFormValues>({
-    defaultValues: { status: 'lead', price: 0 },
+    values: {
+      vehicleId: presetVehicle?.id ?? '',
+      customerId: customers.some((c) => c.id === presetCustomer) ? presetCustomer : '',
+      price: presetVehicle?.price ?? 0,
+      status: 'lead',
+      notes: '',
+    },
+    resetOptions: { keepDirtyValues: true },
   })
 
   const createMutation = useMutation({
@@ -160,6 +178,20 @@ export function MotorsDealNew() {
         </form>
       </div>
     </motion.div>
+  )
+}
+
+export function MotorsDealNew() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center py-20">
+          <div className="mm-spinner" role="status" aria-label="Chargement" />
+        </div>
+      }
+    >
+      <MotorsDealNewForm />
+    </Suspense>
   )
 }
 

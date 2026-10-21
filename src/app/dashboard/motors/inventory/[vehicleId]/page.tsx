@@ -31,6 +31,7 @@ export function MotorsVehicleDetail() {
   const [direction, setDirection] = useState(0)
   const [editing, setEditing] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [photoToDelete, setPhotoToDelete] = useState<number | null>(null)
 
   const { data: vehicle, isLoading, error } = useQuery({
     queryKey: ['vehicle', vehicleId],
@@ -92,10 +93,14 @@ export function MotorsVehicleDetail() {
     onSuccess: (updated) => {
       qc.setQueryData(['vehicle', vehicleId], updated)
       invalidateMotorsQueries(qc)
-      setActiveIdx(i => Math.min(i, updated.images.length - 1))
+      setActiveIdx(i => Math.max(0, Math.min(i, updated.images.length - 1)))
+      setPhotoToDelete(null)
       toast('Photo supprimée')
     },
-    onError: (e) => toast((e as Error).message, 'error'),
+    onError: (e) => {
+      setPhotoToDelete(null)
+      toast((e as Error).message, 'error')
+    },
   })
 
   const spotMutation = useMutation({
@@ -236,9 +241,13 @@ export function MotorsVehicleDetail() {
                     </div>
                   </>
                 )}
-                <button onClick={() => removeImageMutation.mutate(activeIdx)}
-                  className="absolute top-3 right-3 z-10 flex h-8 w-8 items-center justify-center bg-red-600/80 text-white backdrop-blur-sm hover:bg-red-600 transition-colors">
-                  <Delete02Icon className="h-3.5 w-3.5" />
+                <button
+                  type="button"
+                  onClick={() => setPhotoToDelete(activeIdx)}
+                  className="mm-media-delete"
+                  aria-label={`Supprimer la photo ${activeIdx + 1}`}
+                >
+                  <Delete02Icon className="h-4 w-4" aria-hidden="true" />
                 </button>
               </>
             ) : (
@@ -338,6 +347,16 @@ export function MotorsVehicleDetail() {
         </div>
       </div>
 
+      <ConfirmDialog
+        isOpen={photoToDelete !== null}
+        onClose={() => setPhotoToDelete(null)}
+        onConfirm={() => photoToDelete !== null && removeImageMutation.mutate(photoToDelete)}
+        title="Supprimer cette photo"
+        message="La photo quitte la fiche et le site public."
+        confirmText="Supprimer"
+        variant="danger"
+        isLoading={removeImageMutation.isPending}
+      />
       <ConfirmDialog
         isOpen={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}

@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { UserIcon, Car01Icon, DollarCircleIcon } from 'hugeicons-react'
 import { Link } from '@/lib/router'
 import { formatPrice } from '@/lib/utils'
-import { DashButton } from '@/components/dashboard'
+import { DashButton, dashDealStatusTone } from '@/components/dashboard'
 import { dealsApi, invalidateMotorsQueries, type ApiDeal, type DealStatus } from '@/lib/api'
 import { useToast } from '@/components/ui/Toast'
 import type { DealsBoard } from '@/server/deals'
@@ -121,7 +121,7 @@ export function MotorsSalesBoard({ initial }: { initial: DealsBoard }) {
           <div key={col.status} className="flex flex-col gap-3">
             <div className="mm-kanban-head">
               <div className="flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-[var(--mm-ink)]" aria-hidden="true" />
+                <span className="h-2 w-2" style={{ background: dashDealStatusTone[col.status] }} aria-hidden="true" />
                 <span className="text-xs font-bold uppercase tracking-wider">{col.label}</span>
                 <span className="mm-kanban-count">{cards.length}</span>
               </div>

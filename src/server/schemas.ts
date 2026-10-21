@@ -57,8 +57,9 @@ export const updateVehicleSchema = createVehicleSchema.partial()
 export const createCustomerSchema = z.object({
   firstName: z.string().min(1).max(100),
   lastName: z.string().min(1).max(100),
-  email: z.string().email(),
-  phone: z.string().min(8).max(20),
+  /* walk-in clients often have no email: '' means none (the column stays NOT NULL) */
+  email: z.string().trim().email().or(z.literal('')),
+  phone: z.string().trim().min(8).max(20),
   address: z.string().nullable(),
   notes: z.string().nullable(),
   source: z.enum(['walk-in', 'referral', 'online', 'phone']),

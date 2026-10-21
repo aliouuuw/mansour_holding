@@ -3,7 +3,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 import { Link } from '@/lib/router'
 import { cn } from '@/lib/utils'
-import type { VehicleStatus } from '@/lib/api'
+import type { DealStatus, VehicleStatus } from '@/lib/api'
 
 export const mmLabelClass = 'mm-label'
 export const mmInputClass = 'mm-input'
@@ -104,6 +104,14 @@ export function DashPageHeader({
       {actions ? <div className="mm-page-actions">{actions}</div> : null}
     </div>
   )
+}
+
+/* one colour per pipeline stage, from the mm status tokens: overview bars and board columns agree */
+export const dashDealStatusTone: Record<DealStatus, string> = {
+  lead: 'var(--mm-ink)',
+  negotiation: 'var(--mm-warn)',
+  'closed-won': 'var(--mm-ok)',
+  'closed-lost': 'var(--mm-grey-muted)',
 }
 
 export { vehicleStatusLabels as dashVehicleStatusLabels }

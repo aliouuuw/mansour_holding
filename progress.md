@@ -1,5 +1,20 @@
 # Project Progress Log
 
+## [Audit] Medium fixes
+
+* **Status:** Done (2026-10-21). Browser check blocked: Playwright needs Chrome (`npx playwright install chrome`). Checked with curl on `next start`.
+* **M1 grid numbers:** digits only (« 25.000.000 » = 25 000 000, no longer 25). No digit = rejected before the server. Test: `useInventoryPatch.test.ts`.
+* **M2 deal notes:** draft seeded once per deal; a status change no longer erases unsaved notes.
+* **M3 deal close:** reopening clears `closedAt`. « Conclu » sets the vehicle to `sold` in the same transaction and refreshes the public site. Reopening does not put the car back on sale (staff choice).
+* **M4 new deal:** 500 rows, sold cars hidden, clients sorted by name. `?vehicleId=` / `?customerId=` prefill.
+* **M5/M6:** clients ordered by `createdAt desc, id`. Search matches « marque modèle » and « prénom nom » across columns.
+* **M7:** `/dashboard/motors/sales` redirects to `/login` when the session is gone (`currentUser()` in `session.ts`).
+* **M8:** client email optional ('' = none, column unchanged). Phone 8-20 and VIN 17 checked in the forms.
+* **M9:** photo delete asks for confirmation (vehicle page and photo modal). Icon button labelled, mm tokens.
+* **M10:** Excon self-hosted for dashboard and login too (`mansour-motors/fonts/excon.ts`, Fontshare CSS removed). Login on dashboard tokens, no « Mansour Holding ». One French error screen (`ErrorScreen`). VehicleForm without gold/noir/red. Overview and board use `dashDealStatusTone` (mm status tokens).
+* **Tests:** `.env.test` gives `bun test` a placeholder `DATABASE_URL` (postgres connects on first query): the old `VehicleForm.test.ts` failure is gone.
+* **Verification:** type-check OK, `bun test` 40/40, `bun run build` OK. curl: sign-up API returns `EMAIL_PASSWORD_SIGN_UP_DISABLED`, `/register` 404, logged-out sales streams `NEXT_REDIRECT` to `/login`. Lint: 4 pre-existing errors left (setState in effects, `nav` before declaration).
+
 ## [Audit] Critical and High fixes (functional + UX audit)
 
 * **Status:** Done (2026-10-21). Not browser-checked: the back office needs a staff login, and mutations would write to the shared Neon database.

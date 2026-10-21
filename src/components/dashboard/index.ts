@@ -4,6 +4,7 @@ export {
   DashIconButton,
   DashPageHeader,
   DashStatus,
+  dashDealStatusTone,
   dashVehicleStatusLabels,
   mmInputClass,
   mmLabelClass,

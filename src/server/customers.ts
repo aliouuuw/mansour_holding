@@ -1,7 +1,7 @@
 'use server'
 
 import { UserError, attempt } from './action-result'
-import { eq, or, ilike, sql } from 'drizzle-orm'
+import { desc, eq, or, ilike, sql } from 'drizzle-orm'
 import { db } from './db/index'
 import { customers } from './db/schema'
 import { requireUser } from './session'
@@ -26,15 +26,15 @@ export async function listCustomers(params: { page?: number; limit?: number; sea
 
     const where = params.search
       ? or(
-          ilike(customers.firstName, `%${params.search}%`),
-          ilike(customers.lastName, `%${params.search}%`),
+          ilike(sql`concat_ws(' ', ${customers.firstName}, ${customers.lastName})`, `%${params.search}%`),
+          ilike(sql`concat_ws(' ', ${customers.lastName}, ${customers.firstName})`, `%${params.search}%`),
           ilike(customers.email, `%${params.search}%`),
           ilike(customers.phone, `%${params.search}%`)
         )
       : undefined
 
     const [rows, [{ count }]] = await Promise.all([
-      db.select().from(customers).where(where).limit(limitNum).offset(offset),
+      db.select().from(customers).where(where).orderBy(desc(customers.createdAt), customers.id).limit(limitNum).offset(offset),
       db.select({ count: sql<number>`count(*)::int` }).from(customers).where(where),
     ])
 

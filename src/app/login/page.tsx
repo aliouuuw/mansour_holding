@@ -1,10 +1,11 @@
 'use client'
 
 import { Link, useNavigate } from '@/lib/router'
-import { Building03Icon, ViewIcon, ViewOffIcon } from 'hugeicons-react'
+import { ViewIcon, ViewOffIcon } from 'hugeicons-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { signIn } from '@/lib/auth'
+import { DashButton, mmInputClass, mmLabelClass } from '@/components/dashboard'
 
 type LoginForm = {
   email: string
@@ -22,7 +23,7 @@ export function LoginPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginForm>()
+  } = useForm<LoginForm>({ defaultValues: { rememberMe: true } })
 
   const onSubmit = async (data: LoginForm) => {
     setError(null)
@@ -35,12 +36,12 @@ export function LoginPage() {
         rememberMe: data.rememberMe,
       })
       if (result.error) {
-        setError(result.error.message || 'Erreur de connexion')
+        setError('Email ou mot de passe incorrect.')
         return
       }
       navigate({ to: '/dashboard' })
     } catch (err) {
-      setError('Une erreur est survenue. Veuillez réessayer.')
+      setError('Connexion impossible. Vérifiez le réseau, puis réessayez.')
       console.error('Login error:', err)
     } finally {
       setIsLoading(false)
@@ -48,108 +49,76 @@ export function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-noir-950">
-      <div className="flex w-full items-center justify-center px-6 py-12">
-        <div className="w-full max-w-md">
-          <div className="mb-12 flex flex-col items-center">
-            <Link to="/" className="flex items-center gap-3 mb-8">
-              <Building03Icon className="h-8 w-8 text-gold-400" />
-              <span className="text-xl font-bold uppercase tracking-widest text-white">Mansour Holding</span>
-            </Link>
-            <div className="text-center">
-              <h1 className="text-3xl font-bold text-white">Espace Professionnel</h1>
-              <p className="mt-3 text-sm text-silver-400">
-                Connectez-vous pour accéder à votre tableau de bord
-              </p>
-            </div>
-          </div>
-
-          {error && (
-            <div className="mb-6 rounded-sm border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-              {error}
-            </div>
-          )}
-
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-silver-400 mb-2">
-                Adresse Email
-              </label>
-              <input
-                type="email"
-                placeholder="votre@email.com"
-                className="w-full rounded-sm border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/30 outline-none transition-colors focus:border-gold-400 focus:bg-white/10 focus:ring-2 focus:ring-gold-400/20"
-                {...register('email', {
-                  required: 'Adresse email requise',
-                  pattern: { value: /\S+@\S+\.\S+/, message: 'Adresse email invalide' },
-                })}
-              />
-              {errors.email && (
-                <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>
-              )}
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-bold uppercase tracking-wider text-silver-400">
-                  Mot de Passe
-                </label>
-                <button type="button" className="text-xs font-medium text-gold-400 hover:text-gold-300">
-                  Mot de passe oublié ?
-                </button>
-              </div>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
-                  className="w-full rounded-sm border border-white/10 bg-white/5 px-4 py-3 pr-10 text-sm text-white placeholder-white/30 outline-none transition-colors focus:border-gold-400 focus:bg-white/10 focus:ring-2 focus:ring-gold-400/20"
-                  {...register('password', {
-                    required: 'Mot de passe requis',
-                    minLength: { value: 8, message: 'Le mot de passe doit contenir au moins 8 caractères' },
-                  })}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-silver-400 hover:text-white"
-                >
-                  {showPassword ? <ViewOffIcon className="h-4 w-4" /> : <ViewIcon className="h-4 w-4" />}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>
-              )}
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="remember"
-                className="h-4 w-4 rounded-sm border-white/10 bg-white/5 text-gold-400 focus:ring-gold-400"
-                {...register('rememberMe')}
-              />
-              <label htmlFor="remember" className="text-sm text-silver-400">
-                Se souvenir de moi
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="block w-full rounded-sm bg-gold-400 px-6 py-4 text-center text-xs font-bold uppercase tracking-[0.2em] text-noir-950 shadow-sm hover:bg-gold-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Connexion...' : 'Se Connecter'}
-            </button>
-          </form>
-
-          <div className="mt-12 pt-8 border-t border-white/10 text-center">
-            <p className="text-xs text-silver-500">
-              © {new Date().getFullYear()} Mansour Holding. Tous droits réservés.
-            </p>
+    <main className="flex min-h-screen items-center justify-center px-4 py-12">
+      <div className="w-full max-w-sm space-y-8">
+        <div className="space-y-6">
+          <Link to="/mansour-motors" aria-label="Mansour Motors, site public">
+            <img src="/mansour-motors/logo-header.png" alt="" width={469} height={429} className="h-10 w-auto" decoding="async" />
+          </Link>
+          <div>
+            <h1 className="mm-title">Espace pro</h1>
+            <p className="mm-lead">Inventaire, clients et ventes du showroom.</p>
           </div>
         </div>
+
+        <form className="mm-panel mm-panel-pad space-y-5" onSubmit={handleSubmit(onSubmit)} noValidate>
+          {error && <div className="mm-alert-error" role="alert">{error}</div>}
+
+          <div>
+            <label htmlFor="login-email" className={mmLabelClass}>Email</label>
+            <input
+              id="login-email"
+              type="email"
+              autoComplete="email"
+              className={mmInputClass}
+              aria-invalid={errors.email ? true : undefined}
+              {...register('email', {
+                required: 'Email requis',
+                pattern: { value: /\S+@\S+\.\S+/, message: 'Email invalide' },
+              })}
+            />
+            {errors.email && <p className="mm-field-error">{errors.email.message}</p>}
+          </div>
+
+          <div>
+            <label htmlFor="login-password" className={mmLabelClass}>Mot de passe</label>
+            <div className="relative">
+              <input
+                id="login-password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="current-password"
+                className={`${mmInputClass} pr-12`}
+                aria-invalid={errors.password ? true : undefined}
+                {...register('password', { required: 'Mot de passe requis' })}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="mm-icon-btn absolute right-0 top-1/2 -translate-y-1/2"
+                aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                aria-pressed={showPassword}
+              >
+                {showPassword ? <ViewOffIcon className="h-4 w-4" aria-hidden="true" /> : <ViewIcon className="h-4 w-4" aria-hidden="true" />}
+              </button>
+            </div>
+            {errors.password && <p className="mm-field-error">{errors.password.message}</p>}
+          </div>
+
+          <label className="flex min-h-[var(--mm-touch)] items-center gap-3 text-sm text-[var(--mm-grey)]">
+            <input type="checkbox" className="h-4 w-4 accent-[var(--mm-ink)]" {...register('rememberMe')} />
+            Rester connecté
+          </label>
+
+          <DashButton type="submit" disabled={isLoading} full>
+            {isLoading ? 'Connexion…' : 'Se connecter'}
+          </DashButton>
+        </form>
+
+        <p className="text-sm text-[var(--mm-grey)]">
+          Mot de passe oublié : demandez à l&apos;administrateur du showroom.
+        </p>
       </div>
-    </div>
+    </main>
   )
 }
 

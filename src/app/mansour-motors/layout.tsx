@@ -1,20 +1,9 @@
 import type { Metadata, Viewport } from 'next'
-import localFont from 'next/font/local'
 import { MOTORS_SITE } from '@/lib/motors-public-host'
 import { og } from './seo'
+import { excon } from './fonts/excon'
 import './motors.css'
 
-/* Excon (Fontshare, free licence), self-hosted: no third-party CSS on the critical path */
-const excon = localFont({
-  src: [
-    { path: './fonts/excon-100.woff2', weight: '100' },
-    { path: './fonts/excon-300.woff2', weight: '300' },
-    { path: './fonts/excon-400.woff2', weight: '400' },
-    { path: './fonts/excon-500.woff2', weight: '500' },
-  ],
-  variable: '--font-excon',
-  display: 'swap',
-})
 
 export const viewport: Viewport = {
   viewportFit: 'cover',

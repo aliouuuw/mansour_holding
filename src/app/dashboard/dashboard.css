@@ -21,7 +21,7 @@
   min-height: 100vh;
   background: var(--mm-paper);
   color: var(--mm-ink);
-  font-family: var(--font-mm);
+  font-family: var(--font-excon), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -508,6 +508,24 @@
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
+}
+.mm-dash .mm-media-delete {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--mm-touch);
+  height: var(--mm-touch);
+  border-radius: var(--mm-r);
+  background: color-mix(in srgb, var(--mm-black) 62%, transparent);
+  color: var(--mm-white);
+  transition: background-color 0.2s var(--mm-ease);
+}
+.mm-dash .mm-media-delete:hover {
+  background: var(--mm-stop);
 }
 .mm-dash .mm-danger-soft:hover {
   background: color-mix(in srgb, var(--mm-stop) 8%, #fff);

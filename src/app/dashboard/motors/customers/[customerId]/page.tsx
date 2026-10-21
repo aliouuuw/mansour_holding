@@ -161,13 +161,13 @@ export function MotorsCustomerDetail() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label className={mmLabelClass}>Email</label>
-                <input type="email" {...register('email', { required: 'Requis' })} className={mmInputClass} />
+                <label className={mmLabelClass}>Email (optionnel)</label>
+                <input type="email" {...register('email', { pattern: { value: /^\S+@\S+\.\S+$/, message: 'Email invalide' } })} className={mmInputClass} />
                 {errors.email && <p className="mm-field-error">{errors.email.message}</p>}
               </div>
               <div>
                 <label className={mmLabelClass}>Téléphone</label>
-                <input {...register('phone', { required: 'Requis' })} className={mmInputClass} />
+                <input {...register('phone', { required: 'Requis', minLength: { value: 8, message: '8 caractères minimum' }, maxLength: { value: 20, message: '20 caractères maximum' } })} className={mmInputClass} />
                 {errors.phone && <p className="mm-field-error">{errors.phone.message}</p>}
               </div>
             </div>
@@ -242,12 +242,14 @@ export function MotorsCustomerDetail() {
           <div className="mm-panel mm-panel-pad">
             <h2 className="mm-panel-title">Coordonnées</h2>
             <div className="mt-4 space-y-3">
-              <div className="flex items-center gap-3">
-                <Mail01Icon className="h-4 w-4 text-[var(--mm-grey-muted)]" aria-hidden="true" />
-                <a href={`mailto:${customer.email}`} className="mm-link text-sm">
-                  {customer.email}
-                </a>
-              </div>
+              {customer.email ? (
+                <div className="flex items-center gap-3">
+                  <Mail01Icon className="h-4 w-4 text-[var(--mm-grey-muted)]" aria-hidden="true" />
+                  <a href={`mailto:${customer.email}`} className="mm-link text-sm">
+                    {customer.email}
+                  </a>
+                </div>
+              ) : null}
               <div className="flex items-center gap-3">
                 <SmartPhone01Icon className="h-4 w-4 text-[var(--mm-grey-muted)]" aria-hidden="true" />
                 <a href={`tel:${customer.phone}`} className="mm-link text-sm">

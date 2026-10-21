@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
+import { excon } from '@/app/mansour-motors/fonts/excon'
 import './dashboard.css'
 
 const iconBase = '/mansour-motors'
@@ -18,13 +19,8 @@ export const metadata: Metadata = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <link
-        rel="stylesheet"
-        href="https://api.fontshare.com/v2/css?f[]=excon@100,200,300,400,500&display=swap"
-        precedence="default"
-      />
+    <div className={excon.variable} style={{ display: 'contents' }}>
       <DashboardLayout>{children}</DashboardLayout>
-    </>
+    </div>
   )
 }
