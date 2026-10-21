@@ -558,7 +558,6 @@ function createRing(canvas) {
     },
     draw,
     frontIndex,
-    frontRect: () => planeRect(frontIndex()),
     planeRect,
     pick,
     destroy() {
@@ -571,28 +570,6 @@ function createRing(canvas) {
       gl.deleteProgram(studio)
     },
   }
-}
-
-function flyTo(car, rect, href, go) {
-  if (reduceMotion.matches || !rect || rect.width < 8) {
-    go(href)
-    return
-  }
-  const layer = document.createElement('div')
-  layer.className = 'fly'
-  const img = document.createElement('img')
-  img.src = car.img
-  img.alt = `${car.make} ${car.model}`
-  img.style.cssText = `top:${rect.top}px;left:${rect.left}px;width:${rect.width}px;height:${rect.height}px`
-  img.style.viewTransitionName = `car-${car.n}`
-  layer.append(img)
-  document.body.append(layer)
-  img.getBoundingClientRect()
-  img.style.top = '0'
-  img.style.left = '0'
-  img.style.width = '100%'
-  img.style.height = '100%'
-  setTimeout(() => go(href), 780)
 }
 
 export function mountTurntable(root, {
@@ -944,10 +921,11 @@ export function mountTurntable(root, {
     syncSwipeHint()
   }
 
-  function openIndex(i, rect) {
+  /* open the fiche at once. The old zoom-to-full-screen layer waited 780 ms and, under
+     client-side navigation, stayed on <body> over the next page until a reload. */
+  function openIndex(i) {
     const c = cars[i]
-    if (!c) return
-    flyTo(c, rect, detailUrl(c), navigate)
+    if (c) navigate(detailUrl(c))
   }
 
   function bindRing() {
@@ -1044,7 +1022,7 @@ export function mountTurntable(root, {
     if (didDrag) { didDrag = false; return }
     const i = ring.pick(e.clientX, e.clientY)
     if (i < 0) return
-    openIndex(i, ring.planeRect(i))
+    openIndex(i)
   })
   canvas?.addEventListener('keydown', (e) => {
     if (mode !== 'ring' || !cars.length) return
@@ -1060,14 +1038,14 @@ export function mountTurntable(root, {
     if (e.key === 'Enter') {
       e.preventDefault()
       const i = ring?.frontIndex() || 0
-      openIndex(i, ring?.frontRect())
+      openIndex(i)
     }
   })
   openBtn?.addEventListener('click', (e) => {
     if (mode !== 'ring' || !ring) return
     e.preventDefault()
     const i = ring.frontIndex()
-    openIndex(i, ring.frontRect())
+    openIndex(i)
   })
   ticksEl?.addEventListener('click', (e) => {
     const b = e.target.closest('[data-i]')
@@ -1100,8 +1078,7 @@ export function mountTurntable(root, {
     const a = e.target.closest('a')
     if (!a) return
     e.preventDefault()
-    const img = $('.idx-shot', a)
-    openIndex(cars.findIndex((c) => String(c.n) === a.dataset.n), img?.getBoundingClientRect())
+    openIndex(cars.findIndex((c) => String(c.n) === a.dataset.n))
   })
   viewEl?.addEventListener('click', (e) => {
     const b = e.target.closest('button')
@@ -1201,8 +1178,7 @@ export function mountTurntable(root, {
     if (!hero || !cars[featured]) return
     e.preventDefault()
     if (didSwipe) { didSwipe = false; return }
-    const img = $('[data-atelier-img]', atelier)
-    openIndex(featured, img?.getBoundingClientRect())
+    openIndex(featured)
   })
   addEventListener('keydown', (e) => {
     if (mode !== 'atelier' || !cars.length) return
@@ -1217,8 +1193,7 @@ export function mountTurntable(root, {
     }
     if (e.key === 'Enter' && document.activeElement === document.body) {
       e.preventDefault()
-      const img = $('[data-atelier-img]', atelier)
-      openIndex(featured, img?.getBoundingClientRect())
+      openIndex(featured)
     }
   }, { signal })
 

@@ -1943,15 +1943,6 @@ input::placeholder { color: var(--grey-2); }
   .index a:hover .idx-thumb { opacity: 1; transform: translateY(-50%) scale(1); }
   .index a:hover .idx-foot { opacity: 0; transition: opacity .25s; }
 }
-/* The detector flags the four layout properties below. Measured at 48 frames of
-   16.7ms with none dropped: the layer is fixed and holds one child, so the only
-   layout it dirties is its own. A transform FLIP would scale the image
-   non-uniformly and break the object-fit crop, so width and height stay. */
-.fly { position: fixed; inset: 0; z-index: 50; background: #050505; pointer-events: none; }
-.fly img {
-  position: absolute; object-fit: cover; object-position: 50% 55%;
-  transition: top .75s var(--ease), left .75s var(--ease), width .75s var(--ease), height .75s var(--ease);
-}
 @media (max-width: 860px) {
   .hero-stage, .hero-cam { transform-origin: 50% 40%; }
   .hero-still { object-position: 50% 38%; }
