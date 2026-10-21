@@ -68,6 +68,9 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
                     <span className="toolbar-label">Atelier</span>
                   </button>
                 </div>
+                <button type="button" className="dispo-dock" data-dispo-dock aria-pressed="false">
+                  Disponibles
+                </button>
                 <details className="filters" data-filters>
                   <summary aria-label="Filtres">
                     <IconFilters size={18} />

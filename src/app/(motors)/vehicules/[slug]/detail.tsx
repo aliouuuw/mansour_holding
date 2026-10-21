@@ -322,7 +322,7 @@ export function PublicVehicleDetail({ vehicle: v, others }: { vehicle: ApiVehicl
 
           <aside className="panel" aria-label="Résumé">
             <div ref={anchorRef}>
-              <p className="panel-price">{fcfa(v.price)}</p>
+              <p className={v.price == null ? 'panel-price is-ask' : 'panel-price'}>{fcfa(v.price)}</p>
               <p><span className="status" data-status={v.status}>{STATE[v.status]}</span></p>
             </div>
             <dl className="specs">
@@ -336,6 +336,14 @@ export function PublicVehicleDetail({ vehicle: v, others }: { vehicle: ApiVehicl
             <div className="panel-actions">
               {sold
                 ? <Button to={motorsRoutes.alert}>Être prévenu d&apos;un modèle similaire</Button>
+                : v.price == null
+                  ? <>
+                    <Button href={waLink(`Bonjour Mansour Motors, je souhaite le prix du ${title} (${v.year}).`)} target="_blank" rel="noopener">Demander le prix</Button>
+                    <div className="pair">
+                      <Button tone="soft" href="#visite">Réserver une visite</Button>
+                      <Button tone="soft" href={CONTACT.tel}>Appeler</Button>
+                    </div>
+                  </>
                   : <>
                   <Button href="#visite">Réserver une visite</Button>
                   <div className="pair">
@@ -356,10 +364,12 @@ export function PublicVehicleDetail({ vehicle: v, others }: { vehicle: ApiVehicl
       </main>
 
       <div className={`bar${bar ? ' is-on' : ''}`} aria-hidden={!bar}>
-        <p><span>{title}</span><b>{fcfa(v.price)}</b></p>
+        <p><span>{title}</span><b className={v.price == null ? 'is-ask' : undefined}>{fcfa(v.price)}</b></p>
         {sold
           ? <Button to={motorsRoutes.alert} tabIndex={bar ? 0 : -1}>Être prévenu</Button>
-          : <Button href="#visite" tabIndex={bar ? 0 : -1}>Réserver une visite</Button>}
+          : v.price == null
+            ? <Button href={waLink(`Bonjour Mansour Motors, je souhaite le prix du ${title} (${v.year}).`)} target="_blank" rel="noopener" tabIndex={bar ? 0 : -1}>Demander le prix</Button>
+            : <Button href="#visite" tabIndex={bar ? 0 : -1}>Réserver une visite</Button>}
       </div>
     </Shell>
   )

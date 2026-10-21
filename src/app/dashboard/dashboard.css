@@ -912,7 +912,28 @@
 }
 .mm-dash .mm-grid-th--num { text-align: right; }
 .mm-dash .mm-grid-th--thumb { width: 4.5rem; }
-.mm-dash .mm-grid-th--actions { width: 2.5rem; }
+.mm-dash .mm-grid-th--actions { width: 4rem; }
+.mm-dash .mm-grid-th--status,
+.mm-dash .mm-grid-cell-td--status { min-width: 8.25rem; }
+.mm-dash .mm-grid-th--price { min-width: 8.5rem; }
+.mm-dash .mm-skel {
+  height: 0.65rem;
+  border-radius: var(--mm-r);
+  background: var(--mm-off);
+}
+.mm-dash .mm-inventory-thumb-btn {
+  display: block;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--mm-r);
+}
+.mm-dash .mm-inventory-thumb-btn:focus-visible {
+  outline: 2px solid var(--mm-ink);
+  outline-offset: 2px;
+}
 .mm-dash .mm-grid-row:hover .mm-grid-cell-td {
   background: color-mix(in srgb, var(--mm-off) 40%, #fff);
 }
@@ -929,8 +950,9 @@
   border-right: 1px solid var(--mm-line);
 }
 .mm-dash .mm-grid-cell-td--actions {
-  padding: 0.35rem 0.5rem;
+  padding: 0.35rem 0.4rem;
   text-align: center;
+  white-space: nowrap;
 }
 .mm-dash .mm-grid-cell-td--editing {
   background: #fff;

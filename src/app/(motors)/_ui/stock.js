@@ -190,8 +190,15 @@ export function mountStock(root, cars, { models, navigate }) {
       }
     }
 
-    const count = `${list.length} véhicule${list.length > 1 ? 's' : ''}`
+    const shownAvail = list.filter((c) => c.status === 'available').length
+    const count = s.dispo
+      ? `${list.length} disponible${list.length === 1 ? '' : 's'}`
+      : shownAvail === list.length
+        ? `${list.length} véhicule${list.length === 1 ? '' : 's'}`
+        : `${list.length} véhicule${list.length === 1 ? '' : 's'} · ${shownAvail} disponible${shownAvail === 1 ? '' : 's'}`
     for (const el of $$('[data-live]', root)) el.textContent = count
+    const dispoDock = $('[data-dispo-dock]', root)
+    if (dispoDock) dispoDock.setAttribute('aria-pressed', String(!!s.dispo))
     $('[data-empty]', root).hidden = list.length > 0
     const sheetN = ['marque', 'modele', 'energie', 'budget', 'km', 'dispo', 'tri', 'gamme'].filter((k) => s[k]).length
     $('[data-active-count]', root).textContent = sheetN ? String(sheetN) : ''
@@ -236,6 +243,10 @@ export function mountStock(root, cars, { models, navigate }) {
     update()
   }, { signal })
   form.addEventListener('change', (e) => { if (e.target !== makeSel) update() }, { signal })
+  $('[data-dispo-dock]', root)?.addEventListener('click', () => {
+    form.elements.dispo.checked = !form.elements.dispo.checked
+    update()
+  }, { signal })
   $('[data-reset]', root).addEventListener('click', () => {
     form.reset()
     makeSel.value = ''

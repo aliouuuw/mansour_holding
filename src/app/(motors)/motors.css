@@ -1205,11 +1205,59 @@ input::placeholder { color: var(--grey-2); }
 .viewbar-tools .seg button:hover:not([aria-pressed='true']) { color: var(--ink); }
 .viewbar-tools .seg [aria-pressed='true'] { color: var(--white); font-weight: 500; }
 .viewbar-tools .seg button,
-.filters summary {
+.filters summary,
+.dispo-dock {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: .4rem;
+}
+.dispo-dock {
+  min-height: 2.25rem;
+  padding: .35rem .8rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--grey);
+  cursor: pointer;
+  font: inherit;
+  font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .04em;
+  white-space: nowrap;
+  box-shadow: inset -1px 0 0 rgba(18, 17, 16, .1);
+  transition: color .2s, background-color .2s;
+}
+.dispo-dock:hover { color: var(--ink); }
+.dispo-dock[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+}
+@media (min-width: 861px) {
+  /* page title is clipped; without this offset the sticky bar paints over the first photo row */
+  .mm main:has(.filterbar) { padding-top: var(--head-total); }
+  .catalog-toolbar .viewbar-tools {
+    gap: .45rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+  .viewbar-tools .seg {
+    padding: 2px;
+    border: 1px solid rgba(18, 17, 16, .1);
+    border-radius: var(--r);
+    background: rgba(255, 255, 255, .55);
+    box-shadow: none;
+  }
+  .dispo-dock,
+  .filters summary {
+    margin-left: 0;
+    border: 1px solid rgba(18, 17, 16, .1);
+    border-radius: var(--r);
+    background: rgba(255, 255, 255, .55);
+    box-shadow: none;
+  }
 }
 .viewbar-tools .ui-icon,
 .filters summary .ui-icon { display: none; flex: 0 0 auto; }
@@ -1254,7 +1302,39 @@ input::placeholder { color: var(--grey-2); }
   align-self: end; gap: .75rem; margin-top: .55rem; padding-top: 0; border-top: 0;
 }
 .card-price { font-weight: 350; font-size: 1.25rem; letter-spacing: -.015em; font-variant-numeric: tabular-nums; color: var(--ink); }
-.card[data-status='sold'] .card-price { color: var(--grey-2); text-decoration: line-through; text-decoration-thickness: 1px; }
+.card-price.is-ask,
+.idx-price.is-ask,
+.panel-price.is-ask,
+.bar b.is-ask {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.card[data-status='sold'] .card-price:not(.is-ask) {
+  color: var(--grey-2);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+.card-stamp {
+  position: absolute;
+  top: .65rem;
+  left: .65rem;
+  z-index: 2;
+  padding: .28rem .5rem;
+  border: 1px solid rgba(255, 255, 255, .28);
+  background: #121110;
+  color: #f6f5f2;
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  line-height: 1;
+  pointer-events: none;
+}
+.card-stamp.is-reserved {
+  background: #966d09;
+  border-color: rgba(255, 255, 255, .22);
+}
 .card .status {
   display: inline-flex; align-items: center; gap: .4rem;
   font-size: .78rem; font-weight: 550; color: var(--grey);
@@ -1286,6 +1366,7 @@ input::placeholder { color: var(--grey-2); }
 .photo-bar .rail i { background: var(--white); }
 .panel { position: sticky; top: calc(var(--head) + 16px); display: grid; gap: 1.5rem; padding: 1.55rem 1.4rem 1.7rem; background: #fbfaf7; box-shadow: 0 0 0 1px var(--line); }
 .panel-price { font-weight: 100; font-size: clamp(2.4rem, 3.6vw, 3.4rem); letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.panel-price.is-ask { font-size: clamp(1.2rem, 2vw, 1.55rem); font-weight: 350; letter-spacing: -.02em; }
 [data-stock] { margin-top: .7rem; }
 .panel .specs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-block: 1px solid var(--line); padding-block: 1rem; }
 .specs dt { font-size: .78rem; color: var(--grey); }
@@ -1448,13 +1529,14 @@ input::placeholder { color: var(--grey-2); }
     display: flex;
     align-items: baseline;
     gap: .35rem;
-    flex: 1 1 auto;
+    flex: 1 0 100%;
     min-width: 0;
     margin: 0;
-    padding: .4rem 0 .15rem;
+    padding: .35rem 0 .1rem;
     font-size: .64rem;
-    letter-spacing: .08em;
+    letter-spacing: .04em;
     text-transform: uppercase;
+    white-space: nowrap;
   }
   .catalog-count--mobile [data-active-label] { display: none; }
   .viewbar-tools .ui-icon,
@@ -1471,7 +1553,7 @@ input::placeholder { color: var(--grey-2); }
   }
   .catalog-toolbar .viewbar-tools {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     align-items: center;
     gap: .4rem;
     flex: 1 1 auto;
@@ -1492,6 +1574,15 @@ input::placeholder { color: var(--grey-2); }
     background: rgba(255, 255, 255, .5);
   }
   .filters { flex: 0 0 auto; }
+  .dispo-dock {
+    flex: 0 0 auto;
+    min-height: 2.5rem;
+    padding: .25rem .6rem;
+    font-size: .7rem;
+    box-shadow: none;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+  }
   .filters summary {
     min-height: 2.5rem;
     min-width: 2.5rem;
@@ -1809,6 +1900,7 @@ input::placeholder { color: var(--grey-2); }
   background: linear-gradient(transparent 62%, rgba(5, 5, 5, .82) 100%);
   pointer-events: none;
 }
+.atelier-hero-media .card-stamp { z-index: 3; }
 .atelier-meta {
   position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
   display: grid; grid-template-columns: minmax(0, 1fr) auto;
@@ -1906,7 +1998,7 @@ input::placeholder { color: var(--grey-2); }
 }
 .ch-dark .index a { border-bottom-color: var(--line-d); }
 .idx-n { color: var(--grey); font-variant-numeric: tabular-nums; font-weight: 300; align-self: baseline; }
-.idx-thumb { display: none; }
+.idx-thumb { display: none; position: relative; overflow: hidden; }
 .idx-body { min-width: 0; display: grid; gap: .15rem; }
 .idx-make {
   font-size: .68rem; font-weight: 500; letter-spacing: .14em;

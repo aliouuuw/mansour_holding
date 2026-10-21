@@ -7,12 +7,11 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatPrice(price: number | null | undefined): string {
   if (price == null) return 'Prix sur demande'
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'XOF',
-    minimumFractionDigits: 0,
+  /* fr-FR currency for XOF prints "F CFA"; the showroom writes FCFA */
+  const digits = new Intl.NumberFormat('fr-FR', {
     maximumFractionDigits: 0,
   }).format(price).replace(/[\u202f\u00a0]/g, ' ')
+  return `${digits} FCFA`
 }
 
 export function formatNumber(n: number): string {

@@ -1,5 +1,25 @@
 # Project Progress Log
 
+## [Motors] Second look — visible defects
+
+* **Status:** Done (2026-10-21). Browser-checked. Committed with the catalog pass.
+* **Stamp:** **Vendu** uses solid ink `#121110`. The sticky bar covered the first photo row (48 px). Desktop main now has `padding-top: var(--head-total)`, so the Ferrari stamp sits clear of the bar.
+* **Phone toolbar:** the count is its own line (`24 véhicules · 8 disponibles`). Grille, Liste, Atelier, Disponibles, and Filtres wrap on the next line. `flex-wrap: nowrap` had pushed the buttons off screen.
+* **Desktop toolbar:** Disponibles and Filtres are separate chips. They no longer read as extra view modes inside the Grille pill.
+* **Dashboard:** `formatPrice` prints `0 FCFA` (Intl XOF printed `0 F CFA`). Null stays **Prix sur demande**.
+* **Inventory:** Statut column fits **Disponible** (132 px). The grid scrolls about 80 px to reach **Fiche**.
+* **Verification:** `bun run type-check` OK. Desktop 1300 px and phone 390 px catalog. Overview text `0 FCFA`. Inventory row measured, no clip on the status select.
+
+## [Motors] Catalog + dashboard product pass (Impeccable)
+
+* **Status:** Done (2026-10-21). Browser-checked catalog (desktop + 390 px), BMW fiche, dashboard overview, inventory grid. Committed with the second look.
+* **World:** inherited public paper/ink and mm-dash. No DESIGN.md rewrite.
+* **Catalog:** toolbar **Disponibles** toggle (`?dispo=1`); count names available vs total; **Vendu** / **Réservé** stamp on photos (list + atelier too); do not strike **Prix sur demande**.
+* **Fiche:** unpriced cars use sentence-size price and primary **Demander le prix** (WhatsApp). Visit and call stay secondary.
+* **Dashboard:** KPI **Disponibles** + *N au total*; deal rows link to the affaire; overview keeps header while loading; VIN in inventory search; visible **Fiche**; shorter grid hint; mobile thumb opens photos; French description placeholder.
+* **Verification:** `bun run type-check` OK. `bun test` 45/45. Browser: filter 24→8, BMW CTA, KPI 8 / 24, inventory search + Fiche.
+* **Later:** enter real FCFA prices in the back office (every public card is still Prix sur demande); deal-row click untested (zero affaires); default-on Disponibles is a product call.
+
 ## [Motors] Routing: Motors at the root, slug URLs
 
 * **Status:** Done (2026-10-21). Checked with curl on `next start` and Host headers. Not deployed.

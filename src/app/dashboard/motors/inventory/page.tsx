@@ -183,8 +183,8 @@ export function MotorsInventory() {
   const availableStock = overview?.availableCount ?? 0
   const lead =
     statusFilter !== 'all' || queryQ
-      ? `${pagination.total} résultat${pagination.total === 1 ? '' : 's'} · ${availableStock} disponibles · édition en ligne`
-      : `${totalStock} véhicules · ${availableStock} disponibles · édition en ligne`
+      ? `${pagination.total} résultat${pagination.total === 1 ? '' : 's'} · ${availableStock} disponibles`
+      : `${totalStock} véhicules · ${availableStock} disponibles`
 
   const hasFilters = statusFilter !== 'all' || queryQ.length > 0
 
@@ -264,7 +264,7 @@ export function MotorsInventory() {
           <input
             ref={searchInputRef}
             type="search"
-            placeholder="Rechercher par marque ou modèle…"
+            placeholder="Marque, modèle ou VIN…"
             value={searchInput}
             onChange={(e) => handleSearch(e.target.value)}
             className="mm-input mm-input--search text-sm"
@@ -318,7 +318,12 @@ export function MotorsInventory() {
         ) : (
           <>
             <div className="mm-inventory-mobile-only">
-              <InventoryMobileList vehicles={vehicles} vehiclesQueryKey={vehiclesQueryKey} isLoading={isLoading} />
+              <InventoryMobileList
+                vehicles={vehicles}
+                vehiclesQueryKey={vehiclesQueryKey}
+                isLoading={isLoading}
+                onOpenMedia={setMediaVehicle}
+              />
             </div>
             <InventoryGrid
               vehicles={vehicles}

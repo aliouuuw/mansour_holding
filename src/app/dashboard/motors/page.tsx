@@ -15,22 +15,62 @@ import { formatPrice, formatNumber } from '@/lib/utils'
 import { DashButton, DashPageHeader, dashDealStatusTone } from '@/components/dashboard'
 import { overviewApi } from '@/lib/api'
 
+const overviewActions = (
+  <>
+    <DashButton to="/dashboard/motors/inventory" variant="soft">
+      <Car01Icon className="h-4 w-4" aria-hidden="true" /> Inventaire
+    </DashButton>
+    <DashButton to="/dashboard/motors/sales/new">
+      <Add01Icon className="h-4 w-4" aria-hidden="true" /> Nouvelle affaire
+    </DashButton>
+  </>
+)
+
+const dealStatusLabel = {
+  lead: 'Prospect',
+  negotiation: 'Négociation',
+  'closed-won': 'Conclu',
+  'closed-lost': 'Perdu',
+} as const
+
 export function MotorsDashboard() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['overview', 'motors'],
     queryFn: overviewApi.motors,
   })
 
+  const header = (
+    <DashPageHeader
+      title="Mansour Motors"
+      lead="Tableau de bord du concessionnaire"
+      actions={overviewActions}
+    />
+  )
+
   /* no zeros while loading or after a failure: a 0 FCFA revenue would read as a fact */
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="mm-spinner" role="status" aria-label="Chargement" />
+      <div className="space-y-8" aria-busy="true">
+        {header}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="mm-panel mm-panel-pad min-h-28" aria-hidden="true">
+              <div className="mm-skel w-24" />
+              <div className="mm-skel mt-4 h-7 w-16" />
+            </div>
+          ))}
+        </div>
+        <p className="sr-only">Chargement</p>
       </div>
     )
   }
   if (error) {
-    return <div className="mm-alert-error" role="alert">Chiffres indisponibles : {(error as Error).message}</div>
+    return (
+      <div className="space-y-8">
+        {header}
+        <div className="mm-alert-error" role="alert">Chiffres indisponibles : {(error as Error).message}</div>
+      </div>
+    )
   }
 
   const vehicles = data?.availableVehicles ?? []
@@ -43,9 +83,9 @@ export function MotorsDashboard() {
 
   const kpis = [
     {
-      label: 'Véhicules en stock',
+      label: 'Disponibles',
       value: formatNumber(availableCount),
-      total: `${totalVehicles} total`,
+      total: `${totalVehicles} au total`,
       icon: Car01Icon,
       href: '/dashboard/motors/inventory' as const,
     },
@@ -85,22 +125,8 @@ export function MotorsDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-        <DashPageHeader
-          title="Mansour Motors"
-          lead="Tableau de bord du concessionnaire"
-          actions={
-            <>
-              <DashButton to="/dashboard/motors/inventory" variant="soft">
-                <Car01Icon className="h-4 w-4" aria-hidden="true" /> Inventaire
-              </DashButton>
-              <DashButton to="/dashboard/motors/sales/new">
-                <Add01Icon className="h-4 w-4" aria-hidden="true" /> Nouvelle affaire
-              </DashButton>
-            </>
-          }
-        />
+        {header}
       </motion.div>
 
       {/* KPIs */}
@@ -149,13 +175,12 @@ export function MotorsDashboard() {
             {deals.length === 0 ? (
               <div className="mm-empty">Aucune affaire pour le moment</div>
             ) : (
-              deals.map((deal, index) => (
-                <motion.div
+              deals.map((deal) => (
+                <Link
                   key={deal.id}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.5 + index * 0.05 }}
-                  className="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-[var(--mm-off)]/50"
+                  to="/dashboard/motors/sales/$dealId"
+                  params={{ dealId: deal.id }}
+                  className="flex items-center gap-4 px-6 py-4 text-[inherit] no-underline transition-colors hover:bg-[var(--mm-off)]/50"
                 >
                   <div className="flex-1 min-w-0">
                     <p className="truncate text-sm font-medium">{deal.vehicleName ?? '—'}</p>
@@ -164,9 +189,9 @@ export function MotorsDashboard() {
                   <p className="text-sm font-semibold">{formatPrice(deal.price)}</p>
                   <span className="flex items-center gap-1.5 text-xs font-medium text-[var(--mm-grey)]">
                     <span className="h-2 w-2" style={{ background: dashDealStatusTone[deal.status] }} aria-hidden="true" />
-                    {deal.status === 'lead' ? 'Prospect' : deal.status === 'negotiation' ? 'Négociation' : deal.status === 'closed-won' ? 'Conclu' : 'Perdu'}
+                    {dealStatusLabel[deal.status]}
                   </span>
-                </motion.div>
+                </Link>
               ))
             )}
           </div>

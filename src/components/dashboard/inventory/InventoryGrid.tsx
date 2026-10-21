@@ -133,7 +133,7 @@ function InventoryGridRow({
       {EDITABLE_FIELDS.slice(0, 5).map((field) => (
         <InventoryFieldCombobox key={field} {...cellProps(field)} />
       ))}
-      <td className="mm-grid-cell-td">
+      <td className="mm-grid-cell-td mm-grid-cell-td--status">
         <select
           className="mm-grid-select"
           value={vehicle.status}
@@ -157,7 +157,7 @@ function InventoryGridRow({
           className="mm-link inline-flex items-center gap-1"
         >
           <ViewIcon className="h-3.5 w-3.5" aria-hidden="true" />
-          <span className="sr-only">Fiche</span>
+          Fiche
         </Link>
       </td>
     </tr>
@@ -187,9 +187,7 @@ export function InventoryGrid({
 
   return (
     <div className="mm-grid-wrap">
-      <p className="mm-grid-hint">
-        Chaque cellule ouvre une liste de valeurs déjà utilisées. Tapez une nouvelle valeur pour l&apos;enregistrer dans la liste. Cliquez la vignette pour gérer les photos.
-      </p>
+      <p className="mm-grid-hint">Cliquez une cellule pour modifier. La vignette ouvre les photos.</p>
       <div className="mm-grid-scroll">
         <table className="mm-grid-table">
           <thead>
@@ -205,10 +203,10 @@ export function InventoryGrid({
               <th className="mm-grid-th mm-grid-th--num" scope="col">
                 <SortHeader label="Km" field="mileage" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />
               </th>
-              <th className="mm-grid-th mm-grid-th--num" scope="col">
+              <th className="mm-grid-th mm-grid-th--num mm-grid-th--price" scope="col">
                 <SortHeader label="Prix" field="price" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />
               </th>
-              <th className="mm-grid-th" scope="col">Statut</th>
+              <th className="mm-grid-th mm-grid-th--status" scope="col">Statut</th>
               <th className="mm-grid-th" scope="col">VIN</th>
               <th className="mm-grid-th mm-grid-th--num" scope="col">
                 <SortHeader label="Arrivée" field="arrivedAt" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />

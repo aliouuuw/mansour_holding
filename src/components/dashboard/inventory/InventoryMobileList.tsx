@@ -15,10 +15,12 @@ export function InventoryMobileList({
   vehicles,
   vehiclesQueryKey,
   isLoading,
+  onOpenMedia,
 }: {
   vehicles: ApiVehicle[]
   vehiclesQueryKey: VehiclesQueryKey
   isLoading: boolean
+  onOpenMedia?: (vehicle: ApiVehicle) => void
 }) {
   if (isLoading) {
     return (
@@ -30,13 +32,26 @@ export function InventoryMobileList({
   return (
     <div className="mm-inventory-cards">
       {vehicles.map((v) => (
-        <MobileVehicleCard key={v.id} vehicle={v} vehiclesQueryKey={vehiclesQueryKey} />
+        <MobileVehicleCard
+          key={v.id}
+          vehicle={v}
+          vehiclesQueryKey={vehiclesQueryKey}
+          onOpenMedia={onOpenMedia}
+        />
       ))}
     </div>
   )
 }
 
-function MobileVehicleCard({ vehicle, vehiclesQueryKey }: { vehicle: ApiVehicle; vehiclesQueryKey: VehiclesQueryKey }) {
+function MobileVehicleCard({
+  vehicle,
+  vehiclesQueryKey,
+  onOpenMedia,
+}: {
+  vehicle: ApiVehicle
+  vehiclesQueryKey: VehiclesQueryKey
+  onOpenMedia?: (vehicle: ApiVehicle) => void
+}) {
   /* one save state per card: saving one price must not lock the field you tap next */
   const { saveField, patchStatus, isPending: disabled } = useInventoryPatch(vehiclesQueryKey)
   const saved = vehicle.price === null ? '' : String(vehicle.price)
@@ -51,7 +66,20 @@ function MobileVehicleCard({ vehicle, vehiclesQueryKey }: { vehicle: ApiVehicle;
 
   return (
     <article className="mm-inventory-card mm-inventory-card--edit">
-      {img ? (
+      {onOpenMedia ? (
+        <button
+          type="button"
+          className="mm-inventory-thumb-btn"
+          onClick={() => onOpenMedia(vehicle)}
+          aria-label={`Gérer les photos de ${vehicle.make} ${vehicle.model}`}
+        >
+          {img ? (
+            <img src={img} alt="" className="h-16 w-20 rounded-[var(--mm-r)] object-cover" loading="lazy" decoding="async" />
+          ) : (
+            <div className="flex h-16 w-20 items-center justify-center rounded-[var(--mm-r)] bg-[var(--mm-off)] text-xs text-[var(--mm-grey-muted)]">+</div>
+          )}
+        </button>
+      ) : img ? (
         <img src={img} alt="" className="h-16 w-20 shrink-0 rounded-[var(--mm-r)] object-cover" loading="lazy" decoding="async" />
       ) : (
         <div className="flex h-16 w-20 shrink-0 items-center justify-center rounded-[var(--mm-r)] bg-[var(--mm-off)] text-xs text-[var(--mm-grey-muted)]">—</div>

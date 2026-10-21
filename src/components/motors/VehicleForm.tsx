@@ -204,7 +204,7 @@ export function VehicleForm({ defaultValues, onSubmit, submitLabel, loading }: P
           {...register('description')}
           rows={3}
           className={cn(mmTextareaClass, 'resize-none')}
-          placeholder="Full options, cuir, toit ouvrant..."
+          placeholder="Toutes options, cuir, toit ouvrant…"
         />
       </div>
 

@@ -1,7 +1,7 @@
 import {
   $, $$, esc, fcfa, km, pad2, detailUrl, status, reduceMotion, segThumb,
 } from './dom.js'
-import { FUEL } from './shared'
+import { FUEL, STATE } from './shared'
 
 const TAU = Math.PI * 2
 
@@ -844,13 +844,14 @@ export function mountTurntable(root, {
           <span class="idx-n">${pad2(i + 1)}</span>
           <span class="idx-thumb">
             <img src="${esc(c.img)}" alt="" class="idx-shot${c.cutout ? ' is-cutout' : ''}" style="--pos:${c.pos}" loading="lazy" decoding="async">
+            ${c.status !== 'available' ? `<span class="card-stamp${c.status === 'reserved' ? ' is-reserved' : ''}">${esc(STATE[c.status])}</span>` : ''}
           </span>
           <span class="idx-body">
             <span class="idx-make">${esc(c.make)}</span>
             <span class="idx-name">${esc(c.model)}</span>
             <span class="idx-meta">${c.year} · ${km(c.km)} · ${esc(FUEL[c.fuel] ?? c.fuel ?? '')}</span>
             <span class="idx-foot">
-              <span class="idx-price">${fcfa(c.price)}</span>
+              <span class="idx-price${c.price == null ? ' is-ask' : ''}">${fcfa(c.price)}</span>
               ${status(c)}
             </span>
           </span>
@@ -890,6 +891,20 @@ export function mountTurntable(root, {
         img.classList.add('is-in')
       }
     }
+    const media = $('[data-atelier-media]', atelier)
+    if (media) {
+      let stamp = $('[data-atelier-stamp]', media)
+      if (!stamp) {
+        stamp = document.createElement('span')
+        stamp.className = 'card-stamp'
+        stamp.dataset.atelierStamp = ''
+        media.append(stamp)
+      }
+      const soldOrHeld = c.status !== 'available'
+      stamp.hidden = !soldOrHeld
+      stamp.textContent = soldOrHeld ? STATE[c.status] : ''
+      stamp.classList.toggle('is-reserved', c.status === 'reserved')
+    }
     const brand = $('[data-atelier-brand]', atelier)
     const name = $('[data-atelier-name]', atelier)
     const specs = $('[data-atelier-specs]', atelier)
@@ -899,7 +914,10 @@ export function mountTurntable(root, {
     if (brand) brand.textContent = c.make
     if (name) name.textContent = c.model
     if (specs) specs.textContent = `${c.year} · ${km(c.km)}`
-    if (price) price.textContent = fcfa(c.price)
+    if (price) {
+      price.textContent = fcfa(c.price)
+      price.classList.toggle('is-ask', c.price == null)
+    }
     if (count) count.innerHTML = `<b>${pad2(featured + 1)}</b> / ${pad2(cars.length)}`
     if (st) st.innerHTML = status(c)
     if (hero) hero.href = detailUrl(c)

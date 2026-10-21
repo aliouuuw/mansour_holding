@@ -14,13 +14,19 @@ export function Card({ v, eager = false }: { v: ApiVehicle; eager?: boolean }) {
         <div className="media card-media">
           {/* eslint-disable-next-line @next/next/no-img-element -- object-position comes from the vehicle's focal point */}
           <img src={cover(v)} alt="" className={isCutout(v) ? 'is-cutout' : undefined} style={{ '--pos': focal(v) } as React.CSSProperties} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+          {v.status !== 'available' ? (
+            <span className={v.status === 'reserved' ? 'card-stamp is-reserved' : 'card-stamp'}>{STATE[v.status]}</span>
+          ) : null}
           <span className="card-open-hint" aria-hidden="true">Voir la fiche</span>
         </div>
         <div className="card-body">
           <p className="brand">{v.make}</p>
           <h3 className="card-model">{v.model}</h3>
           <p className="meta"><span>{v.year}</span><span>{km(v.mileage)}</span><span>{FUEL[v.fuelType]}</span></p>
-          <p className="card-foot"><span className="card-price">{fcfa(v.price)}</span><span className="status" data-status={v.status}>{STATE[v.status]}</span></p>
+          <p className="card-foot">
+            <span className={v.price == null ? 'card-price is-ask' : 'card-price'}>{fcfa(v.price)}</span>
+            <span className="status" data-status={v.status}>{STATE[v.status]}</span>
+          </p>
         </div>
       </a>
     </article>

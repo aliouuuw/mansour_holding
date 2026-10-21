@@ -73,9 +73,9 @@ export async function listVehicles(filters: VehicleFilters = {}) {
     conditions.push(sql`(jsonb_array_length(${vehicles.images}) > 0 or coalesce(${vehicles.extras}->>'cover', '') <> '')`)
   }
   if (filters.search) {
-    /* "Toyota Land Cruiser" spans both columns */
+    /* "Toyota Land Cruiser" spans both columns; VIN is how staff find a specific car */
     conditions.push(
-      sql`concat_ws(' ', ${vehicles.make}, ${vehicles.model}) ilike ${'%' + filters.search.trim() + '%'}`
+      sql`concat_ws(' ', ${vehicles.make}, ${vehicles.model}, coalesce(${vehicles.vin}, '')) ilike ${'%' + filters.search.trim() + '%'}`
     )
   }
 
