@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useId, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { ArrowDown01Icon, ArrowUp01Icon, Cancel01Icon, DragDropVerticalIcon } from 'hugeicons-react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { vehiclesApi, invalidateMotorsQueries, type ApiVehicle } from '@/lib/api'
 import { PLATEAU } from '@/app/mansour-motors/_ui/car'
 import { useToast } from '@/components/ui/Toast'
+import { useModal } from '@/components/ui/useModal'
 import { DashButton, dashVehicleStatusLabels } from '@/components/dashboard'
 
 function moveItem(list: ApiVehicle[], index: number, dir: -1 | 1) {
@@ -45,22 +46,23 @@ export function VehicleOrderDialog({
     refetchOnWindowFocus: false,
   })
 
-  useEffect(() => {
-    if (!open) {
-      setItems(null)
-      setDragIndex(null)
-      setSeeded(false)
-      return
-    }
-    if (!data || isFetching || seeded) return
+  /* closed: forget the draft. Open: copy the fresh list once, then the staff edits that copy. */
+  if (!open && seeded) {
+    setItems(null)
+    setDragIndex(null)
+    setSeeded(false)
+  }
+  if (open && data && !isFetching && !seeded) {
     setItems(data.data)
     setSeeded(true)
-  }, [open, data, isFetching, seeded])
+  }
 
   const dirty =
     !!data &&
     !!items &&
     (items.length !== data.data.length || items.some((vehicle, index) => vehicle.id !== data.data[index]?.id))
+
+  const dialogRef = useRef<HTMLDivElement>(null)
 
   const saveMutation = useMutation({
     mutationFn: (orderedIds: string[]) => vehiclesApi.reorder(orderedIds),
@@ -72,6 +74,8 @@ export function VehicleOrderDialog({
     },
     onError: (e) => toast((e as Error).message, 'error'),
   })
+
+  useModal(open, dialogRef, { onEscape: saveMutation.isPending ? undefined : onClose })
 
   const dropOn = (index: number) => {
     if (dragIndex === null || dragIndex === index) return
@@ -95,14 +99,17 @@ export function VehicleOrderDialog({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            /* a stray click must not drop an unsaved order: Annuler and Escape still close */
+            onClick={dirty || saveMutation.isPending ? undefined : onClose}
             aria-hidden="true"
           />
           <div className="mm-dialog-viewport">
             <motion.div
+              ref={dialogRef}
               role="dialog"
               aria-modal="true"
               aria-labelledby={titleId}
+              tabIndex={-1}
               className="mm-dialog mm-dialog--order"
               initial={reduceMotion ? false : { opacity: 0, y: 12, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}

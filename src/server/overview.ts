@@ -4,6 +4,7 @@ import { desc, eq, sql } from 'drizzle-orm'
 import { db } from './db/index'
 import { vehicles, customers, deals } from './db/schema'
 import { requireUser } from './session'
+import { attempt, type ActionResult } from './action-result'
 
 export type HoldingOverview = {
   vehicleTotal: number
@@ -64,81 +65,85 @@ async function dealPipeline() {
   return { ...pipeline, dealTotal, totalRevenue, activeDeals: pipeline.lead + pipeline.negotiation }
 }
 
-export async function getHoldingOverview(): Promise<HoldingOverview> {
-  await requireUser()
-  const [[{ vehicleTotal }], [{ customerTotal }], pipeline] = await Promise.all([
-    db.select({ vehicleTotal: sql<number>`count(*)::int` }).from(vehicles),
-    db.select({ customerTotal: sql<number>`count(*)::int` }).from(customers),
-    dealPipeline(),
-  ])
-  return {
-    vehicleTotal,
-    customerTotal,
-    dealTotal: pipeline.dealTotal,
-    closedWon: pipeline['closed-won'],
-    totalRevenue: pipeline.totalRevenue,
-  }
+export async function getHoldingOverview(): Promise<ActionResult<HoldingOverview>> {
+  return attempt(async () => {
+    await requireUser()
+    const [[{ vehicleTotal }], [{ customerTotal }], pipeline] = await Promise.all([
+      db.select({ vehicleTotal: sql<number>`count(*)::int` }).from(vehicles),
+      db.select({ customerTotal: sql<number>`count(*)::int` }).from(customers),
+      dealPipeline(),
+    ])
+    return {
+      vehicleTotal,
+      customerTotal,
+      dealTotal: pipeline.dealTotal,
+      closedWon: pipeline['closed-won'],
+      totalRevenue: pipeline.totalRevenue,
+    }
+  })
 }
 
-export async function getMotorsOverview(): Promise<MotorsOverview> {
-  await requireUser()
-  const [[{ vehicleTotal }], [{ availableCount }], [{ customerTotal }], pipeline, dealRows, vehicleRows] = await Promise.all([
-    db.select({ vehicleTotal: sql<number>`count(*)::int` }).from(vehicles),
-    db.select({ availableCount: sql<number>`count(*)::int` }).from(vehicles).where(eq(vehicles.status, 'available')),
-    db.select({ customerTotal: sql<number>`count(*)::int` }).from(customers),
-    dealPipeline(),
-    db
-      .select({
-        id: deals.id,
-        price: deals.price,
-        status: deals.status,
-        vehicleMake: vehicles.make,
-        vehicleModel: vehicles.model,
-        vehicleYear: vehicles.year,
-        customerFirstName: customers.firstName,
-        customerLastName: customers.lastName,
-      })
-      .from(deals)
-      .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
-      .leftJoin(customers, eq(deals.customerId, customers.id))
-      .orderBy(desc(deals.createdAt))
-      .limit(5),
-    db
-      .select({
-        id: vehicles.id,
-        make: vehicles.make,
-        model: vehicles.model,
-        year: vehicles.year,
-        price: vehicles.price,
-        images: vehicles.images,
-      })
-      .from(vehicles)
-      .where(eq(vehicles.status, 'available'))
-      .orderBy(desc(vehicles.createdAt))
-      .limit(3),
-  ])
+export async function getMotorsOverview(): Promise<ActionResult<MotorsOverview>> {
+  return attempt(async () => {
+    await requireUser()
+    const [[{ vehicleTotal }], [{ availableCount }], [{ customerTotal }], pipeline, dealRows, vehicleRows] = await Promise.all([
+      db.select({ vehicleTotal: sql<number>`count(*)::int` }).from(vehicles),
+      db.select({ availableCount: sql<number>`count(*)::int` }).from(vehicles).where(eq(vehicles.status, 'available')),
+      db.select({ customerTotal: sql<number>`count(*)::int` }).from(customers),
+      dealPipeline(),
+      db
+        .select({
+          id: deals.id,
+          price: deals.price,
+          status: deals.status,
+          vehicleMake: vehicles.make,
+          vehicleModel: vehicles.model,
+          vehicleYear: vehicles.year,
+          customerFirstName: customers.firstName,
+          customerLastName: customers.lastName,
+        })
+        .from(deals)
+        .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
+        .leftJoin(customers, eq(deals.customerId, customers.id))
+        .orderBy(desc(deals.createdAt))
+        .limit(5),
+      db
+        .select({
+          id: vehicles.id,
+          make: vehicles.make,
+          model: vehicles.model,
+          year: vehicles.year,
+          price: vehicles.price,
+          images: vehicles.images,
+        })
+        .from(vehicles)
+        .where(eq(vehicles.status, 'available'))
+        .orderBy(desc(vehicles.createdAt))
+        .limit(3),
+    ])
 
-  return {
-    vehicleTotal,
-    availableCount,
-    customerTotal,
-    dealTotal: pipeline.dealTotal,
-    activeDeals: pipeline.activeDeals,
-    lead: pipeline.lead,
-    negotiation: pipeline.negotiation,
-    'closed-won': pipeline['closed-won'],
-    'closed-lost': pipeline['closed-lost'],
-    totalRevenue: pipeline.totalRevenue,
-    recentDeals: dealRows.map((row) => ({
-      id: row.id,
-      price: row.price,
-      status: row.status,
-      vehicleName: row.vehicleMake ? `${row.vehicleMake} ${row.vehicleModel} ${row.vehicleYear}` : null,
-      customerName: row.customerFirstName ? `${row.customerFirstName} ${row.customerLastName}` : null,
-    })),
-    availableVehicles: vehicleRows.map((row) => ({
-      ...row,
-      images: row.images ?? [],
-    })),
-  }
+    return {
+      vehicleTotal,
+      availableCount,
+      customerTotal,
+      dealTotal: pipeline.dealTotal,
+      activeDeals: pipeline.activeDeals,
+      lead: pipeline.lead,
+      negotiation: pipeline.negotiation,
+      'closed-won': pipeline['closed-won'],
+      'closed-lost': pipeline['closed-lost'],
+      totalRevenue: pipeline.totalRevenue,
+      recentDeals: dealRows.map((row) => ({
+        id: row.id,
+        price: row.price,
+        status: row.status,
+        vehicleName: row.vehicleMake ? `${row.vehicleMake} ${row.vehicleModel} ${row.vehicleYear}` : null,
+        customerName: row.customerFirstName ? `${row.customerFirstName} ${row.customerLastName}` : null,
+      })),
+      availableVehicles: vehicleRows.map((row) => ({
+        ...row,
+        images: row.images ?? [],
+      })),
+    }
+  })
 }

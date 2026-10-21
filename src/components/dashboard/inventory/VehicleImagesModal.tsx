@@ -14,6 +14,7 @@ import { vehiclesApi, invalidateMotorsQueries, type ApiVehicle, type VehicleList
 import { useToast } from '@/components/ui/Toast'
 import { DashButton } from '@/components/dashboard'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
+import { useModal } from '@/components/ui/useModal'
 import type { VehiclesQueryKey } from './useInventoryPatch'
 
 type MediaAction = '' | 'add' | 'replace'
@@ -40,17 +41,30 @@ export function VehicleImagesModal({
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const images = vehicle?.images ?? []
+  const dialogRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (open) setActiveIdx(0)
-  }, [open, vehicle?.id])
+  const nav = (dir: -1 | 1) => {
+    if (images.length < 2) return
+    setDirection(dir)
+    setActiveIdx((i) => (i + dir + images.length) % images.length)
+  }
+
+  /* the delete confirmation owns Escape while it is open */
+  useModal(open, dialogRef, { onEscape: confirmDelete ? undefined : onClose })
+
+  /* a newly opened vehicle starts on its first photo */
+  const [shownId, setShownId] = useState<string | null>(null)
+  if ((vehicle?.id ?? null) !== shownId) {
+    setShownId(vehicle?.id ?? null)
+    setActiveIdx(0)
+  }
 
   useEffect(() => {
     if (!open) return
-    /* the delete confirmation owns the keyboard while it is open */
     if (confirmDelete) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      /* arrows browse photos, except inside the Médias select */
+      if (e.target instanceof HTMLSelectElement) return
       if (e.key === 'ArrowLeft') nav(-1)
       if (e.key === 'ArrowRight') nav(1)
     }
@@ -130,12 +144,6 @@ export function VehicleImagesModal({
   const current = images[activeIdx]
   const chosen = !!current && vehicle?.extras.spot === current
 
-  const nav = (dir: -1 | 1) => {
-    if (images.length < 2) return
-    setDirection(dir)
-    setActiveIdx((i) => (i + dir + images.length) % images.length)
-  }
-
   const handleMediaAction = (value: MediaAction) => {
     setMediaAction(value)
     if (value === 'add') addInputRef.current?.click()
@@ -163,9 +171,11 @@ export function VehicleImagesModal({
           />
           <div className="mm-dialog-viewport">
             <motion.div
+              ref={dialogRef}
               role="dialog"
               aria-modal="true"
               aria-labelledby={titleId}
+              tabIndex={-1}
               className="mm-dialog mm-dialog--media"
               initial={reduceMotion ? false : { opacity: 0, y: 12, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}

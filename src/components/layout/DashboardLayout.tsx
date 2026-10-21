@@ -9,9 +9,7 @@ import {
   UserMultiple02Icon,
   ChartUpIcon,
   Menu01Icon,
-  ArrowDown01Icon,
   Logout01Icon,
-  UserIcon,
   Calculator01Icon,
 } from 'hugeicons-react'
 import { cn } from '@/lib/utils'
@@ -107,16 +105,11 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </div>
 
         <div className="border-b border-[var(--mm-line-d)] p-4">
-          <button
-            type="button"
-            className="flex w-full min-h-[var(--mm-touch)] items-center justify-between rounded-[var(--mm-r)] border border-[var(--mm-line-d)] bg-white/[0.04] px-3 py-2 text-sm transition-colors hover:bg-white/[0.07]"
-          >
-            <div className="flex items-center gap-2">
-              <Car01Icon className="h-4 w-4 shrink-0 opacity-90" aria-hidden="true" />
-              <span className="font-medium">Mansour Motors</span>
-            </div>
-            <ArrowDown01Icon className="h-4 w-4 shrink-0 opacity-50" aria-hidden="true" />
-          </button>
+          {/* one business today: a label, not a switcher */}
+          <p className="flex min-h-[var(--mm-touch)] items-center gap-2 px-3 text-sm font-medium">
+            <Car01Icon className="h-4 w-4 shrink-0 opacity-90" aria-hidden="true" />
+            Mansour Motors
+          </p>
         </div>
 
         <nav className="flex-1 overflow-y-auto px-3 py-4">
@@ -177,6 +170,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
               onClick={handleLogout}
               className="flex min-h-9 min-w-9 items-center justify-center rounded-[var(--mm-r)] text-[var(--mm-grey-muted)] transition-colors hover:bg-white/[0.06] hover:text-[var(--mm-white)]"
               title="Se déconnecter"
+              aria-label="Se déconnecter"
             >
               <Logout01Icon className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -204,15 +198,6 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             </h2>
           </div>
 
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              className="flex min-h-[var(--mm-touch)] min-w-[var(--mm-touch)] items-center justify-center rounded-[var(--mm-r)] text-[var(--mm-grey)] transition-colors hover:bg-[var(--mm-off)] lg:hidden"
-              aria-label="Profil"
-            >
-              <UserIcon className="h-5 w-5" aria-hidden="true" />
-            </button>
-          </div>
         </header>
 
         <main className="p-4 lg:p-8">{children}</main>

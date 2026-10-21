@@ -190,8 +190,8 @@ export const dealsApi = {
 }
 
 export const overviewApi = {
-  holding: getHoldingOverview,
-  motors: getMotorsOverview,
+  holding: u(getHoldingOverview),
+  motors: u(getMotorsOverview),
 }
 
 export function invalidateMotorsQueries(qc: QueryClient) {

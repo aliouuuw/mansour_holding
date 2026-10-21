@@ -1,5 +1,16 @@
 # Project Progress Log
 
+## [Audit] Low fixes
+
+* **Status:** Done (2026-10-21). Browser check still blocked (no Chrome for Playwright).
+* **L1 dead controls:** sidebar business switcher is a label, mobile « Profil » button and « Programmer un essai » removed, logout has an accessible name. « Créer une affaire » on a vehicle or a client prefills the new deal.
+* **L2 search:** URL sync no longer trims what is being typed. Pending debounce cleared on unmount (inventory, clients, sales list).
+* **L3 dialogs:** `src/components/ui/useModal.ts` (scroll lock, focus in, Tab trap, Escape, focus back) used by ConfirmDialog, photo modal and order dialog. A backdrop click no longer drops an unsaved order. Arrow keys skip the Médias select.
+* **L4 overview:** spinner while loading, French error instead of zeros. Overview actions return `{ ok, error }`.
+* **L5 mobile inventory:** spinner while loading; one save state per card.
+* **L6 copy/CSV:** fixed French title on a missing vehicle. CSV uses `;` (French Excel). Export toast says when 500 rows is not everything. Test: `csv.test.ts`.
+* **Verification:** type-check OK, `bun test` 41/41, `bun run build` OK. Lint on touched areas: 1 pre-existing error left (`InventoryFieldCombobox` setState in effect), down from 5.
+
 ## [Audit] Medium fixes
 
 * **Status:** Done (2026-10-21). Browser check blocked: Playwright needs Chrome (`npx playwright install chrome`). Checked with curl on `next start`.

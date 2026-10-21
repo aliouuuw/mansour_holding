@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useId, useRef } from 'react'
+import { useId, useRef } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { Cancel01Icon } from 'hugeicons-react'
+import { useModal } from './useModal'
 
 interface ConfirmDialogProps {
   isOpen: boolean
@@ -33,51 +34,7 @@ export function ConfirmDialog({
   const cancelRef = useRef<HTMLButtonElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!isOpen) return
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !isLoading) onClose()
-    }
-    document.addEventListener('keydown', onKey)
-    cancelRef.current?.focus()
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.removeEventListener('keydown', onKey)
-      document.body.style.overflow = prev
-    }
-  }, [isOpen, isLoading, onClose])
-
-  useEffect(() => {
-    const root = dialogRef.current
-    if (!isOpen || !root) return
-
-    const focusable = () =>
-      Array.from(
-        root.querySelectorAll<HTMLElement>(
-          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        )
-      )
-
-    const onTab = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return
-      const els = focusable()
-      if (els.length === 0) return
-      const first = els[0]
-      const last = els[els.length - 1]
-      const active = document.activeElement
-      if (e.shiftKey && active === first) {
-        e.preventDefault()
-        last.focus()
-      } else if (!e.shiftKey && active === last) {
-        e.preventDefault()
-        first.focus()
-      }
-    }
-
-    root.addEventListener('keydown', onTab)
-    return () => root.removeEventListener('keydown', onTab)
-  }, [isOpen])
+  useModal(isOpen, dialogRef, { onEscape: isLoading ? undefined : onClose, initialFocus: cancelRef })
 
   const motionProps = reduceMotion
     ? { initial: false, animate: { opacity: 1 }, exit: { opacity: 0 } }

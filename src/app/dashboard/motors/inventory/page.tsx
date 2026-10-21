@@ -66,9 +66,14 @@ export function MotorsInventory() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    setSearchInput(queryQ)
-  }, [queryQ])
+  /* follow the URL (back button, reset) without trimming what is being typed: "Range " stays "Range " */
+  const [syncedQ, setSyncedQ] = useState(queryQ)
+  if (syncedQ !== queryQ) {
+    setSyncedQ(queryQ)
+    if (searchInput.trim() !== queryQ) setSearchInput(queryQ)
+  }
+  /* a pending search must not navigate after the page is gone */
+  useEffect(() => () => { if (debounceRef.current) clearTimeout(debounceRef.current) }, [])
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -213,7 +218,9 @@ export function MotorsInventory() {
           formatDate(v.arrivedAt),
         ])
       )
-      toast(`${res.data.length} véhicules exportés`)
+      /* one page of 500 is the server max: say so instead of exporting a silent subset */
+      const capped = res.pagination.total > res.data.length ? ` (les ${res.data.length} premiers sur ${res.pagination.total})` : ''
+      toast(`${res.data.length} véhicules exportés${capped}`)
     },
     onError: (e) => toast((e as Error).message, 'error'),
   })
@@ -311,7 +318,7 @@ export function MotorsInventory() {
         ) : (
           <>
             <div className="mm-inventory-mobile-only">
-              <InventoryMobileList vehicles={vehicles} vehiclesQueryKey={vehiclesQueryKey} />
+              <InventoryMobileList vehicles={vehicles} vehiclesQueryKey={vehiclesQueryKey} isLoading={isLoading} />
             </div>
             <InventoryGrid
               vehicles={vehicles}

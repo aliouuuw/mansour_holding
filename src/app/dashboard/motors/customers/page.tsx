@@ -73,9 +73,14 @@ function MotorsCustomersContent() {
   const [searchInput, setSearchInput] = useState(queryQ)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  useEffect(() => {
-    setSearchInput(queryQ)
-  }, [queryQ])
+  /* follow the URL (back button, reset) without trimming what is being typed: "Range " stays "Range " */
+  const [syncedQ, setSyncedQ] = useState(queryQ)
+  if (syncedQ !== queryQ) {
+    setSyncedQ(queryQ)
+    if (searchInput.trim() !== queryQ) setSearchInput(queryQ)
+  }
+  /* a pending search must not navigate after the page is gone */
+  useEffect(() => () => { if (debounceRef.current) clearTimeout(debounceRef.current) }, [])
 
   const patchParams = useCallback(
     (patch: Record<string, string | null>) => {
@@ -133,7 +138,8 @@ function MotorsCustomersContent() {
           formatDate(c.createdAt),
         ])
       )
-      toast(`${res.data.length} client${res.data.length === 1 ? '' : 's'} exporté${res.data.length === 1 ? '' : 's'}`)
+      const capped = res.pagination.total > res.data.length ? ` (les ${res.data.length} premiers sur ${res.pagination.total})` : ''
+      toast(`${res.data.length} client${res.data.length === 1 ? '' : 's'} exporté${res.data.length === 1 ? '' : 's'}${capped}`)
     },
     onError: (e) => toast((e as Error).message, 'error'),
   })

@@ -292,7 +292,7 @@ export function MotorsCustomerDetail() {
           <div className="mm-panel mm-panel-pad">
             <h2 className="mm-panel-title">Actions rapides</h2>
             <div className="mt-4">
-              <DashButton to="/dashboard/motors/sales/new" full>
+              <DashButton to={`/dashboard/motors/sales/new?customerId=${customer.id}`} full>
                 Créer une affaire
               </DashButton>
             </div>

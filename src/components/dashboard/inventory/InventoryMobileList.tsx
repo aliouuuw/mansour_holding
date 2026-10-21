@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from '@/lib/router'
 import { dashVehicleStatusLabels, DashStatus } from '@/components/dashboard'
 import type { ApiVehicle, VehicleStatus } from '@/lib/api'
@@ -14,39 +14,38 @@ const STATUSES: VehicleStatus[] = ['available', 'reserved', 'sold']
 export function InventoryMobileList({
   vehicles,
   vehiclesQueryKey,
+  isLoading,
 }: {
   vehicles: ApiVehicle[]
   vehiclesQueryKey: VehiclesQueryKey
+  isLoading: boolean
 }) {
-  const { saveField, patchStatus, isPending } = useInventoryPatch(vehiclesQueryKey)
-
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="mm-spinner" role="status" aria-label="Chargement" />
+      </div>
+    )
+  }
   return (
     <div className="mm-inventory-cards">
       {vehicles.map((v) => (
-        <MobileVehicleCard key={v.id} vehicle={v} saveField={saveField} patchStatus={patchStatus} disabled={isPending} />
+        <MobileVehicleCard key={v.id} vehicle={v} vehiclesQueryKey={vehiclesQueryKey} />
       ))}
     </div>
   )
 }
 
-function MobileVehicleCard({
-  vehicle,
-  saveField,
-  patchStatus,
-  disabled,
-}: {
-  vehicle: ApiVehicle
-  saveField: (vehicle: ApiVehicle, field: 'price', raw: string) => void
-  patchStatus: (args: { id: string; patch: { status: VehicleStatus } }) => void
-  disabled: boolean
-}) {
-  const [priceDraft, setPriceDraft] = useState(() =>
-    vehicle.price === null ? '' : String(vehicle.price)
-  )
-
-  useEffect(() => {
-    setPriceDraft(vehicle.price === null ? '' : String(vehicle.price))
-  }, [vehicle.price, vehicle.id])
+function MobileVehicleCard({ vehicle, vehiclesQueryKey }: { vehicle: ApiVehicle; vehiclesQueryKey: VehiclesQueryKey }) {
+  /* one save state per card: saving one price must not lock the field you tap next */
+  const { saveField, patchStatus, isPending: disabled } = useInventoryPatch(vehiclesQueryKey)
+  const saved = vehicle.price === null ? '' : String(vehicle.price)
+  const [priceDraft, setPriceDraft] = useState(saved)
+  const [seenPrice, setSeenPrice] = useState(saved)
+  if (seenPrice !== saved) {
+    setSeenPrice(saved)
+    setPriceDraft(saved)
+  }
 
   const img = vehicle.images?.[0]
 

@@ -18,10 +18,22 @@ import { overviewApi } from '@/lib/api'
 import { DashPageHeader } from '@/components/dashboard'
 
 export function DashboardHome() {
-  const { data } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['overview', 'holding'],
     queryFn: overviewApi.holding,
   })
+
+  /* no zeros while loading or after a failure: a 0 FCFA revenue would read as a fact */
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="mm-spinner" role="status" aria-label="Chargement" />
+      </div>
+    )
+  }
+  if (error) {
+    return <div className="mm-alert-error" role="alert">Chiffres indisponibles : {(error as Error).message}</div>
+  }
 
   const totalVehicles = data?.vehicleTotal ?? 0
   const totalCustomers = data?.customerTotal ?? 0

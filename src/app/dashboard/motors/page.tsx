@@ -16,10 +16,22 @@ import { DashButton, DashPageHeader, dashDealStatusTone } from '@/components/das
 import { overviewApi } from '@/lib/api'
 
 export function MotorsDashboard() {
-  const { data } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['overview', 'motors'],
     queryFn: overviewApi.motors,
   })
+
+  /* no zeros while loading or after a failure: a 0 FCFA revenue would read as a fact */
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="mm-spinner" role="status" aria-label="Chargement" />
+      </div>
+    )
+  }
+  if (error) {
+    return <div className="mm-alert-error" role="alert">Chiffres indisponibles : {(error as Error).message}</div>
+  }
 
   const vehicles = data?.availableVehicles ?? []
   const totalVehicles = data?.vehicleTotal ?? 0

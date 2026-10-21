@@ -128,7 +128,7 @@ export function MotorsVehicleDetail() {
 
   if (error || !vehicle) return (
     <div className="flex flex-col items-center justify-center py-20">
-      <p className="mm-title">{(error as Error)?.message ?? 'Véhicule non trouvé'}</p>
+      <p className="mm-title">Véhicule introuvable</p>
       <Link to="/dashboard/motors/inventory" className="mm-link mt-4 inline-block">Retour à l&apos;inventaire</Link>
     </div>
   )
@@ -340,8 +340,7 @@ export function MotorsVehicleDetail() {
           <div className="mm-panel mm-panel-pad">
             <h2 className="mm-panel-title">Actions rapides</h2>
             <div className="mt-4 space-y-2">
-              <DashButton to="/dashboard/motors/sales/new" full>Créer une affaire</DashButton>
-              <DashButton type="button" variant="soft" full disabled>Programmer un essai</DashButton>
+              <DashButton to={`/dashboard/motors/sales/new?vehicleId=${vehicle.id}`} full>Créer une affaire</DashButton>
             </div>
           </div>
         </div>
