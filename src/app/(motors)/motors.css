@@ -1,5 +1,5 @@
 /* Mansour Motors public layer. Ported from prototype/launch/launch.css (direction locked 2026-09-18).
-   Every rule is scoped under .mm (the wrapper in app/mansour-motors/layout.tsx) so nothing leaks into the dashboard. */
+   Every rule is scoped under .mm (the wrapper in app/(motors)/layout.tsx) so nothing leaks into the dashboard. */
 
 :root { --head: 68px; }
 html:has(.mm) { scroll-padding-top: calc(80px + env(safe-area-inset-top, 0px)); -webkit-text-size-adjust: 100%; background: #f3f2ef; --head: 68px; }

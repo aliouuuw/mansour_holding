@@ -10,9 +10,12 @@ const nextConfig: NextConfig = {
   },
   serverExternalPackages: ['postgres'],
   async redirects() {
+    /* the public site moved to the root (2026-10-21). Old links keep working; the query and
+       the #fragment travel with the redirect. /mansour-motors/* asset paths are files, not pages. */
     return [
-      { source: '/vehicules', destination: '/mansour-motors/vehicules', permanent: true },
-      { source: '/vehicules/:vehicleId', destination: '/mansour-motors/vehicules/:vehicleId', permanent: true },
+      { source: '/mansour-motors', destination: '/', permanent: true },
+      { source: '/mansour-motors/vehicules', destination: '/vehicules', permanent: true },
+      { source: '/mansour-motors/vehicules/:id', destination: '/vehicules/:id', permanent: true },
     ]
   },
   async rewrites() {

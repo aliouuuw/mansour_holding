@@ -81,7 +81,7 @@ export const vehicles = pgTable('vehicles', {
   createdBy: varchar('created_by', { length: 36 }).references(() => user.id),
   /* when the car went on the showroom floor (catalog « Arrivée récente ») */
   arrivedAt: timestamp('arrived_at').notNull().defaultNow(),
-  /* lower comes first on /mansour-motors/vehicules when no visitor sort is set */
+  /* lower comes first on /vehicules when no visitor sort is set */
   sortOrder: integer('sort_order').notNull().default(0),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),

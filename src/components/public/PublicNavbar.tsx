@@ -1,23 +1,19 @@
 import { useState } from 'react'
 import { Link, useRouterState } from '@/lib/router'
 import { useScroll, useAnimationFrame, motion, AnimatePresence } from 'framer-motion'
-import { Building03Icon, Menu01Icon, Cancel01Icon, Car01Icon } from 'hugeicons-react'
+import { Building03Icon, Menu01Icon, Cancel01Icon } from 'hugeicons-react'
 import { cn } from '@/lib/utils'
+import { MOTORS_SITE } from '@/lib/motors-public-host'
 
-const holdingLinks = [
-  { label: 'Motors', to: '/mansour-motors' },
+/* the holding page links out to the Motors site on its own domain */
+const navLinks = [
+  { label: 'Motors', to: MOTORS_SITE },
   { label: 'À propos', to: '/#about' },
   { label: 'Contact', to: '/#contact' },
 ]
 
-const motorsLinks = [
-  { label: 'Véhicules', to: '/mansour-motors/vehicules' },
-  { label: 'Services', to: '/mansour-motors#services' },
-  { label: 'Showroom', to: '/mansour-motors#contact' },
-]
-
 // Pages that have dark hero sections (navbar starts transparent with white text)
-const darkHeroPages = ['/', '/mansour-motors']
+const darkHeroPages = ['/', '/holding']
 
 export function PublicNavbar() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -26,8 +22,6 @@ export function PublicNavbar() {
   const routerState = useRouterState()
   const currentPath = routerState.location.pathname
 
-  const isMotorsSection = currentPath.startsWith('/mansour-motors')
-  const navLinks = isMotorsSection ? motorsLinks : holdingLinks
   const hasDarkHero = darkHeroPages.includes(currentPath)
 
   // On dark hero pages: start transparent, go to white on scroll
@@ -64,27 +58,12 @@ export function PublicNavbar() {
             </span>
           </Link>
 
-          {isMotorsSection && (
-            <motion.div
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="hidden items-center gap-2.5 md:flex"
-            >
-              <span className={cn(useDarkText ? 'text-noir-300' : 'text-white/20')}>/</span>
-              <Link to="/mansour-motors" className="flex items-center gap-1.5 hover-trigger group">
-                <Car01Icon className={cn('h-4 w-4', useDarkText ? 'text-gold-600' : 'text-gold-400')} />
-                <span className={cn('text-[11px] font-bold uppercase tracking-[0.18em]', useDarkText ? 'text-gold-600' : 'text-gold-400')}>
-                  Motors
-                </span>
-              </Link>
-            </motion.div>
-          )}
         </div>
 
         {/* Desktop Navigation */}
         <div className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => {
-            const isActive = currentPath === link.to || (link.to !== '/' && currentPath.startsWith(link.to.split('#')[0]) && link.to.split('#')[0] !== '/mansour-motors' && link.to.split('#')[0] !== '/')
+            const isActive = currentPath === link.to || (link.to !== '/' && currentPath.startsWith(link.to.split('#')[0]) && link.to.split('#')[0] !== '/')
             return (
               <Link
                 key={link.to}
@@ -159,17 +138,6 @@ export function PublicNavbar() {
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-40 flex flex-col justify-between bg-noir-950 px-6 pb-12 pt-28 md:hidden"
           >
-            {isMotorsSection && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.05 }}
-                className="mb-8 flex items-center gap-2 border-b border-white/10 pb-4"
-              >
-                <Car01Icon className="h-5 w-5 text-gold-400" />
-                <span className="text-xs font-bold uppercase tracking-[0.2em] text-gold-400">Mansour Motors</span>
-              </motion.div>
-            )}
 
             <div className="flex flex-col gap-1">
               {navLinks.map((link, i) => (

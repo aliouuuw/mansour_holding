@@ -4,11 +4,12 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { Link } from '@/lib/router'
 import { CONAKRY, CONTACT, openState, waLink } from './shared'
+import { motorsRoutes } from '@/lib/motors-routes'
 
 const NAV = [
-  { label: 'Accueil', to: '/mansour-motors' },
-  { label: 'Véhicules', to: '/mansour-motors/vehicules' },
-  { label: 'Showroom', to: '/mansour-motors#showroom' },
+  { label: 'Accueil', to: motorsRoutes.home },
+  { label: 'Véhicules', to: motorsRoutes.stock },
+  { label: 'Showroom', to: motorsRoutes.showroom },
 ]
 
 /* "Ouvert jusqu'à 18h" depends on the visitor's clock, so it is filled after hydration */
@@ -78,7 +79,7 @@ function Header() {
   return (
     <header className="header" ref={ref}>
       <div className="wrap">
-        <Link className="logo" to="/mansour-motors" aria-label="Mansour Motors, accueil">
+        <Link className="logo" to={motorsRoutes.home} aria-label="Mansour Motors, accueil">
           <img className="logo-mark logo-mark--on-light" src="/mansour-motors/logo-header.png" alt="" width={469} height={429} decoding="async" />
           <img className="logo-mark logo-mark--on-dark" src="/mansour-motors/logo-header-white.png" alt="" width={469} height={429} decoding="async" />
           <span className="logo-text">Mansour Motors</span>
@@ -184,7 +185,8 @@ export function Shell({ children, className = '', waText = 'Bonjour Mansour Moto
     if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
     const a = (e.target as Element).closest('a')
     const href = a?.getAttribute('href')
-    if (!a || a.target || !href?.startsWith('/mansour-motors')) return
+    /* same-site paths only: not //cdn, not tel:, not https:// */
+    if (!a || a.target || !href?.startsWith('/') || href.startsWith('//')) return
     e.preventDefault()
     router.push(href)
   }

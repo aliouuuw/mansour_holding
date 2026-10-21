@@ -5,6 +5,7 @@ import { Link } from '@/lib/router'
 import type { ApiVehicle } from '@/lib/api'
 import { Button, Card, Field, Fieldset, GallerySwipeHint, Shell } from '../../_ui'
 import { CONTACT, FUEL, GEARBOX, STATE, bookingDays, fcfa, focal, km, pad2, shrink, waLink } from '../../_ui/shared'
+import { motorsRoutes } from '@/lib/motors-routes'
 
 const TABS = [
   { id: 'photos', label: 'Photos' },
@@ -296,11 +297,11 @@ export function PublicVehicleDetail({ vehicle: v, others }: { vehicle: ApiVehicl
       <main>
         <div className="wrap detail-head">
           <div>
-            <p className="crumbs"><Link to="/mansour-motors">Accueil</Link> / <Link to="/mansour-motors/vehicules">Véhicules</Link> / <span>{title}</span></p>
+            <p className="crumbs"><Link to={motorsRoutes.home}>Accueil</Link> / <Link to={motorsRoutes.stock}>Véhicules</Link> / <span>{title}</span></p>
             <p className="brand">{v.make}</p>
             <h1 className="display">{v.model}</h1>
           </div>
-          <Button tone="soft" to="/mansour-motors/vehicules"><span aria-hidden="true">←</span> Tout le stock</Button>
+          <Button tone="soft" to={motorsRoutes.stock}><span aria-hidden="true">←</span> Tout le stock</Button>
         </div>
 
         <div className="wrap detail">
@@ -334,7 +335,7 @@ export function PublicVehicleDetail({ vehicle: v, others }: { vehicle: ApiVehicl
             </nav>
             <div className="panel-actions">
               {sold
-                ? <Button to="/mansour-motors#alerte">Être prévenu d&apos;un modèle similaire</Button>
+                ? <Button to={motorsRoutes.alert}>Être prévenu d&apos;un modèle similaire</Button>
                   : <>
                   <Button href="#visite">Réserver une visite</Button>
                   <div className="pair">
@@ -357,7 +358,7 @@ export function PublicVehicleDetail({ vehicle: v, others }: { vehicle: ApiVehicl
       <div className={`bar${bar ? ' is-on' : ''}`} aria-hidden={!bar}>
         <p><span>{title}</span><b>{fcfa(v.price)}</b></p>
         {sold
-          ? <Button to="/mansour-motors#alerte" tabIndex={bar ? 0 : -1}>Être prévenu</Button>
+          ? <Button to={motorsRoutes.alert} tabIndex={bar ? 0 : -1}>Être prévenu</Button>
           : <Button href="#visite" tabIndex={bar ? 0 : -1}>Réserver une visite</Button>}
       </div>
     </Shell>

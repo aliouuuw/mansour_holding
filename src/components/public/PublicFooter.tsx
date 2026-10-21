@@ -1,4 +1,5 @@
 import { Link } from '@/lib/router'
+import { MOTORS_SITE } from '@/lib/motors-public-host'
 import {
   Building03Icon,
   TelephoneIcon,
@@ -11,7 +12,7 @@ import {
 } from 'hugeicons-react'
 
 const businessLinks = [
-  { label: 'Mansour Motors', to: '/mansour-motors' },
+  { label: 'Mansour Motors', to: MOTORS_SITE },
   { label: 'Mansour Immobilier', to: '#', disabled: true },
   { label: 'Mansour Location', to: '#', disabled: true },
   { label: 'Mansour Construction', to: '#', disabled: true },
@@ -19,9 +20,9 @@ const businessLinks = [
 
 const navLinks = [
   { label: 'Accueil', to: '/' },
-  { label: 'Véhicules', to: '/mansour-motors/vehicules' },
-  { label: 'Connexion', to: '/login' },
-  { label: 'Espace Pro', to: '/dashboard' },
+  { label: 'Véhicules', to: `${MOTORS_SITE}/vehicules` },
+  /* the back office lives on the Motors domain: one host, one login cookie */
+  { label: 'Espace Pro', to: `${MOTORS_SITE}/login` },
 ]
 
 export function PublicFooter() {

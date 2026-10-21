@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
-import { excon } from '@/app/mansour-motors/fonts/excon'
+import { excon } from '@/app/(motors)/fonts/excon'
 import './dashboard.css'
 
 const iconBase = '/mansour-motors'

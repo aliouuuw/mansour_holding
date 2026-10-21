@@ -1,5 +1,6 @@
 import type { ApiVehicle } from '@/lib/api'
 import { spotlightIsCutout, spotlightSrc } from '@/server/vehicle-image'
+import { motorsRoutes } from '@/lib/motors-routes'
 
 /* ── the house: phone and mail from mansourmotors.sn. The street is the confirmed showroom. ── */
 export const CONTACT = {
@@ -53,7 +54,7 @@ export const fcfa = (n: number | null | undefined) => (n == null ? PRICE_ON_ASK 
 export const km = (n: number) => `${digits(n)} km`
 export const pad2 = (n: number) => String(n).padStart(2, '0')
 export const waLink = (text: string) => `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(text)}`
-export const vehicleUrl = (v: Pick<ApiVehicle, 'id'>) => `/mansour-motors/vehicules/${v.id}`
+export const vehicleUrl = (v: Pick<ApiVehicle, 'id' | 'make' | 'model' | 'year'>) => motorsRoutes.vehicle(v)
 
 /* photo metadata lives in extras: which way the car's nose points, and the focal point */
 export const face = (v: ApiVehicle): 'left' | 'right' => (v.extras.face === 'right' ? 'right' : 'left')

@@ -1,5 +1,6 @@
 'use client'
 
+import { MOTORS_SITE } from '@/lib/motors-public-host'
 import { useRef } from 'react'
 import { Link } from '@/lib/router'
 import {
@@ -122,7 +123,7 @@ const businesses = [
       'https://images.unsplash.com/photo-1563720360172-67b8f3dce741?q=80&w=2070&auto=format&fit=crop',
     colSpan: 'md:col-span-2 lg:col-span-2',
     ready: true,
-    href: '/mansour-motors',
+    href: MOTORS_SITE,
   },
   {
     id: 'immobilier',

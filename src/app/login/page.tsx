@@ -32,14 +32,14 @@ export function LoginPage() {
       const result = await signIn.email({
         email: data.email,
         password: data.password,
-        callbackURL: '/dashboard',
+        callbackURL: '/dashboard/motors',
         rememberMe: data.rememberMe,
       })
       if (result.error) {
         setError('Email ou mot de passe incorrect.')
         return
       }
-      navigate({ to: '/dashboard' })
+      navigate({ to: '/dashboard/motors' })
     } catch (err) {
       setError('Connexion impossible. Vérifiez le réseau, puis réessayez.')
       console.error('Login error:', err)
@@ -52,7 +52,7 @@ export function LoginPage() {
     <main className="flex min-h-screen items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm space-y-8">
         <div className="space-y-6">
-          <Link to="/mansour-motors" aria-label="Mansour Motors, site public">
+          <Link to="/" aria-label="Mansour Motors, site public">
             <img src="/mansour-motors/logo-header.png" alt="" width={469} height={429} className="h-10 w-auto" decoding="async" />
           </Link>
           <div>

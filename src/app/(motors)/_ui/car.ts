@@ -1,9 +1,10 @@
 import type { ApiVehicle } from '@/lib/api'
-import { cover, face, focal, isCutout, rangeOf, type RangeId } from './shared'
+import { cover, face, focal, isCutout, rangeOf, vehicleUrl, type RangeId } from './shared'
 
-/* the shape the plateau (turntable.js) reads; `n` carries the vehicle id for links */
+/* the shape the plateau (turntable.js) reads; `n` is the vehicle id, `href` its public page */
 export type PlateauCar = {
   n: string
+  href: string
   make: string
   model: string
   year: number
@@ -27,6 +28,7 @@ export const arrivalMs = (v: Pick<ApiVehicle, 'arrivedAt' | 'createdAt'>) =>
 
 export const toCar = (v: ApiVehicle): PlateauCar => ({
   n: v.id,
+  href: vehicleUrl(v),
   make: v.make,
   model: v.model,
   year: v.year,

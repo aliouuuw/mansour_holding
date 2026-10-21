@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { excon } from '@/app/mansour-motors/fonts/excon'
+import { excon } from '@/app/(motors)/fonts/excon'
 import '../dashboard/dashboard.css'
 
 export const metadata: Metadata = {

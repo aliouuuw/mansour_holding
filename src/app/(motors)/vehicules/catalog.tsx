@@ -7,6 +7,7 @@ import { AtelierSwipeHint, Button, Card, Shell } from '../_ui'
 import { toCar } from '../_ui/car'
 import { IconFilters, IconGrid, IconList, IconSwipe } from '../_ui/icons'
 import { BUDGETS, FUEL, RANGES, cover, focal, isCutout, rangeOf, vehicleUrl } from '../_ui/shared'
+import { motorsRoutes } from '@/lib/motors-routes'
 
 const KMS = [1000, 5000, 10000, 20000]
 
@@ -19,7 +20,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
   const makeCounts = useMemo(() => Object.fromEntries(makes.map((make) => [make, vehicles.filter((vehicle) => vehicle.make === make).length])), [makes, vehicles])
   const models = useMemo(() => Object.fromEntries(makes.map((m) => [m, [...new Set(vehicles.filter((v) => v.make === m).map((v) => v.model))]])), [makes, vehicles])
   const fuels = useMemo(() => [...new Set(vehicles.map((v) => v.fuelType))], [vehicles])
-  const firstDetailHref = vehicles[0] ? vehicleUrl(vehicles[0]) : '/mansour-motors/vehicules'
+  const firstDetailHref = vehicles[0] ? vehicleUrl(vehicles[0]) : motorsRoutes.stock
   const firstVehicle = vehicles[0]
   const firstAtelierImg = firstVehicle ? cover(firstVehicle) : ''
 
@@ -245,7 +246,7 @@ export function PublicVehicles({ vehicles }: { vehicles: ApiVehicle[] }) {
           <div className="empty" data-empty hidden>
             <p className="h2">Aucun véhicule ne correspond.</p>
             <p className="lead">Élargissez un filtre, ou dites-nous ce que vous cherchez. Le showroom vous recontacte quand un véhicule correspond.</p>
-            <Button to="/mansour-motors#alerte">Être prévenu</Button>
+            <Button to={motorsRoutes.alert}>Être prévenu</Button>
           </div>
         </div>
       </main>

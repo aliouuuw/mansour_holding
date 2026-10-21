@@ -1,5 +1,16 @@
 # Project Progress Log
 
+## [Motors] Routing: Motors at the root, slug URLs
+
+* **Status:** Done (2026-10-21). Checked with curl on `next start` and Host headers. Not deployed.
+* **Layout:** public site moved from `app/mansour-motors` to the route group `app/(motors)`: `/`, `/vehicules`, `/vehicules/[slug]`. The holding page moved to `app/holding` (own layout: Playfair, « Mansour Holding » title). `src/proxy.ts` (Next 16 name, was `middleware.ts`) shows `/holding` at `/` on `mansour-holding.vercel.app` only, and 404s `/holding` on mansourmotors.sn. Localhost and previews show Motors at `/`.
+* **Redirects (308, next.config):** `/mansour-motors` → `/`, `/mansour-motors/vehicules` → `/vehicules`, `/mansour-motors/vehicules/:id` → `/vehicules/:id`. Query and #fragment carry over. `/mansour-motors/*` asset paths are unchanged.
+* **Slugs:** `src/lib/motors-routes.ts` holds every public URL (`motorsRoutes`, `vehicleSlug`, `parseVehicleSlug`). Slug = words + 12 hex of the uuid (`suzuki-spresso-2025-3316b5ef562f`); the id decides, the words do not. A uuid or renamed slug 308s to the canonical slug. Turntable and stock read `car.href`.
+* **Status codes:** the three `loading.tsx` colour fills started the stream before the page ran, so `notFound()` / `permanentRedirect()` became 200 + client-side redirect. Removed: unknown cars return a real 404 (« Véhicule introuvable », noindex), legacy ids a real 308.
+* **404 / login:** `app/not-found.tsx` is the branded French 404 (Shell, Excon). Login lands on `/dashboard/motors`. Holding navbar/footer link to `https://mansourmotors.sn` (absolute). `revalidatePath('/', 'layout')` refreshes the public pages.
+* **Verification:** type-check OK, `bun test` 45/45 (`motors-routes.test.ts`), `bun run build` OK. curl: `/` 200 Motors, holding host `/` 200 « Mansour Holding », brand `/holding` 404, `/foo` 404 « Page introuvable », old detail → slug in 2 hops, canonical and JSON-LD on the slug, sitemap lists slugs.
+* **Later:** submit the sitemap in Search Console; split the holding page into its own Vercel project (then delete `proxy.ts` and `app/holding`); `www` DNS; R2 custom domain.
+
 ## [Audit] Low fixes
 
 * **Status:** Done (2026-10-21). Browser check still blocked (no Chrome for Playwright).

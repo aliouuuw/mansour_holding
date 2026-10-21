@@ -144,7 +144,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
           <div className="mt-8 border-t border-[var(--mm-line-d)] pt-4">
             <Link
-              to="/mansour-motors"
+              to="/"
               className="flex min-h-[var(--mm-touch)] items-center gap-2 rounded-[var(--mm-r)] px-3 text-sm text-[var(--mm-white)]/65 transition-colors hover:bg-white/[0.06] hover:text-[var(--mm-white)]"
               onClick={() => setSidebarOpen(false)}
             >

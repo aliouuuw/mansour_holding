@@ -8,7 +8,8 @@ export const $$ = (sel, root = document) => [...root.querySelectorAll(sel)]
 export const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
 export const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)')
 /* plateau cars carry the vehicle id as `n` */
-export const detailUrl = (c) => `/mansour-motors/vehicules/${c.n}`
+/* the slug URL is built once, in toCar (car.ts) */
+export const detailUrl = (c) => c.href
 export const status = (c) => `<span class="status" data-status="${c.status}">${STATE[c.status]}</span>`
 
 /* segmented control: a soft thumb slides under the chosen option.

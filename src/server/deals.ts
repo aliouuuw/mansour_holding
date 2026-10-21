@@ -202,7 +202,7 @@ export async function updateDeal(id: string, data: unknown) {
       }
       return row
     })
-    if (validated.status === 'closed-won') revalidatePath('/mansour-motors', 'layout')
+    if (validated.status === 'closed-won') revalidatePath('/', 'layout')
 
     const [row] = await db
       .select(dealSelect)

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { listVehicles } from '@/server/vehicles'
 import { og } from '../seo'
 import { PublicVehicles } from './catalog'
+import { motorsRoutes } from '@/lib/motors-routes'
 
 export const revalidate = 60
 
@@ -12,8 +13,8 @@ const description =
 export const metadata: Metadata = {
   title,
   description,
-  alternates: { canonical: '/mansour-motors/vehicules' },
-  openGraph: { ...og, title, description, url: '/mansour-motors/vehicules' },
+  alternates: { canonical: motorsRoutes.stock },
+  openGraph: { ...og, title, description, url: motorsRoutes.stock },
 }
 
 export default async function Page() {

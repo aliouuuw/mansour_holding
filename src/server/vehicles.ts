@@ -47,8 +47,9 @@ function vehicleSortColumn(field: VehicleSortField) {
   }
 }
 
-/* landing, stock and detail pages are ISR: refresh them on every staff change */
-const refreshSite = () => revalidatePath('/mansour-motors', 'layout')
+/* landing, stock and detail pages are ISR: refresh them on every staff change.
+   The public site sits at the root (app/(motors)), so the root layout covers every page. */
+const refreshSite = () => revalidatePath('/', 'layout')
 
 function serializeVehicle(row: typeof vehicles.$inferSelect) {
   return {
@@ -100,6 +101,18 @@ export async function listVehicles(filters: VehicleFilters = {}) {
 
 export async function getVehicle(id: string) {
   const [vehicle] = await db.select().from(vehicles).where(eq(vehicles.id, id))
+  if (!vehicle) throw new UserError('Véhicule introuvable.')
+  return serializeVehicle(vehicle)
+}
+
+/** Public detail pages resolve a slug by the short id at its end (src/lib/motors-routes.ts). */
+export async function getVehicleByIdPrefix(prefix: string) {
+  if (!/^[0-9a-f]{12}$/.test(prefix)) throw new UserError('Véhicule introuvable.')
+  const [vehicle] = await db
+    .select()
+    .from(vehicles)
+    .where(sql`replace(${vehicles.id}::text, '-', '') like ${prefix + '%'}`)
+    .limit(1)
   if (!vehicle) throw new UserError('Véhicule introuvable.')
   return serializeVehicle(vehicle)
 }

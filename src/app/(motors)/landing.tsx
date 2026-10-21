@@ -7,6 +7,7 @@ import type { ApiVehicle } from '@/lib/api'
 import { AtelierSwipeHint, Button, Chapter, Field, OpenNote, Shell, ShowroomMap, ShowroomMapConakry } from './_ui'
 import { arrivalMs, lineup, PLATEAU, toCar } from './_ui/car'
 import { BUDGETS, CONAKRY, CONTACT, DAY, HOURS, STATE, YEARS, cover, focal, isCutout, pad2, vehicleUrl, waLink } from './_ui/shared'
+import { motorsRoutes } from '@/lib/motors-routes'
 
 function prestige(vehicles: ApiVehicle[]) {
   const open = vehicles.filter((v) => v.status !== 'sold')
@@ -223,7 +224,7 @@ function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) 
   const shown = total > vehicles.length
     ? `${total} véhicules au showroom, ${vehicles.length} sur le plateau`
     : `${available} disponible${available > 1 ? 's' : ''} sur ${total}`
-  const firstDetailHref = vehicles[0] ? vehicleUrl(vehicles[0]) : '/mansour-motors/vehicules'
+  const firstDetailHref = vehicles[0] ? vehicleUrl(vehicles[0]) : motorsRoutes.stock
   const firstVehicle = vehicles[0]
   const firstAtelierImg = firstVehicle ? cover(firstVehicle) : ''
 
@@ -268,7 +269,7 @@ function Lineup({ vehicles, total }: { vehicles: ApiVehicle[]; total: number }) 
               <button type="button" data-mode="ring" aria-pressed="true">Plateau</button>
               <button type="button" data-mode="list" aria-pressed="false">Liste</button>
             </div>
-            <Button to="/mansour-motors/vehicules">Tout le stock</Button>
+            <Button to={motorsRoutes.stock}>Tout le stock</Button>
           </div>
         </div>
         <div className="ring-stage" data-stage>
