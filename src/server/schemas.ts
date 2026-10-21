@@ -1,10 +1,31 @@
 import { z } from 'zod'
+import { UserError } from './action-result'
 
 const idSchema = z.string().uuid()
 
+const FIELD_LABELS: Record<string, string> = {
+  make: 'Marque',
+  model: 'Modèle',
+  year: 'Année',
+  mileage: 'Kilométrage',
+  price: 'Prix',
+  color: 'Couleur',
+  vin: 'VIN (17 caractères)',
+  images: 'Photos',
+  firstName: 'Prénom',
+  lastName: 'Nom',
+  email: 'Email',
+  phone: 'Téléphone (8 à 20 caractères)',
+  vehicleId: 'Véhicule',
+  customerId: 'Client',
+}
+
 export function parseBody<T>(schema: z.ZodType<T>, data: unknown): T {
   const result = schema.safeParse(data)
-  if (!result.success) throw new Error('Validation failed')
+  if (!result.success) {
+    const field = String(result.error.issues[0]?.path[0] ?? '')
+    throw new UserError(`Champ invalide : ${FIELD_LABELS[field] ?? field}.`)
+  }
   return result.data
 }
 

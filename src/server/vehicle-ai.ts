@@ -1,5 +1,6 @@
 'use server'
 
+import { UserError, attempt, type ActionResult } from './action-result'
 import { requireUser } from './session'
 import { openRouterChat } from './openrouter'
 import { getAssistModelOptions, resolveAssistModelId } from './openrouter-models'
@@ -56,82 +57,88 @@ Règles:
 }
 
 export async function listVehicleAiModels() {
-  await requireUser()
-  return getAssistModelOptions()
+  return attempt(async () => {
+    await requireUser()
+    return getAssistModelOptions()
+  })
 }
 
 export async function suggestVehicleFromTitle(
   title: string,
   modelId?: string,
-): Promise<VehicleSuggestPayload> {
-  await requireUser()
-  const trimmed = title.trim()
-  if (trimmed.length < 3) throw new Error('Titre trop court (3 caractères minimum).')
-  const model = await resolveAssistModelId(modelId)
+): Promise<ActionResult<VehicleSuggestPayload>> {
+  return attempt(async () => {
+    await requireUser()
+    const trimmed = title.trim()
+    if (trimmed.length < 3) throw new UserError('Titre trop court (3 caractères minimum).')
+    const model = await resolveAssistModelId(modelId)
 
-  const content = await openRouterChat(
-    [
-      { role: 'system', content: suggestSystemPrompt() },
-      { role: 'user', content: `Titre:\n${trimmed}` },
-    ],
-    { model, jsonObject: true },
-  )
+    const content = await openRouterChat(
+      [
+        { role: 'system', content: suggestSystemPrompt() },
+        { role: 'user', content: `Titre:\n${trimmed}` },
+      ],
+      { model, jsonObject: true },
+    )
 
-  try {
-    return normalizeSuggestPayload(parseJsonFromLlm(content))
-  } catch {
-    throw new Error('Impossible de lire la suggestion IA. Réessayez ou changez de modèle OpenRouter.')
-  }
+    try {
+      return normalizeSuggestPayload(parseJsonFromLlm(content))
+    } catch {
+      throw new UserError('Impossible de lire la suggestion IA. Réessayez ou changez de modèle OpenRouter.')
+    }
+  })
 }
 
 export async function generateVehicleDescription(
   facts: VehicleDescriptionFacts,
   modelId?: string,
-): Promise<{ description: string }> {
-  await requireUser()
-  if (!facts.make.trim() || !facts.model.trim()) {
-    throw new Error('Marque et modèle requis pour générer la description.')
-  }
-  const model = await resolveAssistModelId(modelId)
+): Promise<ActionResult<{ description: string }>> {
+  return attempt(async () => {
+    await requireUser()
+    if (!facts.make.trim() || !facts.model.trim()) {
+      throw new UserError('Marque et modèle requis pour générer la description.')
+    }
+    const model = await resolveAssistModelId(modelId)
 
-  const extras = featureExtrasForPrompt(facts.extras)
-  const fuelFr: Record<string, string> = {
-    gasoline: 'Essence',
-    diesel: 'Diesel',
-    hybrid: 'Hybride',
-    electric: 'Électrique',
-  }
-  const transFr: Record<string, string> = {
-    manual: 'Manuelle',
-    automatic: 'Automatique',
-    cvt: 'CVT',
-  }
+    const extras = featureExtrasForPrompt(facts.extras)
+    const fuelFr: Record<string, string> = {
+      gasoline: 'Essence',
+      diesel: 'Diesel',
+      hybrid: 'Hybride',
+      electric: 'Électrique',
+    }
+    const transFr: Record<string, string> = {
+      manual: 'Manuelle',
+      automatic: 'Automatique',
+      cvt: 'CVT',
+    }
 
-  const lines = [
-    `Marque: ${facts.make.trim()}`,
-    `Modèle: ${facts.model.trim()}`,
-    `Année: ${facts.year}`,
-    `Kilométrage: ${facts.mileage} km`,
-    `Carburant: ${fuelFr[facts.fuelType] ?? facts.fuelType}`,
-    `Transmission: ${transFr[facts.transmission] ?? facts.transmission}`,
-  ]
-  if (facts.color?.trim()) lines.push(`Couleur: ${facts.color.trim()}`)
-  if (Object.keys(extras).length) {
-    lines.push('Caractéristiques:')
-    for (const [k, v] of Object.entries(extras)) lines.push(`- ${k}: ${v}`)
-  }
+    const lines = [
+      `Marque: ${facts.make.trim()}`,
+      `Modèle: ${facts.model.trim()}`,
+      `Année: ${facts.year}`,
+      `Kilométrage: ${facts.mileage} km`,
+      `Carburant: ${fuelFr[facts.fuelType] ?? facts.fuelType}`,
+      `Transmission: ${transFr[facts.transmission] ?? facts.transmission}`,
+    ]
+    if (facts.color?.trim()) lines.push(`Couleur: ${facts.color.trim()}`)
+    if (Object.keys(extras).length) {
+      lines.push('Caractéristiques:')
+      for (const [k, v] of Object.entries(extras)) lines.push(`- ${k}: ${v}`)
+    }
 
-  const content = await openRouterChat(
-    [
-      { role: 'system', content: descriptionSystemPrompt() },
-      { role: 'user', content: lines.join('\n') },
-    ],
-    { model, jsonObject: true, maxTokens: 1024 },
-  )
+    const content = await openRouterChat(
+      [
+        { role: 'system', content: descriptionSystemPrompt() },
+        { role: 'user', content: lines.join('\n') },
+      ],
+      { model, jsonObject: true, maxTokens: 1024 },
+    )
 
-  try {
-    return vehicleDescriptionSchema.parse(parseJsonFromLlm(content))
-  } catch {
-    throw new Error('Impossible de lire la description IA. Réessayez.')
-  }
+    try {
+      return vehicleDescriptionSchema.parse(parseJsonFromLlm(content))
+    } catch {
+      throw new UserError('Impossible de lire la description IA. Réessayez.')
+    }
+  })
 }

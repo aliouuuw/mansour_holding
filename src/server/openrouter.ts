@@ -1,3 +1,5 @@
+import { UserError } from './action-result'
+
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions'
 
 export type ChatMessage = { role: 'system' | 'user' | 'assistant'; content: string }
@@ -38,7 +40,7 @@ export async function openRouterChat(
   options?: { model?: string; jsonObject?: boolean; maxTokens?: number },
 ): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY?.trim()
-  if (!apiKey) throw new Error('OPENROUTER_API_KEY manquant. Ajoutez-le dans .env.local.')
+  if (!apiKey) throw new UserError('OPENROUTER_API_KEY manquant. Ajoutez-le dans .env.local.')
 
   const body: Record<string, unknown> = {
     model: options?.model?.trim() || openRouterModelFromEnv(),
@@ -73,23 +75,23 @@ export async function openRouterChat(
     } catch {
       /* keep slice */
     }
-    throw new Error(`OpenRouter (${res.status}) : ${detail}`)
+    throw new UserError(`OpenRouter (${res.status}) : ${detail}`)
   }
 
   let payload: { choices?: { finish_reason?: string; message?: AssistantMessage }[] }
   try {
     payload = JSON.parse(raw) as typeof payload
   } catch {
-    throw new Error('Réponse OpenRouter illisible.')
+    throw new UserError('Réponse OpenRouter illisible.')
   }
 
   const choice = payload.choices?.[0]
   const content = assistantText(choice?.message)
   if (!content) {
     if (choice?.finish_reason === 'length') {
-      throw new Error('Le modèle a été coupé avant la réponse. Choisissez un autre modèle, puis réessayez.')
+      throw new UserError('Le modèle a été coupé avant la réponse. Choisissez un autre modèle, puis réessayez.')
     }
-    throw new Error('OpenRouter a renvoyé une réponse vide. Choisissez un autre modèle, puis réessayez.')
+    throw new UserError('OpenRouter a renvoyé une réponse vide. Choisissez un autre modèle, puis réessayez.')
   }
   return content
 }

@@ -19,7 +19,8 @@ const fmtLong = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeri
 /* photos: the record's own photographs; with a single one, three framings of it */
 function framings(v: ApiVehicle, title: string) {
   if (v.images.length > 1) return v.images.map((src, i) => ({ src: shrink(src, 1920), pos: i ? '50% 50%' : focal(v), zoom: 1, alt: `${title}, photo ${i + 1}` }))
-  const src = shrink(v.images[0] ?? '', 1920)
+  /* no gallery yet: the studio cover stands in (the page 404s when neither exists) */
+  const src = shrink(v.images[0] ?? v.extras.cover ?? '', 1920)
   return [
     { src, pos: focal(v), zoom: 1, alt: v.color ? `${title}, ${v.color}` : title },
     { src, pos: '24% 58%', zoom: 1.7, alt: `${title}, détail avant` },

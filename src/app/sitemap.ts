@@ -7,7 +7,7 @@ export const revalidate = 3600
 
 /* the public motors site only: the holding page and the back office stay out */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { data } = await listVehicles({ limit: 500 })
+  const { data } = await listVehicles({ limit: 500, withPhoto: true })
   const newest = data.reduce((max, v) => (v.updatedAt > max ? v.updatedAt : max), '')
   return [
     { url: MOTORS_SITE, lastModified: newest || undefined },

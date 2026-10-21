@@ -39,8 +39,10 @@ export default async function Page({ params }: Props) {
   const { vehicleId } = await params
   const [vehicle, all] = await Promise.all([
     vehicleById(vehicleId),
-    listVehicles({ limit: 100 }),
+    listVehicles({ limit: 100, withPhoto: true }),
   ]).catch(() => notFound())
+  /* same rule as the lists: no photo, no public page yet */
+  if (!vehicle.images.length && !vehicle.extras.cover) notFound()
   /* other cars: the three nearest in price */
   const others = all.data
     .filter((v) => v.id !== vehicleId)

@@ -1,5 +1,6 @@
 'use server'
 
+import { UserError, attempt, type ActionResult } from './action-result'
 import { and, desc, eq, ilike, or, sql } from 'drizzle-orm'
 import { db } from './db/index'
 import { deals, vehicles, customers } from './db/schema'
@@ -58,50 +59,54 @@ function dealListWhere(params: { status?: DealStatus; search?: string }) {
 }
 
 export async function listDeals(params: { page?: number; limit?: number; status?: DealStatus; search?: string } = {}) {
-  await requireUser()
-  const pageNum = Math.max(1, params.page ?? 1)
-  const limitNum = Math.min(100, Math.max(1, params.limit ?? 50))
-  const offset = (pageNum - 1) * limitNum
-  const where = dealListWhere(params)
+  return attempt(async () => {
+    await requireUser()
+    const pageNum = Math.max(1, params.page ?? 1)
+    const limitNum = Math.min(100, Math.max(1, params.limit ?? 50))
+    const offset = (pageNum - 1) * limitNum
+    const where = dealListWhere(params)
 
-  const base = db
-    .select(dealSelect)
-    .from(deals)
-    .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
-    .leftJoin(customers, eq(deals.customerId, customers.id))
-
-  const [rows, [{ count }]] = await Promise.all([
-    base.where(where).orderBy(desc(deals.createdAt)).limit(limitNum).offset(offset),
-    db
-      .select({ count: sql<number>`count(*)::int` })
+    const base = db
+      .select(dealSelect)
       .from(deals)
       .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
       .leftJoin(customers, eq(deals.customerId, customers.id))
-      .where(where),
-  ])
 
-  return {
-    data: rows.map(serializeDeal),
-    pagination: { page: pageNum, limit: limitNum, total: count, pages: Math.ceil(count / limitNum) },
-  }
+    const [rows, [{ count }]] = await Promise.all([
+      base.where(where).orderBy(desc(deals.createdAt)).limit(limitNum).offset(offset),
+      db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(deals)
+        .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
+        .leftJoin(customers, eq(deals.customerId, customers.id))
+        .where(where),
+    ])
+
+    return {
+      data: rows.map(serializeDeal),
+      pagination: { page: pageNum, limit: limitNum, total: count, pages: Math.ceil(count / limitNum) },
+    }
+  })
 }
 
 export async function getDealSummary() {
-  await requireUser()
-  const [rows, [{ total }]] = await Promise.all([
-    db
-      .select({ status: deals.status, count: sql<number>`count(*)::int` })
-      .from(deals)
-      .groupBy(deals.status),
-    db
-      .select({ total: sql<number>`coalesce(sum(price), 0)::int` })
-      .from(deals)
-      .where(eq(deals.status, 'closed-won')),
-  ])
+  return attempt(async () => {
+    await requireUser()
+    const [rows, [{ total }]] = await Promise.all([
+      db
+        .select({ status: deals.status, count: sql<number>`count(*)::int` })
+        .from(deals)
+        .groupBy(deals.status),
+      db
+        .select({ total: sql<number>`coalesce(sum(${deals.price}), 0)`.mapWith(Number) })
+        .from(deals)
+        .where(eq(deals.status, 'closed-won')),
+    ])
 
-  const summary = { lead: 0, negotiation: 0, 'closed-won': 0, 'closed-lost': 0, totalRevenue: total }
-  for (const row of rows) summary[row.status] = row.count
-  return summary
+    const summary = { lead: 0, negotiation: 0, 'closed-won': 0, 'closed-lost': 0, totalRevenue: total }
+    for (const row of rows) summary[row.status] = row.count
+    return summary
+  })
 }
 
 export type DealsBoard = {
@@ -110,93 +115,103 @@ export type DealsBoard = {
   wonRevenue: number
 }
 
-export async function listDealsBoard(): Promise<DealsBoard> {
-  await requireUser()
-  // ponytail: one scan of deals. Paginate per column if the board grows past a few hundred rows.
-  const rows = await db
-    .select(dealSelect)
-    .from(deals)
-    .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
-    .leftJoin(customers, eq(deals.customerId, customers.id))
-    .orderBy(desc(deals.createdAt))
+export async function listDealsBoard(): Promise<ActionResult<DealsBoard>> {
+  return attempt(async () => {
+    await requireUser()
+    // ponytail: one scan of deals. Paginate per column if the board grows past a few hundred rows.
+    const rows = await db
+      .select(dealSelect)
+      .from(deals)
+      .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
+      .leftJoin(customers, eq(deals.customerId, customers.id))
+      .orderBy(desc(deals.createdAt))
 
-  const columns: DealsBoard['columns'] = {
-    lead: [],
-    negotiation: [],
-    'closed-won': [],
-    'closed-lost': [],
-  }
-  for (const row of rows) {
-    const deal = serializeDeal(row)
-    columns[deal.status].push(deal)
-  }
+    const columns: DealsBoard['columns'] = {
+      lead: [],
+      negotiation: [],
+      'closed-won': [],
+      'closed-lost': [],
+    }
+    for (const row of rows) {
+      const deal = serializeDeal(row)
+      columns[deal.status].push(deal)
+    }
 
-  return {
-    columns,
-    activeCount: columns.lead.length + columns.negotiation.length,
-    wonRevenue: columns['closed-won'].reduce((sum, deal) => sum + deal.price, 0),
-  }
+    return {
+      columns,
+      activeCount: columns.lead.length + columns.negotiation.length,
+      wonRevenue: columns['closed-won'].reduce((sum, deal) => sum + deal.price, 0),
+    }
+  })
 }
 
 export async function getDeal(id: string) {
-  await requireUser()
-  const [row] = await db
-    .select(dealSelect)
-    .from(deals)
-    .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
-    .leftJoin(customers, eq(deals.customerId, customers.id))
-    .where(eq(deals.id, id))
+  return attempt(async () => {
+    await requireUser()
+    const [row] = await db
+      .select(dealSelect)
+      .from(deals)
+      .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
+      .leftJoin(customers, eq(deals.customerId, customers.id))
+      .where(eq(deals.id, id))
 
-  if (!row) throw new Error('Deal not found')
-  return serializeDeal(row)
+    if (!row) throw new UserError('Affaire introuvable.')
+    return serializeDeal(row)
+  })
 }
 
 export async function createDeal(data: unknown) {
-  const user = await requireUser()
-  const validated = parseBody(createDealSchema, data)
-  const [deal] = await db
-    .insert(deals)
-    .values({ ...validated, salesPersonId: user.id })
-    .returning()
+  return attempt(async () => {
+    const user = await requireUser()
+    const validated = parseBody(createDealSchema, data)
+    const [deal] = await db
+      .insert(deals)
+      .values({ ...validated, salesPersonId: user.id })
+      .returning()
 
-  const [row] = await db
-    .select(dealSelect)
-    .from(deals)
-    .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
-    .leftJoin(customers, eq(deals.customerId, customers.id))
-    .where(eq(deals.id, deal.id))
+    const [row] = await db
+      .select(dealSelect)
+      .from(deals)
+      .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
+      .leftJoin(customers, eq(deals.customerId, customers.id))
+      .where(eq(deals.id, deal.id))
 
-  return serializeDeal(row!)
+    return serializeDeal(row!)
+  })
 }
 
 export async function updateDeal(id: string, data: unknown) {
-  await requireUser()
-  const validated = parseBody(updateDealSchema, data)
-  if (validated.status === 'closed-won' || validated.status === 'closed-lost') {
-    validated.closedAt = new Date()
-  }
+  return attempt(async () => {
+    await requireUser()
+    const validated = parseBody(updateDealSchema, data)
+    if (validated.status === 'closed-won' || validated.status === 'closed-lost') {
+      validated.closedAt = new Date()
+    }
 
-  const [deal] = await db
-    .update(deals)
-    .set({ ...validated, updatedAt: new Date() })
-    .where(eq(deals.id, id))
-    .returning()
+    const [deal] = await db
+      .update(deals)
+      .set({ ...validated, updatedAt: new Date() })
+      .where(eq(deals.id, id))
+      .returning()
 
-  if (!deal) throw new Error('Deal not found')
+    if (!deal) throw new UserError('Affaire introuvable.')
 
-  const [row] = await db
-    .select(dealSelect)
-    .from(deals)
-    .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
-    .leftJoin(customers, eq(deals.customerId, customers.id))
-    .where(eq(deals.id, deal.id))
+    const [row] = await db
+      .select(dealSelect)
+      .from(deals)
+      .leftJoin(vehicles, eq(deals.vehicleId, vehicles.id))
+      .leftJoin(customers, eq(deals.customerId, customers.id))
+      .where(eq(deals.id, deal.id))
 
-  return serializeDeal(row!)
+    return serializeDeal(row!)
+  })
 }
 
 export async function deleteDeal(id: string) {
-  await requireUser()
-  const [deleted] = await db.delete(deals).where(eq(deals.id, id)).returning()
-  if (!deleted) throw new Error('Deal not found')
-  return { success: true as const }
+  return attempt(async () => {
+    await requireUser()
+    const [deleted] = await db.delete(deals).where(eq(deals.id, id)).returning()
+    if (!deleted) throw new UserError('Affaire introuvable.')
+    return { success: true as const }
+  })
 }

@@ -17,6 +17,6 @@ export const metadata: Metadata = {
 }
 
 export default async function Page() {
-  const { data } = await listVehicles({ limit: 200, sortBy: 'sortOrder', sortDir: 'asc' })
+  const { data } = await listVehicles({ limit: 200, sortBy: 'sortOrder', sortDir: 'asc', withPhoto: true })
   return <PublicVehicles vehicles={data} />
 }

@@ -42,6 +42,14 @@ import {
 import type { VehicleSuggestPayload } from '@/server/vehicle-ai-parse'
 import type { VehicleDescriptionFacts } from '@/server/vehicle-ai-parse'
 import type { QueryClient } from '@tanstack/react-query'
+import { unwrap, type ActionResult } from '@/server/action-result'
+import { fitImageForUpload } from '@/lib/fit-image'
+
+/* server actions return { ok, error }: turn a failure back into an Error with the French message */
+const u =
+  <A extends unknown[], T>(fn: (...args: A) => Promise<ActionResult<T>>) =>
+  (...args: A) =>
+    unwrap(fn(...args))
 
 export type {
   VehicleStatus,
@@ -130,19 +138,19 @@ export type DealSummary = {
 export const vehiclesApi = {
   list: listVehicles,
   get: getVehicle,
-  create: createVehicle,
-  update: updateVehicle,
-  delete: deleteVehicle,
-  reorder: reorderVehicles,
-  uploadImage: (id: string, file: File) => {
+  create: u(createVehicle),
+  update: u(updateVehicle),
+  delete: u(deleteVehicle),
+  reorder: u(reorderVehicles),
+  uploadImage: async (id: string, file: File) => {
     const form = new FormData()
-    form.append('file', file)
-    return uploadVehicleImage(id, form)
+    form.append('file', await fitImageForUpload(file))
+    return unwrap(uploadVehicleImage(id, form))
   },
-  replaceImage: (id: string, index: number, file: File) => {
+  replaceImage: async (id: string, index: number, file: File) => {
     const form = new FormData()
-    form.append('file', file)
-    return replaceVehicleImage(id, index, form)
+    form.append('file', await fitImageForUpload(file))
+    return unwrap(replaceVehicleImage(id, index, form))
   },
 }
 
@@ -153,9 +161,9 @@ export const inventorySuggestionsApi = {
 export type { VehicleSuggestPayload, VehicleDescriptionFacts }
 
 export const vehiclesAiApi = {
-  listModels: listVehicleAiModels,
-  suggestFromTitle: suggestVehicleFromTitle,
-  generateDescription: generateVehicleDescription,
+  listModels: u(listVehicleAiModels),
+  suggestFromTitle: u(suggestVehicleFromTitle),
+  generateDescription: u(generateVehicleDescription),
 }
 
 export const publicVehiclesApi = {
@@ -164,21 +172,21 @@ export const publicVehiclesApi = {
 }
 
 export const customersApi = {
-  list: listCustomers,
-  get: getCustomer,
-  create: createCustomer,
-  update: updateCustomer,
-  delete: deleteCustomer,
+  list: u(listCustomers),
+  get: u(getCustomer),
+  create: u(createCustomer),
+  update: u(updateCustomer),
+  delete: u(deleteCustomer),
 }
 
 export const dealsApi = {
-  list: listDeals,
-  board: listDealsBoard,
-  summary: getDealSummary,
-  get: getDeal,
-  create: createDeal,
-  update: updateDeal,
-  delete: deleteDeal,
+  list: u(listDeals),
+  board: u(listDealsBoard),
+  summary: u(getDealSummary),
+  get: u(getDeal),
+  create: u(createDeal),
+  update: u(updateDeal),
+  delete: u(deleteDeal),
 }
 
 export const overviewApi = {
@@ -189,7 +197,11 @@ export const overviewApi = {
 export function invalidateMotorsQueries(qc: QueryClient) {
   void qc.invalidateQueries({ queryKey: ['overview'] })
   void qc.invalidateQueries({ queryKey: ['vehicles'] })
+  void qc.invalidateQueries({ queryKey: ['vehicle'] })
+  void qc.invalidateQueries({ queryKey: ['vehicles-for-deal'] })
   void qc.invalidateQueries({ queryKey: ['customers'] })
+  void qc.invalidateQueries({ queryKey: ['customer'] })
+  void qc.invalidateQueries({ queryKey: ['customers-for-deal'] })
   void qc.invalidateQueries({ queryKey: ['deals'] })
   void qc.invalidateQueries({ queryKey: ['deals-board'] })
   void qc.invalidateQueries({ queryKey: ['deals-summary'] })

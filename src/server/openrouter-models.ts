@@ -1,3 +1,5 @@
+import { UserError } from './action-result'
+
 /** Cheap paid cap: about $1 / 1M tokens (prompt + completion per token). */
 const CHEAP_PAID_MAX = 0.000001
 
@@ -114,7 +116,7 @@ export async function fetchOpenRouterCatalog(): Promise<OpenRouterCatalogModel[]
     signal: AbortSignal.timeout(20_000),
     next: { revalidate: 900 },
   })
-  if (!res.ok) throw new Error(`OpenRouter models (${res.status})`)
+  if (!res.ok) throw new UserError(`OpenRouter models (${res.status})`)
 
   const payload = (await res.json()) as { data?: OpenRouterCatalogModel[] }
   const models = payload.data ?? []
@@ -129,7 +131,7 @@ export async function getAssistModelOptions(): Promise<{
   const catalog = await fetchOpenRouterCatalog()
   const models = pickAssistModels(catalog)
   if (models.length === 0) {
-    throw new Error('Aucun modèle OpenRouter compatible trouvé.')
+    throw new UserError('Aucun modèle OpenRouter compatible trouvé.')
   }
   const defaultModelId =
     models.find((m) => m.tier === 'free')?.id
@@ -143,7 +145,7 @@ export async function resolveAssistModelId(requested: string | undefined): Promi
   const allowed = new Set(models.map((m) => m.id))
   const id = requested?.trim() || defaultModelId
   if (!allowed.has(id)) {
-    throw new Error('Modèle IA non autorisé. Choisissez-en un dans la liste.')
+    throw new UserError('Modèle IA non autorisé. Choisissez-en un dans la liste.')
   }
   return id
 }

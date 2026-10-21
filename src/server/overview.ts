@@ -52,7 +52,8 @@ async function dealPipeline() {
       .from(deals)
       .groupBy(deals.status),
     db
-      .select({ totalRevenue: sql<number>`coalesce(sum(price), 0)::int` })
+      /* sum(integer) is bigint: an ::int cast overflows after about 30 sales at 70 M FCFA */
+      .select({ totalRevenue: sql<number>`coalesce(sum(${deals.price}), 0)`.mapWith(Number) })
       .from(deals)
       .where(eq(deals.status, 'closed-won')),
   ])

@@ -202,8 +202,14 @@ async function seed() {
     }
 
     console.log(`Creating admin user: ${adminEmail}`)
-    await auth.api.signUpEmail({
-      body: { email: adminEmail, password: adminPassword, name: adminName },
+    /* sign-up is closed (auth.ts), so create the user and its password account directly */
+    const ctx = await auth.$context
+    const created = await ctx.internalAdapter.createUser({ email: adminEmail, name: adminName, emailVerified: true })
+    await ctx.internalAdapter.linkAccount({
+      userId: created.id,
+      providerId: 'credential',
+      accountId: created.id,
+      password: await ctx.password.hash(adminPassword),
     })
     console.log('✅ Admin user created')
 

@@ -1,5 +1,16 @@
 # Project Progress Log
 
+## [Audit] Critical and High fixes (functional + UX audit)
+
+* **Status:** Done (2026-10-21). Not browser-checked: the back office needs a staff login, and mutations would write to the shared Neon database.
+* **C1 sign-up closed:** `disableSignUp: true` in `src/server/auth.ts`; `/register` deleted. `bun run db:seed` now creates the admin through `auth.$context.internalAdapter` (sign-up API refuses).
+* **H1 French errors in production:** `src/server/action-result.ts` (`attempt`, `UserError`, `unwrap`). Vehicle mutations, customers, deals and the AI assistant return `{ ok, error }`; `src/lib/api.ts` unwraps. `unstable_rethrow` keeps redirect / notFound / dynamic-usage signals working. Validation names the field (« Champ invalide : Email. »).
+* **H2 revenue overflow:** `sum(price)` is bigint; mapped with `Number` instead of `::int` (overflowed after about 30 sales).
+* **H3 photo upload on Vercel:** `src/lib/fit-image.ts` shrinks photos above 3.5 MB in the browser (2560 px, JPEG, WebP for PNG/WebP) before the server action. Vercel caps bodies at 4.5 MB.
+* **H4 broken public cards:** `listVehicles({ withPhoto: true })` on home, catalogue, detail « others » and sitemap. A detail page with no photo and no studio cover 404s.
+* **H5 cache:** `invalidateMotorsQueries` now covers `vehicle`, `customer`, `vehicles-for-deal`, `customers-for-deal`.
+* **Verification:** `bun run type-check` OK. `bun test`: 34 pass, 1 pre-existing fail (`VehicleForm.test.ts` imports the DB without `DATABASE_URL`). `bun run build` OK: 24 catalogue cards, 26 sitemap URLs.
+
 ## [Motors] SEO and performance pass (seo-audit)
 
 * **Status:** Done and live (2026-10-13). No browser check: Playwright cannot start (Chrome is not installed).

@@ -1,3 +1,5 @@
+import { UserError } from './action-result'
+
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
 const EXT_BY_MIME: Record<string, string> = {
@@ -17,14 +19,14 @@ const MIME_BY_EXT: Record<string, string> = {
 }
 
 export function vehicleImageMeta(file: { type: string; name: string; size: number }) {
-  if (file.size <= 0) throw new Error('Fichier vide.')
-  if (file.size > MAX_IMAGE_BYTES) throw new Error('Photo trop lourde. La limite est 10 Mo.')
+  if (file.size <= 0) throw new UserError('Fichier vide.')
+  if (file.size > MAX_IMAGE_BYTES) throw new UserError('Photo trop lourde. La limite est 10 Mo.')
 
   const mime = file.type === 'image/jpg' ? 'image/jpeg' : file.type
   const named = file.name.split('.').pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') ?? ''
   const type = EXT_BY_MIME[mime] ? mime : MIME_BY_EXT[named]
   const ext = EXT_BY_MIME[type ?? ''] ?? ''
-  if (!type || !ext) throw new Error('Format non pris en charge. Utilisez JPEG, PNG ou WebP.')
+  if (!type || !ext) throw new UserError('Format non pris en charge. Utilisez JPEG, PNG ou WebP.')
   return { type, ext }
 }
 

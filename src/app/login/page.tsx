@@ -142,15 +142,6 @@ export function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-8 text-center">
-            <p className="text-sm text-silver-400">
-              Pas encore de compte ?{' '}
-              <Link to="/register" className="font-semibold text-gold-400 hover:text-gold-300">
-                Créer un compte
-              </Link>
-            </p>
-          </div>
-
           <div className="mt-12 pt-8 border-t border-white/10 text-center">
             <p className="text-xs text-silver-500">
               © {new Date().getFullYear()} Mansour Holding. Tous droits réservés.

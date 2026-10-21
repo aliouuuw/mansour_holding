@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default async function Page() {
   /* all statuses: the floor plan shows reserved and sold cars too */
-  const { data } = await listVehicles({ limit: 100 })
+  const { data } = await listVehicles({ limit: 100, withPhoto: true })
   return (
     <>
       <JsonLd data={dealerLd} />

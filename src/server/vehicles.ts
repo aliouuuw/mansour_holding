@@ -1,5 +1,6 @@
 'use server'
 
+import { UserError, attempt } from './action-result'
 import { revalidatePath } from 'next/cache'
 import { eq, and, sql, asc, desc } from 'drizzle-orm'
 import { db } from './db/index'
@@ -25,6 +26,8 @@ export type VehicleFilters = {
   search?: string
   sortBy?: VehicleSortField
   sortDir?: VehicleSortDir
+  /* public pages: a car with no photo and no studio cover stays off the site */
+  withPhoto?: boolean
 }
 
 function vehicleSortColumn(field: VehicleSortField) {
@@ -65,6 +68,9 @@ export async function listVehicles(filters: VehicleFilters = {}) {
 
   const conditions = []
   if (filters.status) conditions.push(eq(vehicles.status, filters.status))
+  if (filters.withPhoto) {
+    conditions.push(sql`(jsonb_array_length(${vehicles.images}) > 0 or coalesce(${vehicles.extras}->>'cover', '') <> '')`)
+  }
   if (filters.search) {
     conditions.push(
       sql`(${vehicles.make} ilike ${'%' + filters.search + '%'} or ${vehicles.model} ilike ${'%' + filters.search + '%'})`
@@ -93,131 +99,143 @@ export async function listVehicles(filters: VehicleFilters = {}) {
 
 export async function getVehicle(id: string) {
   const [vehicle] = await db.select().from(vehicles).where(eq(vehicles.id, id))
-  if (!vehicle) throw new Error('Vehicle not found')
+  if (!vehicle) throw new UserError('Véhicule introuvable.')
   return serializeVehicle(vehicle)
 }
 
 export async function createVehicle(data: unknown) {
-  const user = await requireUser()
-  const validated = parseBody(createVehicleSchema, data)
-  const [{ minOrder }] = await db
-    .select({ minOrder: sql<number>`coalesce(min(${vehicles.sortOrder}), 1)::int` })
-    .from(vehicles)
-  const [vehicle] = await db
-    .insert(vehicles)
-    .values({ ...validated, createdBy: user.id, sortOrder: minOrder - 1 })
-    .returning()
-  refreshSite()
-  return serializeVehicle(vehicle)
+  return attempt(async () => {
+    const user = await requireUser()
+    const validated = parseBody(createVehicleSchema, data)
+    const [{ minOrder }] = await db
+      .select({ minOrder: sql<number>`coalesce(min(${vehicles.sortOrder}), 1)::int` })
+      .from(vehicles)
+    const [vehicle] = await db
+      .insert(vehicles)
+      .values({ ...validated, createdBy: user.id, sortOrder: minOrder - 1 })
+      .returning()
+    refreshSite()
+    return serializeVehicle(vehicle)
+  })
 }
 
 export async function reorderVehicles(orderedIds: string[]) {
-  await requireUser()
-  const rows = await db.select({ id: vehicles.id }).from(vehicles)
-  assertReorderIds(orderedIds, rows.map((row) => row.id))
-  await db.transaction(async (tx) => {
-    for (let i = 0; i < orderedIds.length; i++) {
-      await tx
-        .update(vehicles)
-        .set({ sortOrder: i, updatedAt: new Date() })
-        .where(eq(vehicles.id, orderedIds[i]!))
-    }
+  return attempt(async () => {
+    await requireUser()
+    const rows = await db.select({ id: vehicles.id }).from(vehicles)
+    assertReorderIds(orderedIds, rows.map((row) => row.id))
+    await db.transaction(async (tx) => {
+      for (let i = 0; i < orderedIds.length; i++) {
+        await tx
+          .update(vehicles)
+          .set({ sortOrder: i, updatedAt: new Date() })
+          .where(eq(vehicles.id, orderedIds[i]!))
+      }
+    })
+    refreshSite()
+    return { success: true as const }
   })
-  refreshSite()
-  return { success: true as const }
 }
 
 export async function updateVehicle(id: string, data: unknown) {
-  await requireUser()
-  const validated = parseBody(updateVehicleSchema, data)
-  const vehicle = await db.transaction(async (tx) => {
-    const [existing] = await tx.select().from(vehicles).where(eq(vehicles.id, id)).for('update')
-    if (!existing) throw new Error('Vehicle not found')
-    const extras = validated.images
-      ? coverFor(validated.extras ?? existing.extras ?? {}, existing.images ?? [], validated.images)
-      : validated.extras
-    const [row] = await tx
-      .update(vehicles)
-      .set({ ...validated, ...(extras && { extras }), updatedAt: new Date() })
-      .where(eq(vehicles.id, id))
-      .returning()
-    return row
+  return attempt(async () => {
+    await requireUser()
+    const validated = parseBody(updateVehicleSchema, data)
+    const vehicle = await db.transaction(async (tx) => {
+      const [existing] = await tx.select().from(vehicles).where(eq(vehicles.id, id)).for('update')
+      if (!existing) throw new UserError('Véhicule introuvable.')
+      const extras = validated.images
+        ? coverFor(validated.extras ?? existing.extras ?? {}, existing.images ?? [], validated.images)
+        : validated.extras
+      const [row] = await tx
+        .update(vehicles)
+        .set({ ...validated, ...(extras && { extras }), updatedAt: new Date() })
+        .where(eq(vehicles.id, id))
+        .returning()
+      return row
+    })
+    await rememberInventoryPatch(validated)
+    refreshSite()
+    return serializeVehicle(vehicle)
   })
-  await rememberInventoryPatch(validated)
-  refreshSite()
-  return serializeVehicle(vehicle)
 }
 
 export async function deleteVehicle(id: string) {
-  await requireUser()
-  const [deleted] = await db.delete(vehicles).where(eq(vehicles.id, id)).returning()
-  if (!deleted) throw new Error('Vehicle not found')
-  refreshSite()
-  return { success: true as const }
+  return attempt(async () => {
+    await requireUser()
+    const [deleted] = await db.delete(vehicles).where(eq(vehicles.id, id)).returning()
+    if (!deleted) throw new UserError('Véhicule introuvable.')
+    refreshSite()
+    return { success: true as const }
+  })
 }
 
 async function storeVehicleFile(id: string, file: File) {
   const { type, ext } = vehicleImageMeta(file)
   const base = process.env.R2_PUBLIC_URL?.replace(/\/$/, '')
-  if (!base) throw new Error('Stockage photo indisponible.')
+  if (!base) throw new UserError('Stockage photo indisponible.')
   const key = `vehicles/${id}/${Date.now()}.${ext}`
   try {
     await uploadToR2(key, new Uint8Array(await file.arrayBuffer()), type)
   } catch (err) {
     console.error('R2 upload error:', err)
-    throw new Error('Envoi de la photo impossible.')
+    throw new UserError('Envoi de la photo impossible.')
   }
   return `${base}/${key}`
 }
 
 export async function uploadVehicleImage(id: string, formData: FormData) {
-  await requireUser()
-  const [vehicle] = await db.select({ id: vehicles.id }).from(vehicles).where(eq(vehicles.id, id))
-  if (!vehicle) throw new Error('Vehicle not found')
+  return attempt(async () => {
+    await requireUser()
+    const [vehicle] = await db.select({ id: vehicles.id }).from(vehicles).where(eq(vehicles.id, id))
+    if (!vehicle) throw new UserError('Véhicule introuvable.')
 
-  const file = formData.get('file')
-  if (!(file instanceof File)) throw new Error('No file provided')
+    const file = formData.get('file')
+    if (!(file instanceof File)) throw new UserError('Aucune photo reçue.')
 
-  const publicUrl = await storeVehicleFile(id, file)
-  const [updated] = await db
-    .update(vehicles)
-    .set({
-      images: sql`coalesce(${vehicles.images}, '[]'::jsonb) || jsonb_build_array(${publicUrl}::text)`,
-      updatedAt: new Date(),
-    })
-    .where(eq(vehicles.id, id))
-    .returning()
+    const publicUrl = await storeVehicleFile(id, file)
+    const [updated] = await db
+      .update(vehicles)
+      .set({
+        images: sql`coalesce(${vehicles.images}, '[]'::jsonb) || jsonb_build_array(${publicUrl}::text)`,
+        updatedAt: new Date(),
+      })
+      .where(eq(vehicles.id, id))
+      .returning()
 
-  if (!updated) throw new Error('Vehicle not found')
-  const serialized = serializeVehicle(updated)
-  refreshSite()
-  return { url: publicUrl, images: serialized.images }
+    if (!updated) throw new UserError('Véhicule introuvable.')
+    const serialized = serializeVehicle(updated)
+    refreshSite()
+    return { url: publicUrl, images: serialized.images }
+  })
 }
 
 export async function replaceVehicleImage(id: string, index: number, formData: FormData) {
-  await requireUser()
-  const [existing] = await db.select({ id: vehicles.id }).from(vehicles).where(eq(vehicles.id, id))
-  if (!existing) throw new Error('Vehicle not found')
-  const file = formData.get('file')
-  if (!(file instanceof File)) throw new Error('No file provided')
-  if (!Number.isInteger(index) || index < 0) throw new Error('Image index out of range')
+  return attempt(async () => {
+    await requireUser()
+    const [existing] = await db.select({ id: vehicles.id }).from(vehicles).where(eq(vehicles.id, id))
+    if (!existing) throw new UserError('Véhicule introuvable.')
+    const file = formData.get('file')
+    if (!(file instanceof File)) throw new UserError('Aucune photo reçue.')
+    if (!Number.isInteger(index) || index < 0) throw new UserError('Cette photo n’existe plus. Rechargez la page.')
 
-  const publicUrl = await storeVehicleFile(id, file)
-  const updated = await db.transaction(async (tx) => {
-    const [vehicle] = await tx.select().from(vehicles).where(eq(vehicles.id, id)).for('update')
-    if (!vehicle) throw new Error('Vehicle not found')
-    const before = vehicle.images ?? []
-    const images = [...before]
-    if (index >= images.length) throw new Error('Image index out of range')
-    images[index] = publicUrl
-    const [row] = await tx
-      .update(vehicles)
-      .set({ images, extras: coverFor(vehicle.extras ?? {}, before, images), updatedAt: new Date() })
-      .where(eq(vehicles.id, id))
-      .returning()
-    return row
+    const publicUrl = await storeVehicleFile(id, file)
+    const updated = await db.transaction(async (tx) => {
+      const [vehicle] = await tx.select().from(vehicles).where(eq(vehicles.id, id)).for('update')
+      if (!vehicle) throw new UserError('Véhicule introuvable.')
+      const before = vehicle.images ?? []
+      const images = [...before]
+      if (index >= images.length) throw new UserError('Cette photo n’existe plus. Rechargez la page.')
+      images[index] = publicUrl
+      const [row] = await tx
+        .update(vehicles)
+        .set({ images, extras: coverFor(vehicle.extras ?? {}, before, images), updatedAt: new Date() })
+        .where(eq(vehicles.id, id))
+        .returning()
+      return row
+    })
+
+    refreshSite()
+    return serializeVehicle(updated)
   })
-
-  refreshSite()
-  return serializeVehicle(updated)
 }

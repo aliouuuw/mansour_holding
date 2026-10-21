@@ -17,7 +17,8 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    autoSignIn: true,
+    /* staff accounts only: created by `bun run db:seed`, never from the web */
+    disableSignUp: true,
   },
   socialProviders: {},
   secret: process.env.BETTER_AUTH_SECRET || 'your-secret-key-change-in-production',
